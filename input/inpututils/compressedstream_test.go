@@ -10,9 +10,11 @@ import (
 	"time"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/testutil"
 )
 
 func TestGzipStream(t *testing.T) {
+	testutil.InitLogger()
 	genfile := func(wpipe io.WriteCloser) {
 		defer wpipe.Close()
 		w := gzip.NewWriter(wpipe)

@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/AdRoll/baker/testutil"
 )
 
 func getCorpus() []byte {
@@ -34,6 +36,7 @@ func getCorpus() []byte {
 }
 
 func TestGzReader(t *testing.T) {
+	testutil.InitLogger()
 	data := getCorpus()
 
 	var buf bytes.Buffer
@@ -57,6 +60,7 @@ func TestGzReader(t *testing.T) {
 }
 
 func TestGzReadErrorEmpty(t *testing.T) {
+	testutil.InitLogger()
 	var empty bytes.Buffer
 
 	r, err := newFastGzReader(&empty)
@@ -84,6 +88,7 @@ func TestGzReadErrorEmpty(t *testing.T) {
 }
 
 func TestGzReadErrorInvalid(t *testing.T) {
+	testutil.InitLogger()
 	wrong := "ciaociaociaociao"
 
 	r, err := newFastGzReader(strings.NewReader(wrong))
@@ -111,6 +116,7 @@ func TestGzReadErrorInvalid(t *testing.T) {
 }
 
 func BenchmarkGzip(b *testing.B) {
+	testutil.InitLogger()
 	data := getCorpus()
 	data = append(data, data...)
 	data = append(data, data...)
@@ -134,6 +140,7 @@ func BenchmarkGzip(b *testing.B) {
 }
 
 func BenchmarkFastGzip(b *testing.B) {
+	testutil.InitLogger()
 	data := getCorpus()
 	data = append(data, data...)
 	data = append(data, data...)

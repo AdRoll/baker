@@ -5,7 +5,7 @@ import (
 	"runtime/debug"
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/AdRoll/baker/logger"
 )
 
 func Main(cfg *Config, duration time.Duration) error {
@@ -25,7 +25,7 @@ func Main(cfg *Config, duration time.Duration) error {
 
 	topology, err := NewTopologyFromConfig(cfg)
 	if err != nil {
-		log.Fatal(err)
+		logger.Log.Fatal(err)
 	}
 
 	// Start the topology

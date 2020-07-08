@@ -5,9 +5,12 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/AdRoll/baker/testutil"
 )
 
 func TestMerge(t *testing.T) {
+	testutil.InitLogger()
 	b1 := MetricsBag{}
 	b2 := MetricsBag{}
 
@@ -61,6 +64,7 @@ func TestMerge(t *testing.T) {
 }
 
 func TestMergeHistogram(t *testing.T) {
+	testutil.InitLogger()
 	t.Run("both non-nil", func(t *testing.T) {
 		b1 := MetricsBag{}
 		b2 := MetricsBag{}
@@ -110,6 +114,7 @@ func TestMergeHistogram(t *testing.T) {
 }
 
 func TestMergeTimings(t *testing.T) {
+	testutil.InitLogger()
 	t.Run("both non-nil", func(t *testing.T) {
 		b1 := MetricsBag{}
 		b2 := MetricsBag{}
@@ -159,6 +164,7 @@ func TestMergeTimings(t *testing.T) {
 }
 
 func TestPanicMerge(t *testing.T) {
+	testutil.InitLogger()
 	defer func() {
 		r := recover()
 		if r == nil {

@@ -12,6 +12,7 @@ import (
 )
 
 func BenchmarkFilesOutput(b *testing.B) {
+	testutil.InitLogger()
 	defer testutil.DisableLogging()()
 	dir, rmdir := testutil.TempDir(b)
 	defer rmdir()

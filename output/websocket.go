@@ -5,8 +5,8 @@ import (
 	"sync/atomic"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/logger"
 	"github.com/AdRoll/baker/output/websocket"
-	log "github.com/sirupsen/logrus"
 )
 
 var WebSocketDesc = baker.OutputDesc{
@@ -31,7 +31,7 @@ type WebSocketWriter struct {
 }
 
 func NewWebSocketWriter(cfg baker.OutputParams) (baker.Output, error) {
-	log.WithFields(log.Fields{"fn": "NewWebSocketWriter", "idx": cfg.Index}).Info("Initializing")
+	logger.Log.Info("Initializing. fn=NewWebSocketWriter, idx=", cfg.Index)
 
 	if cfg.DecodedConfig == nil {
 		cfg.DecodedConfig = &WebSocketWriterConfig{}
@@ -57,10 +57,10 @@ func (w *WebSocketWriter) Run(input <-chan baker.OutputLogLine, _ chan<- string)
 	go server.Listen()
 
 	go func() {
-		log.Fatal(http.ListenAndServe(":8080", nil))
+		logger.Log.Fatal(http.ListenAndServe(":8080", nil))
 	}()
 
-	log.Info("WS Ready to receive records")
+	logger.Log.Info("WS Ready to receive records")
 	for lldata := range input {
 		server.SendAll(lldata.Fields)
 		atomic.AddInt64(&w.totaln, int64(1))

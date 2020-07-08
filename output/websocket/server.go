@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/AdRoll/baker"
-	log "github.com/sirupsen/logrus"
+	"github.com/AdRoll/baker/logger"
 	ws "golang.org/x/net/websocket"
 )
 
@@ -67,7 +67,7 @@ func (s *Server) sendAll(msg []string) {
 // It serves client connection and broadcast request.
 func (s *Server) Listen() {
 
-	log.Info("Listening server...")
+	logger.Log.Info("Listening server...")
 
 	// websocket handler
 	onConnected := func(ws *ws.Conn) {
@@ -78,7 +78,7 @@ func (s *Server) Listen() {
 			}
 		}()
 
-		log.WithFields(log.Fields{"query": ws.Request().URL.Query()}).Info("Received args")
+		logger.Log.Info("Received args. query=%v", ws.Request().URL.Query())
 		client := newClient(ws, s)
 		s.add(client)
 		client.Listen()
@@ -86,7 +86,7 @@ func (s *Server) Listen() {
 
 	http.Handle("/subscribe", ws.Handler(onConnected))
 
-	log.Info("Created handler")
+	logger.Log.Info("Created handler")
 
 	for {
 		select {
@@ -94,11 +94,11 @@ func (s *Server) Listen() {
 		// Add new a client
 		case c := <-s.addCh:
 			s.clients[c.id] = c
-			log.WithField("# clients", len(s.clients)).Info("New Connection")
+			logger.Log.Info("New Connection, # clients=", len(s.clients))
 
 		// del a client
 		case c := <-s.delCh:
-			log.WithField("client", c).Info("Delete client")
+			logger.Log.Info("Delete client. client=", c)
 			delete(s.clients, c.id)
 
 		// broadcast LogLine for all clients
@@ -106,7 +106,7 @@ func (s *Server) Listen() {
 			s.sendAll(msg)
 
 		case err := <-s.errCh:
-			log.WithError(err).Info("Error")
+			logger.Log.Info(err)
 
 		case <-s.doneCh:
 			return

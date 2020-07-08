@@ -252,3 +252,14 @@ func (c *cache) Del(key string) {
 func (c *cache) Clear() {
 	*c = nil
 }
+
+// NewLogLineFromMap populates an LogLine with the fields in m. Useful for testing purposes
+func NewLogLineFromMap(m map[FieldIndex]string) LogLine {
+	ll := LogLine{}
+	for fidx, v := range m {
+		if v != "" {
+			ll.Set(fidx, []byte(v))
+		}
+	}
+	return ll
+}

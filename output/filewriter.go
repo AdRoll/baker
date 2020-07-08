@@ -17,10 +17,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
 	zstd "github.com/valyala/gozstd"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/logger"
 )
 
 var FilesDesc = baker.OutputDesc{
@@ -55,7 +55,7 @@ func (cfg *FileWriterConfig) fillDefaults() {
 
 		region, err := md.Region()
 		if err != nil {
-			log.WithError(err).Error("Couldn't fetch region")
+			logger.Log.Error("Couldn't fetch region. ", err)
 			region = ""
 		}
 		cfg.Region = region
@@ -66,7 +66,7 @@ func (cfg *FileWriterConfig) fillDefaults() {
 
 		instanceid, err := md.GetMetadata("instance-id")
 		if err != nil {
-			log.WithError(err).Error("Couldn't fetch instance-id")
+			logger.Log.Error("Couldn't fetch instance-id. ", err)
 			instanceid = ""
 		}
 
@@ -119,7 +119,7 @@ func makeFileWriterPath(p *template.Template, t string, idx int, region, instanc
 }
 
 func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
-	log.WithFields(log.Fields{"fn": "NewFileWriter", "idx": cfg.Index}).Info("Initializing")
+	logger.Log.Info("Initializing. fn=NewFileWriter, idx=", cfg.Index)
 
 	if cfg.DecodedConfig == nil {
 		cfg.DecodedConfig = &FileWriterConfig{}
@@ -136,7 +136,7 @@ func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 }
 
 func (w *FileWriter) Run(input <-chan baker.OutputLogLine, upch chan<- string) {
-	log.WithFields(log.Fields{"idx": w.index}).Info("FileWriter ready to log")
+	logger.Log.Info("FileWriter ready to log. idx=", w.index)
 
 	for lldata := range input {
 		if len(lldata.Line) < 3 {
@@ -157,7 +157,7 @@ func (w *FileWriter) Run(input <-chan baker.OutputLogLine, upch chan<- string) {
 		atomic.AddInt64(&w.totaln, int64(1))
 	}
 
-	log.WithFields(log.Fields{"idx": w.index}).Info("FileWriter Terminating")
+	logger.Log.Info("FileWriter Terminating. idx=", w.index)
 	for _, worker := range w.workers {
 		worker.Close()
 	}
@@ -279,15 +279,15 @@ func (fw *fileWorker) makePath() string {
 }
 
 func (fw *fileWorker) Rotate() {
-	ctxLog := log.WithFields(log.Fields{"current": fw.currentPath, "idx": fw.index})
+	ctxLog := fmt.Sprintf("current=%s, idx=%d", fw.currentPath, fw.index)
 
-	ctxLog.Info("Rotating")
+	logger.Log.Info("Rotating. ", ctxLog)
 	oldPath := fw.currentPath
 	fw.currentPath = fw.makePath()
 
 	fd, err := os.OpenFile(fw.currentPath, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
-		ctxLog.Fatal("failed to rotate")
+		logger.Log.Fatal("failed to rotate", ctxLog)
 		panic(err)
 	}
 	w := bufio.NewWriterSize(fd, fileWorkerChunkBuffer)
@@ -302,7 +302,7 @@ func (fw *fileWorker) Rotate() {
 		cwriter, err = gzip.NewWriterLevel(w, gzip.BestSpeed)
 	}
 	if err != nil {
-		ctxLog.WithError(err).Fatal("failed to rotate")
+		logger.Log.Fatalf("failed to rotate: %v %s", err, ctxLog)
 		panic(err)
 	}
 
@@ -314,7 +314,7 @@ func (fw *fileWorker) Rotate() {
 	fw.writer = w
 	fw.cwriter = cwriter
 	fw.rotateIdx++
-	ctxLog.Info("Rotated")
+	logger.Log.Info("Rotated", ctxLog)
 }
 
 func (fw *fileWorker) upload(filepath string) {
@@ -328,7 +328,7 @@ func (fw *fileWorker) Write(req []byte) {
 }
 
 func (fw *fileWorker) Close() {
-	log.WithFields(log.Fields{"idx": fw.index}).Info("fileWorker closing")
+	logger.Log.Info("fileWorker closing. idx=", fw.index)
 	close(fw.in)
 }
 
@@ -360,7 +360,7 @@ func (fw *fileWorker) write(line []byte) error {
 func (fw *fileWorker) run() {
 	for line := range fw.in {
 		if err := fw.write(line); err != nil {
-			log.WithError(err).Error("error writing to file")
+			logger.Log.Error("error writing to file. ", err)
 		}
 	}
 	fw.ticker.Stop()

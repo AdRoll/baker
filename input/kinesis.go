@@ -9,12 +9,12 @@ import (
 	"time"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/logger"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kinesis"
-	log "github.com/sirupsen/logrus"
 )
 
 var KTailDesc = baker.InputDesc{
@@ -76,12 +76,9 @@ func NewKTail(cfg baker.InputParams) (baker.Input, error) {
 }
 
 func (s *KTail) refreshShards() error {
-	ctxLog := log.WithFields(log.Fields{
-		"f":    "RefreshShards",
-		"name": s.Cfg.Stream,
-	})
+	ctxLog := fmt.Sprintf("f=RefreshShards, name=%s", s.Cfg.Stream)
 
-	ctxLog.Info("refreshing shards")
+	logger.Log.Info("refreshing shards. ", ctxLog)
 	params := &kinesis.DescribeStreamInput{
 		StreamName: aws.String(s.Cfg.Stream),
 	}
@@ -95,7 +92,7 @@ func (s *KTail) refreshShards() error {
 	if err != nil {
 		// Print the error, cast err to awserr.Error to get the Code and
 		// Message from an error.
-		ctxLog.WithFields(log.Fields{"error": err}).Error("failed to init stream")
+		logger.Log.Errorf("failed to init stream, error=%v, %s", err, ctxLog)
 		return err
 	}
 	s.shards = shards
@@ -103,11 +100,8 @@ func (s *KTail) refreshShards() error {
 }
 
 func (s *KTail) ProcessRecords(shard *kinesis.Shard) error {
-	ctxLog := log.WithFields(log.Fields{
-		"f":      "ProcessRecords",
-		"stream": s.Cfg.Stream,
-		"shard":  *shard.ShardId,
-	})
+	ctxLog := fmt.Sprintf("f=ProcessRecords, name=%s, shard=%s", s.Cfg.Stream, *shard.ShardId)
+
 	params := &kinesis.GetShardIteratorInput{
 		ShardId:           aws.String(*shard.ShardId),
 		ShardIteratorType: aws.String("LATEST"),
@@ -120,7 +114,6 @@ func (s *KTail) ProcessRecords(shard *kinesis.Shard) error {
 	nextShardIterator := resp.ShardIterator
 	backoff := awsDefaultBackoff
 	for atomic.LoadInt64(&s.stop) == 0 {
-		// ctxLog.Debug("Iterating")
 		start := time.Now()
 		params1 := &kinesis.GetRecordsInput{
 			// Limit:         aws.Int64(1000),
@@ -132,12 +125,12 @@ func (s *KTail) ProcessRecords(shard *kinesis.Shard) error {
 			switch code {
 			case "ProvisionedThroughputExceededException":
 				d := backoff.Duration()
-				ctxLog.WithFields(log.Fields{"error": code, "backoff": d}).Error("Reconnecting")
+				logger.Log.Errorf("Reconnecting. error=%s, backoff=%v, %s", code, d, ctxLog)
 				time.Sleep(d)
 				continue
 
 			default:
-				ctxLog.WithFields(log.Fields{"error": code}).Error("Unexpected")
+				logger.Log.Errorf("Unexpected. error=%s, %s", code, ctxLog)
 				return err
 			}
 		}

@@ -4,8 +4,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/AdRoll/baker/logger"
 	"github.com/DataDog/datadog-go/statsd"
-	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -20,7 +20,7 @@ func Init(host, prefix string, inputtags []string) {
 
 	dog, err = statsd.NewBuffered(host, 256)
 	if err != nil {
-		log.Fatal(err)
+		logger.Log.Fatal(err)
 	}
 	tags = inputtags
 
@@ -52,7 +52,7 @@ func RawCount(name string, value int64) {
 		// down, instead of crashing we should just submit a delta of
 		// 0.
 		if delta < 0 {
-			log.Fatalf("encountered a negative delta! a metric of name '%s' that should always be increasing have decreased from last collection. old value %d, new value %d, delta %d\n", name, counters[name], value, delta)
+			logger.Log.Fatalf("encountered a negative delta! a metric of name '%s' that should always be increasing have decreased from last collection. old value %d, new value %d, delta %d\n", name, counters[name], value, delta)
 		}
 		counters[name] = value
 		countersLock.Unlock()
@@ -103,7 +103,7 @@ func RawCountWithTags(name string, value int64, xtags []string) {
 		// down, instead of crashing we should just submit a delta of
 		// 0.
 		if delta < 0 {
-			log.Fatalf("encountered a negative delta! a metric of name '%s' that should always be increasing have decreased from last collection. old value %d, new value %d, delta %d\n", name, counters[name], value, delta)
+			logger.Log.Fatalf("encountered a negative delta! a metric of name '%s' that should always be increasing have decreased from last collection. old value %d, new value %d, delta %d\n", name, counters[name], value, delta)
 		}
 		counters[name] = value
 		countersLock.Unlock()

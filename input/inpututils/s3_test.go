@@ -4,11 +4,14 @@ import (
 	"net/url"
 	"reflect"
 	"testing"
+
+	"github.com/AdRoll/baker/testutil"
 )
 
 const DefaultS3Scheme = "s3"
 
 func TestS3ListChoosePathComponents(t *testing.T) {
+	testutil.InitLogger()
 	var testCases = []struct {
 		// Input test path
 		path string
@@ -51,6 +54,7 @@ func TestS3ListChoosePathComponents(t *testing.T) {
 }
 
 func TestS3ListChoosePathComponentsErrType(t *testing.T) {
+	testutil.InitLogger()
 	tests := []struct {
 		name string
 		url  string

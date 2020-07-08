@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/AdRoll/baker/logger"
 	"github.com/AdRoll/baker/metrics"
-	log "github.com/sirupsen/logrus"
 )
 
 func countInvalid(invalid *[LogLineNumFields]int64) int64 {
@@ -88,7 +88,7 @@ func (sd *StatsDumper) dumpNow() {
 	}
 
 	if numUploads < sd.prevUploads {
-		log.Fatalf("numUploads < prevUploads: %d < %d\n", numUploads, sd.prevUploads)
+		logger.Log.Fatalf("numUploads < prevUploads: %d < %d\n", numUploads, sd.prevUploads)
 	}
 
 	invalid := countInvalid(&t.invalid)

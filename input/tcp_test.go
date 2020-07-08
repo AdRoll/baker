@@ -10,12 +10,14 @@ import (
 
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/output/outputtest"
+	"github.com/AdRoll/baker/testutil"
 )
 
 // this test checks that, given a reasonable amount of time (500ms) and under
 // normal conditions, all log lines sent one by one on the TCP socket are
 // received by the output.
 func TestIntegrationTCP1by1(t *testing.T) {
+	testutil.InitLogger()
 	toml := `
 	[input]
 	name="TCP"
@@ -85,6 +87,7 @@ func TestIntegrationTCP1by1(t *testing.T) {
 // normal conditions, all log lines sent by chunk on the TCP socket are
 // received by the output.
 func TestIntegrationTCPChunks(t *testing.T) {
+	testutil.InitLogger()
 	toml := `
 	[input]
 	name="TCP"
@@ -164,6 +167,7 @@ func TestIntegrationTCPChunks(t *testing.T) {
 // the output is a multiple of the chunk size (i.e whole chunks are received
 // correctly).
 func TestIntegrationTCPStopChunk(t *testing.T) {
+	testutil.InitLogger()
 	toml := `
 	[input]
 	name="TCP"

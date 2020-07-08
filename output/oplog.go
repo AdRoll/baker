@@ -3,8 +3,9 @@ package output
 import (
 	"sync/atomic"
 
+	"github.com/AdRoll/baker/logger"
+
 	"github.com/AdRoll/baker"
-	log "github.com/sirupsen/logrus"
 )
 
 var OpLogDesc = baker.OutputDesc{
@@ -27,7 +28,7 @@ type OpLog struct {
 }
 
 func NewOpLog(cfg baker.OutputParams) (baker.Output, error) {
-	log.WithFields(log.Fields{"fn": "NewOpLog", "idx": cfg.Index}).Info("Initializing")
+	logger.Log.Info("Initializing. fn=NewOpLog, idx=", cfg.Index)
 
 	if cfg.DecodedConfig == nil {
 		cfg.DecodedConfig = &OpLogConfig{}
@@ -42,9 +43,10 @@ func NewOpLog(cfg baker.OutputParams) (baker.Output, error) {
 }
 
 func (w *OpLog) Run(input <-chan baker.OutputLogLine, _ chan<- string) {
-	log.Info("OpLog ready to log")
+	logger.Log.Info("OpLog ready to log")
 	for lldata := range input {
-		log.WithFields(log.Fields{"line": lldata.Fields}).Info(".")
+		logger.Log.Info("line=", lldata.Fields)
+
 		atomic.AddInt64(&w.totaln, int64(1))
 	}
 }

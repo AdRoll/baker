@@ -8,7 +8,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/AdRoll/baker/logger"
 )
 
 type Topology struct {
@@ -236,7 +236,7 @@ func (t *Topology) Start() {
 	signal.Notify(stopch, os.Interrupt)
 	go func() {
 		<-stopch
-		log.Warn("CTRL+C caught, doing clean shutdown (use CTRL+\\ aka SIGQUIT to abort)")
+		logger.Log.Warn("CTRL+C caught, doing clean shutdown (use CTRL+\\ aka SIGQUIT to abort)")
 		t.Stop()
 	}()
 }

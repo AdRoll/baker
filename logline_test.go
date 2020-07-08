@@ -3,11 +3,14 @@ package baker
 import (
 	"bytes"
 	"testing"
+
+	"github.com/AdRoll/baker/testutil"
 )
 
 // This tests ensure parse does not crash when it meets a log line
 // with too many separators
 func TestLogLineParse_separators(t *testing.T) {
+	testutil.InitLogger()
 	tests := []struct {
 		name  string
 		nseps int
@@ -66,6 +69,7 @@ func TestLogLineParse_separators(t *testing.T) {
 }
 
 func TestLogLineToTextWithFieldsHigherThan256(t *testing.T) {
+	testutil.InitLogger()
 	for i := FieldIndex(0); i < LogLineNumFields; i++ {
 		ll := LogLine{}
 		ll.Set(i, []byte("myvalue"))
@@ -76,6 +80,7 @@ func TestLogLineToTextWithFieldsHigherThan256(t *testing.T) {
 }
 
 func TestLogLineMeta(t *testing.T) {
+	testutil.InitLogger()
 	ll := LogLine{}
 
 	_, ok := ll.Meta("foo")
@@ -99,6 +104,7 @@ func TestLogLineMeta(t *testing.T) {
 
 }
 func TestLogLineCache(t *testing.T) {
+	testutil.InitLogger()
 	ll := LogLine{}
 
 	testCache := func() {

@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/AdRoll/baker/logger"
 	"github.com/sirupsen/logrus"
 )
 
@@ -96,4 +97,8 @@ func LessLogging() (reset func()) {
 	lvl := logrus.GetLevel()
 	logrus.SetLevel(logrus.ErrorLevel)
 	return func() { logrus.SetLevel(lvl) }
+}
+
+func InitLogger() {
+	logger.Log = logrus.New()
 }

@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/logger"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/juju/ratelimit"
-	log "github.com/sirupsen/logrus"
 )
 
 var DynamoDBDesc = baker.OutputDesc{
@@ -119,7 +119,7 @@ func (dp *dynamoProcess) doRequest(inp *dynamodb.BatchWriteItemInput) error {
 			// wrong table name. Just exit.
 			// FIXME: maybe we should differentiate batch mode vs daemon mode,
 			// and never exits in daemon mode?
-			log.Fatal(err)
+			logger.Log.Fatal(err)
 			return err
 		}
 
@@ -143,7 +143,7 @@ func (dp *dynamoProcess) doRequest(inp *dynamodb.BatchWriteItemInput) error {
 func (dp *dynamoProcess) run() {
 	for req := range dp.in {
 		if err := dp.doRequest(req); err != nil {
-			log.WithError(err).Error("error writing to DynamoDB")
+			logger.Log.Error("error writing to DynamoDB. ", err)
 			dp.out <- false
 		} else {
 			dp.out <- true
@@ -311,7 +311,7 @@ func (b *DynamoWriter) push(record []string) {
 	pkey := record[0]
 	for i := 0; i < b.reqn; i++ {
 		if b.pkeys[i] == pkey {
-			log.WithField("key", pkey).Warning("found duplicated primary key")
+			logger.Log.Warning("found duplicated primary key. key=", pkey)
 			return
 		}
 	}

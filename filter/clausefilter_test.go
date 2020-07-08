@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/testutil"
 )
 
 func assertPanic(t *testing.T, f func()) {
@@ -27,6 +28,7 @@ func fieldByName(name string) (baker.FieldIndex, bool) {
 }
 
 func TestClauseParser(t *testing.T) {
+	testutil.InitLogger()
 	cf := &ClauseFilter{
 		fieldByName: fieldByName,
 	}
@@ -39,6 +41,7 @@ func TestClauseParser(t *testing.T) {
 }
 
 func TestClausesMatchCorrectly(t *testing.T) {
+	testutil.InitLogger()
 	line1 := []byte("value0\x1evalue1\x1evalue3")
 	logline := baker.NewLogLineFromText(line1)
 

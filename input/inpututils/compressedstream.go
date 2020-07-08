@@ -12,10 +12,10 @@ import (
 	"time"
 
 	"github.com/klauspost/compress/gzip"
-	log "github.com/sirupsen/logrus"
 	zstd "github.com/valyala/gozstd"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/logger"
 )
 
 const (
@@ -247,13 +247,12 @@ func (s *CompressedInput) ParseFile(fn string) {
 }
 
 func (s *CompressedInput) parseFileTyped(fn string, comp compressionType) {
-
-	ctx := log.WithFields(log.Fields{"f": "compressedInput.parseFile", "fn": fn})
+	ctxLog := fmt.Sprintf("f=compressedInput.parseFile, fn=%v", fn)
 	stream, sz, lastModified, url, err := s.Opener(fn)
 
 	stream = s.stats.NewStatsReader(stream, sz)
 	if err != nil {
-		log.WithFields(log.Fields{"f": "compressedInput.parseFile", "fn": fn}).WithError(err).Error("Error while opening stream")
+		logger.Log.Errorf("Error while opening stream: %v. f=compressedInput.parseFile, fn=%v", err, fn)
 		return
 	}
 	defer stream.Close()
@@ -268,10 +267,10 @@ func (s *CompressedInput) parseFileTyped(fn string, comp compressionType) {
 				// Sometimes the fast gz reader fails to initialize due to
 				// memory pressure. We'd still like to run so try the
 				// slower (and less memory hungry) gzip.
-				ctx.WithError(err).Error("error initializing fast gzip, will attempt slow gzip")
+				logger.Log.Errorf("error initializing fast gzip, will attempt slow gzip: %v. %s", err, ctxLog)
 				r, err = gzip.NewReader(stream)
 				if err != nil {
-					ctx.WithError(err).Fatal("both fast and slow gzip readers failed to initialize")
+					logger.Log.Fatalf("both fast and slow gzip readers failed to initialize: %v. %s", err, ctxLog)
 					return
 				}
 			} else {
@@ -281,7 +280,7 @@ func (s *CompressedInput) parseFileTyped(fn string, comp compressionType) {
 		} else {
 			rgz, err := gzip.NewReader(stream)
 			if err != nil {
-				ctx.WithError(err).Fatal("error initializing gzip")
+				logger.Log.Fatalf("error initializing gzip: %v. %s ", err, ctxLog)
 				return
 			}
 			defer rgz.Close()
@@ -292,10 +291,10 @@ func (s *CompressedInput) parseFileTyped(fn string, comp compressionType) {
 		defer rzst.Release()
 		r = rzst
 	default:
-		ctx.WithError(err).Fatal("Unknown compression type specified.")
+		logger.Log.Fatalf("Unknown compression type specified: %v. %s ", err, ctxLog)
 	}
 
-	ctx.Info("begin reading")
+	logger.Log.Info("begin reading. ", ctxLog)
 
 	rbuf := bufio.NewReaderSize(r, kChunkBuffer)
 
@@ -316,7 +315,7 @@ func (s *CompressedInput) parseFileTyped(fn string, comp compressionType) {
 		}
 
 		if err != nil {
-			ctx.WithError(err).Error("error reading file")
+			logger.Log.Errorf("error reading file: %v. %s", err, ctxLog)
 			return
 		}
 
@@ -331,7 +330,7 @@ func (s *CompressedInput) parseFileTyped(fn string, comp compressionType) {
 		if bakerData.Bytes[n-1] != '\n' {
 			endl, err := rbuf.ReadBytes('\n')
 			if err != nil {
-				ctx.WithError(err).Error("error searching newline")
+				logger.Log.Errorf("error searching newline: %v. %s", err, ctxLog)
 				return
 			}
 
@@ -359,7 +358,7 @@ func (s *CompressedInput) parseFileTyped(fn string, comp compressionType) {
 		s.send(bakerData)
 	}
 
-	ctx.Info("end")
+	logger.Log.Info("end. ", ctxLog)
 }
 
 func (s *CompressedInput) FreeMem(data *baker.Data) {

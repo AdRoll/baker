@@ -6,9 +6,9 @@ import (
 	"sync/atomic"
 
 	"github.com/nsf/sexp"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/logger"
 )
 
 var ClauseFilterDesc = baker.FilterDesc{
@@ -101,7 +101,7 @@ func NewClauseFilter(cfg baker.FilterParams) (baker.Filter, error) {
 	}
 	dcfg := cfg.DecodedConfig.(*ClauseFilterConfig)
 	if dcfg.Clause == "" {
-		log.Warn("ClauseFilter is being used but the Clause string is empty. This means everything will be passed through this filter.")
+		logger.Log.Warn("ClauseFilter is being used but the Clause string is empty. This means everything will be passed through this filter.")
 	}
 
 	cf := &ClauseFilter{
@@ -178,7 +178,7 @@ func (f *ClauseFilter) parseClauseSexp(node *sexp.Node) Clause {
 
 		second, err2 := node.Nth(2)
 		if err2 != nil {
-			log.WithError(err2).Fatal("Cannot interpret child for and/or clause")
+			logger.Log.Fatal("Cannot interpret child for and/or clause. ", err2)
 		}
 
 		inner_node := sexp.Node{Value: node.Children.Value, Next: second}
@@ -186,7 +186,7 @@ func (f *ClauseFilter) parseClauseSexp(node *sexp.Node) Clause {
 
 		first, err1 := node.Nth(1)
 		if err1 != nil {
-			log.WithError(err1).Fatal("Cannot interpret child for and/or clause")
+			logger.Log.Fatal("Cannot interpret child for and/or clause. ", err1)
 		}
 
 		lclause := f.parseClauseSexp(first)
@@ -199,7 +199,7 @@ func (f *ClauseFilter) parseClauseSexp(node *sexp.Node) Clause {
 	if node.NumChildren() == 2 && node.Children.Value == "not" {
 		child_node, err := node.Nth(1)
 		if err != nil {
-			log.WithError(err).Fatal("Cannot interpret child for not-clause")
+			logger.Log.Fatal("Cannot interpret child for not-clause. ", err)
 		}
 		child := f.parseClauseSexp(child_node)
 		return Clause{clauseType: not_clause,
@@ -209,10 +209,10 @@ func (f *ClauseFilter) parseClauseSexp(node *sexp.Node) Clause {
 		field_node, err1 := node.Nth(0)
 		value_node, err2 := node.Nth(1)
 		if err1 != nil {
-			log.WithError(err1).Fatal("Cannot interpret clause s-expression")
+			logger.Log.Fatal("Cannot interpret clause s-expression. ", err1)
 		}
 		if err2 != nil {
-			log.WithError(err2).Fatal("Cannot interpret clause s-expression")
+			logger.Log.Fatal("Cannot interpret clause s-expression. ", err2)
 		}
 
 		field := field_node.Value
@@ -220,7 +220,7 @@ func (f *ClauseFilter) parseClauseSexp(node *sexp.Node) Clause {
 
 		idx, ok := f.fieldByName(field)
 		if !ok {
-			log.Fatal("No such field: ", field)
+			logger.Log.Fatal("No such field: ", field)
 		}
 
 		return Clause{clauseType: atom_clause,
@@ -228,7 +228,7 @@ func (f *ClauseFilter) parseClauseSexp(node *sexp.Node) Clause {
 			matchFieldContents: []byte(value)}
 	}
 
-	log.Fatal("Cannot interpret s-expression. Verify it's correctly written.")
+	logger.Log.Fatal("Cannot interpret s-expression. Verify it's correctly written.")
 	panic("Unreachable")
 }
 

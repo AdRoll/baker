@@ -8,6 +8,7 @@ import (
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/input/inputtest"
 	"github.com/AdRoll/baker/output/outputtest"
+	"github.com/AdRoll/baker/testutil"
 )
 
 func fillComponentsAndLoadConfig(t *testing.T, toml string, user ...baker.UserDesc) (*baker.Config, error) {
@@ -30,6 +31,7 @@ name="recorder"
 }
 
 func TestUserConfigSimple(t *testing.T) {
+	testutil.InitLogger()
 	// This test checks that a single user configuration is correcly decoded.
 	const toml = `
 [[user]]
@@ -58,6 +60,7 @@ name="MyConfiG"
 }
 
 func TestUserConfigMultiple(t *testing.T) {
+	testutil.InitLogger()
 	// This test checks that we can provide multiple user configurations.
 	const toml = `
 	# This is user config configA
@@ -100,6 +103,7 @@ func TestUserConfigMultiple(t *testing.T) {
 }
 
 func TestUserConfigExtraConfigInTOML(t *testing.T) {
+	testutil.InitLogger()
 	// This test checks that each user configuration in TOML must be defined
 	// of NewConfigFromToml fails.
 	const toml = `
@@ -129,6 +133,7 @@ func TestUserConfigExtraConfigInTOML(t *testing.T) {
 }
 
 func TestUserConfigExtraConfigDefinition(t *testing.T) {
+	testutil.InitLogger()
 	// This test checks that NewConfigFromToml succeeds if some user
 	// configurations have been defined but do not exist in TOML.
 	const toml = `

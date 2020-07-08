@@ -3,9 +3,12 @@ package input
 import (
 	"fmt"
 	"testing"
+
+	"github.com/AdRoll/baker/testutil"
 )
 
 func TestParseMessagePlain(t *testing.T) {
+	testutil.InitLogger()
 	S3Bucket := ""
 	Cfg := &SQSConfig{
 		MessageFormat: "plain",
@@ -17,13 +20,14 @@ func TestParseMessagePlain(t *testing.T) {
 	}
 
 	Message := "s3://some-bucket/log/2015-01-23/l-20150123.gz"
-	ActualPath, ActualTs, err := s.parseMessage(&Message, nil)
+	ActualPath, ActualTs, err := s.parseMessage(&Message, "")
 	assertEqual(t, Message, ActualPath)
 	assertEqual(t, "", ActualTs)
 	assertEqual(t, nil, err)
 }
 
 func TestParseMessageSNSFullS3Url(t *testing.T) {
+	testutil.InitLogger()
 	S3Bucket := ""
 	Cfg := &SQSConfig{
 		MessageFormat: "sns",
@@ -42,13 +46,14 @@ func TestParseMessageSNSFullS3Url(t *testing.T) {
 `
 	ExpectedPath := "s3://some-bucket/log/2015-01-23/l-20150123.gz"
 	ExpectedTs := "2020-05-22T23:21:09.550Z"
-	ActualPath, ActualTs, err := s.parseMessage(&Message, nil)
+	ActualPath, ActualTs, err := s.parseMessage(&Message, "")
 	assertEqual(t, ExpectedPath, ActualPath)
 	assertEqual(t, ExpectedTs, ActualTs)
 	assertEqual(t, nil, err)
 }
 
 func TestParseMessageSNSParsedUrl(t *testing.T) {
+	testutil.InitLogger()
 	S3Bucket := "baker-omfg"
 	Cfg := &SQSConfig{
 		MessageFormat: "sns",
@@ -67,7 +72,7 @@ func TestParseMessageSNSParsedUrl(t *testing.T) {
 `
 	ExpectedPath := "log/2015-01-23/l-20150123.gz"
 	ExpectedTs := "2020-05-22T23:21:09.550Z"
-	ActualPath, ActualTs, err := s.parseMessage(&Message, nil)
+	ActualPath, ActualTs, err := s.parseMessage(&Message, "")
 	assertEqual(t, ExpectedPath, ActualPath)
 	assertEqual(t, ExpectedTs, ActualTs)
 	assertEqual(t, nil, err)

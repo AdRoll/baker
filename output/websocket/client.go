@@ -2,9 +2,10 @@ package websocket
 
 import (
 	"errors"
+	"fmt"
 	"io"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/AdRoll/baker/logger"
 	ws "golang.org/x/net/websocket"
 )
 
@@ -112,9 +113,9 @@ func (c *client) Listen() {
 
 // Listen write request via chanel
 func (c *client) listenWrite() {
-	ctx := log.WithFields(log.Fields{"client": c, "fn": "listenWrite"})
+	ctxLog := fmt.Sprintf("client=%v, fn=listenWrite", c)
 
-	ctx.Info("Listening write to client")
+	logger.Log.Info("Listening write to client. ", ctxLog)
 	for {
 		select {
 
@@ -123,7 +124,7 @@ func (c *client) listenWrite() {
 			if c.shouldSend(msg) {
 				err := ws.JSON.Send(c.ws, msg)
 				if err == io.EOF {
-					ctx.Info("Terminating")
+					logger.Log.Info("Terminating. ", ctxLog)
 					c.Done()
 					return
 				}
@@ -131,7 +132,7 @@ func (c *client) listenWrite() {
 
 		// receive done request
 		case <-c.doneCh:
-			ctx.Info("Terminating")
+			logger.Log.Info("Terminating. ", ctxLog)
 			c.server.del(c)
 			return
 		}
@@ -140,14 +141,14 @@ func (c *client) listenWrite() {
 
 // Listen read request via chanel
 func (c *client) listenRead() {
-	ctx := log.WithFields(log.Fields{"client": c, "fn": "listenRead"})
-	ctx.Info("Listening read from client")
+	ctxLog := fmt.Sprintf("client=%v, fn=listenRead", c)
+	logger.Log.Info("Listening read from client. ", ctxLog)
 	for {
 		select {
 
 		// receive done request
 		case <-c.doneCh:
-			ctx.Info("Terminating")
+			logger.Log.Info("Terminating. ", ctxLog)
 			c.server.del(c)
 			return
 
@@ -160,7 +161,7 @@ func (c *client) listenRead() {
 			} else if err != nil {
 				c.server.err(err)
 			} else {
-				ctx.WithField("msg", msg).Info("Received")
+				logger.Log.Infof("Received. msg=%v, %s", msg, ctxLog)
 			}
 		}
 	}

@@ -15,12 +15,13 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/AdRoll/baker/logger"
+
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/input/inpututils"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	log "github.com/sirupsen/logrus"
 )
 
 // TODO[open-source] Evaluate whether the last_modified HTTP header (that goes to the metadata field)
@@ -219,13 +220,13 @@ func (s *List) processListFile(f io.ReadCloser) {
 			}
 			err := scanner.Err()
 			if err != nil {
-				log.WithError(err).Fatal("Failed to scan list input file.")
+				logger.Log.Fatal("Failed to scan list input file. ", err)
 			}
 			lines <- line
 		}
 		err := scanner.Err()
 		if err != nil {
-			log.WithError(err).Fatal("Failed to scan list input file.")
+			logger.Log.Fatal("Failed to scan list input file. ", err)
 		}
 		close(lines)
 	}()
@@ -337,7 +338,7 @@ func (s *List) Run(inch chan<- *baker.Data) error {
 	s.ci.NoMoreFiles()
 	<-s.ci.Done
 
-	log.WithFields(log.Fields{"f": "List.Run"}).Info("terminating")
+	logger.Log.Info("terminating. f=List.Run")
 	if ferr := s.fatalErr.Load(); ferr != nil {
 		return ferr.(error)
 	}

@@ -5,6 +5,8 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/AdRoll/baker/testutil"
 )
 
 type dummyInput struct{}
@@ -19,6 +21,7 @@ func (d *dummyInput) Stop()              {}
 func (d *dummyInput) FreeMem(data *Data) {}
 
 func TestRunFilterChainMetadata(t *testing.T) {
+	testutil.InitLogger()
 	// Test the same metadata provided by Input can be accessed inside the filters,
 	// a simpler version of t.chain was used since the same LogLine received in the chain
 	// is passed down to the filters, so we can check there if the same metadata is available.

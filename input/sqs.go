@@ -9,10 +9,9 @@ import (
 	"sync"
 	"time"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/input/inpututils"
+	"github.com/AdRoll/baker/logger"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
@@ -94,7 +93,7 @@ func NewSQS(cfg baker.InputParams) (baker.Input, error) {
 }
 
 func (s *SQS) pollQueue(sqsurl string) {
-	ctxLog := log.WithFields(log.Fields{"f": "SQS.pollQueue", "url": sqsurl})
+	ctxLog := fmt.Sprintf("f=SQS.pollQueue, url=%s", sqsurl)
 	backoff := awsDefaultBackoff
 	for {
 		resp, err := s.svc.ReceiveMessage(&sqs.ReceiveMessageInput{
@@ -107,7 +106,7 @@ func (s *SQS) pollQueue(sqsurl string) {
 			MaxNumberOfMessages: aws.Int64(1),
 		})
 		if err != nil {
-			ctxLog.WithError(err).Error("error from ReceiveMessage")
+			logger.Log.Errorf("error from ReceiveMessage: %v. %s", err, ctxLog)
 			time.Sleep(backoff.Duration())
 			continue
 		}
@@ -129,7 +128,7 @@ func (s *SQS) pollQueue(sqsurl string) {
 				// second.
 				ts, err := time.Parse(time.RFC3339, snsMsgTimestamp)
 				if err != nil {
-					ctxLog.WithError(err).Error("error parsing Timestamp in SNS message")
+					logger.Log.Errorf("error parsing Timestamp in SNS message: %v. %s", err, ctxLog)
 					continue
 				}
 
@@ -150,13 +149,13 @@ func (s *SQS) pollQueue(sqsurl string) {
 				ReceiptHandle: msg.ReceiptHandle,
 			})
 			if err != nil {
-				ctxLog.WithError(err).Error("error from DeleteMessage")
+				logger.Log.Error("error from DeleteMessage: %v. %s", err, ctxLog)
 			}
 		}
 	}
 }
 
-func (s *SQS) parseMessage(Body *string, ctxLog *log.Entry) (string, string, error) {
+func (s *SQS) parseMessage(Body *string, ctxLog string) (string, string, error) {
 	var s3FilePath string
 	var snsMsgTimestamp string
 
@@ -179,7 +178,7 @@ func (s *SQS) parseMessage(Body *string, ctxLog *log.Entry) (string, string, err
 		}
 		snsMsg := SNSMessage{}
 		if err := json.Unmarshal([]byte(*Body), &snsMsg); err != nil {
-			ctxLog.WithError(err).Error("error parsing SNS message in SQS")
+			logger.Log.Errorf("error parsing SNS message in SQS: %v. %s", err, ctxLog)
 			return "", "", err
 		}
 
@@ -188,7 +187,7 @@ func (s *SQS) parseMessage(Body *string, ctxLog *log.Entry) (string, string, err
 		// So we just extract the path and use it as filename
 		parsedUrl, err := url.Parse(snsMsg.Message)
 		if err != nil {
-			ctxLog.WithError(err).Error("error parsing URL in SNS message in SQS")
+			logger.Log.Errorf("error parsing URL in SNS message in SQS: %v. %s", err, ctxLog)
 			return "", "", err
 		}
 		// If bucket isn't hardcoded, find it from S3 path.

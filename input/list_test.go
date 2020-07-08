@@ -65,6 +65,7 @@ func makeTestLog(tb testing.TB, dir, fn string, numlines int) string {
 }
 
 func TestListBasic(t *testing.T) {
+	testutil.InitLogger()
 	dir, rmdir := testutil.TempDir(t)
 	defer rmdir()
 
@@ -148,6 +149,7 @@ func TestListBasic(t *testing.T) {
 }
 
 func TestListInvalidStdin(t *testing.T) {
+	testutil.InitLogger()
 
 	piper, pipew, err := os.Pipe()
 	if err != nil {

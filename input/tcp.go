@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"compress/gzip"
+	"fmt"
 	"io"
 	"net"
 	"sync"
@@ -11,7 +12,7 @@ import (
 	"time"
 
 	"github.com/AdRoll/baker"
-	log "github.com/sirupsen/logrus"
+	"github.com/AdRoll/baker/logger"
 )
 
 var TCPDesc = baker.InputDesc{
@@ -75,11 +76,11 @@ func (s *TCP) Run(inch chan<- *baker.Data) error {
 	var wg sync.WaitGroup
 	s.setOutputChannel(inch)
 
-	ctxLog := log.WithFields(log.Fields{"f": "Run"})
+	ctxLog := "f=Run"
 
 	addr, err := net.ResolveTCPAddr("tcp", s.Cfg.Listener)
 	if err != nil {
-		ctxLog.WithFields(log.Fields{"listener": s.Cfg.Listener}).Error("Can't resolve")
+		logger.Log.Errorf("Can't resolve. listener=%v, %s", s.Cfg.Listener, ctxLog)
 		return err
 	}
 
@@ -96,10 +97,10 @@ func (s *TCP) Run(inch chan<- *baker.Data) error {
 			if opErr, ok := err.(*net.OpError); ok && opErr.Timeout() {
 				continue
 			}
-			ctxLog.WithFields(log.Fields{"error": err}).Error("Error while accepting")
+			logger.Log.Errorf("Error while accepting. error=%v,%s", err, ctxLog)
 		}
 
-		ctxLog.WithFields(log.Fields{"addr": conn.RemoteAddr()}).Info("Connected")
+		logger.Log.Infof("Connected. addr=%v,%s", conn.RemoteAddr(), ctxLog)
 		wg.Add(1)
 		go func(conn *net.TCPConn) {
 			defer wg.Done()
@@ -139,12 +140,12 @@ func (s *TCP) Stop() {
 
 func (s *TCP) handleStream(conn *net.TCPConn) {
 	defer conn.Close()
-	ctxLog := log.WithFields(log.Fields{"f": "handleStream", "addr": conn.RemoteAddr()})
+	ctxLog := fmt.Sprintf("f=handleStream, addr=%v", conn.RemoteAddr())
 
 	// r, err := newFastGzReader(conn)
 	r, err := gzip.NewReader(conn)
 	if err != nil {
-		ctxLog.WithError(err).Error("error initializing gzip")
+		logger.Log.Errorf("error initializing gzip: %v. %s", err, ctxLog)
 		return
 	}
 	// defer r.Close()
@@ -164,7 +165,7 @@ func (s *TCP) handleStream(conn *net.TCPConn) {
 		}
 
 		if err != nil {
-			ctxLog.WithError(err).Error("error reading stream")
+			logger.Log.Errorf("error reading stream: %v. %s", err, ctxLog)
 			return
 		}
 
@@ -179,7 +180,7 @@ func (s *TCP) handleStream(conn *net.TCPConn) {
 		if bakerData.Bytes[n-1] != '\n' {
 			endl, err := rbuf.ReadBytes('\n')
 			if err != nil {
-				ctxLog.WithError(err).Error("error searching newline")
+				logger.Log.Errorf("error searching newline: %v. %s", err, ctxLog)
 				return
 			}
 
