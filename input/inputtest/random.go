@@ -16,21 +16,21 @@ var RandomDesc = baker.InputDesc{
 	Config: &RandomConfig{},
 }
 
-// RandomConfig specifies the number of random log lines to generate as well as
+// RandomConfig specifies the number of random records to generate as well as
 // the seed for the PRNG.
 type RandomConfig struct {
-	NumLines int
+	Records  int
 	RandSeed int64
 }
 
 func (cfg *RandomConfig) fillDefaults() {
-	if cfg.NumLines == 0 {
-		cfg.NumLines = 1000
+	if cfg.Records == 0 {
+		cfg.Records = 1000
 	}
 }
 
 // A Random input is baker input used for testing. It generates a specified
-// number of random, but valid, log lines.
+// number of random, but valid, records.
 type Random struct {
 	Cfg *RandomConfig
 }
@@ -55,8 +55,8 @@ func (r *Random) Run(output chan<- *baker.Data) error {
 	types := []string{"t1", "t2", "t3", "t4"}
 
 	var buf []byte
-	for i := 0; i < r.Cfg.NumLines; i++ {
-		var ll baker.LogLine
+	for i := 0; i < r.Cfg.Records; i++ {
+		var ll baker.Record
 
 		var t1 [16]byte
 		rand.Read(t1[:])
@@ -70,7 +70,7 @@ func (r *Random) Run(output chan<- *baker.Data) error {
 
 		buf = ll.ToText(buf)
 		buf = append(buf, '\n')
-		if i%16 == 0 || i == r.Cfg.NumLines-1 {
+		if i%16 == 0 || i == r.Cfg.Records-1 {
 			output <- &baker.Data{Bytes: buf}
 			buf = nil
 		}

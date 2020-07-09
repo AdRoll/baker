@@ -107,6 +107,7 @@ type Config struct {
 
 	shardingFuncs map[FieldIndex]ShardingFunc
 	validate      ValidationFunc
+	createRecord  func() Record
 
 	fieldByName func(string) (FieldIndex, bool)
 	fieldName   func(FieldIndex) string
@@ -130,6 +131,11 @@ func (c *Config) fillDefaults() {
 	c.Output.fillDefaults()
 	c.Upload.fillDefaults()
 	c.General.fillDefaults()
+
+	if c.createRecord == nil {
+		// For now, leave Logline as the default
+		c.createRecord = func() Record { return &LogLine{} }
+	}
 }
 
 func (c *ConfigInput) fillDefaults() {
@@ -288,6 +294,7 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 	// Copy pluggable functions
 	cfg.shardingFuncs = comp.ShardingFuncs
 	cfg.validate = comp.Validate
+	cfg.createRecord = comp.CreateRecord
 	cfg.fieldByName = comp.FieldByName
 	cfg.fieldName = comp.FieldName
 

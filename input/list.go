@@ -47,8 +47,8 @@ var ListDesc = baker.InputDesc{
 		"    walked, and all files matching the \"MatchPath\" option regexp will be processed as logfiles\n" +
 		"  * \"-\": the contents of a log file will be read from stdin and processed\n" +
 		"  * \"@-\": each line read from stdin will be parsed as a \"file specifier\"\n\n" +
-		"All loglines produced by this input contain 2 metadata values:\n" +
-		"  * url: the files that originally contained the logline\n" +
+		"All records produced by this input contain 2 metadata values:\n" +
+		"  * url: the files that originally contained the record\n" +
 		"  * last_modified: the last modification datetime of the above file\n",
 }
 

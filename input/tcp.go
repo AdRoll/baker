@@ -19,18 +19,18 @@ var TCPDesc = baker.InputDesc{
 	Name:   "TCP",
 	New:    NewTCP,
 	Config: &TCPConfig{},
-	Help: "This input relies on a TCP connection to receive loglines in the usual format\n" +
+	Help: "This input relies on a TCP connection to receive records in the usual format\n" +
 		"Configure it with a host and port that you want to accept connection from.\n" +
 		"By default it listens on port 6000 for any connection\n" +
 		"It never exits.\n",
 }
 
 const (
-	// gzipInput reads loglines in chunks, for maximizing speed. This is the
+	// gzipInput reads records in chunks, for maximizing speed. This is the
 	// size of each chunk.
 	tcpChunkBuffer = 128 * 1024
 
-	// This is the expected maximum length of a single logline. We still handle
+	// This is the expected maximum length of a single record. We still handle
 	// longer lines, but with a slower code-path.
 	tcpMaxLineLength = 4 * 1024
 )

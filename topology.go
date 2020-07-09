@@ -19,13 +19,15 @@ type Topology struct {
 
 	inerr     atomic.Value
 	inch      chan *Data
-	outch     []chan OutputLogLine
+	outch     []chan OutputRecord
 	rawOutput bool
 	upch      chan string
 
-	invalid [LogLineNumFields]int64
-	shard   func(l *LogLine) uint64
-	chain   func(l *LogLine)
+	invalid   [LogLineNumFields]int64 // count validation errors (by field)
+	malformed int64                   // count parse or empty records
+
+	shard func(l Record) uint64
+	chain func(l Record)
 
 	filterProcs int
 	outFields   []FieldIndex
@@ -50,7 +52,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 		fieldName:   cfg.fieldName,
 		linePool: sync.Pool{
 			New: func() interface{} {
-				return new(LogLine)
+				return cfg.createRecord()
 			},
 		},
 	}
@@ -61,6 +63,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 			DecodedConfig: cfg.Input.DecodedConfig,
 			FieldByName:   cfg.fieldByName,
 			FieldName:     cfg.fieldName,
+			CreateRecord:  cfg.createRecord,
 		},
 	}
 	tp.Input, err = cfg.Input.desc.New(inCfg)
@@ -75,6 +78,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 				DecodedConfig: cfg.Filter[idx].DecodedConfig,
 				FieldByName:   cfg.fieldByName,
 				FieldName:     cfg.fieldName,
+				CreateRecord:  cfg.createRecord,
 			},
 		}
 		fil, err := cfg.Filter[idx].desc.New(filCfg)
@@ -103,6 +107,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 				DecodedConfig: cfg.Output.DecodedConfig,
 				FieldByName:   cfg.fieldByName,
 				FieldName:     cfg.fieldName,
+				CreateRecord:  cfg.createRecord,
 			},
 			Index:  i,
 			Fields: tp.outFields,
@@ -122,7 +127,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	// output worker, and the sharding function will decided where to
 	// send each output; if there is no sharding, we create one
 	// channel, and the output workers will all fetch from the same.
-	tp.outch = make([]chan OutputLogLine, cfg.Output.Procs)
+	tp.outch = make([]chan OutputRecord, cfg.Output.Procs)
 
 	if cfg.Output.Sharding != "" {
 		field, ok := cfg.fieldByName(cfg.Output.Sharding)
@@ -140,10 +145,10 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 		}
 
 		for i := range tp.outch {
-			tp.outch[i] = make(chan OutputLogLine, cfg.Output.ChanSize)
+			tp.outch[i] = make(chan OutputRecord, cfg.Output.ChanSize)
 		}
 	} else {
-		tp.outch[0] = make(chan OutputLogLine, cfg.Output.ChanSize)
+		tp.outch[0] = make(chan OutputRecord, cfg.Output.ChanSize)
 	}
 
 	if cfg.Upload.Name != "" {
@@ -152,6 +157,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 				DecodedConfig: cfg.Input.DecodedConfig,
 				FieldByName:   cfg.fieldByName,
 				FieldName:     cfg.fieldName,
+				CreateRecord:  cfg.createRecord,
 			},
 		}
 		tp.Upload, err = cfg.Upload.desc.New(upCfg)
@@ -166,13 +172,13 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	for i := len(tp.Filters) - 1; i >= 0; i-- {
 		nf := next
 		f := tp.Filters[i]
-		next = func(l *LogLine) {
+		next = func(l Record) {
 			f.Process(l, nf)
 		}
 	}
-	tp.chain = func(l *LogLine) {
+	tp.chain = func(l Record) {
 		next(l)
-		*l = LogLine{}
+		l.Clear()
 		tp.linePool.Put(l)
 	}
 
@@ -284,7 +290,7 @@ func (t *Topology) Error() error {
 	return nil
 }
 
-func (t *Topology) filterChainEnd(l *LogLine) {
+func (t *Topology) filterChainEnd(l Record) {
 	// Extract fields for output
 	var rawOut []byte
 	out := make([]string, len(t.outFields))
@@ -301,7 +307,7 @@ func (t *Topology) filterChainEnd(l *LogLine) {
 		idx := t.shard(l)
 		outch = t.outch[int(idx%uint64(len(t.outch)))]
 	}
-	outch <- OutputLogLine{Line: rawOut, Fields: out}
+	outch <- OutputRecord{Record: rawOut, Fields: out}
 }
 
 func (t *Topology) runFilterChain() {
@@ -321,22 +327,20 @@ func (t *Topology) runFilterChain() {
 				data = nil
 			}
 
-			// Parse the line splitting on separators
-			logline := t.linePool.Get().(*LogLine)
-			logline.Parse(line, &bakerData.Meta)
+			// Get a new record from the pool and decode the buffer into it.
+			logline := t.linePool.Get().(Record)
+			err := logline.Parse(line, &bakerData.Meta)
+			if err != nil || len(line) == 0 {
+				// Count parse errors or empty records
+				atomic.AddInt64(&t.malformed, 1)
+				continue
+			}
 
 			// Validate against patterns
 			if t.validate != nil {
 				// call external validation function
 				if ok, idx := t.validate(logline); !ok {
 					atomic.AddInt64(&t.invalid[idx], 1)
-					continue
-				}
-			} else {
-				if logline.data == nil {
-					// Even with validation disabled, there's no point
-					// in letting an empty line go though: drop it.
-					atomic.AddInt64(&t.invalid[0], 1)
 					continue
 				}
 			}

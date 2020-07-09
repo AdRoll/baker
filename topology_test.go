@@ -46,7 +46,7 @@ func TestRunFilterChainMetadata(t *testing.T) {
 			},
 		},
 		// Simpler version
-		chain: func(l *LogLine) {
+		chain: func(l Record) {
 			if v, _ := l.Meta("last_modified"); v != lastModified {
 				t.Errorf("missing metadata in logline expected last modified = %s got = %s", lastModified, v)
 			}

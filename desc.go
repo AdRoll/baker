@@ -11,13 +11,16 @@ type Components struct {
 
 	ShardingFuncs map[FieldIndex]ShardingFunc
 	Validate      ValidationFunc
-	FieldByName   func(string) (FieldIndex, bool)
-	FieldName     func(FieldIndex) string
+	CreateRecord  func() Record
+
+	FieldByName func(string) (FieldIndex, bool)
+	FieldName   func(FieldIndex) string
 }
 
 // ComponentParams holds the common configuration parameters passed to components of all kinds.
 type ComponentParams struct {
 	DecodedConfig interface{}                     // decoded component-specific struct (from configuration file)
+	CreateRecord  func() Record                   // factory function to create new empty records
 	FieldByName   func(string) (FieldIndex, bool) // translates field names to Record indexes
 	FieldName     func(FieldIndex) string         // returns the name of a field given its index in the Record
 }
@@ -36,7 +39,7 @@ type FilterParams struct {
 type OutputParams struct {
 	ComponentParams
 	Index  int          // tells the index of the output, in case multiple parallel output procs are used
-	Fields []FieldIndex // fields of the logline that will be send to the output
+	Fields []FieldIndex // fields of the record that will be send to the output
 }
 
 // UploadParams is the struct passed to the Upload constructor.
@@ -44,18 +47,18 @@ type UploadParams struct {
 	ComponentParams
 }
 
-// A ShardingFunc calculates a sharding value for a LogLine.
+// A ShardingFunc calculates a sharding value for a record.
 //
 // Sharding functions are silent to errors in the specified fields. If a field
 // is corrupt, they will probabily ignore it and still compute the best
 // possible sharding value. Obviously a very corrupted field (eg: empty) could
 // result into an uneven sharding.
-type ShardingFunc func(*LogLine) uint64
+type ShardingFunc func(Record) uint64
 
-// ValidationFunc checks the validity of a LogLine, returning true if it's
+// ValidationFunc checks the validity of a record, returning true if it's
 // valid. If a validation error is found it returns false and the index of
 // the field that failed validation.
-type ValidationFunc func(*LogLine) (bool, FieldIndex)
+type ValidationFunc func(Record) (bool, FieldIndex)
 
 // InputDesc describes an Input component to the topology.
 type InputDesc struct {

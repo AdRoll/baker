@@ -19,11 +19,11 @@ import (
 )
 
 const (
-	// compressedInput reads loglines in chunks, for maximizing speed. This is the
+	// compressedInput reads records in chunks, for maximizing speed. This is the
 	// size of each chunk.
 	kChunkBuffer = 128 * 1024
 
-	// This is the expected maximum length of a single logline. We still handle
+	// This is the expected maximum length of a single record. We still handle
 	// longer lines, but with a slower code-path.
 	kMaxLineLength = 4 * 1024
 )
@@ -36,7 +36,7 @@ const (
 	zstdCompression
 )
 
-// These keys identify values in the Logline Metadata cache
+// These keys identify values in the record Metadata cache
 const (
 	MetadataLastModified = "last_modified"
 	MetadataURL          = "url"

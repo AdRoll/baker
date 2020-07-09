@@ -101,7 +101,7 @@ func (s *Server) Listen() {
 			log.WithField("client", c).Info("Delete client")
 			delete(s.clients, c.id)
 
-		// broadcast LogLine for all clients
+		// broadcast Record for all clients
 		case msg := <-s.sendAllCh:
 			s.sendAll(msg)
 
