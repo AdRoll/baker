@@ -92,7 +92,8 @@ func (sd *StatsDumper) dumpNow() {
 	}
 
 	invalid := countInvalid(&t.invalid)
-	totalErrors := invalid + filtered + outErrors
+	parseErrors := t.malformed
+	totalErrors := invalid + parseErrors + filtered + outErrors
 	metrics.RawCount("error_lines", totalErrors)
 
 	for k, v := range allMetrics {
@@ -106,10 +107,11 @@ func (sd *StatsDumper) dumpNow() {
 		}
 	}
 
-	fmt.Printf("Stats: 1s[w:%d r:%d] total[w:%d r:%d u:%d] speed[w:%d r:%d] errors[i:%d f:%d o:%d u:%d]\n",
+	fmt.Printf("Stats: 1s[w:%d r:%d] total[w:%d r:%d u:%d] speed[w:%d r:%d] errors[p:%d i:%d f:%d o:%d u:%d]\n",
 		curwlines-sd.prevwlines, currlines-sd.prevrlines,
 		curwlines, currlines, numUploads,
 		curwlines/nsec, currlines/nsec,
+		parseErrors,
 		invalid,
 		filtered,
 		outErrors,

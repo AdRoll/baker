@@ -13,7 +13,7 @@ func TestRawOutputFields(t *testing.T) {
 
 	toml := `
 [input]
-name="LogLine"
+name="Records"
 
 [output]
 name="Recorder"
@@ -21,7 +21,7 @@ procs=1
 fields=["field2", "field0", "field1", "field3"]
 `
 	c := baker.Components{
-		Inputs:  []baker.InputDesc{inputtest.LogLineDesc},
+		Inputs:  []baker.InputDesc{inputtest.RecordsDesc},
 		Outputs: []baker.OutputDesc{outputtest.RecorderDesc},
 		FieldByName: func(name string) (baker.FieldIndex, bool) {
 			switch name {
@@ -49,7 +49,7 @@ fields=["field2", "field0", "field1", "field3"]
 		t.Fatal(err)
 	}
 
-	in := topology.Input.(*inputtest.LogLine)
+	in := topology.Input.(*inputtest.Records)
 	out := topology.Output[0].(*outputtest.Recorder)
 
 	for i := 0; i < 10; i++ {
@@ -57,17 +57,17 @@ fields=["field2", "field0", "field1", "field3"]
 		ll.Set(0, []byte("value0"))
 		ll.Set(1, []byte("value1"))
 		ll.Set(3, []byte("value3"))
-		in.Lines = append(in.Lines, &ll)
+		in.Records = append(in.Records, &ll)
 	}
 
 	topology.Start()
 	topology.Wait()
 
-	if len(out.LogLines) != 10 {
-		t.Fatalf("number of log lines and set of fields should be 3, got %d", len(out.LogLines))
+	if len(out.Records) != 10 {
+		t.Fatalf("number of records and set of fields should be 3, got %d", len(out.Records))
 	}
 
-	for _, lldata := range out.LogLines {
+	for _, lldata := range out.Records {
 		// lldata.Fields keep the same order as in output.fields (in TOML)
 		fields := lldata.Fields
 

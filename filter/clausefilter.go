@@ -123,7 +123,7 @@ type Clause struct {
 	matchFieldContents []byte
 }
 
-func (f *ClauseFilter) Process(l *baker.LogLine, next func(*baker.LogLine)) {
+func (f *ClauseFilter) Process(l baker.Record, next func(baker.Record)) {
 	atomic.AddInt64(&f.numProcessedLines, 1)
 	if f.matchClause(l, &f.topClause) {
 		next(l)
@@ -247,7 +247,7 @@ func (f *ClauseFilter) parseClause(ClauseRaw string) Clause {
 	return f.parseClauseSexp(clause)
 }
 
-func (f *ClauseFilter) matchClause(l *baker.LogLine, clause *Clause) bool {
+func (f *ClauseFilter) matchClause(l baker.Record, clause *Clause) bool {
 	switch clause.clauseType {
 	case not_clause:
 		result := f.matchClause(l, clause.leftClause)

@@ -48,7 +48,7 @@ func NewWebSocketWriter(cfg baker.OutputParams) (baker.Output, error) {
 
 // websocket server
 
-func (w *WebSocketWriter) Run(input <-chan baker.OutputLogLine, _ chan<- string) {
+func (w *WebSocketWriter) Run(input <-chan baker.OutputRecord, _ chan<- string) {
 	cfg := websocket.Conf{
 		Fields:      w.Fields,
 		FieldByName: w.fieldByName,

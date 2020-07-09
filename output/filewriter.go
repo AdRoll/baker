@@ -135,14 +135,14 @@ func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 	}, nil
 }
 
-func (w *FileWriter) Run(input <-chan baker.OutputLogLine, upch chan<- string) {
+func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) {
 	log.WithFields(log.Fields{"idx": w.index}).Info("FileWriter ready to log")
 
 	for lldata := range input {
-		if len(lldata.Line) < 3 {
+		if len(lldata.Record) < 3 {
 			continue // bad line
 		}
-		linetype := string(lldata.Line[:3])
+		linetype := string(lldata.Record[:3])
 
 		worker, ok := w.workers[linetype]
 		if !ok {
@@ -152,7 +152,7 @@ func (w *FileWriter) Run(input <-chan baker.OutputLogLine, upch chan<- string) {
 			w.workers[linetype] = worker
 		}
 
-		worker.Write(lldata.Line)
+		worker.Write(lldata.Record)
 
 		atomic.AddInt64(&w.totaln, int64(1))
 	}

@@ -72,48 +72,52 @@ type Input interface {
 	FreeMem(data *Data)
 }
 
-// Filter is an interface representing one data filter; a filter is a
-// function that processes a LogLine and produces a FilterOutput (that is,
-// a custom record to be stored somwhere through a Output)
+// Filter represents a data filter; a filter is a function that processes
+// records. A filter can discard, transform, forward and even create records.
 type Filter interface {
-	// Process processes a single logline, and then optionally sends it to
+	// Process processes a single Record, and then optionally sends it to
 	// next filter in the chain.
-	// Process might mutate the logline, adding/modifying/removing fields,
+	// Process might mutate the Record, adding/modifying/removing fields,
 	// and might decide to throw it away, or pass it to next filter in chain
 	// by calling the next() function. In some cases, a filter might generate
-	// multiple loglines in output, by calling next() multiple times.
+	// multiple Record in output, by calling next() multiple times.
 	// next() is guaranteed to be non-nil; for the last filter of the chain,
 	// it points to a function that wraps up the filtering chain and sends
-	// the logline to the output.
-	Process(l *LogLine, next func(*LogLine))
+	// the Record to the output.
+	Process(l Record, next func(Record))
 
-	// Return stats about the filter
+	// Stats returns stats about the filter
 	Stats() FilterStats
 }
 
-// Output is an interface representing an object that is processing
-// (storing) the output for a filter.
+// Output is the final end of a topology, it process the records that have
+// reached the end of the filter chain and performs the final action (storing,
+// sending through the wire, counting, etc.)
 type Output interface {
-	// Run processes the OutputLogLine data coming through a channel.
-	// Run must block forever.
-	// The output implementer will know whether to use clean or raw input
-	// channels, only one is actually used at a time.
-	Run(in <-chan OutputLogLine, upch chan<- string)
+	// Run processes the OutputRecord data coming through a channel.
+	// Run must block until in channel has been closed and it has processed
+	// all records.
+	// It can send filenames via upch, they will be handled by an Upload if one
+	// is present in the topology.
+	// TODO: since Run must be blocking, it could return an error, useful
+	// for the topology to acknowledge the correct processing if nil, or
+	// end the whole topology in case non-nil.
+	Run(in <-chan OutputRecord, upch chan<- string)
 
-	// Return stats about the output
+	// Stats returns stats about the output.
 	Stats() OutputStats
 
-	// Returns true if this output supports sharding
+	// CanShards returns true if this output supports sharding.
 	CanShard() bool
 }
 
-// OutputLogLine is the data structure sent to baker output components.
+// OutputRecord is the data structure sent to baker output components.
 //
-// It represents a log line in two possibile formats:
-//   * a list of pre-parsed fields, extracted from the log line (as string).
+// It represents a Record in two possibile formats:
+//   * a list of pre-parsed fields, extracted from the record (as string).
 //     This is useful when the output only cares about specific fields and does
-//     not need the full log line.
-//   * the whole logline, as processed and possibly modified by baker filters (as []byte).
+//     not need the full record.
+//   * the whole record, as processed and possibly modified by baker filters (as []byte).
 //
 // Fields sent to the output are described in the topology. This was designed
 // such as an output can work in different modes, by processing different
@@ -121,27 +125,26 @@ type Output interface {
 // this validation should be performed by the Output itself. The topology can
 // also declare no fields in which case, the Fields slice will be empty.
 //
-// Line is non-nil only if the output declares itself as a raw output (see
+// Record is non-nil only if the output declares itself as a raw output (see
 // OutputDesc.Raw). This is done for performance reasons, as recreating the
-// whole log line requires allocations and memory copies, and is not always
+// whole record requires allocations and memory copies, and is not always
 // required.
-type OutputLogLine struct {
+type OutputRecord struct {
 	Fields []string // Fields are the fields sent to a Baker output.
-	Line   []byte   // Line is the raw log line from which Fields are extracted.
+	Record []byte   // Record is the data representation of a Record (obtained with Record.ToText())
 }
 
-// Upload is an interface representing an object that is uploading
-// the output of a topology to a configured location
+// Upload uploads files created by the topology output to a configured location.
 type Upload interface {
 	// Run processes the output result as it comes through the channel.
 	// Run must block forever
 	// upch will receive filenames that Output wants to see uploaded.
 	Run(upch <-chan string)
 
-	// Force the upload to stop as cleanly as possible, which usually means
-	// to finish up all the existing downloads.
+	// Stop forces the upload to stop as cleanly as possible, which usually
+	// means to finish up all the existing downloads.
 	Stop()
 
-	// Return stats about the upload process
+	// Stats returns stats about the upload process
 	Stats() UploadStats
 }

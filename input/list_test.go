@@ -16,7 +16,7 @@ import (
 	"github.com/AdRoll/baker/testutil"
 )
 
-func randomLogLine() baker.LogLine {
+func randomLogLine() baker.Record {
 	var ll baker.LogLine
 
 	rand := rand.New(rand.NewSource(0))
@@ -37,7 +37,7 @@ func randomLogLine() baker.LogLine {
 	typ := types[rand.Intn(len(types))]
 	ll.Set(0, []byte(typ))
 
-	return ll
+	return &ll
 }
 
 func makeTestLog(tb testing.TB, dir, fn string, numlines int) string {

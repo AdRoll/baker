@@ -76,57 +76,54 @@ func TestLogLineToTextWithFieldsHigherThan256(t *testing.T) {
 }
 
 func TestLogLineMeta(t *testing.T) {
-	ll := LogLine{}
-
+	var ll Record
+	ll = &LogLine{}
 	_, ok := ll.Meta("foo")
 	if ok {
 		t.Errorf("ll.Meta(%q) = _, %v;  want _, false", "foo", ok)
 	}
 
-	ll.meta = Metadata{}
-
-	ll.meta["foo"] = 23
+	ll.Parse(nil, &Metadata{"foo": 23})
 	val, ok := ll.Meta("foo")
 	if !ok || val != 23 {
 		t.Errorf("ll.Meta(%q) = %v, %v;  want 23, true", "foo", val, ok)
 	}
-
-	ll.meta["foo"] = "hello gopher"
-	val, ok = ll.Meta("foo")
-	if !ok || val != "hello gopher" {
-		t.Errorf("ll.Meta(%q) = %v, %v;  want 23, true", "foo", val, ok)
-	}
-
 }
+
 func TestLogLineCache(t *testing.T) {
-	ll := LogLine{}
+	var ll Record
+	ll = &LogLine{}
 
 	testCache := func() {
-		_, ok := ll.Cache.Get("foo")
+		_, ok := ll.Cache().Get("foo")
 		if ok {
-			t.Errorf("ll.Cache.Get(%q) = _, %v;  want _, false", "foo", ok)
+			t.Errorf("ll.Cache().Get(%q) = _, %v;  want _, false", "foo", ok)
 		}
 
-		ll.Cache.Set("foo", 23)
-		val, ok := ll.Cache.Get("foo")
+		ll.Cache().Set("foo", 23)
+		val, ok := ll.Cache().Get("foo")
 		if !ok || val != 23 {
-			t.Errorf("ll.Cache.Get(%q) = %v, %v;  want 23, true", "foo", val, ok)
+			t.Errorf("ll.Cache().Get(%q) = %v, %v;  want 23, true", "foo", val, ok)
 		}
 
-		ll.Cache.Set("foo", "hello gopher")
-		val, ok = ll.Cache.Get("foo")
+		ll.Cache().Set("foo", "hello gopher")
+		val, ok = ll.Cache().Get("foo")
 		if !ok || val != "hello gopher" {
-			t.Errorf("ll.Cache.Get(%q) = %v, %v;  want 23, true", "foo", val, ok)
+			t.Errorf("ll.Cache().Get(%q) = %v, %v;  want 23, true", "foo", val, ok)
 		}
 
-		ll.Cache.Del("foo")
-		val, ok = ll.Cache.Get("foo")
+		ll.Cache().Del("foo")
+		val, ok = ll.Cache().Get("foo")
 		if ok {
-			t.Errorf("ll.Cache.Get(%q) = %v, %v;  want _, false", "foo", val, ok)
+			t.Errorf("ll.Cache().Get(%q) = %v, %v;  want _, false", "foo", val, ok)
 		}
 	}
 
 	testCache()
-	ll.Cache.Clear()
+	ll.Cache().Clear()
 	testCache()
+}
+
+func TestLogLineRecordConformance(t *testing.T) {
+	RecordConformanceTest(t, &LogLine{})
 }

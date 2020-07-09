@@ -51,7 +51,7 @@ func TestClausesMatchCorrectly(t *testing.T) {
 	filter, _ := NewClauseFilter(cfg)
 	matched_clause := false
 
-	filter.Process(&logline, func(*baker.LogLine) { matched_clause = true })
+	filter.Process(logline, func(baker.Record) { matched_clause = true })
 	if matched_clause == false {
 		t.Errorf("Clause filter filtered a line it should not have.")
 	}
@@ -61,7 +61,7 @@ func TestClausesMatchCorrectly(t *testing.T) {
 	filter, _ = NewClauseFilter(cfg)
 	matched_clause = false
 
-	filter.Process(&logline, func(*baker.LogLine) { matched_clause = true })
+	filter.Process(logline, func(baker.Record) { matched_clause = true })
 	if matched_clause == true {
 		t.Errorf("Clause filter filtered a line it should not have.")
 	}
@@ -71,7 +71,7 @@ func TestClausesMatchCorrectly(t *testing.T) {
 	filter, _ = NewClauseFilter(cfg)
 	matched_clause = false
 
-	filter.Process(&logline, func(*baker.LogLine) { matched_clause = true })
+	filter.Process(logline, func(baker.Record) { matched_clause = true })
 	if matched_clause == false {
 		t.Errorf("Clause filter filtered a line it should not have.")
 	}
@@ -81,7 +81,7 @@ func TestClausesMatchCorrectly(t *testing.T) {
 	filter, _ = NewClauseFilter(cfg)
 	matched_clause = false
 
-	filter.Process(&logline, func(*baker.LogLine) { matched_clause = true })
+	filter.Process(logline, func(baker.Record) { matched_clause = true })
 	if matched_clause == false {
 		t.Errorf("Clause filter filtered a line it should not have.")
 	}
@@ -90,7 +90,7 @@ func TestClausesMatchCorrectly(t *testing.T) {
 	filter, _ = NewClauseFilter(cfg)
 	matched_clause = false
 
-	filter.Process(&logline, func(*baker.LogLine) { matched_clause = true })
+	filter.Process(logline, func(baker.Record) { matched_clause = true })
 	if matched_clause == true {
 		t.Errorf("Clause filter filtered a line it should not have.")
 	}
@@ -100,7 +100,7 @@ func TestClausesMatchCorrectly(t *testing.T) {
 	filter, _ = NewClauseFilter(cfg)
 	matched_clause = false
 
-	filter.Process(&logline, func(*baker.LogLine) { matched_clause = true })
+	filter.Process(logline, func(baker.Record) { matched_clause = true })
 	if matched_clause == false {
 		t.Errorf("Clause filter filtered a line it should not have.")
 	}
