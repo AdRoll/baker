@@ -22,7 +22,7 @@ func TestRunFilterChainMetadata(t *testing.T) {
 	// Test the same metadata provided by Input can be accessed inside the filters,
 	// a simpler version of t.chain was used since the same LogLine received in the chain
 	// is passed down to the filters, so we can check there if the same metadata is available.
-	var rawLine LogLine
+	rawLine := LogLine{FieldSeparator: 44}
 	rawLine.Set(0, []byte("test"))
 	line := rawLine.ToText(nil)
 	lastModified := time.Unix(1234, 5678)
@@ -33,7 +33,6 @@ func TestRunFilterChainMetadata(t *testing.T) {
 
 	inch := make(chan *Data)
 	defer close(inch)
-
 	chainCalled := false
 	topo := &Topology{
 		// Populate fields needed by runFilterChain
@@ -41,7 +40,9 @@ func TestRunFilterChainMetadata(t *testing.T) {
 		Input: &dummyInput{},
 		linePool: sync.Pool{
 			New: func() interface{} {
-				return new(LogLine)
+				return &LogLine{
+					FieldSeparator: 44,
+				}
 			},
 		},
 		// Simpler version

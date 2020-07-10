@@ -28,7 +28,7 @@ const (
 // field, both those that had a parsed value, and those that were empty.
 //
 // Normally, LogLine will be constructed through NewLogLineFromText(), that
-// parses a CSV line (with separator 0x1E). But notice that the zero value of
+// parses a CSV line (with separator 0x2C). But notice that the zero value of
 // LogLine is a perfectly valid empty object, and can be used as such to
 // contruct loglines starting from empty.
 type LogLine struct {
@@ -69,7 +69,8 @@ type LogLine struct {
 	wdata [256][]byte
 	wcnt  uint8
 
-	cache Cache
+	cache          Cache
+	FieldSeparator byte
 }
 
 // Get the value of a field (either standard or custom)
@@ -105,8 +106,8 @@ func (l *LogLine) Set(f FieldIndex, data []byte) {
 
 // NewLogLineFromText creates a LogLine from a line of text (parsing the TSV)
 // This is the moral equivalent of bytes.Split(), but without memory allocations
-func NewLogLineFromText(text []byte) Record {
-	l := &LogLine{}
+func NewLogLineFromText(text []byte, sep byte) Record {
+	l := &LogLine{FieldSeparator: sep}
 	l.Parse(text, nil)
 	return l
 }
@@ -126,7 +127,7 @@ func (l *LogLine) Parse(text []byte, meta *Metadata) error {
 	l.idx[0] = -1
 	fc := FieldIndex(1)
 	for i, ch := range text {
-		if ch == 30 {
+		if ch == l.FieldSeparator {
 			if fc > LogLineNumFields {
 				return errLogLineTooManyFields
 			}
@@ -195,14 +196,14 @@ func (l *LogLine) ToText(buf []byte) []byte {
 	done := false
 	for fc := FieldIndex(0); fc < LogLineNumFields && !done; fc++ {
 		buf = append(buf, l.Get(fc)...)
-		buf = append(buf, 30)
+		buf = append(buf, l.FieldSeparator)
 		done = fc > FieldIndex(lastw) && (l.data == nil || l.idx[fc] == -1)
 	}
 	return buf
 }
 
 func (l *LogLine) Clear() {
-	*l = LogLine{}
+	*l = LogLine{FieldSeparator: l.FieldSeparator}
 }
 
 // Meta returns the metadata having the given specific key, if any.

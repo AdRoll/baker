@@ -53,7 +53,7 @@ fields=["field2", "field0", "field1", "field3"]
 	out := topology.Output[0].(*outputtest.Recorder)
 
 	for i := 0; i < 10; i++ {
-		ll := baker.LogLine{}
+		ll := baker.LogLine{FieldSeparator: 44}
 		ll.Set(0, []byte("value0"))
 		ll.Set(1, []byte("value1"))
 		ll.Set(3, []byte("value3"))

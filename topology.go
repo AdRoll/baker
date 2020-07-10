@@ -328,8 +328,8 @@ func (t *Topology) runFilterChain() {
 			}
 
 			// Get a new record from the pool and decode the buffer into it.
-			logline := t.linePool.Get().(Record)
-			err := logline.Parse(line, &bakerData.Meta)
+			record := t.linePool.Get().(Record)
+			err := record.Parse(line, &bakerData.Meta)
 			if err != nil || len(line) == 0 {
 				// Count parse errors or empty records
 				atomic.AddInt64(&t.malformed, 1)
@@ -339,14 +339,14 @@ func (t *Topology) runFilterChain() {
 			// Validate against patterns
 			if t.validate != nil {
 				// call external validation function
-				if ok, idx := t.validate(logline); !ok {
+				if ok, idx := t.validate(record); !ok {
 					atomic.AddInt64(&t.invalid[idx], 1)
 					continue
 				}
 			}
 
 			// Send the logline through the filter chain
-			t.chain(logline)
+			t.chain(record)
 		}
 
 		// zero out the common metadata struct.  this doesn't allocate:

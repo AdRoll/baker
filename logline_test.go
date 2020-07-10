@@ -52,7 +52,7 @@ func TestLogLineParse_separators(t *testing.T) {
 			for i := 0; i < tt.nseps; i++ {
 				b.WriteByte(comma)
 			}
-			ll := LogLine{}
+			ll := LogLine{FieldSeparator: comma}
 			ll.Parse(b.Bytes(), nil)
 
 			if tt.reset && ll.data != nil {
@@ -67,7 +67,7 @@ func TestLogLineParse_separators(t *testing.T) {
 
 func TestLogLineToTextWithFieldsHigherThan256(t *testing.T) {
 	for i := FieldIndex(0); i < LogLineNumFields; i++ {
-		ll := LogLine{}
+		ll := LogLine{FieldSeparator: 44}
 		ll.Set(i, []byte("myvalue"))
 		if !bytes.Contains(ll.ToText(nil), []byte("myvalue")) {
 			t.Fatalf("Field %d: %s not found in ll.ToText()", i, "myvalue")
@@ -77,7 +77,7 @@ func TestLogLineToTextWithFieldsHigherThan256(t *testing.T) {
 
 func TestLogLineMeta(t *testing.T) {
 	var ll Record
-	ll = &LogLine{}
+	ll = &LogLine{FieldSeparator: 44}
 	_, ok := ll.Meta("foo")
 	if ok {
 		t.Errorf("ll.Meta(%q) = _, %v;  want _, false", "foo", ok)
@@ -92,7 +92,7 @@ func TestLogLineMeta(t *testing.T) {
 
 func TestLogLineCache(t *testing.T) {
 	var ll Record
-	ll = &LogLine{}
+	ll = &LogLine{FieldSeparator: 44}
 
 	testCache := func() {
 		_, ok := ll.Cache().Get("foo")
@@ -125,5 +125,5 @@ func TestLogLineCache(t *testing.T) {
 }
 
 func TestLogLineRecordConformance(t *testing.T) {
-	RecordConformanceTest(t, &LogLine{})
+	RecordConformanceTest(t, &LogLine{FieldSeparator: 44})
 }
