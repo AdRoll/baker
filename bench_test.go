@@ -109,7 +109,7 @@ fields=["fielda", "fieldb"]
 			b.Fatalf("topology error: %v", err)
 		}
 
-		const wantRaw = "hello\x1eworld\x1e\x1e"
+		const wantRaw = "hello,world,,"
 		for _, ll := range topo.Output[0].(*outputtest.Recorder).Records {
 			if ll.Fields[0] != "hello" || ll.Fields[1] != "world" {
 				b.Fatalf("ll.Fields[0], ll.Fields[1] = %q, %q, want %q, %q", ll.Fields[0], ll.Fields[1], "hello", "world")
@@ -128,7 +128,7 @@ var sink interface{}
 func BenchmarkLogLineParse(b *testing.B) {
 	var ll baker.Record
 	ll = &baker.LogLine{}
-	buf := bytes.Repeat([]byte(`hello\x1eworld\x1e\x1e`), 200)
+	buf := bytes.Repeat([]byte(`hello,world,,`), 200)
 	md := baker.Metadata{"foo": "bar"}
 
 	b.ReportAllocs()

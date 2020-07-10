@@ -39,7 +39,7 @@ func TestLogLineParse_separators(t *testing.T) {
 			reset: true,
 		},
 	}
-
+	var comma byte = 44
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			defer func() {
@@ -50,7 +50,7 @@ func TestLogLineParse_separators(t *testing.T) {
 
 			b := bytes.Buffer{}
 			for i := 0; i < tt.nseps; i++ {
-				b.WriteByte('\x1e')
+				b.WriteByte(comma)
 			}
 			ll := LogLine{}
 			ll.Parse(b.Bytes(), nil)

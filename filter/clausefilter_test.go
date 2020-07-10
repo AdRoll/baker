@@ -39,7 +39,7 @@ func TestClauseParser(t *testing.T) {
 }
 
 func TestClausesMatchCorrectly(t *testing.T) {
-	line1 := []byte("value0\x1evalue1\x1evalue3")
+	line1 := []byte("value0,value1,value3")
 	logline := baker.NewLogLineFromText(line1)
 
 	cfg := baker.FilterParams{
