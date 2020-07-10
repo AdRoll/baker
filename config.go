@@ -1,10 +1,12 @@
 package baker
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"reflect"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/rasky/toml"
 )
@@ -82,6 +84,12 @@ type ConfigUser struct {
 	Config *toml.Primitive
 }
 
+// ConfigCSV defines configuration for CSV records
+type ConfigCSV struct {
+	// FieldSeparator defines the fields separator used in the records
+	FieldSeparator string `toml:"field_separator"`
+}
+
 // A ConfigGeneral specifies general configuration for the whole topology.
 type ConfigGeneral struct {
 	Datadog       bool
@@ -104,13 +112,15 @@ type Config struct {
 	Upload      ConfigUpload
 	General     ConfigGeneral
 	User        []ConfigUser
+	CSV         ConfigCSV
 
 	shardingFuncs map[FieldIndex]ShardingFunc
 	validate      ValidationFunc
 	createRecord  func() Record
 
-	fieldByName func(string) (FieldIndex, bool)
-	fieldName   func(FieldIndex) string
+	fieldByName    func(string) (FieldIndex, bool)
+	fieldName      func(FieldIndex) string
+	fieldSeparator byte
 }
 
 // String returns a string representation of the exported fields of c.
@@ -289,6 +299,14 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 	// Abort if there's any unknown key in the configuration file
 	if keys := md.Undecoded(); len(keys) > 0 {
 		return nil, fmt.Errorf("invalid keys in configuration file: %v", keys)
+	}
+
+	if cfg.CSV.FieldSeparator != "" {
+		r, size := utf8.DecodeRuneInString(cfg.CSV.FieldSeparator)
+		if size > 1 {
+			return nil, errors.New("The field separator must be a 1-byte char")
+		}
+		cfg.fieldSeparator = byte(r)
 	}
 
 	// Copy pluggable functions
