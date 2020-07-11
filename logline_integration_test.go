@@ -29,7 +29,7 @@ fields=["f2", "f0", "f1", "f3"]
 func TestSeparatorComma(t *testing.T) {
 	toml := `
 [csv]
-field_separator=','
+field_separator='2c' # comma
 [input]
 name="LogLine"
 [output]
@@ -43,7 +43,7 @@ fields=["f2", "f0", "f1", "f3"]
 func TestSeparatorDot(t *testing.T) {
 	toml := `
 [csv]
-field_separator='.'
+field_separator='2e' # dot
 [input]
 name="LogLine"
 [output]

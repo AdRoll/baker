@@ -1,12 +1,12 @@
 package baker
 
 import (
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
 	"reflect"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/rasky/toml"
 )
@@ -311,11 +311,14 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 	}
 
 	if cfg.CSV.FieldSeparator != "" {
-		r, size := utf8.DecodeRuneInString(cfg.CSV.FieldSeparator)
-		if size > 1 {
+		decoded, err := hex.DecodeString(cfg.CSV.FieldSeparator)
+		if err != nil {
+			return nil, fmt.Errorf("Error decoding field separator: %v", err)
+		}
+		if len(decoded) != 1 {
 			return nil, errors.New("The field separator must be a 1-byte char")
 		}
-		cfg.fieldSeparator = byte(r)
+		cfg.fieldSeparator = decoded[0]
 	}
 
 	// Copy pluggable functions
