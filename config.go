@@ -142,9 +142,8 @@ func (c *Config) fillDefaults() {
 	c.Upload.fillDefaults()
 	c.General.fillDefaults()
 
-	// Default field separator is comma
 	if c.fieldSeparator == 0 {
-		c.fieldSeparator = 44
+		c.fieldSeparator = DefaultLogLineFieldSeparator
 	}
 
 	if c.createRecord == nil {

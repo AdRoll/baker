@@ -85,7 +85,7 @@ fields=["fielda", "fieldb"]
 
 	lines := make([]baker.Record, nlines)
 	for i := 0; i < nlines; i++ {
-		l := &baker.LogLine{FieldSeparator: 44}
+		l := &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
 		l.Set(0, []byte("hello"))
 		l.Set(1, []byte("world"))
 		lines[i] = l
@@ -127,7 +127,7 @@ var sink interface{}
 
 func BenchmarkLogLineParse(b *testing.B) {
 	var ll baker.Record
-	ll = &baker.LogLine{FieldSeparator: 44}
+	ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
 	buf := bytes.Repeat([]byte(`hello,world,,`), 200)
 	md := baker.Metadata{"foo": "bar"}
 

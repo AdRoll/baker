@@ -12,6 +12,9 @@ const (
 	// we probably want to keep this for adroll-baker but not in the core.
 	// how one uses the field indices is up to them.
 	NumFieldsBaker FieldIndex = 100
+
+	// DefaultLogLineFieldSeparator is comma
+	DefaultLogLineFieldSeparator byte = 44
 )
 
 // LogLine represents a CSV text line using ASCII 30 as field separator. It

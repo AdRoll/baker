@@ -39,7 +39,6 @@ func TestLogLineParse_separators(t *testing.T) {
 			reset: true,
 		},
 	}
-	var comma byte = 44
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			defer func() {
@@ -50,9 +49,9 @@ func TestLogLineParse_separators(t *testing.T) {
 
 			b := bytes.Buffer{}
 			for i := 0; i < tt.nseps; i++ {
-				b.WriteByte(comma)
+				b.WriteByte(DefaultLogLineFieldSeparator)
 			}
-			ll := LogLine{FieldSeparator: comma}
+			ll := LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
 			ll.Parse(b.Bytes(), nil)
 
 			if tt.reset && ll.data != nil {
@@ -67,7 +66,7 @@ func TestLogLineParse_separators(t *testing.T) {
 
 func TestLogLineToTextWithFieldsHigherThan256(t *testing.T) {
 	for i := FieldIndex(0); i < LogLineNumFields; i++ {
-		ll := LogLine{FieldSeparator: 44}
+		ll := LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
 		ll.Set(i, []byte("myvalue"))
 		if !bytes.Contains(ll.ToText(nil), []byte("myvalue")) {
 			t.Fatalf("Field %d: %s not found in ll.ToText()", i, "myvalue")
@@ -77,7 +76,7 @@ func TestLogLineToTextWithFieldsHigherThan256(t *testing.T) {
 
 func TestLogLineMeta(t *testing.T) {
 	var ll Record
-	ll = &LogLine{FieldSeparator: 44}
+	ll = &LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
 	_, ok := ll.Meta("foo")
 	if ok {
 		t.Errorf("ll.Meta(%q) = _, %v;  want _, false", "foo", ok)
@@ -92,7 +91,7 @@ func TestLogLineMeta(t *testing.T) {
 
 func TestLogLineCache(t *testing.T) {
 	var ll Record
-	ll = &LogLine{FieldSeparator: 44}
+	ll = &LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
 
 	testCache := func() {
 		_, ok := ll.Cache().Get("foo")
@@ -125,5 +124,5 @@ func TestLogLineCache(t *testing.T) {
 }
 
 func TestLogLineRecordConformance(t *testing.T) {
-	RecordConformanceTest(t, &LogLine{FieldSeparator: 44})
+	RecordConformanceTest(t, &LogLine{FieldSeparator: DefaultLogLineFieldSeparator})
 }

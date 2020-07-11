@@ -22,7 +22,7 @@ func TestRunFilterChainMetadata(t *testing.T) {
 	// Test the same metadata provided by Input can be accessed inside the filters,
 	// a simpler version of t.chain was used since the same LogLine received in the chain
 	// is passed down to the filters, so we can check there if the same metadata is available.
-	rawLine := LogLine{FieldSeparator: 44}
+	rawLine := LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
 	rawLine.Set(0, []byte("test"))
 	line := rawLine.ToText(nil)
 	lastModified := time.Unix(1234, 5678)
@@ -41,7 +41,7 @@ func TestRunFilterChainMetadata(t *testing.T) {
 		linePool: sync.Pool{
 			New: func() interface{} {
 				return &LogLine{
-					FieldSeparator: 44,
+					FieldSeparator: DefaultLogLineFieldSeparator,
 				}
 			},
 		},

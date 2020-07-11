@@ -40,7 +40,7 @@ func TestClauseParser(t *testing.T) {
 
 func TestClausesMatchCorrectly(t *testing.T) {
 	line1 := []byte("value0,value1,value3")
-	logline := baker.NewLogLineFromText(line1, 44)
+	logline := baker.NewLogLineFromText(line1, baker.DefaultLogLineFieldSeparator)
 
 	cfg := baker.FilterParams{
 		ComponentParams: baker.ComponentParams{
