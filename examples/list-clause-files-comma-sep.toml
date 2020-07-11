@@ -1,10 +1,13 @@
 # This topology reads a zstandard file containing multiple loglines, filters them using
 # the Clause filter and saves the matching lines into a gz file
+[csv]
+field_separator="2c"
+
 [input]
 name="List"
 
     [input.config]
-    files=["./examples/data/list-clause-files.csv.zst"]
+    files=["./examples/data/list-clause-files-comma-sep.csv.zst"]
 
 [[filter]]
 name="ClauseFilter"
