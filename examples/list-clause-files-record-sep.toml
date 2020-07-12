@@ -1,13 +1,13 @@
 # This topology reads a zstandard file containing multiple loglines, filters them using
 # the Clause filter and saves the matching lines into a gz file
 [csv]
-field_separator="1e"
+field_separator="\u001e"
 
 [input]
 name="List"
 
     [input.config]
-    files=["./examples/data/list-clause-files-rec-sep.csv.zst"]
+    files=["./examples/data/list-clause-files-record-sep.csv.zst"]
 
 [[filter]]
 name="ClauseFilter"
@@ -20,4 +20,4 @@ name="Files"
 procs=1
 
     [output.config]
-    PathString="/tmp/baker/{{.Year}}{{.Month}}{{.Day}}-{{.Hour}}{{.Minute}}{{.Second}}.log.gz"
+    PathString="/tmp/baker/output-list-clause-files-record-sep.csv.gz"
