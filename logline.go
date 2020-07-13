@@ -29,11 +29,6 @@ const (
 // It is also possible to modify a LogLine in memory, as it gets processed.
 // Modifications can be done through the Set() method, and can be done to any
 // field, both those that had a parsed value, and those that were empty.
-//
-// Normally, LogLine will be constructed through NewLogLineFromText(), that
-// parses a CSV line (with separator 0x2C). But notice that the zero value of
-// LogLine is a perfectly valid empty object, and can be used as such to
-// contruct loglines starting from empty.
 type LogLine struct {
 	// These next few fields handle the read-only fields that were parsed from a
 	// text logline. data is the original line in memory, while idx is the index
@@ -105,14 +100,6 @@ func (l *LogLine) Set(f FieldIndex, data []byte) {
 	}
 	l.wmask[f] = l.wcnt
 	l.wdata[l.wcnt] = data
-}
-
-// NewLogLineFromText creates a LogLine from a line of text (parsing the TSV)
-// This is the moral equivalent of bytes.Split(), but without memory allocations
-func NewLogLineFromText(text []byte, sep byte) Record {
-	l := &LogLine{FieldSeparator: sep}
-	l.Parse(text, nil)
-	return l
 }
 
 var errLogLineTooManyFields = errors.New("LogLine has too many fields")

@@ -39,8 +39,8 @@ func TestClauseParser(t *testing.T) {
 }
 
 func TestClausesMatchCorrectly(t *testing.T) {
-	line1 := []byte("value0,value1,value3")
-	logline := baker.NewLogLineFromText(line1, baker.DefaultLogLineFieldSeparator)
+	logline := &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+	logline.Parse([]byte("value0,value1,value3"), nil)
 
 	cfg := baker.FilterParams{
 		ComponentParams: baker.ComponentParams{
