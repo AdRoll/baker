@@ -126,3 +126,25 @@ func TestLogLineCache(t *testing.T) {
 func TestLogLineRecordConformance(t *testing.T) {
 	RecordConformanceTest(t, &LogLine{FieldSeparator: DefaultLogLineFieldSeparator})
 }
+
+func BenchmarkParse(b *testing.B) {
+	text := []byte("value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value")
+	b.Run("bench", func(b *testing.B) {
+		for n := 0; n < b.N; n++ {
+			ll := LogLine{FieldSeparator: 44}
+			ll.Parse(text, nil)
+		}
+	})
+}
+
+func BenchmarkToText(b *testing.B) {
+	b.Run("bench", func(b *testing.B) {
+		ll := LogLine{FieldSeparator: 44}
+		for i := 0; i < 100; i++ {
+			ll.Set(FieldIndex(i), []byte("value"))
+		}
+		for n := 0; n < b.N; n++ {
+			_ = ll.ToText(nil)
+		}
+	})
+}
