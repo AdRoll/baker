@@ -127,6 +127,70 @@ func TestLogLineRecordConformance(t *testing.T) {
 	RecordConformanceTest(t, &LogLine{FieldSeparator: DefaultLogLineFieldSeparator})
 }
 
+func TestLogLineParseCustomSeparator(t *testing.T) {
+	t.Run("default comma separator", func(t *testing.T) {
+		text := []byte("value1,value2,,value4")
+		ll := LogLine{FieldSeparator: 44}
+		ll.Parse(text, nil)
+		if !bytes.Equal(ll.Get(0), []byte("value1")) {
+			t.Fatalf("want: %v, got: %v", "value1", ll.Get(0))
+		}
+		if !bytes.Equal(ll.Get(1), []byte("value2")) {
+			t.Fatalf("want: %v, got: %v", "value2", ll.Get(1))
+		}
+		if !bytes.Equal(ll.Get(2), []byte("")) {
+			t.Fatalf("want: %v, got: %v", "", ll.Get(2))
+		}
+		if !bytes.Equal(ll.Get(3), []byte("value4")) {
+			t.Fatalf("want: %v, got: %v", "value4", ll.Get(3))
+		}
+	})
+
+	t.Run("custom dot separator", func(t *testing.T) {
+		text := []byte("value1.value2..value4")
+		ll := LogLine{FieldSeparator: 46}
+		ll.Parse(text, nil)
+		if !bytes.Equal(ll.Get(0), []byte("value1")) {
+			t.Fatalf("want: %v, got: %v", "value1", ll.Get(0))
+		}
+		if !bytes.Equal(ll.Get(1), []byte("value2")) {
+			t.Fatalf("want: %v, got: %v", "value2", ll.Get(1))
+		}
+		if !bytes.Equal(ll.Get(2), []byte("")) {
+			t.Fatalf("want: %v, got: %v", "", ll.Get(2))
+		}
+		if !bytes.Equal(ll.Get(3), []byte("value4")) {
+			t.Fatalf("want: %v, got: %v", "value4", ll.Get(3))
+		}
+	})
+}
+
+func TestLogLineToTextCustomSeparator(t *testing.T) {
+	t.Run("default comma separator", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: 44}
+		ll.Set(0, []byte("value1"))
+		ll.Set(1, []byte("value2"))
+		ll.Set(3, []byte("value4"))
+		text := ll.ToText(nil)
+		exp := []byte("value1,value2,,value4,,")
+		if !bytes.Equal(text, exp) {
+			t.Fatalf("want: %s got: %s", exp, text)
+		}
+	})
+
+	t.Run("custom dot separator", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: 46}
+		ll.Set(0, []byte("value1"))
+		ll.Set(1, []byte("value2"))
+		ll.Set(3, []byte("value4"))
+		text := ll.ToText(nil)
+		exp := []byte("value1.value2..value4..")
+		if !bytes.Equal(text, exp) {
+			t.Fatalf("want: %s got: %s", exp, text)
+		}
+	})
+}
+
 func BenchmarkParse(b *testing.B) {
 	text := []byte("value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value")
 	b.Run("bench", func(b *testing.B) {
