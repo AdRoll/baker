@@ -4,13 +4,11 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-// AllOutputs returns the list of all supported outputs.
-func AllOutputs() []baker.OutputDesc {
-	return []baker.OutputDesc{
-		DynamoDBDesc,
-		FilesDesc,
-		NopDesc,
-		OpLogDesc,
-		WebSocketDesc,
-	}
+// All is the list of all baker outputs.
+var All = []baker.OutputDesc{
+	DynamoDBDesc,
+	FilesDesc,
+	NopDesc,
+	OpLogDesc,
+	WebSocketDesc,
 }

@@ -31,26 +31,23 @@ func assertValidConfigHelp(t *testing.T, name string, cfg interface{}) {
 }
 
 func TestAllInputsHasConfigHelp(t *testing.T) {
-	for _, input := range input.AllInputs() {
+	for _, input := range input.All {
 		assertValidConfigHelp(t, input.Name, input.Config)
 	}
 }
 
 func TestAllFiltersHasConfigHelp(t *testing.T) {
-	for _, filter := range filter.AllFilters() {
+	for _, filter := range filter.All {
 		assertValidConfigHelp(t, filter.Name, filter.Config)
 	}
 }
 
 func TestAllOutputsHasConfigHelp(t *testing.T) {
-	for _, output := range output.AllOutputs() {
+	for _, output := range output.All {
 		assertValidConfigHelp(t, output.Name, output.Config)
 	}
 }
 
-// TODO: Enable when at least one uploader exists
-// func TestAllUploadsHasConfigHelp(t *testing.T) {
-// 	for _, upload := range upload.AllUploads() {
-// 		assertValidConfigHelp(t, upload.Name, upload.Config)
-// 	}
-// }
+func TestAllUploadsHasConfigHelp(t *testing.T) {
+	// nothing to do: baker.Upload don't have any config at the moment
+}

@@ -4,9 +4,7 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-// AllFilters returns the list of all supported filters.
-func AllFilters() []baker.FilterDesc {
-	return []baker.FilterDesc{
-		ClauseFilterDesc,
-	}
+// All is the list of all baker filters.
+var All = []baker.FilterDesc{
+	ClauseFilterDesc,
 }
