@@ -8,7 +8,7 @@ import (
 func AllOutputs() []baker.OutputDesc {
 	return []baker.OutputDesc{
 		DynamoDBDesc,
-		FilesDesc,
+		FileWriterDesc,
 		NopDesc,
 		OpLogDesc,
 		WebSocketDesc,

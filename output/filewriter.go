@@ -14,8 +14,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws/ec2metadata"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	zstd "github.com/valyala/gozstd"
@@ -23,8 +21,8 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-var FilesDesc = baker.OutputDesc{
-	Name:   "Files",
+var FileWriterDesc = baker.OutputDesc{
+	Name:   "FileWriter",
 	New:    NewFileWriter,
 	Config: &FileWriterConfig{},
 	Raw:    true,
@@ -32,45 +30,20 @@ var FilesDesc = baker.OutputDesc{
 }
 
 type FileWriterConfig struct {
-	PathString           string        `help:"Template to describe location of the output directory: supports .Type, .Year, .Month, .Day, .Region, .Instance, and .Rotation."`
+	PathString           string        `help:"Template to describe location of the output directory: supports .Year, .Month, .Day and .Rotation."`
 	RotateInterval       time.Duration `help:"Time after which data will be rotated. If -1, it will not rotate until the end." default:"60s"`
 	StagingPathString    string        `help:"Staging directory for the upload functionality"`
-	Region               string        `help:"Replaces {{.Region}} in PathString. If empty it is set to 'region' from EC2 Metadata."`
-	InstanceID           string        `help:"Replaces {{.Instance}} in PathString. If empty it is set to 'instance-id' from EC2 Metadata."`
 	ZstdCompressionLevel int           `help:"zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
 	ZstdWindowLog        int           `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
 }
 
 func (cfg *FileWriterConfig) fillDefaults() {
 	if cfg.PathString == "" {
-		cfg.PathString = "/tmp/baker/ologs/logs/{{.Year}}/{{.Month}}/{{.Day}}/{{.Type}}-baker-{{.Instance}}-{{.Region}}/{{.Type}}-{{.Year}}{{.Month}}{{.Day}}-{{.Hour}}{{.Minute}}{{.Second}}.{{.Index}}.log.gz"
+		cfg.PathString = "/tmp/baker/ologs/logs/{{.Year}}/{{.Month}}/{{.Day}}/{{.Year}}{{.Month}}{{.Day}}-{{.Hour}}{{.Minute}}{{.Second}}.{{.Index}}.log.gz"
 	}
 	var z time.Duration
 	if cfg.RotateInterval == z {
 		cfg.RotateInterval = 60 * time.Second
-	}
-
-	if strings.Contains(cfg.PathString, "{{.Region}}") && cfg.Region == "" {
-		md := ec2metadata.New(session.New())
-
-		region, err := md.Region()
-		if err != nil {
-			log.WithError(err).Error("Couldn't fetch region")
-			region = ""
-		}
-		cfg.Region = region
-	}
-
-	if strings.Contains(cfg.PathString, "{{.Instance}}") && cfg.InstanceID == "" {
-		md := ec2metadata.New(session.New())
-
-		instanceid, err := md.GetMetadata("instance-id")
-		if err != nil {
-			log.WithError(err).Error("Couldn't fetch instance-id")
-			instanceid = ""
-		}
-
-		cfg.InstanceID = instanceid
 	}
 
 	if cfg.ZstdCompressionLevel == 0 {
@@ -84,38 +57,8 @@ type FileWriter struct {
 	Fields []baker.FieldIndex
 	totaln int64
 
-	workers map[string]*fileWorker
+	workers map[int]*fileWorker
 	index   int
-}
-
-func makeFileWriterPath(p *template.Template, t string, idx int, region, instanceid, uid string) string {
-	now := time.Now().UTC()
-	var doc bytes.Buffer
-
-	replacementVars := map[string]string{
-		"Type":     t,
-		"Index":    fmt.Sprintf("%04d", idx),
-		"Year":     fmt.Sprintf("%04d", now.Year()),
-		"Month":    fmt.Sprintf("%02d", now.Month()),
-		"Day":      fmt.Sprintf("%02d", now.Day()),
-		"Hour":     fmt.Sprintf("%02d", now.Hour()),
-		"Minute":   fmt.Sprintf("%02d", now.Minute()),
-		"Second":   fmt.Sprintf("%02d", now.Second()),
-		"Instance": instanceid,
-		"UUID":     uid,
-		"Region":   region,
-	}
-	err := p.Execute(&doc, replacementVars)
-	if err != nil {
-		panic(err.Error())
-	}
-	replacedPath := doc.String()
-	dir := path.Dir(replacedPath)
-
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		os.MkdirAll(dir, 0777)
-	}
-	return replacedPath
 }
 
 func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
@@ -130,7 +73,7 @@ func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 	return &FileWriter{
 		Cfg:     dcfg,
 		Fields:  cfg.Fields,
-		workers: make(map[string]*fileWorker),
+		workers: make(map[int]*fileWorker),
 		index:   cfg.Index,
 	}, nil
 }
@@ -139,17 +82,12 @@ func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) {
 	log.WithFields(log.Fields{"idx": w.index}).Info("FileWriter ready to log")
 
 	for lldata := range input {
-		if len(lldata.Record) < 3 {
-			continue // bad line
-		}
-		linetype := string(lldata.Record[:3])
-
-		worker, ok := w.workers[linetype]
+		worker, ok := w.workers[w.index]
 		if !ok {
 			// Unique UUID for the output processes
 			uid := uuid.New().String()
-			worker = newWorker(w.Cfg, linetype, w.index, uid, upch)
-			w.workers[linetype] = worker
+			worker = newWorker(w.Cfg, w.index, uid, upch)
+			w.workers[w.index] = worker
 		}
 
 		worker.Write(lldata.Record)
@@ -173,7 +111,7 @@ func (w *FileWriter) Stats() baker.OutputStats {
 }
 
 func (w *FileWriter) CanShard() bool {
-	return false
+	return true
 }
 
 // Internal object only.
@@ -189,10 +127,8 @@ type fileWorker struct {
 	cfg *FileWriterConfig
 
 	pathTemplate *template.Template
-	linetype     string
 	index        int
 	uid          string
-	region       string
 	rotateIdx    int64
 
 	currentPath string
@@ -210,7 +146,7 @@ const (
 	fileWorkerChunkBuffer = 128 * 1024
 )
 
-func newWorker(cfg *FileWriterConfig, linetype string, index int, uid string, upch chan<- string) *fileWorker {
+func newWorker(cfg *FileWriterConfig, index int, uid string, upch chan<- string) *fileWorker {
 	pathTemplate, err := template.New("fileWorkerType").Parse(cfg.PathString)
 	if err != nil {
 		panic(err.Error())
@@ -222,10 +158,8 @@ func newWorker(cfg *FileWriterConfig, linetype string, index int, uid string, up
 		upch:         upch,
 		cfg:          cfg,
 		pathTemplate: pathTemplate,
-		linetype:     linetype,
 		index:        index,
 		uid:          uid,
-		region:       cfg.Region,
 		useZstd:      false,
 		rotateIdx:    0,
 	}
@@ -252,7 +186,6 @@ func (fw *fileWorker) makePath() string {
 	var doc bytes.Buffer
 
 	replacementVars := map[string]string{
-		"Type":     fw.linetype,
 		"Index":    fmt.Sprintf("%04d", fw.index),
 		"Year":     fmt.Sprintf("%04d", now.Year()),
 		"Month":    fmt.Sprintf("%02d", now.Month()),
@@ -260,9 +193,7 @@ func (fw *fileWorker) makePath() string {
 		"Hour":     fmt.Sprintf("%02d", now.Hour()),
 		"Minute":   fmt.Sprintf("%02d", now.Minute()),
 		"Second":   fmt.Sprintf("%02d", now.Second()),
-		"Instance": fw.cfg.InstanceID,
 		"UUID":     fw.uid,
-		"Region":   fw.region,
 		"Rotation": fmt.Sprintf("%06d", fw.rotateIdx),
 	}
 	err := fw.pathTemplate.Execute(&doc, replacementVars)
