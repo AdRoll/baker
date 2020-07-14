@@ -48,9 +48,8 @@ func (r *dummyOutput) CanShard() bool { return false }
 
 func TestCustomFieldSeparator(t *testing.T) {
 	comp := Components{
-		Inputs:      []InputDesc{dummyInputDesc},
-		Outputs:     []OutputDesc{dummyOutputDesc},
-		FieldByName: func(name string) (FieldIndex, bool) { return 0, true },
+		Inputs:  []InputDesc{dummyInputDesc},
+		Outputs: []OutputDesc{dummyOutputDesc},
 	}
 
 	t.Run("without separator in conf", func(t *testing.T) {
