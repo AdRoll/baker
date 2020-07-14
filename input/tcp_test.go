@@ -58,7 +58,7 @@ func TestTCP1by1(t *testing.T) {
 
 		for i := 0; i < nlines; i++ {
 			buf := &bytes.Buffer{}
-			l := baker.LogLine{}
+			l := baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
 			l.Set(1, []byte("field"))
 			buf.Write(l.ToText(nil))
 			buf.WriteByte('\n')
@@ -144,7 +144,7 @@ func TestTCPChunks(t *testing.T) {
 		for i := 0; i < nchunks; i++ {
 			buf.Reset()
 			for j := 0; j < chunksize; j++ {
-				l := baker.LogLine{}
+				l := baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
 				l.Set(1, []byte("field"))
 				buf.Write(l.ToText(nil))
 				buf.WriteByte('\n')
@@ -234,7 +234,7 @@ func TestTCPStopChunk(t *testing.T) {
 		for {
 			buf.Reset()
 			for i := 0; i < chunksz; i++ {
-				l := baker.LogLine{}
+				l := baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
 				l.Set(1, []byte("field"))
 				buf.Write(l.ToText(nil))
 				buf.WriteByte('\n')

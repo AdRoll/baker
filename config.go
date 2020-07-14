@@ -5,6 +5,7 @@ import (
 	"io"
 	"reflect"
 	"strings"
+	"unicode"
 
 	"github.com/rasky/toml"
 )
@@ -82,6 +83,12 @@ type ConfigUser struct {
 	Config *toml.Primitive
 }
 
+// ConfigCSV defines configuration for CSV records
+type ConfigCSV struct {
+	// FieldSeparator defines the fields separator used in the records
+	FieldSeparator string `toml:"field_separator"`
+}
+
 // A ConfigGeneral specifies general configuration for the whole topology.
 type ConfigGeneral struct {
 	Datadog       bool
@@ -104,6 +111,7 @@ type Config struct {
 	Upload      ConfigUpload
 	General     ConfigGeneral
 	User        []ConfigUser
+	CSV         ConfigCSV
 
 	shardingFuncs map[FieldIndex]ShardingFunc
 	validate      ValidationFunc
@@ -125,17 +133,36 @@ func (c *Config) String() string {
 	return s
 }
 
-func (c *Config) fillDefaults() {
+func (c *Config) fillDefaults() error {
 	c.Input.fillDefaults()
 	c.FilterChain.fillDefaults()
 	c.Output.fillDefaults()
 	c.Upload.fillDefaults()
 	c.General.fillDefaults()
-
-	if c.createRecord == nil {
-		// For now, leave Logline as the default
-		c.createRecord = func() Record { return &LogLine{} }
+	if err := c.fillCreateRecordDefault(); err != nil {
+		return err
 	}
+	return nil
+}
+
+func (c *Config) fillCreateRecordDefault() error {
+	if c.createRecord == nil {
+		fieldSeparator := DefaultLogLineFieldSeparator
+		if c.CSV.FieldSeparator != "" {
+			sep := []rune(c.CSV.FieldSeparator)
+			if len(sep) != 1 || sep[0] > unicode.MaxASCII {
+				return fmt.Errorf("Separator must be a 1-byte string or hex char")
+			}
+			fieldSeparator = byte(sep[0])
+		}
+		// For now, leave Logline as the default
+		c.createRecord = func() Record {
+			return &LogLine{
+				FieldSeparator: fieldSeparator,
+			}
+		}
+	}
+	return nil
 }
 
 func (c *ConfigInput) fillDefaults() {
@@ -299,7 +326,5 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 	cfg.fieldName = comp.FieldName
 
 	// Fill-in with missing defaults
-	cfg.fillDefaults()
-
-	return &cfg, nil
+	return &cfg, cfg.fillDefaults()
 }

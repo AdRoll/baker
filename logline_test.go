@@ -39,7 +39,6 @@ func TestLogLineParse_separators(t *testing.T) {
 			reset: true,
 		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			defer func() {
@@ -50,9 +49,9 @@ func TestLogLineParse_separators(t *testing.T) {
 
 			b := bytes.Buffer{}
 			for i := 0; i < tt.nseps; i++ {
-				b.WriteByte('\x1e')
+				b.WriteByte(DefaultLogLineFieldSeparator)
 			}
-			ll := LogLine{}
+			ll := LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
 			ll.Parse(b.Bytes(), nil)
 
 			if tt.reset && ll.data != nil {
@@ -67,7 +66,7 @@ func TestLogLineParse_separators(t *testing.T) {
 
 func TestLogLineToTextWithFieldsHigherThan256(t *testing.T) {
 	for i := FieldIndex(0); i < LogLineNumFields; i++ {
-		ll := LogLine{}
+		ll := LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
 		ll.Set(i, []byte("myvalue"))
 		if !bytes.Contains(ll.ToText(nil), []byte("myvalue")) {
 			t.Fatalf("Field %d: %s not found in ll.ToText()", i, "myvalue")
@@ -77,7 +76,7 @@ func TestLogLineToTextWithFieldsHigherThan256(t *testing.T) {
 
 func TestLogLineMeta(t *testing.T) {
 	var ll Record
-	ll = &LogLine{}
+	ll = &LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
 	_, ok := ll.Meta("foo")
 	if ok {
 		t.Errorf("ll.Meta(%q) = _, %v;  want _, false", "foo", ok)
@@ -92,7 +91,7 @@ func TestLogLineMeta(t *testing.T) {
 
 func TestLogLineCache(t *testing.T) {
 	var ll Record
-	ll = &LogLine{}
+	ll = &LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
 
 	testCache := func() {
 		_, ok := ll.Cache().Get("foo")
@@ -125,5 +124,91 @@ func TestLogLineCache(t *testing.T) {
 }
 
 func TestLogLineRecordConformance(t *testing.T) {
-	RecordConformanceTest(t, &LogLine{})
+	RecordConformanceTest(t, &LogLine{FieldSeparator: DefaultLogLineFieldSeparator})
+}
+
+func TestLogLineParseCustomSeparator(t *testing.T) {
+	t.Run("default comma separator", func(t *testing.T) {
+		text := []byte("value1,value2,,value4")
+		ll := LogLine{FieldSeparator: 44}
+		ll.Parse(text, nil)
+		if !bytes.Equal(ll.Get(0), []byte("value1")) {
+			t.Fatalf("want: %v, got: %v", "value1", ll.Get(0))
+		}
+		if !bytes.Equal(ll.Get(1), []byte("value2")) {
+			t.Fatalf("want: %v, got: %v", "value2", ll.Get(1))
+		}
+		if !bytes.Equal(ll.Get(2), []byte("")) {
+			t.Fatalf("want: %v, got: %v", "", ll.Get(2))
+		}
+		if !bytes.Equal(ll.Get(3), []byte("value4")) {
+			t.Fatalf("want: %v, got: %v", "value4", ll.Get(3))
+		}
+	})
+
+	t.Run("custom dot separator", func(t *testing.T) {
+		text := []byte("value1.value2..value4")
+		ll := LogLine{FieldSeparator: 46}
+		ll.Parse(text, nil)
+		if !bytes.Equal(ll.Get(0), []byte("value1")) {
+			t.Fatalf("want: %v, got: %v", "value1", ll.Get(0))
+		}
+		if !bytes.Equal(ll.Get(1), []byte("value2")) {
+			t.Fatalf("want: %v, got: %v", "value2", ll.Get(1))
+		}
+		if !bytes.Equal(ll.Get(2), []byte("")) {
+			t.Fatalf("want: %v, got: %v", "", ll.Get(2))
+		}
+		if !bytes.Equal(ll.Get(3), []byte("value4")) {
+			t.Fatalf("want: %v, got: %v", "value4", ll.Get(3))
+		}
+	})
+}
+
+func TestLogLineToTextCustomSeparator(t *testing.T) {
+	t.Run("default comma separator", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: 44}
+		ll.Set(0, []byte("value1"))
+		ll.Set(1, []byte("value2"))
+		ll.Set(3, []byte("value4"))
+		text := ll.ToText(nil)
+		exp := []byte("value1,value2,,value4,,")
+		if !bytes.Equal(text, exp) {
+			t.Fatalf("want: %s got: %s", exp, text)
+		}
+	})
+
+	t.Run("custom dot separator", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: 46}
+		ll.Set(0, []byte("value1"))
+		ll.Set(1, []byte("value2"))
+		ll.Set(3, []byte("value4"))
+		text := ll.ToText(nil)
+		exp := []byte("value1.value2..value4..")
+		if !bytes.Equal(text, exp) {
+			t.Fatalf("want: %s got: %s", exp, text)
+		}
+	})
+}
+
+func BenchmarkParse(b *testing.B) {
+	text := []byte("value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value")
+	b.Run("bench", func(b *testing.B) {
+		for n := 0; n < b.N; n++ {
+			ll := LogLine{FieldSeparator: 44}
+			ll.Parse(text, nil)
+		}
+	})
+}
+
+func BenchmarkToText(b *testing.B) {
+	b.Run("bench", func(b *testing.B) {
+		ll := LogLine{FieldSeparator: 44}
+		for i := 0; i < 100; i++ {
+			ll.Set(FieldIndex(i), []byte("value"))
+		}
+		for n := 0; n < b.N; n++ {
+			_ = ll.ToText(nil)
+		}
+	})
 }
