@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/AdRoll/baker"
-	"github.com/AdRoll/baker/filter"
 	"github.com/AdRoll/baker/input"
 	"github.com/AdRoll/baker/output"
 )
@@ -36,7 +35,6 @@ procs=1
 	`
 	c := baker.Components{
 		Inputs:      input.All,
-		Filters:     filter.All,
 		Outputs:     output.All,
 		FieldByName: fieldByName,
 	}
