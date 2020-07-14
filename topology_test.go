@@ -7,6 +7,17 @@ import (
 	"time"
 )
 
+type dummyInput struct{}
+
+func (d *dummyInput) Run(output chan<- *Data) error {
+	return nil
+}
+func (d *dummyInput) Stats() InputStats {
+	return InputStats{}
+}
+func (d *dummyInput) Stop()              {}
+func (d *dummyInput) FreeMem(data *Data) {}
+
 func TestRunFilterChainMetadata(t *testing.T) {
 	// Test the same metadata provided by Input can be accessed inside the filters,
 	// a simpler version of t.chain was used since the same LogLine received in the chain

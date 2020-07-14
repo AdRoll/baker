@@ -140,7 +140,13 @@ func (c *Config) fillDefaults() error {
 	c.Output.fillDefaults()
 	c.Upload.fillDefaults()
 	c.General.fillDefaults()
+	if err := c.fillCreateRecordDefault(); err != nil {
+		return err
+	}
+	return nil
+}
 
+func (c *Config) fillCreateRecordDefault() error {
 	if c.createRecord == nil {
 		fieldSeparator := DefaultLogLineFieldSeparator
 		if c.CSV.FieldSeparator != "" {
@@ -160,7 +166,6 @@ func (c *Config) fillDefaults() error {
 			}
 		}
 	}
-
 	return nil
 }
 
