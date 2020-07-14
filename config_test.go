@@ -5,81 +5,61 @@ import (
 )
 
 func TestFillCreateRecordDefault(t *testing.T) {
-	t.Run("without separator in conf", func(t *testing.T) {
-		cfg := Config{}
-		if err := cfg.fillCreateRecordDefault(); err != nil {
-			t.Fatalf("unexpected err: %v", err)
-		}
-		ll := cfg.createRecord().(*LogLine)
-		if ll.FieldSeparator != DefaultLogLineFieldSeparator {
-			t.Fatalf("want: %v, got: %v", DefaultLogLineFieldSeparator, ll.FieldSeparator)
-		}
-	})
+	tests := []struct {
+		name    string
+		field   string
+		want    byte
+		wantErr bool
+	}{
+		{
+			name:  "default",
+			field: "",
+			want:  DefaultLogLineFieldSeparator,
+		},
+		{
+			name:  "explicit comma",
+			field: ",",
+			want:  DefaultLogLineFieldSeparator,
+		},
+		{
+			name:  "record separator",
+			field: "\u001e",
+			want:  0x1e,
+		},
+		{
+			name:  "dot",
+			field: ".",
+			want:  '.',
+		},
+		{
+			name:    "not ascii",
+			field:   "à",
+			wantErr: true,
+		},
+		{
+			name:    "2 chars",
+			field:   ",,",
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cfg := Config{
+				CSV: ConfigCSV{
+					FieldSeparator: tt.field,
+				},
+			}
+			err := cfg.fillCreateRecordDefault()
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("Config.fillCreateRecordDefault() err: %v, wantErr: %v", err, tt.wantErr)
+				}
+				return
+			}
 
-	t.Run("with comma separator", func(t *testing.T) {
-		cfg := Config{
-			CSV: ConfigCSV{
-				FieldSeparator: ",",
-			},
-		}
-		if err := cfg.fillCreateRecordDefault(); err != nil {
-			t.Fatalf("unexpected err: %v", err)
-		}
-		ll := cfg.createRecord().(*LogLine)
-		if ll.FieldSeparator != DefaultLogLineFieldSeparator {
-			t.Fatalf("want: %v, got: %v", DefaultLogLineFieldSeparator, ll.FieldSeparator)
-		}
-	})
-
-	t.Run("with record separator", func(t *testing.T) {
-		cfg := Config{
-			CSV: ConfigCSV{
-				FieldSeparator: "\u001e",
-			},
-		}
-		if err := cfg.fillCreateRecordDefault(); err != nil {
-			t.Fatalf("unexpected err: %v", err)
-		}
-		ll := cfg.createRecord().(*LogLine)
-		if ll.FieldSeparator != 30 {
-			t.Fatalf("want: %v, got: %v", 30, ll.FieldSeparator)
-		}
-	})
-
-	t.Run("with dot separator", func(t *testing.T) {
-		cfg := Config{
-			CSV: ConfigCSV{
-				FieldSeparator: ".",
-			},
-		}
-		if err := cfg.fillCreateRecordDefault(); err != nil {
-			t.Fatalf("unexpected err: %v", err)
-		}
-		ll := cfg.createRecord().(*LogLine)
-		if ll.FieldSeparator != 46 {
-			t.Fatalf("want: %v, got: %v", 46, ll.FieldSeparator)
-		}
-	})
-
-	t.Run("wrong ascii separator", func(t *testing.T) {
-		cfg := Config{
-			CSV: ConfigCSV{
-				FieldSeparator: "è",
-			},
-		}
-		if err := cfg.fillCreateRecordDefault(); err == nil {
-			t.Fatal("unexpected nil err")
-		}
-	})
-
-	t.Run("separator too long", func(t *testing.T) {
-		cfg := Config{
-			CSV: ConfigCSV{
-				FieldSeparator: ".,",
-			},
-		}
-		if err := cfg.fillCreateRecordDefault(); err == nil {
-			t.Fatal("unexpected nil err")
-		}
-	})
+			if sep := cfg.createRecord().(*LogLine).FieldSeparator; sep != tt.want {
+				t.Errorf(`got separator "%c" (%v), want "%c" (%v)`, sep, sep, tt.want, tt.want)
+			}
+		})
+	}
 }

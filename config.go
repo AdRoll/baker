@@ -326,9 +326,5 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 	cfg.fieldName = comp.FieldName
 
 	// Fill-in with missing defaults
-	if err := cfg.fillDefaults(); err != nil {
-		return nil, err
-	}
-
-	return &cfg, nil
+	return &cfg, cfg.fillDefaults()
 }
