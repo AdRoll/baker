@@ -118,9 +118,8 @@ type Config struct {
 	validate      ValidationFunc
 	createRecord  func() Record
 
-	fieldByName    func(string) (FieldIndex, bool)
-	fieldName      func(FieldIndex) string
-	fieldSeparator byte
+	fieldByName func(string) (FieldIndex, bool)
+	fieldName   func(FieldIndex) string
 }
 
 // String returns a string representation of the exported fields of c.
@@ -135,25 +134,34 @@ func (c *Config) String() string {
 	return s
 }
 
-func (c *Config) fillDefaults() {
+func (c *Config) fillDefaults() error {
 	c.Input.fillDefaults()
 	c.FilterChain.fillDefaults()
 	c.Output.fillDefaults()
 	c.Upload.fillDefaults()
 	c.General.fillDefaults()
 
-	if c.fieldSeparator == 0 {
-		c.fieldSeparator = DefaultLogLineFieldSeparator
-	}
-
 	if c.createRecord == nil {
+		fieldSeparator := DefaultLogLineFieldSeparator
+		if c.CSV.FieldSeparator != "" {
+			decoded, err := hex.DecodeString(c.CSV.FieldSeparator)
+			if err != nil {
+				return fmt.Errorf("Error decoding field separator: %v", err)
+			}
+			if len(decoded) != 1 {
+				return errors.New("The field separator must be a 1-byte char")
+			}
+			fieldSeparator = decoded[0]
+		}
 		// For now, leave Logline as the default
 		c.createRecord = func() Record {
 			return &LogLine{
-				FieldSeparator: c.fieldSeparator,
+				FieldSeparator: fieldSeparator,
 			}
 		}
 	}
+
+	return nil
 }
 
 func (c *ConfigInput) fillDefaults() {
@@ -309,17 +317,6 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		return nil, fmt.Errorf("invalid keys in configuration file: %v", keys)
 	}
 
-	if cfg.CSV.FieldSeparator != "" {
-		decoded, err := hex.DecodeString(cfg.CSV.FieldSeparator)
-		if err != nil {
-			return nil, fmt.Errorf("Error decoding field separator: %v", err)
-		}
-		if len(decoded) != 1 {
-			return nil, errors.New("The field separator must be a 1-byte char")
-		}
-		cfg.fieldSeparator = decoded[0]
-	}
-
 	// Copy pluggable functions
 	cfg.shardingFuncs = comp.ShardingFuncs
 	cfg.validate = comp.Validate
@@ -328,7 +325,9 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 	cfg.fieldName = comp.FieldName
 
 	// Fill-in with missing defaults
-	cfg.fillDefaults()
+	if err := cfg.fillDefaults(); err != nil {
+		return nil, err
+	}
 
 	return &cfg, nil
 }

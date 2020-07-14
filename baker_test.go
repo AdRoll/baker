@@ -67,9 +67,6 @@ name="DummyOut"
 		if cfg.CSV.FieldSeparator != "" {
 			t.Fatalf("want: %s, got: %s", "", cfg.CSV.FieldSeparator)
 		}
-		if cfg.fieldSeparator != 44 {
-			t.Fatalf("want: %v, got: %v", 44, cfg.fieldSeparator)
-		}
 	})
 
 	t.Run("with comma separator", func(t *testing.T) {
@@ -88,9 +85,6 @@ name="DummyOut"
 		if cfg.CSV.FieldSeparator != "2c" {
 			t.Fatalf("want: %s, got: %s", "2c", cfg.CSV.FieldSeparator)
 		}
-		if cfg.fieldSeparator != 44 {
-			t.Fatalf("want: %v, got: %v", 44, cfg.fieldSeparator)
-		}
 	})
 
 	t.Run("with record separator", func(t *testing.T) {
@@ -108,9 +102,6 @@ name="DummyOut"
 		}
 		if cfg.CSV.FieldSeparator != "1e" {
 			t.Fatalf("want: %s, got: %s", "1e", cfg.CSV.FieldSeparator)
-		}
-		if cfg.fieldSeparator != 30 {
-			t.Fatalf("want: %v, got: %v", 30, cfg.fieldSeparator)
 		}
 	})
 }
