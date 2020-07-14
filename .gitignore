@@ -1,2 +1,3 @@
 # Ignore files created with 'make compile-tests'
 /*.test
+cover.out
