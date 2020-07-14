@@ -11,6 +11,10 @@ test-short: ## Run tests with -short flag in the local env
 test: ## Run tests in the local env
 	go test -race ./...
 
+cover: ## Run tests and open coverage report in browser
+	go test -cover -coverprofile cover.out ./...
+	go tool cover -html cover.out
+
 compile-tests: ## Compile test and benchmarks
 	for pkg in $$(go list ./...) ; do \
 		go test -c -bench . $$pkg ; \
