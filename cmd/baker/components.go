@@ -14,9 +14,9 @@ const (
 )
 
 var components = baker.Components{
-	Inputs:        input.AllInputs(),
-	Filters:       filter.AllFilters(),
-	Outputs:       output.AllOutputs(),
+	Inputs:        input.All,
+	Filters:       filter.All,
+	Outputs:       output.All,
 	ShardingFuncs: shardingFuncs,
 	Validate:      validateLogLine,
 	FieldByName:   fieldByName,
