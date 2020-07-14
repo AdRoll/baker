@@ -1,12 +1,11 @@
 package baker
 
 import (
-	"encoding/hex"
-	"errors"
 	"fmt"
 	"io"
 	"reflect"
 	"strings"
+	"unicode"
 
 	"github.com/rasky/toml"
 )
@@ -150,14 +149,11 @@ func (c *Config) fillCreateRecordDefault() error {
 	if c.createRecord == nil {
 		fieldSeparator := DefaultLogLineFieldSeparator
 		if c.CSV.FieldSeparator != "" {
-			decoded, err := hex.DecodeString(c.CSV.FieldSeparator)
-			if err != nil {
-				return fmt.Errorf("Error decoding field separator: %v", err)
+			sep := []rune(c.CSV.FieldSeparator)
+			if len(sep) != 1 || sep[0] > unicode.MaxASCII {
+				return fmt.Errorf("Separator must be a 1-byte string or hex char")
 			}
-			if len(decoded) != 1 {
-				return errors.New("The field separator must be a 1-byte char")
-			}
-			fieldSeparator = decoded[0]
+			fieldSeparator = byte(sep[0])
 		}
 		// For now, leave Logline as the default
 		c.createRecord = func() Record {
