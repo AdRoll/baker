@@ -34,7 +34,7 @@ jobs:
 
       - name: Run examples and check results
         run: |
-          ./baker-bin ./examples/list-clause-files-comma-sep.toml
+          ./baker-bin-example ./examples/list-clause-files-comma-sep.toml
           diff /tmp/baker/output-list-clause-files-comma-sep.csv.gz ./examples/golden/list-clause-files-comma-sep.csv.gz
-          ./baker-bin ./examples/list-clause-files-record-sep.toml
+          ./baker-bin-example ./examples/list-clause-files-record-sep.toml
           diff /tmp/baker/output-list-clause-files-record-sep.csv.gz ./examples/golden/list-clause-files-record-sep.csv.gz

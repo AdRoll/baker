@@ -4,10 +4,10 @@ VERSION?=$(shell git rev-parse --verify HEAD --short=8)
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-test-short: ## Run tests with -short flag in the local env
+test-short: ## Run tests with -short flag
 	go test -short -race ./...
 
-test: ## Run tests in the local env
+test: ## Run tests
 	go test -race ./...
 
 cover: ## Run tests and open coverage report in browser
@@ -28,5 +28,5 @@ gofmt-write: ## Run gofmt locally overwriting files
 govet: ## Run go vet on the project
 	go vet ./...
 
-build: ## Build baker binary in the local env
-	go build -v -o baker-bin -ldflags "-X main.build=$(VERSION)" ./cmd/baker/
+build: ## Build an example baker binary
+	go build -v -o baker-bin-example -ldflags "-X main.build=$(VERSION)" ./examples/advanced/
