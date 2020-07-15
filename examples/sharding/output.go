@@ -33,7 +33,7 @@ func (s *Shardable) CanShard() bool {
 }
 
 func (s *Shardable) Run(input <-chan baker.OutputRecord, _ chan<- string) {
-	// Do something with the input record.
+	// Do something with `input` record.
 	// s.idx identifies the output process index and should
 	// be used to manage the sharding
 	for data := range input {
