@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"math/rand"
 	"os"
@@ -11,12 +10,7 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-var (
-	flagHelpConfig = flag.String("help", "", "show help for a `component` (use '*' to dump all)")
-	flagVersion    = flag.Bool("version", false, "print version number")
-)
-
-var build = "-- unknown --"
+var flagHelpConfig = flag.String("help", "", "show help for a `component` (use '*' to dump all)")
 
 func main() {
 	// Seed pseudo-random number generation using seconds since the epoch
@@ -27,11 +21,6 @@ func main() {
 
 	if *flagHelpConfig != "" {
 		baker.PrintHelp(os.Stderr, *flagHelpConfig, components)
-		return
-	}
-
-	if *flagVersion {
-		fmt.Printf("Baker version: %s\n", build)
 		return
 	}
 
@@ -52,11 +41,7 @@ func main() {
 	f.Close()
 
 	var duration time.Duration
-	err = baker.Main(cfg, duration)
-
-	// If there's any fatal error, dump it as Fatal,
-	// aborting with a non-zero exit code.
-	if err != nil {
+	if err := baker.Main(cfg, duration); err != nil {
 		log.Fatal(err)
 	}
 }

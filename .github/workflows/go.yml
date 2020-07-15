@@ -38,7 +38,7 @@ jobs:
 
       - name: Use advanced example to verify test topologies
         run: |
-          ./advanced ./examples/list-clause-files-comma-sep.toml
-          diff /tmp/baker/output-list-clause-files-comma-sep.csv.gz ./examples/golden/list-clause-files-comma-sep.csv.gz
-          ./advanced ./examples/list-clause-files-record-sep.toml
-          diff /tmp/baker/output-list-clause-files-record-sep.csv.gz ./examples/golden/list-clause-files-record-sep.csv.gz
+          ./advanced ./examples/toml/list-clause-files-comma-sep.toml
+          diff ./_out/output-list-clause-files-comma-sep.csv.gz ./examples/golden/list-clause-files-comma-sep.csv.gz
+          ./advanced ./examples/toml/list-clause-files-record-sep.toml
+          diff ./_out/output-list-clause-files-record-sep.csv.gz ./examples/golden/list-clause-files-record-sep.csv.gz

@@ -31,7 +31,7 @@ name = "List"
 name = "Files"
 procs=1
     [output.config]
-    PathString="/tmp/baker/output-list-clause-files-comma-sep.csv.gz"
+    PathString="./_out/output-list-clause-files-comma-sep.csv.gz"
 	`
 	c := baker.Components{
 		Inputs:      input.All,

@@ -7,10 +7,11 @@ import (
 	"github.com/AdRoll/baker/output"
 )
 
+// Some example fields
 const (
-	FieldA baker.FieldIndex = 0
-	FieldB baker.FieldIndex = 1
-	FieldC baker.FieldIndex = 2
+	Timestamp baker.FieldIndex = 0
+	Source    baker.FieldIndex = 1
+	Target    baker.FieldIndex = 2
 )
 
 var components = baker.Components{
@@ -24,30 +25,30 @@ var components = baker.Components{
 }
 
 var fields = map[string]baker.FieldIndex{
-	"fieldA": FieldA,
-	"fieldB": FieldB,
-	"fieldC": FieldC,
+	"timestamp": Timestamp,
+	"source":    Source,
+	"target":    Target,
 }
 
 var shardingFuncs = map[baker.FieldIndex]baker.ShardingFunc{
-	FieldA: fieldAToInt,
-	FieldB: fieldBToInt,
-	FieldC: fieldCToInt,
+	Timestamp: timestampToInt,
+	Source:    sourceToInt,
+	Target:    targetToInt,
 }
 
-func fieldAToInt(r baker.Record) uint64 {
-	f := r.Get(FieldA)
-	return uuidToInt(f)
+func timestampToInt(r baker.Record) uint64 {
+	f := r.Get(Timestamp)
+	return simpleHash(f)
 }
 
-func fieldBToInt(r baker.Record) uint64 {
-	f := r.Get(FieldB)
-	return uuidToInt(f)
+func sourceToInt(r baker.Record) uint64 {
+	f := r.Get(Source)
+	return simpleHash(f)
 }
 
-func fieldCToInt(r baker.Record) uint64 {
-	f := r.Get(FieldC)
-	return uuidToInt(f)
+func targetToInt(r baker.Record) uint64 {
+	f := r.Get(Target)
+	return simpleHash(f)
 }
 
 func validateLogLine(baker.Record) (bool, baker.FieldIndex) {
