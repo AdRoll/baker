@@ -1,0 +1,20 @@
+# This topology reads a zstandard file containing multiple loglines, filters them using
+# the Clause filter and saves the matching lines into a gz file
+[input]
+name="List"
+
+    [input.config]
+    files=["./testdata/list-clause-files-comma-sep.input.csv.zst"]
+
+[[filter]]
+name="ClauseFilter"
+
+    [filter.config]
+    Clause="""(or (timestamp value5) (target value6))"""
+
+[output]
+name="Files"
+procs=1
+
+    [output.config]
+    PathString="./_out/list-clause-files-comma-sep.output.csv.gz"

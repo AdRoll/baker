@@ -1,4 +1,9 @@
 # Ignore files created with 'make compile-tests'
 /*.test
 cover.out
-/baker-bin
+/baker-bin-example
+/advanced
+/basic
+/help
+/sharding
+/_out/

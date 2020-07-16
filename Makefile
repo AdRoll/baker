@@ -1,14 +1,12 @@
-# This Makefile can be used to obtain a Linux binary through docker (eg: from OSX)
-# For normal development, Docker is not required. See README.md for build instructions.
 .PHONY: build help
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-test-short: ## Run tests with -short flag in the local env
+test-short: ## Run tests with -short flag
 	go test -short -race ./...
 
-test: ## Run tests in the local env
+test: ## Run tests
 	go test -race ./...
 
 cover: ## Run tests and open coverage report in browser
@@ -28,3 +26,6 @@ gofmt-write: ## Run gofmt locally overwriting files
 
 govet: ## Run go vet on the project
 	go vet ./...
+
+build: ## Build an example baker binary
+	go build -v -o baker-bin-example ./examples/advanced/
