@@ -11,9 +11,8 @@ import (
 )
 
 func simpleHash(r baker.Record, idx baker.FieldIndex) uint64 {
-	v := r.Get(idx)
 	f := fnv.New64()
-	f.Write(v)
+	f.Write(r.Get(idx))
 	return f.Sum64()
 }
 
