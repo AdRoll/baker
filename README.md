@@ -1,9 +1,7 @@
 # Baker
 
-> This document is still WIP
-
-Baker is a library to be used to create configurable pipelines for processing log files.  
-It can read logfiles from different sources (S3, Kinesis, etc.), process them through
+Baker is a Go library able to process "records" (like log lines)  through configurable pipelines.  
+It can read records from different sources (S3, Kinesis, etc.), process them through
 custom filters and send them to some output (like DynamoDB).
 
 Baker is fully parallel and maximizes usage of both CPU-bound and I/O bound pipelines.
@@ -17,19 +15,19 @@ A pipeline is the configured set of operations that Baker performs during its ex
 
 It is defined by:
 
-* One input component, defining where to fetch log files from.
+* One input component, defining where to fetch records from.
 * Zero or more filters, which are functions that can modify records (changing fields,
   dropping them, or even "splitting" them into multiple records).
 * One output component, defining where to send the filtered records to (and which
   columns).
 * One optional upload component, defining where to send files produced by the output
-  component (if any).  The only currently supported destination is an S3 bucket+prefix.
+  component (if any).
 
 Notice that there are two main usage scenarios for Baker:
 
  1. Baker as a batch processor. In this case, Baker will go through all the records
     that are fed by the input component, process them as quickly as possible, and exit.
- 2. Baker as a daemon. In this case, baker will never exit; it will keep waiting for
+ 2. Baker as a daemon. In this case, Baker will never exit; it will keep waiting for
     incoming records from the input component (e.g.: Kinesis), process them and send
     them to the output.
 
@@ -41,8 +39,8 @@ input component is endless, Baker will never exit and thus behave like a daemon.
 ## Usage
 
 Baker uses a `baker.Config` struct to know what to do. The configuration can be either created
-manually or importing a toml file `baker.NewConfigFromToml()`. This
-function requires a `baker.Components` object including all available components.  
+manually or imported from a toml file processed by `baker.NewConfigFromToml()`. This
+function requires a `baker.Components` object including all available/required components.  
 This is an example of this struct:
 
 ```go
@@ -65,7 +63,8 @@ baker.Components{
 ```
 
 Components (inputs, filters, outputs and uploads) can be user-defined or those
-provided by baker can be used. They can also be merged in a single slice to use both.
+provided by Baker can be used. They can also be merged in a single slice to make
+all of them available.
 
 ## How to build a Baker executable
 
@@ -73,13 +72,14 @@ The `examples/` folder contains several `main()` examples:
 
 * [basic](./examples/basic/): a simple command with minimal support
 * [sharding](./examples/sharding/): shows how to use an output that supports sharding
-* [help](./examples/help/): how to build a binary that is able to show the help messages
-* [advanced](./examples/advanced/): an advanced example with most of the features supported by baker
+  (see below for details about sharding)
+* [help](./examples/help/): how to build a binary that is able to show help messages to the user
+* [advanced](./examples/advanced/): an advanced example with most of the features supported by Baker
 
 ## TOML Configuration files
 
-In case you want to configure baker starting from a toml file (which is then parsed with
-`baker.NewConfigFromToml()`), this is a minimalist Baker pipeline that reads a logfile from the disk,
+In case you want to configure Baker starting from a toml file (which is then parsed with
+`baker.NewConfigFromToml()`), this is a minimalist Baker pipeline that reads a record from the disk,
 updates its timestamp field with a "Timestamp" filter and pushes it to DynamoDB:
 
 ```toml
@@ -94,21 +94,22 @@ name="Timestamp"
 
 [output]
 name="DynamoDB"
-fields=["cookie","timestamp","recommended_products"]
+fields=["source","timestamp","user"]
 
 
     [output.config]
     regions=["us-west-2","us-east-1"]
     table="TestTableName"
-    columns=["s:AdvCookie", "n:Timestamp", "s:Products"]
+    columns=["s:Source", "n:Timestamp", "s:User"]
 ```
 
-`[input]` selects the input component, or where to read the logfiles from. In this case,
+`[input]` selects the input component, or where to read the records from. In this case,
 the `List` component is selected, which is a component that fetches logs from a list of
 local or remote paths/URLs. `[input.config]` is where component-specific configurations
 can be specified, and in this case we simply provide the `files` option to `List`. Notice
 that `List` would accept `http://` or even `s3://` URLs there in addition to local paths,
-and some more (run `./baker -help List` for more details).
+and some more (run `./baker-bin -help List` in the [help example](./examples/help/) for
+more details).
 
 `[[filter]]` selects which filters to run. In TOML syntax, the double brackets indicate
 an array of sections, so it basically means that you can define many different `[[filter]]`
@@ -127,6 +128,8 @@ Notice that this is just a selection: it is up to the output component to decide
 physically serialize those columns. For instance, the `DynamoDB` component requires the
 user to specify an option called `columns` that specifies the name and the type of the
 column where the fields will be written.
+If the `raw=true` configuration is used for the output, then all the record is sent to
+the output.
 
 ### How to create components
 
@@ -208,26 +211,69 @@ The help string can be used to build an help output (see the [help](./examples/h
 
 #### Inputs
 
-TODO
+Baker inputs are defined using the `baker.InputDesc` struct.  
+The `New` function must return a `baker.Input` component whose `Run` function
+represents the hearth of the input.  
+That function receives a channel where the data produced by the input must be
+pushed in form of a `baker.Data`.  
+The actual input data is a slice of bytes that will be parsed with `Record.Parse()`
+by Baker before sending it to the filter chain.
+The input can also add metadata to `baker.Data`. Metadata can be user-defined and
+filters must know how to read and use metadata defined by the input.
 
 #### Outputs
 
-TODO
+An output must implement the `Output` interface:
+
+```go
+type Output interface {
+    Run(in <-chan OutputRecord, upch chan<- string)
+    Stats() OutputStats
+    CanShard() bool
+}
+```
+
+The [sharding example output](./examples/sharding/output.go) is a simple implementation of
+an output and can be used as source.
+
+An output can have its own configuration and the `OutputRecord` records sent to the `Run`
+function can be the complete record (into `OutputRecord.Record`) in case the `raw=true`
+configuration has been used for the output or only a subset of fields will be sent into
+`OutputRecord.Fields` if `fields=["field", "field", ...]` is used. In this latter case
+the `OutputRecord.Fields` slice will have the same order of the `fields` configuration.
+
+If more than one `procs` is used (the default value is 32), then each output process will
+receive a subset of the records. The `OutputParams.Index` passed to the `New` function
+identifies the output process and can be used to correcly handle parallelism.
+
+Sharding (which is explained below) is strictly connected to the output component but
+it's also transparent to it. An output will never know how the sharding is calculated,
+but records with the same value on the field used to calculate sharding will be  always
+sent to the output process with the same index (unless a broken sharding function is used).
+
+The output also receives an upload channel where it can send strings to the uploader.
+Those strings will likely be paths to something produced by the output (like files)
+that the uploader must upload somewhere.
 
 #### Uploads
 
-TODO
+As explained in the output paragragh, a string channel is used by the outputs to send messages
+the the uploader. Those strings can represent, for example, file paths and those files
+could be uploaded somewhere.
+
+The uploader component is optional, if missing the string channel is simply ignored by Baker.
 
 ### How to create a '-help' command line option
 
-The [./examples/help/](./examples/help/) folder contains a working example of command that shows
-a generic help/usage message and also specific component help messages when used with `-help <ComponentName>`
+The [./examples/help/](./examples/help/) folder contains a working example of
+command that shows a generic help/usage message and also specific component
+help messages when used with `-help <ComponentName>`
 
 ## Tuning parallelism
 
 When testing Baker in staging environment, you may want to experiment with parallelism
 options to try and obtain the best performance. Keep an eye on `htop` as the pipeline
-runs: if CPUs aren't saturated, it means that baker is running I/O-bound, so depending
+runs: if CPUs aren't saturated, it means that Baker is running I/O-bound, so depending
 on the input/output configuration you may want to increase the parallelism and squeeze
 out more performance.
 
@@ -243,21 +289,22 @@ These are the options you can tune:
 Baker supports sharding of output data, depending on the value of specific fields
 in each record. Sharding makes sense only for some specific output components,
 so check each output component. A component that supports sharding must return `true`
-for the function `CanShard()`.
+from the function `CanShard()`.
 
-To configure sharding, it's sufficient to create a key `sharding` in section `[output]`,
+To configure sharding, it's sufficient to create a `sharding` key in `[output]` section,
 specifying the column on which the sharding must be executed.
 `ShardingFuncs` in `baker.Components` must include a function for the selected field and the
 function must return an index (`uint64`) for each possible value of the field. The index
 is used to choose the target output procs for the records.
 Since the sharding functions provide the capability to spread the records across different output
 `procs` (parallel goroutines), it's clear that the `[output]` configuration must include a `procs`
-value greater than 1 (the default value is 32).
+value greater than 1 (or must avoid including it as the default value is 32).
 
 ### How to implement a sharding function
 
-The [./examples/sharding/](./examples/sharding/) folder contains a working example of an output
-that supports sharding and a `main()` configuration to use it
+The [./examples/sharding/](./examples/sharding/) folder contains a working
+example of an output that supports sharding and a `main()` configuration to
+use it together with simple sharding functions.
 
 ## Stats
 
@@ -294,13 +341,13 @@ metrics that are collected and regularly sent through the agent. To configure me
 collection, use the following keys in the `[general]` section:
 
 * `datadog` (bool): activate metrics collection (default: `false`)
-* `datadog_prefix` (string): prefix for all collected metrics (default: `baker`)
+* `datadog_prefix` (string): prefix for all collected metrics (default: `Baker`)
 * `datadog_host` (string): hostname/port of the datadog agent to connect to
     (default: `127.0.0.1:8125`)
 
 ## Aborting (CTRL+C)
 
-By design, baker attempts a clean shutdown on CTRL+C (SIGINT). This means that it
+By design, Baker attempts a clean shutdown on CTRL+C (SIGINT). This means that it
 will try to flush all records that it's currently processing and correctly
 flush/close any output.
 
@@ -311,10 +358,7 @@ fast enough fo you.
 
 If you need to abort right away, you can use CTRL+\ (SIGQUIT).
 
-## Baker test suites
+## Baker test suite
 
-You can run baker tests by executing:
-
-```sh
-GOFLAGS=-mod=vendor go test -v -race ./...
-```
+You can run Baker tests as any other go project just executing `go test -v -race ./...`.  
+The code also includes several benchmarks.
