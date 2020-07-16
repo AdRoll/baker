@@ -10,9 +10,10 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-func simpleHash(b []byte) uint64 {
+func simpleHash(r baker.Record, idx baker.FieldIndex) uint64 {
+	v := r.Get(idx)
 	f := fnv.New64()
-	f.Sum(b)
+	f.Write(v)
 	return f.Sum64()
 }
 

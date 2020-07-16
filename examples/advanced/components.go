@@ -37,18 +37,15 @@ var shardingFuncs = map[baker.FieldIndex]baker.ShardingFunc{
 }
 
 func timestampToInt(r baker.Record) uint64 {
-	f := r.Get(Timestamp)
-	return simpleHash(f)
+	return simpleHash(r, Timestamp)
 }
 
 func sourceToInt(r baker.Record) uint64 {
-	f := r.Get(Source)
-	return simpleHash(f)
+	return simpleHash(r, Source)
 }
 
 func targetToInt(r baker.Record) uint64 {
-	f := r.Get(Target)
-	return simpleHash(f)
+	return simpleHash(r, Target)
 }
 
 func validateLogLine(baker.Record) (bool, baker.FieldIndex) {
