@@ -1,5 +1,4 @@
 .PHONY: build help
-VERSION?=$(shell git rev-parse --verify HEAD --short=8)
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -29,4 +28,4 @@ govet: ## Run go vet on the project
 	go vet ./...
 
 build: ## Build an example baker binary
-	go build -v -o baker-bin-example -ldflags "-X main.build=$(VERSION)" ./examples/advanced/
+	go build -v -o baker-bin-example ./examples/advanced/
