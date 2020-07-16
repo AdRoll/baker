@@ -1,4 +1,4 @@
-// This example shows how to use an output that supports sharding
+// sharding example shows how to use an output that supports sharding
 // When a shardable output is used, the parallel outputs
 // identified by the "procs" configuration value in the toml,
 // receive a subset of the processed records. The sharding function

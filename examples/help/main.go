@@ -1,5 +1,6 @@
-// This example shows how to build a simple help output.
-// A wrong invocation (no toml argument) or the -h/-help argument show the main usage help.
+// help is a simple example illustrating how to build a baker command with the ability
+// to show an help output for common usage and component-specific instructions.
+// A wrong invocation (no toml argument) or the -h/-help argument shows the main usage help.
 // Using -help together with an available component, shows its help. `-help *` shows the
 // help for all available components
 package main

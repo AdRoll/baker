@@ -1,3 +1,4 @@
+// advanced example shows a complex program using almost all baker features
 package main
 
 import (

@@ -1,3 +1,5 @@
+// basic example illustrates how to build a very simple baker-based program with just
+// input and output components
 package main
 
 import (
