@@ -69,17 +69,17 @@ provided by baker can be used. They can also be merged in a single slice to use 
 
 ## How to build a Baker executable
 
-This paragraph shows how to build a baker-based executable. Goals of this example are:
+The `examples/` folder contains several `main()` examples:
 
-* Create a `main()` function that uses Baker
-* Read Baker configuration from a TOML file
-* Provide Baker a list of components, including custom components
-* ...
+* [basic](./examples/basic/): a simple command with minimal support
+* [sharding](./examples/sharding/): shows how to use an output that supports sharding
+* [help](./examples/help/): how to build a binary that is able to show the help messages
+* [advanced](./examples/advanced/): an advanced example with most of the features supported by baker
 
 ## TOML Configuration files
 
-In case you want to configure baker starting from a toml file then parsed with
-`baker.NewConfigFromToml`, this is a minimalist Baker pipeline that reads a logfile from the disk,
+In case you want to configure baker starting from a toml file (which is then parsed with
+`baker.NewConfigFromToml()`), this is a minimalist Baker pipeline that reads a logfile from the disk,
 updates its timestamp field with a "Timestamp" filter and pushes it to DynamoDB:
 
 ```toml
@@ -132,6 +132,8 @@ column where the fields will be written.
 
 #### Filters
 
+> An example code can be found at [./examples/components/filter.go](./examples/components/filter.go)
+
 A filter must implement a `baker.Filter` interface:
 
 ```go
@@ -156,8 +158,16 @@ times.
 
 In case you plan to use a TOML configuration to build the Baker topology, the filter should also be
 described using a `baker.FilterDesc` struct. In fact a list of `baker.FilterDesc` will be used to
-populate `baker.Components`, which is an argument of `baker.NewConfigFromToml`.  
+populate `baker.Components`, which is an argument of `baker.NewConfigFromToml`. 
 
+```go
+type FilterDesc struct {
+    Name   string
+    New    func(FilterParams) (Filter, error)
+    Config interface{}
+    Help   string
+}
+```
 
 ###### Name
 
@@ -177,78 +187,24 @@ This is the constructor and returns the `baker.Filter` interface as well as a po
 
 ###### Config
 
-The filter could have a configuration (as the `[filter.config]` fields above). The `Config` field
-will be populated to a pointer to that configuration struct.
+The filter can have its own configuration (as the `[filter.config]` fields above). The `Config` field
+will be populated with a pointer to the configuration struct provided.
 
 The `New` function will receive a `baker.FilterParams`. Its `DecodedConfig` will host the filter
 configuration. It requires a type assertion to the filter configuration struct type to be used:
 
-###### Help
-
-The help string can be used to build an help output (see the "Help" paragraph).
-
-##### Example
-
-This is an example of filter, including its toml configuration.  
-The filter gets via configuration a name of the record field and a possible value. All records with
-different values for that field are filtered out.
-
 ```go
-/* TOML configuration for the field
-[[filter]]
-name = "MyFilter"
-    [filter.config]
-    FieldName = "Company"
-    AcceptedValue = "NextRoll"
-*/
-var MyFilterDesc = baker.FilterDesc{
-    Name:   "MyFilter",
-    New:    NewMyFilter,
-    Config: &MyFilterConfig{},
-    Help:   `Drops lines with invalid value for the given field`,
-}
-
-type MyFilterConfig struct {
-    FieldName     string `help:"The name of the field to filter on"`
-    AcceptedValue string `help:"The accepted value for the filtered field"`
-}
-
-type MyFilter struct {
-    numProcessedLines int64
-    numFilteredLines  int64
-    cfg               *MyFilterConfig
-    idx               baker.FieldIndex
-}
-
-func NewMyFilter(cfg baker.FilterParams) (baker.Filter, error) {
+func NewMyCustomFilter(cfg baker.FilterParams) (baker.Filter, error) {
     if cfg.DecodedConfig == nil {
-        cfg.DecodedConfig = &MyFilterConfig{}
+        cfg.DecodedConfig = &MyCustomFilterConfig{}
     }
-    dcfg := cfg.DecodedConfig.(*MyFilterConfig)
-    idx, ok := cfg.FieldByName(dcfg.FieldName)
-    if !ok { /* Return an error */ }
-    return &MyFilter{cfg: dcfg, idx: idx}
-}
-
-func (f *MyFilter) Stats() baker.FilterStats {
-    return baker.FilterStats{
-        NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-        NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
-    }
-}
-
-func (f *MyFilter) Process(l baker.Record, next func(baker.Record)) {
-    atomic.AddInt64(&onp.numProcessedLines, 1)
-
-    if !bytes.Equal(l.Get(f.idx), []byte(f.cfg.AcceptedValue)) {
-        atomic.AddInt64(&onp.numProcessedLines, 1)
-        // Filter out the record not calling next()
-        return
-    }
-    // Call next filter in the filter chain
-    next(l)
+    dcfg := cfg.DecodedConfig.(*MyCustomFilterConfig)
 }
 ```
+
+###### Help
+
+The help string can be used to build an help output (see the [help](./examples/help/) example).
 
 #### Inputs
 
@@ -264,59 +220,8 @@ TODO
 
 ### How to create a '-help' command line option
 
-The `PrintHelp` function can be used to provide a command line option to get components' help.
-
-The help message includes the generic description of the component (provided by the `Help` attribute
-of the `OutputDesc` struct) as well as the help messages for all component's configuration keys.
-
-In case `*` is used as component name, the function shows the help messages for all known components.
-
-An example of usage is:
-
-```go
-var flagPrintHelp = flag.String("help", "", "show help for a `component` (use '*' to dump all)")
-flag.Parse()
-if *flagPrintHelp != "" {
-    comp := baker.Components{
-        Inputs:  input.AllInputs(),
-        Filters: filter.AllFilters(),
-        Outputs: output.AllOutputs(),
-    }
-    PrintHelp(os.Stderr, *flagPrintHelp, comp)
-    return
-}
-```
-
-An example of help output is the following:
-
-```
-$ ./baker-bin -help DynamoDB
-=============================================
-Output: DynamoDB
-=============================================
-This output writes the filtered records to DynamoDB. It must be
-configured specifying the region, the table name, and the columns
-to write.
-Columns are specified using the syntax "t:name" where "t"
-is the type of the data, and "name" is the name of column. Supported
-types are: "n" - integers; "s" - strings.
-The first column (and field) must be the primary key.
-Keys available in the [output.config] section:
-Name               | Type               | Default                    | Help
-----------------------------------------------------------------------------------------------------
-Regions            | array of strings   | us-west-2                  | DynamoDB regions to connect to
-Table              | string             |                            | Name of the table to modify
-Columns            | array of strings   |                            | Table columns that correspond to each of
-                   |                    |                            |   the fields being written
-FlushInterval      | duration           | 1s                         | Interval at which flush the data to
-                   |                    |                            |   DynamoDB even if we have not reached 25
-                   |                    |                            |   records
-MaxWritesPerSec    | int                | 0                          | Maximum number of writes per second that
-                   |                    |                            |   DynamoDB can accept (0 for unlimited)
-MaxBackoff         | duration           | 2m                         | Maximum retry/backoff time in case of
-                   |                    |                            |   errors before giving up
-----------------------------------------------------------------------------------------------------
-```
+The [./examples/help/](./examples/help/) folder contains a working example of command that shows
+a generic help/usage message and also specific component help messages when used with `-help <ComponentName>`
 
 ## Tuning parallelism
 
@@ -345,10 +250,14 @@ specifying the column on which the sharding must be executed.
 `ShardingFuncs` in `baker.Components` must include a function for the selected field and the
 function must return an index (`uint64`) for each possible value of the field. The index
 is used to choose the target output procs for the records.
+Since the sharding functions provide the capability to spread the records across different output
+`procs` (parallel goroutines), it's clear that the `[output]` configuration must include a `procs`
+value greater than 1 (the default value is 32).
 
 ### How to implement a sharding function
 
-TODO
+The [./examples/sharding/](./examples/sharding/) folder contains a working example of an output
+that supports sharding and a `main()` configuration to use it
 
 ## Stats
 
