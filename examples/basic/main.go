@@ -10,10 +10,17 @@ import (
 	"github.com/AdRoll/baker/output"
 )
 
+// Some example fields
+const (
+	Timestamp baker.FieldIndex = 0
+	Source    baker.FieldIndex = 1
+	Target    baker.FieldIndex = 2
+)
+
 var fields = map[string]baker.FieldIndex{
-	"fieldA": 0,
-	"fieldB": 1,
-	"fieldC": 2,
+	"timestamp": Timestamp,
+	"source":    Source,
+	"target":    Target,
 }
 
 func fieldByName(key string) (baker.FieldIndex, bool) {
@@ -26,12 +33,12 @@ func main() {
 [input]
 name = "List"
 [input.config]
-    files=["./examples/data/list-clause-files-comma-sep.csv.zst"]
+    files=["./testdata/list-clause-files-comma-sep.input.csv.zst"]
 [output]
 name = "Files"
 procs=1
     [output.config]
-    PathString="./_out/output-list-clause-files-comma-sep.csv.gz"
+    PathString="./_out/list-clause-files-comma-sep.output.csv.gz"
 	`
 	c := baker.Components{
 		Inputs:      input.All,

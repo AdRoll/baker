@@ -6,29 +6,23 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-func simpleHash(b []byte) uint64 {
-	f := fnv.New64()
-	f.Sum(b)
-	return f.Sum64()
-}
-
+// We support sharding by Age or City
 var shardingFuncs = map[baker.FieldIndex]baker.ShardingFunc{
-	FieldA: fieldAToInt,
-	FieldB: fieldBToInt,
-	FieldC: fieldCToInt,
+	Age:  ageToInt,
+	City: cityToInt,
 }
 
-func fieldAToInt(r baker.Record) uint64 {
-	f := r.Get(FieldA)
-	return simpleHash(f)
+func ageToInt(r baker.Record) uint64 {
+	return simpleHash(r, Age)
 }
 
-func fieldBToInt(r baker.Record) uint64 {
-	f := r.Get(FieldB)
-	return simpleHash(f)
+func cityToInt(r baker.Record) uint64 {
+	return simpleHash(r, City)
 }
 
-func fieldCToInt(r baker.Record) uint64 {
-	f := r.Get(FieldC)
-	return simpleHash(f)
+func simpleHash(r baker.Record, idx baker.FieldIndex) uint64 {
+	v := r.Get(idx)
+	f := fnv.New64()
+	f.Write(v)
+	return f.Sum64()
 }

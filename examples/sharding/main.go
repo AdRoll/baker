@@ -18,19 +18,27 @@ import (
 
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/input"
-	"github.com/AdRoll/baker/output"
 )
 
+// Some example fields
 const (
-	FieldA baker.FieldIndex = 0
-	FieldB baker.FieldIndex = 1
-	FieldC baker.FieldIndex = 2
+	ID        baker.FieldIndex = 0
+	FirstName baker.FieldIndex = 1
+	LastName  baker.FieldIndex = 2
+	Age       baker.FieldIndex = 3
+	Street    baker.FieldIndex = 4
+	City      baker.FieldIndex = 5
+	Dollar    baker.FieldIndex = 6
 )
 
 var fields = map[string]baker.FieldIndex{
-	"fieldA": FieldA,
-	"fieldB": FieldB,
-	"fieldC": FieldC,
+	"id":         ID,
+	"first_name": FirstName,
+	"last_name":  LastName,
+	"age":        Age,
+	"street":     Street,
+	"city":       City,
+	"dollar":     Dollar,
 }
 
 func fieldByName(key string) (baker.FieldIndex, bool) {
@@ -40,7 +48,7 @@ func fieldByName(key string) (baker.FieldIndex, bool) {
 
 var components = baker.Components{
 	Inputs:        input.All,
-	Outputs:       append(output.All, ShardableDesc),
+	Outputs:       []baker.OutputDesc{ShardableDesc},
 	ShardingFuncs: shardingFuncs,
 	FieldByName:   fieldByName,
 }
@@ -50,11 +58,11 @@ func main() {
 [input]
 name="List"
 [input.config]
-	files=["./examples/data/list-clause-files-comma-sep.csv.zst"]
+	files=["./testdata/customers_random.input.csv.zst"]
 [output]
 name="Shardable"
-sharding="fieldA"
-procs=3
+sharding="age" # "city" can be used as well
+procs=10
 `
 
 	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
