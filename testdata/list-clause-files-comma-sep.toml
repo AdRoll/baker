@@ -4,7 +4,7 @@
 name="List"
 
     [input.config]
-    files=["./examples/data/list-clause-files-comma-sep.csv.zst"]
+    files=["./testdata/list-clause-files-comma-sep.input.csv.zst"]
 
 [[filter]]
 name="ClauseFilter"
@@ -17,4 +17,4 @@ name="Files"
 procs=1
 
     [output.config]
-    PathString="./_out/output-list-clause-files-comma-sep.csv.gz"
+    PathString="./_out/list-clause-files-comma-sep.output.csv.gz"

@@ -42,17 +42,17 @@ func testE2EFullTopology(pkg, toml, got, want string) func(t *testing.T) {
 }
 
 func TestE2EFullTopology(t *testing.T) {
-	defer os.RemoveAll("_out")
+	defer os.RemoveAll("./_out")
 
 	t.Run("advanced/csv-record-sep", testE2EFullTopology(
-		"./examples/advanced/", "./examples/toml/list-clause-files-record-sep.toml",
-		"./_out/output-list-clause-files-record-sep.csv.gz",
-		"./examples/golden/list-clause-files-record-sep.csv.gz",
+		"./examples/advanced/", "./testdata/list-clause-files-record-sep.toml",
+		"./_out/list-clause-files-record-sep.output.csv.gz",
+		"./testdata/list-clause-files-record-sep.golden.csv.gz",
 	))
 
 	t.Run("advanced/csv-comma", testE2EFullTopology(
-		"./examples/advanced/", "./examples/toml/list-clause-files-comma-sep.toml",
-		"./_out/output-list-clause-files-comma-sep.csv.gz",
-		"./examples/golden/list-clause-files-comma-sep.csv.gz",
+		"./examples/advanced/", "./testdata/list-clause-files-comma-sep.toml",
+		"./_out/list-clause-files-comma-sep.output.csv.gz",
+		"./testdata/list-clause-files-comma-sep.golden.csv.gz",
 	))
 }

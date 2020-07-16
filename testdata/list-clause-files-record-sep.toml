@@ -7,7 +7,7 @@ field_separator="\u001e"
 name="List"
 
     [input.config]
-    files=["./examples/data/list-clause-files-record-sep.csv.zst"]
+    files=["./testdata/list-clause-files-record-sep.input.csv.zst"]
 
 [[filter]]
 name="ClauseFilter"
@@ -20,4 +20,4 @@ name="Files"
 procs=1
 
     [output.config]
-    PathString="./_out/output-list-clause-files-record-sep.csv.gz"
+    PathString="./_out/list-clause-files-record-sep.output.csv.gz"
