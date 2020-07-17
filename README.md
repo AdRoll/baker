@@ -135,7 +135,7 @@ the output.
 
 #### Filters
 
-> An example code can be found at [./examples/components/filter.go](./examples/components/filter.go)
+> An example code can be found at [./examples/filtering/filter.go](./examples/filtering/filter.go)
 
 A filter must implement a `baker.Filter` interface:
 
