@@ -57,14 +57,15 @@ func main() {
 	toml := `
 [input]
 name="List"
-[input.config]
+
+	[input.config]
 	files=["./testdata/customers_random.input.csv.zst"]
+
 [output]
 name="Shardable"
 sharding="age" # "city" can be used as well
 procs=10
 `
-
 	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
 	if err != nil {
 		log.Fatal(err)

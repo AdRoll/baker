@@ -34,14 +34,17 @@ func main() {
 	toml := `
 [input]
 name = "List"
-[input.config]
-    files=["./testdata/list-clause-files-comma-sep.input.csv.zst"]
+
+	[input.config]
+	files=["testdata/input.csv.zst"]
+
 [output]
 name = "Files"
 procs=1
-    [output.config]
-    PathString="./_out/list-clause-files-comma-sep.output.csv.gz"
-	`
+
+	[output.config]
+	PathString="./_out/output.csv.gz"
+`
 	c := baker.Components{
 		Inputs:      input.All,
 		Outputs:     output.All,
