@@ -9,8 +9,25 @@ import (
 	"testing"
 )
 
+func TestExampleHelp(t *testing.T) {
+	defer os.RemoveAll("./_out")
+
+	cmd := exec.Command("go", "build", "-o", "_out/help", "./examples/help")
+	if err := cmd.Run(); err != nil {
+		t.Fatalf("error: go build ./examples/help: %v", err)
+	}
+}
+
 func TestE2EFullTopology(t *testing.T) {
 	defer os.RemoveAll("./_out")
+
+	t.Run("basic", testE2EFullTopology(
+		"./examples/basic/", "", "", "",
+	))
+
+	t.Run("sharding", testE2EFullTopology(
+		"./examples/sharding/", "", "", "",
+	))
 
 	t.Run("advanced/csv", testE2EFullTopology(
 		"./examples/advanced/", "testdata/advanced_csv_example.toml",
@@ -30,6 +47,12 @@ func testE2EFullTopology(pkg, toml, got, want string) func(t *testing.T) {
 		cmd := exec.Command("go", "run", pkg, toml)
 		if out, err := cmd.CombinedOutput(); err != nil {
 			t.Fatalf("command failed: %s\n%s", err, string(out))
+		}
+
+		if got == "" && want == "" {
+			// Only check that the topology builds and runs without errors
+			// but do not check output
+			return
 		}
 
 		ok, err := diff(got, want)
