@@ -1,0 +1,11 @@
+[input]
+name = "List"
+
+[input.config]
+    files=["testdata/input.csv.zst"]
+
+[output]
+name = "Files"
+procs=1
+    [output.config]
+    PathString="./_out/output.csv.gz"

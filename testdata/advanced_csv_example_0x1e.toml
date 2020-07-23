@@ -1,10 +1,13 @@
 # This topology reads a zstandard file containing multiple loglines, filters them using
 # the Clause filter and saves the matching lines into a gz file
+[csv]
+field_separator="\u001e"
+
 [input]
 name="List"
 
     [input.config]
-    files=["./testdata/list-clause-files-comma-sep.input.csv.zst"]
+    files=["testdata/input.csv.0x1e.zst"]
 
 [[filter]]
 name="ClauseFilter"
@@ -17,4 +20,4 @@ name="Files"
 procs=1
 
     [output.config]
-    PathString="./_out/list-clause-files-comma-sep.output.csv.gz"
+    PathString="_out/0x1e.csv.gz"
