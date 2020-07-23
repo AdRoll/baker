@@ -1,28 +1,12 @@
 package baker
 
 import (
-	"os"
-	"runtime/debug"
 	"time"
 
 	log "github.com/sirupsen/logrus"
 )
 
 func Main(cfg *Config, duration time.Duration) error {
-	/* TODO[opensource]
-	   We've seen that the GOGC value depends a lot from the type of job (batch vs always-on)
-	   Instead of setting the value based on an environment variable we could add a new general
-	   configuration (with default to 800) that could accept both a number or a fixed list of
-	   general values like `batch`, `daemon`, etc
-	*/
-	// This program generates lots of small trash, but the live heap
-	// is usually quite small; this means that, by default, the GC
-	// triggers quite often. To avoid spending too much CPU time in GC,
-	// default to GOGC=800, which trades memory occupation with CPU time.
-	if os.Getenv("GOGC") == "" {
-		debug.SetGCPercent(800)
-	}
-
 	topology, err := NewTopologyFromConfig(cfg)
 	if err != nil {
 		log.Fatal(err)
