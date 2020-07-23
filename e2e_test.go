@@ -9,18 +9,20 @@ import (
 	"testing"
 )
 
-func diff(f1, f2 string) (bool, error) {
-	b1, err := ioutil.ReadFile(f1)
-	if err != nil {
-		return false, fmt.Errorf("can't read file 1 %q: %s", f1, err)
-	}
+func TestE2EFullTopology(t *testing.T) {
+	defer os.RemoveAll("./_out")
 
-	b2, err := ioutil.ReadFile(f2)
-	if err != nil {
-		return false, fmt.Errorf("can't read file 2 %q: %s", f2, err)
-	}
+	t.Run("advanced/csv", testE2EFullTopology(
+		"./examples/advanced/", "testdata/advanced_csv_example.toml",
+		"_out/csv.gz",
+		"testdata/advanced_csv.golden",
+	))
 
-	return bytes.Equal(b1, b2), nil
+	t.Run("advanced/csv-0x1e", testE2EFullTopology(
+		"./examples/advanced/", "./testdata/advanced_csv_example_0x1e.toml",
+		"_out/0x1e.csv.gz",
+		"testdata/advanced_csv_0x1e.golden",
+	))
 }
 
 func testE2EFullTopology(pkg, toml, got, want string) func(t *testing.T) {
@@ -41,18 +43,16 @@ func testE2EFullTopology(pkg, toml, got, want string) func(t *testing.T) {
 	}
 }
 
-func TestE2EFullTopology(t *testing.T) {
-	defer os.RemoveAll("./_out")
+func diff(f1, f2 string) (bool, error) {
+	b1, err := ioutil.ReadFile(f1)
+	if err != nil {
+		return false, fmt.Errorf("can't read file 1 %q: %s", f1, err)
+	}
 
-	t.Run("advanced/csv-0x1e", testE2EFullTopology(
-		"./examples/advanced/", "./testdata/advanced_csv_example_0x1e.toml",
-		"_out/0x1e.csv.gz",
-		"testdata/advanced_csv_0x1e.golden",
-	))
+	b2, err := ioutil.ReadFile(f2)
+	if err != nil {
+		return false, fmt.Errorf("can't read file 2 %q: %s", f2, err)
+	}
 
-	t.Run("advanced/csv", testE2EFullTopology(
-		"./examples/advanced/", "testdata/advanced_csv_example.toml",
-		"_out/csv.gz",
-		"testdata/advanced_csv.golden",
-	))
+	return bytes.Equal(b1, b2), nil
 }
