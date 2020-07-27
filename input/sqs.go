@@ -12,6 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/awsutils"
 	"github.com/AdRoll/baker/input/inpututils"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -95,7 +96,7 @@ func NewSQS(cfg baker.InputParams) (baker.Input, error) {
 
 func (s *SQS) pollQueue(sqsurl string) {
 	ctxLog := log.WithFields(log.Fields{"f": "SQS.pollQueue", "url": sqsurl})
-	backoff := awsDefaultBackoff
+	backoff := awsutils.DefaultBackoff
 	for {
 		resp, err := s.svc.ReceiveMessage(&sqs.ReceiveMessageInput{
 			QueueUrl:        aws.String(sqsurl),

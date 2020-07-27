@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/awsutils"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -105,7 +106,7 @@ func newDynamoProcess(db *dynamodb.DynamoDB, region string, maxbackoff time.Dura
 
 func (dp *dynamoProcess) doRequest(inp *dynamodb.BatchWriteItemInput) error {
 	var err error
-	backoff := awsDefaultBackoff
+	backoff := awsutils.DefaultBackoff
 	deadline := time.Now().Add(dp.maxbackoff)
 
 	for time.Now().Before(deadline) {
@@ -248,7 +249,7 @@ func NewDynamoWriter(cfg baker.OutputParams) (baker.Output, error) {
 	}
 
 	for _, region := range dcfg.Regions {
-		if !awsRegions[region] {
+		if !awsutils.IsValidRegion(region) {
 			return nil, fmt.Errorf("invalid region name: %q", region)
 		}
 		db := DynamoGlobals.Get(region)
