@@ -57,6 +57,10 @@ type S3Config struct {
 }
 
 func (cfg *S3Config) fillDefaults() error {
+	if cfg.Region == "" {
+		return errors.New("Region is a required parameter")
+	}
+
 	if cfg.Prefix == "" {
 		cfg.Prefix = "/"
 	}
