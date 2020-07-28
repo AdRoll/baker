@@ -154,7 +154,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	if cfg.Upload.Name != "" {
 		upCfg := UploadParams{
 			ComponentParams{
-				DecodedConfig: cfg.Input.DecodedConfig,
+				DecodedConfig: cfg.Upload.DecodedConfig,
 				FieldByName:   cfg.fieldByName,
 				FieldName:     cfg.fieldName,
 				CreateRecord:  cfg.createRecord,
