@@ -50,6 +50,10 @@ type S3Config struct {
 	Retries        int           `help:"Number of retries before a failed upload" default:"3"`
 	Concurrency    int           `help:"Number of concurrent workers" default:"5"`
 	Interval       time.Duration `help:"Period at which the source path is scanned" default:"15s"`
+
+	// set to a closure that removes the temporary staging directory in case we
+	// created it ourselves. noop if the user provided the staging area themselves.
+	rmdir func()
 }
 
 func (cfg *S3Config) fillDefaults() error {
@@ -57,13 +61,16 @@ func (cfg *S3Config) fillDefaults() error {
 		cfg.Prefix = "/"
 	}
 	if cfg.StagingPath == "" {
-		// TODO(arl): remove temp directory if we created ourselves
 		dir, err := ioutil.TempDir("", "baker-s3upload-staging-*")
 		if err != nil {
 			return fmt.Errorf("can't create staging path: %v", err)
 		}
 		cfg.StagingPath = dir
+		cfg.rmdir = func() { os.RemoveAll(dir) }
+	} else {
+		cfg.rmdir = func() {} //noop
 	}
+
 	if cfg.SourceBasePath == "" {
 		return errors.New("SourceBasePath must be set")
 	}
@@ -183,6 +190,8 @@ func (u *S3) Stop() {
 		// initiated call and wait for it to have terminated.
 		close(u.quit)
 		u.wgUpload.Wait()
+
+		u.Cfg.rmdir()
 	})
 }
 
