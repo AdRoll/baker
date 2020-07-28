@@ -28,13 +28,26 @@ var S3Desc = baker.UploadDesc{
 	Help:   "S3Uploader uploads the content of a directory to S3\n",
 }
 
+// S3Config holds the configuration for the S3 uploader.
+//
+// Each local path sent to the uploader channel in Run is sent to S3.
+// The S3 destination of such files is determined by:
+// - Bucket: S3 bucket name
+// - Prefix: s3://bucket/prefix
+// - the final component is the path of the file to upload that is relative
+// to SourceBasePath. For example, if SourceBasePath is "/tmp/out",
+// and the file to upload is "/tmp/out/foo/bar/file.gz", the final S3 path is:
+// s3://bucket/prefix/foo/bar/file.gz.
+//
+// All files received by the uploader should be absolute and rooted at
+// SourceBasePath.
 type S3Config struct {
-	Region         string        `help:"S3 region to upload to"`
-	Bucket         string        `help:"Name of the destination S3 bucket"`
+	SourceBasePath string        `help:"Base path used to consider the final S3 path. (required)"`
+	Region         string        `help:"S3 region to upload to. (required)"`
+	Bucket         string        `help:"S3 bucket to upload to. (required)"`
 	Prefix         string        `help:"Prefix on the destination bucket" default:"/"`
-	StagingPath    string        `help:"Path of the local staging area, if empty use a temporary directory"`
-	SourceBasePath string        `help:"Path of the base source path (required)"`
-	Retries        int           `help:"Number of retries" default:"3"`
+	StagingPath    string        `help:"Local staging area to copy files to before upload. If empty use a temporary directory"`
+	Retries        int           `help:"Number of retries before a failed upload" default:"3"`
 	Concurrency    int           `help:"Number of concurrent workers" default:"5"`
 	Interval       time.Duration `help:"Period at which the source path is scanned" default:"15s"`
 }
