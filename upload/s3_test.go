@@ -109,6 +109,7 @@ func TestS3Upload(t *testing.T) {
 			DecodedConfig: &S3Config{
 				SourceBasePath: srcDir,
 				StagingPath:    "",
+				Region:         "us-west-2",
 				Bucket:         "my-bucket",
 				Prefix:         "my-prefix",
 				Concurrency:    16,
