@@ -25,7 +25,7 @@ var S3Desc = baker.UploadDesc{
 	Name:   "S3",
 	New:    newS3,
 	Config: &S3Config{},
-	Help:   "S3Uploader uploads the content of a directory to S3\n",
+	Help:   "S3Uploader uploads files to a destination on S3 that is relative to SourceBasePath",
 }
 
 // S3Config holds the configuration for the S3 uploader.
