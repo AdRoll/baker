@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/awsutils"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -118,7 +119,7 @@ func (s *KTail) ProcessRecords(shard *kinesis.Shard) error {
 		return err
 	}
 	nextShardIterator := resp.ShardIterator
-	backoff := awsDefaultBackoff
+	backoff := awsutils.DefaultBackoff
 	for atomic.LoadInt64(&s.stop) == 0 {
 		// ctxLog.Debug("Iterating")
 		start := time.Now()
