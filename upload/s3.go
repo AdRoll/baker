@@ -64,6 +64,7 @@ func (cfg *S3Config) fillDefaults() error {
 	if cfg.Prefix == "" {
 		cfg.Prefix = "/"
 	}
+
 	if cfg.StagingPath == "" {
 		dir, err := ioutil.TempDir("", "baker-s3upload-staging-*")
 		if err != nil {
@@ -76,18 +77,18 @@ func (cfg *S3Config) fillDefaults() error {
 	}
 
 	if cfg.SourceBasePath == "" {
-		return errors.New("SourceBasePath must be set")
+		return errors.New("SourceBasePath is a required parameter")
 	}
 
 	if cfg.Retries < 0 {
-		return fmt.Errorf("invalid number of retries: %v", cfg.Retries)
+		return fmt.Errorf("Retries: invalid number: %v", cfg.Retries)
 	}
 	if cfg.Retries == 0 {
 		cfg.Retries = 3
 	}
 
 	if cfg.Concurrency < 0 {
-		return fmt.Errorf("invalid number of workers: %v", cfg.Concurrency)
+		return fmt.Errorf("Concurrency: invalid number: %v", cfg.Concurrency)
 	}
 	if cfg.Concurrency == 0 {
 		cfg.Concurrency = 5
