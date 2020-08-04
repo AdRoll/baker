@@ -1,13 +1,15 @@
 # Baker
 
-Baker is a Go library able to process "records" (like log lines)  through configurable pipelines.  
-It can read records from different sources (S3, Kinesis, etc.), process them through
-custom filters and send them to some output (like DynamoDB).
+Baker is a high performance, composable and extendable data-processing pipeline
+for the big data era. It shines at converting, processing, extracting or storing
+records (structured data), applying whatever transformation between input and
+output through easy-to-write filters.
 
 Baker is fully parallel and maximizes usage of both CPU-bound and I/O bound pipelines.
-On a AWS c3.4x instance, it can run a simple pipeline (with little processing of
-records) achieving 30k writes per seconds to DynamoDB in 4 regions, using ~1GB of RAM in
-total, and 500% of CPU (so with room for scaling even further if required).
+On a AWS c3.4xlarge instance (16vCPU amd64 / 30GB RAM), it can run a simple pipeline
+(with little processing of records) achieving 30k writes per seconds to DynamoDB in 4
+AWS regions, using ~1GB of RAM in total, and 500% of CPU (so with room for scaling
+even further if required).
 
 ## Pipelines
 
@@ -15,13 +17,13 @@ A pipeline is the configured set of operations that Baker performs during its ex
 
 It is defined by:
 
-* One input component, defining where to fetch records from.
-* Zero or more filters, which are functions that can modify records (changing fields,
-  dropping them, or even "splitting" them into multiple records).
+* One input component, defining where to fetch records from
+* Zero or more filters, which are functions that can process records (reading/writing
+  fields, clearing them or even splitting them into multiple records)
 * One output component, defining where to send the filtered records to (and which
-  columns).
+  columns)
 * One optional upload component, defining where to send files produced by the output
-  component (if any).
+  component (if any)
 
 Notice that there are two main usage scenarios for Baker:
 
@@ -38,9 +40,9 @@ input component is endless, Baker will never exit and thus behave like a daemon.
 
 ## Usage
 
-Baker uses a `baker.Config` struct to know what to do. The configuration can be either created
-manually or imported from a toml file processed by `baker.NewConfigFromToml()`. This
-function requires a `baker.Components` object including all available/required components.  
+Baker uses a `baker.Config` struct to know what to do. The configuration can be created
+parsing a toml file with `baker.NewConfigFromToml()`. This function requires a
+`baker.Components` object including all available/required components.  
 This is an example of this struct:
 
 ```go
@@ -70,7 +72,7 @@ all of them available.
 
 The `examples/` folder contains several `main()` examples:
 
-* [basic](./examples/basic/): a simple command with minimal support
+* [basic](./examples/basic/): a simple example with minimal support
 * [filtering](./examples/filtering/): shows how to add a filter component
 * [sharding](./examples/sharding/): shows how to use an output that supports sharding
   (see below for details about sharding)
@@ -79,8 +81,7 @@ The `examples/` folder contains several `main()` examples:
 
 ## TOML Configuration files
 
-In case you want to configure Baker starting from a toml file (which is then parsed with
-`baker.NewConfigFromToml()`), this is a minimalist Baker pipeline that reads a record from the disk,
+This is a minimalist Baker pipeline TOML configuration that reads a record from the disk,
 updates its timestamp field with a "Timestamp" filter and pushes it to DynamoDB:
 
 ```toml
