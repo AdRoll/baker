@@ -25,9 +25,7 @@ func NewLazyFilter(cfg baker.FilterParams) (baker.Filter, error) {
 		cfg.DecodedConfig = &LazyFilterConfig{}
 	}
 	dcfg := cfg.DecodedConfig.(*LazyFilterConfig)
-	return &LazyFilter{
-		stakhanovite: dcfg.Stakhanovite,
-	}, nil
+	return &LazyFilter{stakhanovite: dcfg.Stakhanovite}, nil
 }
 
 func (f *LazyFilter) Process(l baker.Record, next func(baker.Record)) {
