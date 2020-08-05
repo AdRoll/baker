@@ -64,9 +64,8 @@ baker.Components{
 }
 ```
 
-Components (inputs, filters, outputs and uploads) are either generic ones provided with Baker or user-defined components.
-provided by Baker can be used. They can also be merged in a single slice to make
-all of them available.
+Components (inputs, filters, outputs and uploads) are either generic ones
+provided with Baker or user-defined components, or a mix of both.
 
 ## How to build a Baker executable
 
@@ -76,7 +75,7 @@ The `examples/` folder contains several `main()` examples:
 * [filtering](./examples/filtering/): shows how to code your own filter
 * [sharding](./examples/sharding/): shows how to use an output that supports sharding
   (see below for details about sharding)
-* [help](./examples/help/):  shows components' help messages
+* [help](./examples/help/): shows components' help messages
 * [advanced](./examples/advanced/): an advanced example with most of the features supported by Baker
 
 ## TOML Configuration files
@@ -129,8 +128,9 @@ name="filterA"
 name="filterB"
 ```
 
-`[output]` selects the output component, the output is where the records that made up until the end of the filter chain without being discarded end up.
-In this case, the `DynamoDB` component is selected, and its configuration is specified
+`[output]` selects the output component; the output is where records that made
+it to the end of the filter chain without being discarded end up.
+In this case, the `DynamoDB` output is selected, and its configuration is specified
 in `[output.config]`.
 
 The `fields` option in the `[output]` section selects which fields of the record will be
@@ -273,7 +273,9 @@ the default is not to serialize the whole record.
 
 #### Uploads
 
-Outputs can, if appropriate, send path to local files to a `chan string`. Uploads reads from this channel and can do whatever they desire with those path. As an example `upload.S3` uploads them to S3..
+Outputs can, if applicable, send paths to local files to a `chan string`.
+Uploads read from this channel and can do whatever they desire with those path.
+As an example `upload.S3` uploads them to S3..
 
 The uploader component is optional, if missing the string channel is simply ignored by Baker.
 
