@@ -92,7 +92,7 @@ name="List"
     files=["records.csv.gz"]
 
 [[filter]]
-name="Timestamp"
+name="ClauseFilter"
 
 [output]
 name="DynamoDB"
@@ -106,18 +106,28 @@ fields=["source","timestamp","user"]
 ```
 
 `[input]` selects the input component, or where to read the records from. In this case,
-the `List` component is selected, which is a component that fetches logs from a list of
+the `List` component is selected, which is a component that fetches CSV files from a list of
 local or remote paths/URLs. `[input.config]` is where component-specific configurations
 can be specified, and in this case we simply provide the `files` option to `List`. Notice
 that `List` would accept `http://` or even `s3://` URLs there in addition to local paths,
 and some more (run `./baker-bin -help List` in the [help example](./examples/help/) for
 more details).
 
-`[[filter]]` selects which filters to run. In TOML syntax, the double brackets indicate
-an array of sections, so it basically means that you can define many different `[[filter]]`
-sections, one for each filter that you wish to run. In this example, only the `Timestamp`
-filter is selected. This configuration file doesn't specifiy any option for this filter;
-if needed, those options would go to a `[filter.config]` subsection.
+`[[filter]]` In TOML syntax, the double brackets indicates an array of sections.
+This is where you declare the list of filters (i.e filter chain) to sequentially
+apply to your records. As other components, each filter may be followed by a
+`[filter.config]` section. This is an example:
+
+```toml
+[[filter]]
+name="filterA"
+
+    [filter.config]
+    foo = "bar
+
+[[filter]]
+name="filterB"
+```
 
 `[output]` selects the output component, the output is where the records that made up until the end of the filter chain without being discarded end up.
 In this case, the `DynamoDB` component is selected, and its configuration is specified
@@ -130,8 +140,6 @@ Notice that this is just a selection: it is up to the output component to decide
 physically serialize those columns. For instance, the `DynamoDB` component requires the
 user to specify an option called `columns` that specifies the name and the type of the
 column where the fields will be written.
-If the `raw=true` configuration is used for the output, then all the record is sent to
-the output.
 
 ### How to create components
 
@@ -149,12 +157,9 @@ type Filter interface {
 ```
 
 While `Stats()` returns a struct used to collect metrics (see the Metrics chapter), the `Process()`
-function is where the filter logic is implemented.
-
+function is where the filter logic is actually implemented.  
 Filters receive a `Record` and the `next()` function, that represents the next filtering function in
-the filter chain. Also if the filter is the last of the chain, the `next()` function is valid
-(in this case Baker will send the record to the output).
-
+the filter chain.  
 The filter can do whatever it likes with the `Record`, like adding or changing a value, dropping it
 (not calling the `next()` function) or even splitting a `Record` calling `next()` multiple
 times.
@@ -213,7 +218,7 @@ The help string can be used to build an help output (see the [help](./examples/h
 
 #### Inputs
 
-Baker inputs are defined using the `baker.InputDesc` struct.  
+An input is described to baker by filling up a `baker.InputDesc` struct.  
 The `New` function must return a `baker.Input` component whose `Run` function
 represents the hearth of the input.  
 That function receives a channel where the data produced by the input must be
@@ -235,18 +240,20 @@ type Output interface {
 }
 ```
 
-The [sharding example output](./examples/sharding/output.go) is a simple implementation of
-an output and can be used as source.
+The [nop output](./output/nop.go) is a simple implementation of an output and can be used as source.
 
-An output can have its own configuration and the `OutputRecord` records sent to the `Run`
-function can be the complete record (into `OutputRecord.Record`) in case the `raw=true`
-configuration has been used for the output or only a subset of fields will be sent into
-`OutputRecord.Fields` if `fields=["field", "field", ...]` is used. In this latter case
-the `OutputRecord.Fields` slice will have the same order of the `fields` configuration.
+The `fields` configuration of the output (like `fields=["field", "field", ...]`) tells which
+record fields will populate the `OutputRecord.Fields` slice that is sent to the output
+as its input. The values of the slice will have the same order as the `fields` configuration.
 
-If more than one `procs` is used (the default value is 32), then each output process will
-receive a subset of the records. The `OutputParams.Index` passed to the `New` function
-identifies the output process and can be used to correcly handle parallelism.
+The `procs` setting in the `[output]` TOML defines *how many instances* of the output are
+going to be created (i.e the `New` constructor function is going to be called `procs` times).  
+Each instance receives its index over the total in `OutputParams.Index`, which is passed to
+the output `New` function.  
+Which output instance a record is sent to, depends on the sharding function (see the
+sharding section).
+
+*NOTE*: If `procs>1` but sharding is not set up, `procs` is set back to 1.
 
 Sharding (which is explained below) is strictly connected to the output component but
 it's also transparent to it. An output will never know how the sharding is calculated,
@@ -256,6 +263,13 @@ sent to the output process with the same index (unless a broken sharding functio
 The output also receives an upload channel where it can send strings to the uploader.
 Those strings will likely be paths to something produced by the output (like files)
 that the uploader must upload somewhere.
+
+##### Raw outputs
+
+An output can declare itself as "raw". A raw output will receive, in addition to optional
+selected fields, also the whole serialized record as a `[]byte` buffer.  
+Serializing a record has a cost, that's why each output must choose to receive it and
+the default is not to serialize the whole record.
 
 #### Uploads
 
@@ -280,22 +294,21 @@ out more performance.
 These are the options you can tune:
 
 * Section `[filterchain]`:
-  * `procs`: number of parallel threads running the filter chain (default: 16)
+  * `procs`: number of parallel goroutines running the filter chain (default: 16)
 * Section `[output]`:
-  * `procs`: number of parallel threads sending data to the output (default: 32)
+  * `procs`: number of parallel goroutines sending data to the output (default: 32)
 
 ## Sharding
 
 Baker supports sharding of output data, depending on the value of specific fields
 in each record. Sharding makes sense only for some specific output components,
-so check each output component. A component that supports sharding must return `true`
+so check out their documentation. A component that supports sharding must return `true`
 from the function `CanShard()`.
 
 To configure sharding, it's sufficient to create a `sharding` key in `[output]` section,
 specifying the column on which the sharding must be executed.
-`ShardingFuncs` in `baker.Components` must include a function for the selected field and the
-function must return an index (`uint64`) for each possible value of the field. The index
-is used to choose the target output procs for the records.
+For a field to be shardable, a `ShardingFunc` must exist for that field (see
+`baker.Components.ShardingFuncs`).  
 Since the sharding functions provide the capability to spread the records across different output
 `procs` (parallel goroutines), it's clear that the `[output]` configuration must include a `procs`
 value greater than 1 (or must avoid including it as the default value is 32).
@@ -311,7 +324,7 @@ use it together with simple sharding functions.
 While running, Baker dumps stats on stdout every second. This is an example line:
 
 ```log
-Stats: 1s[w:29425 r:29638] total[w:411300 r:454498] speed[w:27420 r:30299] errors[i:0 f:0 o:0]
+Stats: 1s[w:29425 r:29638] total[w:411300 r:454498] speed[w:27420 r:30299] errors[p:0 i:0 f:0 o:0 u:0]
 ```
 
 The first bracket shows the number of records that were read (i.e. entered the pipeline)
@@ -322,6 +335,7 @@ speed (records per second).
 The fourth bracket shows the records that were discarded at some point during the records
 because of errors:
 
+* `p:` is the number of records that were discarded for a parsing error
 * `i:` is the number of records that were discarded because an error occurred within
    the input component. Most of the time, this refers to validation issues.
 * `f:` is the number of records that were discarded by the filters in the pipeline. Each
@@ -333,6 +347,7 @@ because of errors:
    issues. Eg. think of an output that expects a column to be in a specific format, and
    rejects records where that field is not in the expected format. A real-world example
    is empty columns that are not accepted by DynamoDB.
+* `u:` is the number records whose upload has failed
 
 ## Metrics
 
@@ -360,5 +375,5 @@ If you need to abort right away, you can use CTRL+\ (SIGQUIT).
 
 ## Baker test suite
 
-You can run Baker tests as any other go project just executing `go test -v -race ./...`.  
+Run baker test suite with: `go test -v -race ./...`  
 The code also includes several benchmarks.
