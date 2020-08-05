@@ -89,7 +89,7 @@ updates its timestamp field with a "Timestamp" filter and pushes it to DynamoDB:
 name="List"
 
     [input.config]
-    files=["./mylog.csv.gz"]
+    files=["records.csv.gz"]
 
 [[filter]]
 name="Timestamp"
