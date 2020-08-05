@@ -135,7 +135,7 @@ func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 	}, nil
 }
 
-func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) {
+func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) error {
 	log.WithFields(log.Fields{"idx": w.index}).Info("FileWriter ready to log")
 
 	for lldata := range input {
@@ -164,6 +164,8 @@ func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) {
 	for _, worker := range w.workers {
 		worker.Wait()
 	}
+
+	return nil
 }
 
 func (w *FileWriter) Stats() baker.OutputStats {

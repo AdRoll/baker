@@ -214,7 +214,9 @@ func (t *Topology) Start() {
 			ch = t.outch[0]
 		}
 		go func(out Output) {
-			out.Run(ch, t.upch)
+			if err := out.Run(ch, t.upch); err != nil {
+				log.WithError(err).Fatal("Output returned an error")
+			}
 			t.wgout.Done()
 		}(out)
 	}

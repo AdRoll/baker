@@ -48,7 +48,7 @@ func NewWebSocketWriter(cfg baker.OutputParams) (baker.Output, error) {
 
 // websocket server
 
-func (w *WebSocketWriter) Run(input <-chan baker.OutputRecord, _ chan<- string) {
+func (w *WebSocketWriter) Run(input <-chan baker.OutputRecord, _ chan<- string) error {
 	cfg := websocket.Conf{
 		Fields:      w.Fields,
 		FieldByName: w.fieldByName,
@@ -65,6 +65,8 @@ func (w *WebSocketWriter) Run(input <-chan baker.OutputRecord, _ chan<- string) 
 		server.SendAll(lldata.Fields)
 		atomic.AddInt64(&w.totaln, int64(1))
 	}
+
+	return nil
 }
 
 func (w *WebSocketWriter) Stats() baker.OutputStats {
