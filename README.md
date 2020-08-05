@@ -259,9 +259,7 @@ that the uploader must upload somewhere.
 
 #### Uploads
 
-As explained in the output paragragh, a string channel is used by the outputs to send messages
-the the uploader. Those strings can represent, for example, file paths and those files
-could be uploaded somewhere.
+Outputs can, if appropriate, send path to local files to a `chan string`. Uploads reads from this channel and can do whatever they desire with those path. As an example `upload.S3` uploads them to S3..
 
 The uploader component is optional, if missing the string channel is simply ignored by Baker.
 
