@@ -64,7 +64,7 @@ baker.Components{
 }
 ```
 
-Components (inputs, filters, outputs and uploads) can be user-defined or those
+Components (inputs, filters, outputs and uploads) are either generic ones provided with Baker or user-defined components.
 provided by Baker can be used. They can also be merged in a single slice to make
 all of them available.
 
