@@ -119,7 +119,7 @@ sections, one for each filter that you wish to run. In this example, only the `T
 filter is selected. This configuration file doesn't specifiy any option for this filter;
 if needed, those options would go to a `[filter.config]` subsection.
 
-`[output]` selects the output component, that is where the records are sent to.
+`[output]` selects the output component, the output is where the records that made up until the end of the filter chain without being discarded end up.
 In this case, the `DynamoDB` component is selected, and its configuration is specified
 in `[output.config]`.
 
