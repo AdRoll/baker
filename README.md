@@ -122,7 +122,7 @@ apply to your records. As other components, each filter may be followed by a
 name="filterA"
 
     [filter.config]
-    foo = "bar
+    foo = "bar"
 
 [[filter]]
 name="filterB"
