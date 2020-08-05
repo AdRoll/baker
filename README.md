@@ -73,7 +73,7 @@ all of them available.
 The `examples/` folder contains several `main()` examples:
 
 * [basic](./examples/basic/): a simple example with minimal support
-* [filtering](./examples/filtering/): shows how to add a filter component
+* [filtering](./examples/filtering/): shows how to code your own filter
 * [sharding](./examples/sharding/): shows how to use an output that supports sharding
   (see below for details about sharding)
 * [help](./examples/help/): how to build a binary that is able to show help messages to the user
