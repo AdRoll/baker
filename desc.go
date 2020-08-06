@@ -19,10 +19,11 @@ type Components struct {
 
 // ComponentParams holds the common configuration parameters passed to components of all kinds.
 type ComponentParams struct {
-	DecodedConfig interface{}                     // decoded component-specific struct (from configuration file)
-	CreateRecord  func() Record                   // factory function to create new empty records
-	FieldByName   func(string) (FieldIndex, bool) // translates field names to Record indexes
-	FieldName     func(FieldIndex) string         // returns the name of a field given its index in the Record
+	DecodedConfig  interface{}                     // decoded component-specific struct (from configuration file)
+	CreateRecord   func() Record                   // factory function to create new empty records
+	FieldByName    func(string) (FieldIndex, bool) // translates field names to Record indexes
+	FieldName      func(FieldIndex) string         // returns the name of a field given its index in the Record
+	ValidateRecord ValidationFunc                  // function to validate a record
 }
 
 // InputParams holds the parameters passed to Input constructor.

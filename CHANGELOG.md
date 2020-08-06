@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - upload: add S3 uploader component [#15](https://github.com/AdRoll/baker/pull/15)
 - filter: add ClearFields filter [#19](https://github.com/AdRoll/baker/pull/19)
+- output: add Stats output [#23](https://github.com/AdRoll/baker/pull/23)
 
 ### Changed
 

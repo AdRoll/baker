@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/DataDog/datadog-go v3.2.0+incompatible
 	github.com/aws/aws-sdk-go v1.25.6-0.20191003182926-f28610301a1e
+	github.com/bmizerany/perks v0.0.0-20141205001514-d9a9656a3a4b
 	github.com/google/uuid v1.1.2-0.20190416172445-c2e93f3ae59f
 	github.com/jpillora/backoff v0.0.0-20160301230512-f85df8d02bdf
 	github.com/juju/ratelimit v0.0.0-20151125201925-77ed1c8a0121

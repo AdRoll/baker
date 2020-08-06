@@ -10,5 +10,6 @@ var All = []baker.OutputDesc{
 	FilesDesc,
 	NopDesc,
 	OpLogDesc,
+	StatsDesc,
 	WebSocketDesc,
 }
