@@ -102,7 +102,7 @@ type Output interface {
 	// TODO: since Run must be blocking, it could return an error, useful
 	// for the topology to acknowledge the correct processing if nil, or
 	// end the whole topology in case non-nil.
-	Run(in <-chan OutputRecord, upch chan<- string)
+	Run(in <-chan OutputRecord, upch chan<- string) error
 
 	// Stats returns stats about the output.
 	Stats() OutputStats

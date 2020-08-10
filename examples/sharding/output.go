@@ -32,13 +32,15 @@ func (s *Shardable) CanShard() bool {
 	return true
 }
 
-func (s *Shardable) Run(input <-chan baker.OutputRecord, _ chan<- string) {
+func (s *Shardable) Run(input <-chan baker.OutputRecord, _ chan<- string) error {
 	// Do something with `input` record.
 	// s.idx identifies the output process index and should
 	// be used to manage the sharding
 	for data := range input {
 		log.Printf(`Shard #%d: Getting "%s"`, s.idx, data.Record)
 	}
+
+	return nil
 }
 
 func (s *Shardable) Stats() baker.OutputStats { return baker.OutputStats{} }

@@ -384,11 +384,13 @@ func (b *DynamoWriter) flush() {
 	b.reqn = 0
 }
 
-func (b *DynamoWriter) Run(input <-chan baker.OutputRecord, _ chan<- string) {
+func (b *DynamoWriter) Run(input <-chan baker.OutputRecord, _ chan<- string) error {
 	for lldata := range input {
 		b.push(lldata.Fields)
 	}
 	b.Flush()
+
+	return nil
 }
 
 func (b *DynamoWriter) Stats() baker.OutputStats {

@@ -41,12 +41,14 @@ func NewOpLog(cfg baker.OutputParams) (baker.Output, error) {
 	}, nil
 }
 
-func (w *OpLog) Run(input <-chan baker.OutputRecord, _ chan<- string) {
+func (w *OpLog) Run(input <-chan baker.OutputRecord, _ chan<- string) error {
 	log.Info("OpLog ready to log")
 	for lldata := range input {
 		log.WithFields(log.Fields{"line": lldata.Fields}).Info(".")
 		atomic.AddInt64(&w.totaln, int64(1))
 	}
+
+	return nil
 }
 
 func (w *OpLog) Stats() baker.OutputStats {

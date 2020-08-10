@@ -32,10 +32,12 @@ func NewRecorder(cfg baker.OutputParams) (baker.Output, error) {
 }
 
 // Run implements baker.Output interface.
-func (r *Recorder) Run(input <-chan baker.OutputRecord, _ chan<- string) {
+func (r *Recorder) Run(input <-chan baker.OutputRecord, _ chan<- string) error {
 	for lldata := range input {
 		r.Records = append(r.Records, lldata)
 	}
+
+	return nil
 }
 
 // Stats implements baker.Output interface.
