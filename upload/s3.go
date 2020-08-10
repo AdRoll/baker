@@ -53,7 +53,7 @@ type S3Config struct {
 
 	// set to a closure that removes the temporary staging directory in case we
 	// created it ourselves. noop if the user provided the staging area themselves.
-	rmdir func()
+	rmdir func() error
 }
 
 func (cfg *S3Config) fillDefaults() error {
@@ -71,9 +71,9 @@ func (cfg *S3Config) fillDefaults() error {
 			return fmt.Errorf("can't create staging path: %v", err)
 		}
 		cfg.StagingPath = dir
-		cfg.rmdir = func() { os.RemoveAll(dir) }
+		cfg.rmdir = func() error { return os.RemoveAll(dir) }
 	} else {
-		cfg.rmdir = func() {} //noop
+		cfg.rmdir = func() error { return nil } //noop
 	}
 
 	if cfg.SourceBasePath == "" {
@@ -140,14 +140,18 @@ func (u *S3) Run(upch <-chan string) {
 		ticker := time.NewTicker(u.Cfg.Interval)
 		defer func() {
 			ticker.Stop()
-			u.uploadDirectory()
+			if err := u.uploadDirectory(); err != nil {
+				log.Error(err)
+			}
 			u.wgUpload.Done()
 		}()
 
 		for {
 			select {
 			case <-ticker.C:
-				u.uploadDirectory()
+				if err := u.uploadDirectory(); err != nil {
+					log.Error(err)
+				}
 			case <-u.quit:
 				return
 			}
@@ -168,10 +172,8 @@ func (u *S3) Run(upch <-chan string) {
 }
 
 func (u *S3) move(sourceFilePath string) error {
-	ctx := log.WithFields(log.Fields{"sourceFilePath": sourceFilePath, "f": "s3upload.move"})
 	relPath, err := filepath.Rel(u.Cfg.SourceBasePath, sourceFilePath)
 	if err != nil {
-		ctx.WithError(err).Error("Unable to get relative path")
 		return err
 	}
 
@@ -179,7 +181,9 @@ func (u *S3) move(sourceFilePath string) error {
 
 	dir := path.Dir(destinationPath)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		os.MkdirAll(dir, 0777)
+		if err := os.MkdirAll(dir, 0777); err != nil {
+			return err
+		}
 	}
 
 	return os.Rename(sourceFilePath, destinationPath)
@@ -196,7 +200,9 @@ func (u *S3) Stop() {
 		close(u.quit)
 		u.wgUpload.Wait()
 
-		u.Cfg.rmdir()
+		if err := u.Cfg.rmdir(); err != nil {
+			log.Errorf("Error removing temp folder: %v", err)
+		}
 	})
 }
 
@@ -261,15 +267,19 @@ func s3UploadFile(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath
 
 	rel, err := filepath.Rel(localPath, fpath)
 	if err != nil {
-		ctx.WithError(err).Error("Unable to get relative path")
-		return err
+		return fmt.Errorf("Unable to get relative path: %v. localPath: %s, filepath: %s", err, localPath, fpath)
 	}
+
 	file, err := os.Open(fpath)
 	if err != nil {
-		ctx.WithError(err).Error("Failed opening file")
-		return err
+		return fmt.Errorf("Failed opening file: %v. localPath: %s, filepath: %s", err, localPath, fpath)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.WithField("fpath", fpath).WithError(err).Error("Can't close file")
+		}
+	}()
+
 	ctx.WithFields(log.Fields{"key": filepath.Join(prefix, rel)}).Info("Uploading")
 	result, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: &bucket,
@@ -277,11 +287,15 @@ func s3UploadFile(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath
 		Body:   file,
 	})
 	if err != nil {
-		ctx.WithError(err).Error("Failed to upload")
-		return err
+		return fmt.Errorf("Failed to upload: %v. localPath: %s, filepath: %s", err, localPath, fpath)
 	}
+
 	// We should really check that what we uploaded is correct before removing
-	os.Remove(fpath)
+	if err := os.Remove(fpath); err != nil {
+		return fmt.Errorf("Can't remove %s: %v", fpath, err)
+	}
+
 	ctx.WithField("dst", result.Location).Info("Done")
+
 	return nil
 }
