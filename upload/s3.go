@@ -121,7 +121,7 @@ func newS3(cfg baker.UploadParams) (baker.Upload, error) {
 	}
 	dcfg := cfg.DecodedConfig.(*S3Config)
 	if err := dcfg.fillDefaults(); err != nil {
-		return nil, fmt.Errorf("s3upload: %v", err)
+		return nil, fmt.Errorf("upload.s3: %v", err)
 	}
 
 	s3svc := s3.New(session.New(&aws.Config{Region: aws.String(dcfg.Region)}))
@@ -180,10 +180,8 @@ func (u *S3) move(sourceFilePath string) error {
 	destinationPath := filepath.Join(u.Cfg.StagingPath, relPath)
 
 	dir := path.Dir(destinationPath)
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		if err := os.MkdirAll(dir, 0777); err != nil {
-			return err
-		}
+	if err := os.MkdirAll(dir, 0777); err != nil {
+		return err
 	}
 
 	return os.Rename(sourceFilePath, destinationPath)
@@ -201,7 +199,7 @@ func (u *S3) Stop() {
 		u.wgUpload.Wait()
 
 		if err := u.Cfg.rmdir(); err != nil {
-			log.Errorf("Error removing temp folder: %v", err)
+			log.Errorf("upload.S3: error removing temp folder: %v", err)
 		}
 	})
 }
@@ -267,16 +265,16 @@ func s3UploadFile(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath
 
 	rel, err := filepath.Rel(localPath, fpath)
 	if err != nil {
-		return fmt.Errorf("Unable to get relative path: %v. localPath: %s, filepath: %s", err, localPath, fpath)
+		return fmt.Errorf("unable to get relative path: %v", err)
 	}
 
 	file, err := os.Open(fpath)
 	if err != nil {
-		return fmt.Errorf("Failed opening file: %v. localPath: %s, filepath: %s", err, localPath, fpath)
+		return fmt.Errorf("failed opening file: %v", err)
 	}
 	defer func() {
 		if err := file.Close(); err != nil {
-			log.WithField("fpath", fpath).WithError(err).Error("Can't close file")
+			log.Error(err)
 		}
 	}()
 
@@ -287,12 +285,13 @@ func s3UploadFile(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath
 		Body:   file,
 	})
 	if err != nil {
-		return fmt.Errorf("Failed to upload: %v. localPath: %s, filepath: %s", err, localPath, fpath)
+		actualS3Path := fmt.Sprintf("s3://%s/%s/%s", bucket, prefix, rel)
+		return fmt.Errorf("error uploading %s to %s: %s", fpath, actualS3Path, err)
 	}
 
 	// We should really check that what we uploaded is correct before removing
 	if err := os.Remove(fpath); err != nil {
-		return fmt.Errorf("Can't remove %s: %v", fpath, err)
+		return err
 	}
 
 	ctx.WithField("dst", result.Location).Info("Done")
