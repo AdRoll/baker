@@ -1,9 +1,13 @@
 package baker
 
 import (
+	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"os"
 	"reflect"
+	"regexp"
 	"strings"
 	"unicode"
 
@@ -205,9 +209,36 @@ func cloneConfig(i interface{}) interface{} {
 	return reflect.New(reflect.ValueOf(i).Elem().Type()).Interface()
 }
 
+var envVarRegxp = regexp.MustCompile(`\${(\w+)}`)
+
+// replaceEnvVars replaces any string in the format ${VALUE} with the corresponding
+// $VALUE environment variable. It returns error if the variable can't be found or
+// if any error occurs while reading from the input reader.
+func replaceEnvVars(f io.Reader) (io.Reader, error) {
+	buf, err := ioutil.ReadAll(f)
+	if err != nil {
+		return nil, fmt.Errorf("Error reading input: %v", err)
+	}
+
+	for _, match := range envVarRegxp.FindAllSubmatch(buf, -1) {
+		v := os.Getenv(string(match[1]))
+		if v == "" {
+			return nil, fmt.Errorf("%s found in TOML but not the corresponding $%s env var", match[0], match[1])
+		}
+		buf = bytes.Replace(buf, match[0], []byte(v), 1)
+	}
+
+	return bytes.NewReader(buf), nil
+}
+
 // NewConfigFromToml creates a Config from a reader reading from a TOML
 // configuration. comp describes all the existing components.
 func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
+	f, err := replaceEnvVars(f)
+	if err != nil {
+		return nil, fmt.Errorf("Can't replace config with env vars: %v", err)
+	}
+
 	// Parse che configuration. Part of the configuration will be
 	// captured as toml.Primitive for deferred parsing (see comment
 	// at top of the file)
