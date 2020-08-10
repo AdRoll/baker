@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"math"
 	"os"
 	"strconv"
@@ -297,7 +296,7 @@ func NewStats(cfg baker.OutputParams) (baker.Output, error) {
 }
 
 // Run implements baker.Output
-func (s *Stats) Run(input <-chan baker.OutputRecord, _ chan<- string) {
+func (s *Stats) Run(input <-chan baker.OutputRecord, _ chan<- string) error {
 	ll := s.cfg.CreateRecord()
 
 	valid := false
@@ -317,8 +316,9 @@ func (s *Stats) Run(input <-chan baker.OutputRecord, _ chan<- string) {
 		}
 	}
 	if err := s.createStatsCSV(); err != nil {
-		log.Fatalf("can't open %s: %v", s.csvPath, err)
+		return fmt.Errorf("can't open %s: %v", s.csvPath, err)
 	}
+	return nil
 }
 
 func (s *Stats) createStatsCSV() error {
