@@ -270,7 +270,7 @@ func s3UploadFile(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath
 
 	file, err := os.Open(fpath)
 	if err != nil {
-		return fmt.Errorf("failed opening file: %v", err)
+		return err
 	}
 	defer func() {
 		if err := file.Close(); err != nil {
