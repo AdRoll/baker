@@ -32,7 +32,7 @@ type KTailConfig struct {
 	IdleTime  time.Duration `help:"Time between polls of each shard" default:"100ms"`
 }
 
-func (cfg *KTailConfig) fillDefaults() {
+func (cfg *KTailConfig) fillDefaults() error {
 	if cfg.AwsRegion == "" {
 		cfg.AwsRegion = "us-west-2"
 	}
@@ -40,6 +40,12 @@ func (cfg *KTailConfig) fillDefaults() {
 	if cfg.IdleTime == z {
 		cfg.IdleTime = 100 * time.Millisecond
 	}
+
+	if cfg.Stream == "" {
+		return fmt.Errorf("Stream field is required")
+	}
+
+	return nil
 }
 
 type KTail struct {
@@ -61,7 +67,10 @@ func NewKTail(cfg baker.InputParams) (baker.Input, error) {
 	if dcfg.Stream == "" {
 		return nil, errors.New("'Stream' is required")
 	}
-	dcfg.fillDefaults()
+
+	if err := dcfg.fillDefaults(); err != nil {
+		return nil, fmt.Errorf("Kinesis: %s", err)
+	}
 
 	sess := session.New(&aws.Config{Region: aws.String(dcfg.AwsRegion)})
 	kin := kinesis.New(sess)
