@@ -42,11 +42,11 @@ var S3Desc = baker.UploadDesc{
 // All files received by the uploader should be absolute and rooted at
 // SourceBasePath.
 type S3Config struct {
-	SourceBasePath string        `help:"Base path used to consider the final S3 path. (required)"`
-	Region         string        `help:"S3 region to upload to. (required)"`
+	SourceBasePath string        `help:"Base path used to consider the final S3 path." default:"/tmp/baker/ologs/"`
+	Region         string        `help:"S3 region to upload to." default:"us-east-1"`
 	Bucket         string        `help:"S3 bucket to upload to. (required)"`
 	Prefix         string        `help:"Prefix on the destination bucket" default:"/"`
-	StagingPath    string        `help:"Local staging area to copy files to before upload. If empty use a temporary directory"`
+	StagingPath    string        `help:"Local staging area to copy files to before upload. If empty use a temporary directory" default:"/tmp/baker/ologs/staging/"`
 	Retries        int           `help:"Number of retries before a failed upload" default:"3"`
 	Concurrency    int           `help:"Number of concurrent workers" default:"5"`
 	Interval       time.Duration `help:"Period at which the source path is scanned" default:"15s"`
