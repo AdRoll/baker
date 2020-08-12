@@ -1,9 +1,7 @@
 package upload
 
 import (
-	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -42,23 +40,23 @@ var S3Desc = baker.UploadDesc{
 // All files received by the uploader should be absolute and rooted at
 // SourceBasePath.
 type S3Config struct {
-	SourceBasePath string        `help:"Base path used to consider the final S3 path. (required)"`
-	Region         string        `help:"S3 region to upload to. (required)"`
+	SourceBasePath string        `help:"Base path used to consider the final S3 path." default:"/tmp/baker/ologs/"`
+	Region         string        `help:"S3 region to upload to." default:"us-east-1"`
 	Bucket         string        `help:"S3 bucket to upload to. (required)"`
 	Prefix         string        `help:"Prefix on the destination bucket" default:"/"`
-	StagingPath    string        `help:"Local staging area to copy files to before upload. If empty use a temporary directory"`
+	StagingPath    string        `help:"Local staging area to copy files to before upload." default:"/tmp/baker/ologs/staging/"`
 	Retries        int           `help:"Number of retries before a failed upload" default:"3"`
 	Concurrency    int           `help:"Number of concurrent workers" default:"5"`
 	Interval       time.Duration `help:"Period at which the source path is scanned" default:"15s"`
-
-	// set to a closure that removes the temporary staging directory in case we
-	// created it ourselves. noop if the user provided the staging area themselves.
-	rmdir func() error
 }
 
 func (cfg *S3Config) fillDefaults() error {
+	if cfg.Bucket == "" {
+		return fmt.Errorf("Bucket is required")
+	}
+
 	if cfg.Region == "" {
-		return errors.New("Region is a required parameter")
+		cfg.Region = "us-east-1"
 	}
 
 	if cfg.Prefix == "" {
@@ -66,18 +64,11 @@ func (cfg *S3Config) fillDefaults() error {
 	}
 
 	if cfg.StagingPath == "" {
-		dir, err := ioutil.TempDir("", "baker-s3upload-staging-*")
-		if err != nil {
-			return fmt.Errorf("can't create staging path: %v", err)
-		}
-		cfg.StagingPath = dir
-		cfg.rmdir = func() error { return os.RemoveAll(dir) }
-	} else {
-		cfg.rmdir = func() error { return nil } //noop
+		cfg.StagingPath = "/tmp/baker/ologs/staging/"
 	}
 
 	if cfg.SourceBasePath == "" {
-		return errors.New("SourceBasePath is a required parameter")
+		cfg.SourceBasePath = "/tmp/baker/ologs/"
 	}
 
 	if cfg.Retries < 0 {
@@ -197,10 +188,6 @@ func (u *S3) Stop() {
 		// initiated call and wait for it to have terminated.
 		close(u.quit)
 		u.wgUpload.Wait()
-
-		if err := u.Cfg.rmdir(); err != nil {
-			log.Errorf("upload.S3: error removing temp folder: %v", err)
-		}
 	})
 }
 

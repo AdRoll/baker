@@ -4,6 +4,5 @@ import "github.com/AdRoll/baker"
 
 // All is the list of all aws uploads.
 var All = []baker.UploadDesc{
-	// TODO: disabled for now
-	//S3Desc,
+	S3Desc,
 }
