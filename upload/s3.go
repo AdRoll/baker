@@ -48,6 +48,7 @@ type S3Config struct {
 	Retries        int           `help:"Number of retries before a failed upload" default:"3"`
 	Concurrency    int           `help:"Number of concurrent workers" default:"5"`
 	Interval       time.Duration `help:"Period at which the source path is scanned" default:"15s"`
+	FailOnError    bool          `help:"Fail when an error happens, instead of only logging" default:"false"`
 }
 
 func (cfg *S3Config) fillDefaults() error {
@@ -132,6 +133,9 @@ func (u *S3) Run(upch <-chan string) {
 		defer func() {
 			ticker.Stop()
 			if err := u.uploadDirectory(); err != nil {
+				if u.Cfg.FailOnError {
+					log.Fatal(err)
+				}
 				log.Error(err)
 			}
 			u.wgUpload.Done()
@@ -141,6 +145,9 @@ func (u *S3) Run(upch <-chan string) {
 			select {
 			case <-ticker.C:
 				if err := u.uploadDirectory(); err != nil {
+					if u.Cfg.FailOnError {
+						log.Fatal(err)
+					}
 					log.Error(err)
 				}
 			case <-u.quit:
@@ -154,7 +161,11 @@ func (u *S3) Run(upch <-chan string) {
 		atomic.AddInt64(&u.totaln, int64(1))
 		atomic.AddInt64(&u.queuedn, int64(1))
 		if err != nil {
-			log.WithFields(log.Fields{"filepath": sourceFilePath}).WithError(err).Error("Couldn't move")
+			errCtx := log.WithFields(log.Fields{"filepath": sourceFilePath}).WithError(err)
+			if u.Cfg.FailOnError {
+				errCtx.Fatal("couldn't move")
+			}
+			errCtx.Error("couldn't move")
 		}
 	}
 
@@ -234,7 +245,11 @@ func (u *S3) uploadDirectory() error {
 					break
 				} else {
 					atomic.AddInt64(&u.totalerr, int64(1))
-					log.WithError(err).WithFields(log.Fields{"retry#": i + 1}).Error("failed upload")
+					errCtx := log.WithError(err).WithFields(log.Fields{"retry#": i + 1})
+					if u.Cfg.FailOnError {
+						errCtx.Fatal("failed upload")
+					}
+					errCtx.Error("failed upload")
 				}
 			}
 		}(fpath)
