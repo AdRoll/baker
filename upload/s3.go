@@ -44,7 +44,7 @@ type S3Config struct {
 	Region         string        `help:"S3 region to upload to." default:"us-east-1"`
 	Bucket         string        `help:"S3 bucket to upload to. (required)"`
 	Prefix         string        `help:"Prefix on the destination bucket" default:"/"`
-	StagingPath    string        `help:"Local staging area to copy files to before upload. If empty use a temporary directory" default:"/tmp/baker/ologs/staging/"`
+	StagingPath    string        `help:"Local staging area to copy files to before upload." default:"/tmp/baker/ologs/staging/"`
 	Retries        int           `help:"Number of retries before a failed upload" default:"3"`
 	Concurrency    int           `help:"Number of concurrent workers" default:"5"`
 	Interval       time.Duration `help:"Period at which the source path is scanned" default:"15s"`
