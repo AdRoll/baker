@@ -222,10 +222,9 @@ func replaceEnvVars(f io.Reader) (io.Reader, error) {
 
 	for _, match := range envVarRegxp.FindAllSubmatch(buf, -1) {
 		v := os.Getenv(string(match[1]))
-		if v == "" {
-			return nil, fmt.Errorf("%s found in TOML but not the corresponding $%s env var", match[0], match[1])
+		if v != "" {
+			buf = bytes.Replace(buf, match[0], []byte(v), 1)
 		}
-		buf = bytes.Replace(buf, match[0], []byte(v), 1)
 	}
 
 	return bytes.NewReader(buf), nil

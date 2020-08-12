@@ -77,26 +77,17 @@ func TestEnvVarBaseReplace(t *testing.T) {
 	[general]
 	dont_validate_fields = true
 	`
-	t.Run("no env var", func(t *testing.T) {
-		_, err := replaceEnvVars(strings.NewReader(src_toml))
-		if err == nil {
-			t.Fatalf("expected error")
-		}
-	})
+	os.Setenv("DNT_VAL_FIELDS", "true")
+	defer os.Unsetenv("DNT_VAL_FIELDS")
+	s, err := replaceEnvVars(strings.NewReader(src_toml))
+	if err != nil {
+		t.Fatalf("replaceEnvVars err: %v", err)
+	}
+	buf, _ := ioutil.ReadAll(s)
 
-	t.Run("with env var", func(t *testing.T) {
-		os.Setenv("DNT_VAL_FIELDS", "true")
-		defer os.Unsetenv("DNT_VAL_FIELDS")
-		s, err := replaceEnvVars(strings.NewReader(src_toml))
-		if err != nil {
-			t.Fatalf("replaceEnvVars err: %v", err)
-		}
-		buf, _ := ioutil.ReadAll(s)
-
-		if want_toml != string(buf) {
-			t.Fatalf("wrong toml: %s", string(buf))
-		}
-	})
+	if want_toml != string(buf) {
+		t.Fatalf("wrong toml: %s", string(buf))
+	}
 }
 
 func TestEnvVarComplexReplace(t *testing.T) {
@@ -109,6 +100,7 @@ name = "InputName"
 name = "FilterName"
 	[filter.config]
 	some_key = ${BAKER_CONF_TEST_BOOL} # boolean
+	another_key = "${THIS_ENV_IS_NOT_SET}" # must be skipped
 [output]
 name = "OutputName"
 procs = ${BAKER_CONF_TEST_NMBR} # number
@@ -126,6 +118,7 @@ name = "InputName"
 name = "FilterName"
 	[filter.config]
 	some_key = true # boolean
+	another_key = "${THIS_ENV_IS_NOT_SET}" # must be skipped
 [output]
 name = "OutputName"
 procs = 7 # number
