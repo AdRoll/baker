@@ -181,7 +181,7 @@ func TestS3Upload(t *testing.T) {
 func Test_uploadDirectory(t *testing.T) {
 	defer testutil.DisableLogging()()
 	// Create a folder to store files to be uploaded
-	srcDir, err := ioutil.TempDir("/tmp", "upload_s3_test")
+	srcDir, err := ioutil.TempDir(".", "upload_s3_test")
 	if err != nil {
 		t.Fatalf("Can't setup test: %v", err)
 	}
@@ -229,7 +229,7 @@ func prepareUploadS3TestFolder(t *testing.T, numFiles int) (string, []string) {
 	t.Helper()
 
 	// Create a folder to store files to be uploaded
-	srcDir, err := ioutil.TempDir("/tmp", "upload_s3_test")
+	srcDir, err := ioutil.TempDir(".", "upload_s3_test")
 	if err != nil {
 		t.Fatalf("Can't setup test: %v", err)
 	}
@@ -310,7 +310,7 @@ func TestRun(t *testing.T) {
 	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
 	fname := fnames[0]
 
-	stagingDir, err := ioutil.TempDir("/tmp", "upload_s3_test_staging")
+	stagingDir, err := ioutil.TempDir(".", "upload_s3_test_staging")
 	if err != nil {
 		t.Fatalf("Can't setup test: %v", err)
 	}
@@ -362,7 +362,7 @@ func TestRunExitOnError(t *testing.T) {
 	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
 	fname := fnames[0]
 
-	stagingDir, err := ioutil.TempDir("/tmp", "upload_s3_test_staging")
+	stagingDir, err := ioutil.TempDir(".", "upload_s3_test_staging")
 	if err != nil {
 		t.Fatalf("Can't setup test: %v", err)
 	}
@@ -414,7 +414,7 @@ func TestRunNotExitOnError(t *testing.T) {
 	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
 	fname := fnames[0]
 
-	stagingDir, err := ioutil.TempDir("/tmp", "upload_s3_test_staging")
+	stagingDir, err := ioutil.TempDir(".", "upload_s3_test_staging")
 	if err != nil {
 		t.Fatalf("Can't setup test: %v", err)
 	}
@@ -460,13 +460,13 @@ func TestRunNotExitOnError(t *testing.T) {
 }
 
 func Test_move(t *testing.T) {
-	srcDir, err := ioutil.TempDir("/tmp", "upload_s3_test")
+	srcDir, err := ioutil.TempDir(".", "upload_s3_test")
 	if err != nil {
 		t.Fatalf("Can't setup test: %v", err)
 	}
 	defer os.Remove(srcDir)
 
-	trgtDir, err := ioutil.TempDir("/tmp", "upload_s3_test2")
+	trgtDir, err := ioutil.TempDir(".", "upload_s3_test2")
 	if err != nil {
 		t.Fatalf("Can't setup test: %v", err)
 	}
