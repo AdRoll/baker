@@ -48,7 +48,7 @@ type S3Config struct {
 	Retries        int           `help:"Number of retries before a failed upload" default:"3"`
 	Concurrency    int           `help:"Number of concurrent workers" default:"5"`
 	Interval       time.Duration `help:"Period at which the source path is scanned" default:"15s"`
-	FailOnError    bool          `help:"Fail when an error happens, instead of only logging" default:"false"`
+	ExitOnError    bool          `help:"Exit at first error, instead of logging all errors" default:"false"`
 }
 
 func (cfg *S3Config) fillDefaults() error {
@@ -105,6 +105,8 @@ type S3 struct {
 	totaln   int64
 	totalerr int64
 	queuedn  int64
+
+	uploadFn func(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath string) error
 }
 
 func newS3(cfg baker.UploadParams) (baker.Upload, error) {
@@ -121,10 +123,11 @@ func newS3(cfg baker.UploadParams) (baker.Upload, error) {
 		Cfg:      dcfg,
 		uploader: s3manager.NewUploaderWithClient(s3svc),
 		quit:     make(chan struct{}),
+		uploadFn: s3UploadFile,
 	}, nil
 }
 
-func (u *S3) Run(upch <-chan string) {
+func (u *S3) Run(upch <-chan string) error {
 	// Start a goroutine in which we periodically look at the source
 	// path for files and upload the ones we find.
 	u.wgUpload.Add(1)
@@ -133,7 +136,7 @@ func (u *S3) Run(upch <-chan string) {
 		defer func() {
 			ticker.Stop()
 			if err := u.uploadDirectory(); err != nil {
-				if u.Cfg.FailOnError {
+				if u.Cfg.ExitOnError {
 					log.Fatal(err)
 				}
 				log.Error(err)
@@ -145,7 +148,7 @@ func (u *S3) Run(upch <-chan string) {
 			select {
 			case <-ticker.C:
 				if err := u.uploadDirectory(); err != nil {
-					if u.Cfg.FailOnError {
+					if u.Cfg.ExitOnError {
 						log.Fatal(err)
 					}
 					log.Error(err)
@@ -161,16 +164,16 @@ func (u *S3) Run(upch <-chan string) {
 		atomic.AddInt64(&u.totaln, int64(1))
 		atomic.AddInt64(&u.queuedn, int64(1))
 		if err != nil {
-			errCtx := log.WithFields(log.Fields{"filepath": sourceFilePath}).WithError(err)
-			if u.Cfg.FailOnError {
-				errCtx.Fatal("couldn't move")
+			if u.Cfg.ExitOnError {
+				return fmt.Errorf("couldn't move: %v", err)
 			}
-			errCtx.Error("couldn't move")
+			log.WithFields(log.Fields{"filepath": sourceFilePath}).WithError(err).Error("couldn't move")
 		}
 	}
 
 	// Stop blocks until the upload goroutine has exited.
 	u.Stop()
+	return nil
 }
 
 func (u *S3) move(sourceFilePath string) error {
@@ -225,9 +228,9 @@ func (u *S3) uploadDirectory() error {
 	ctx.Info("Uploading")
 	sem := make(sem, u.Cfg.Concurrency)
 	ctx.Info("Starting to walk...")
-	err := filepath.Walk(u.Cfg.StagingPath, func(fpath string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
+	err := filepath.Walk(u.Cfg.StagingPath, func(fpath string, info os.FileInfo, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
 		}
 		if info.IsDir() {
 			return nil
@@ -239,14 +242,14 @@ func (u *S3) uploadDirectory() error {
 			defer func() { sem.decr(); wg.Done() }()
 
 			for i := 0; i < u.Cfg.Retries; i++ {
-				if err := s3UploadFile(u.uploader, u.Cfg.Bucket, u.Cfg.Prefix, u.Cfg.StagingPath, fpath); err == nil {
+				if err := u.uploadFn(u.uploader, u.Cfg.Bucket, u.Cfg.Prefix, u.Cfg.StagingPath, fpath); err == nil {
 					atomic.AddInt64(&u.totaln, int64(1))
 					atomic.AddInt64(&u.queuedn, int64(-1))
 					break
 				} else {
 					atomic.AddInt64(&u.totalerr, int64(1))
 					errCtx := log.WithError(err).WithFields(log.Fields{"retry#": i + 1})
-					if u.Cfg.FailOnError {
+					if u.Cfg.ExitOnError {
 						errCtx.Fatal("failed upload")
 					}
 					errCtx.Error("failed upload")
