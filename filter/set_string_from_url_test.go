@@ -24,8 +24,8 @@ func TestSetStringFromURL(t *testing.T) {
 		},
 		{
 			name:        "string found",
-			url:         "s3://foo/bar/path-to-us-west-2",
-			strings:     []string{"us-west-2"},
+			url:         "s3://foo/bar/path-to-us-west-2/us-east-1",
+			strings:     []string{"us-west-2", "us-east-1"},
 			wantDiscard: false,
 			wantField:   "us-west-2",
 		},
@@ -55,15 +55,19 @@ func TestSetStringFromURL(t *testing.T) {
 				strings = append(strings, []byte(s))
 			}
 
-			discarded := true
+			nextCount := 0
 			f := &setStringFromURL{field: 0, strings: strings}
-			f.Process(ll, func(baker.Record) { discarded = false })
+			f.Process(ll, func(baker.Record) { nextCount++ })
 
-			if discarded != tt.wantDiscard {
-				t.Errorf("record discarded=%t, want %t", discarded, tt.wantDiscard)
+			if nextCount == 0 != tt.wantDiscard {
+				t.Errorf("record discarded=%t, want %t", nextCount == 0, tt.wantDiscard)
 			}
 
 			if !tt.wantDiscard {
+				if nextCount > 1 {
+					t.Errorf("next called %d times, want a single call", nextCount)
+				}
+
 				b := ll.Get(0)
 				if string(b) != tt.wantField {
 					t.Errorf("got field=%q, want %q", b, tt.wantField)

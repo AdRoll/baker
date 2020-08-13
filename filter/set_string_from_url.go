@@ -92,6 +92,7 @@ func (f *setStringFromURL) Process(l baker.Record, next func(baker.Record)) {
 
 		l.Set(f.field, s)
 		next(l)
+		return
 	}
 
 	atomic.AddInt64(&f.numFilteredLines, 1)
