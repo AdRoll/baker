@@ -139,7 +139,7 @@ type Upload interface {
 	// Run processes the output result as it comes through the channel.
 	// Run must block forever
 	// upch will receive filenames that Output wants to see uploaded.
-	Run(upch <-chan string)
+	Run(upch <-chan string) error
 
 	// Stop forces the upload to stop as cleanly as possible, which usually
 	// means to finish up all the existing downloads.
