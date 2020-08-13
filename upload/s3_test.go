@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -196,7 +197,9 @@ func Test_uploadDirectory(t *testing.T) {
 		}
 	}
 
+	var total int64
 	mockUploadFn := func(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath string) error {
+		atomic.AddInt64(&total, 1)
 		return nil
 	}
 
@@ -212,8 +215,8 @@ func Test_uploadDirectory(t *testing.T) {
 	if err := s3.uploadDirectory(); err != nil {
 		log.Fatal(err)
 	}
-	if int(s3.totaln) != numFiles {
-		t.Fatalf("uploaded: want: %d, got: %d", numFiles, int(s3.totaln))
+	if int(total) != numFiles {
+		t.Fatalf("uploaded: want: %d, got: %d", numFiles, int(total))
 	}
 
 	if s3.totalerr != 0 {
@@ -221,8 +224,9 @@ func Test_uploadDirectory(t *testing.T) {
 	}
 }
 
-func Test_uploadDirectoryError(t *testing.T) {
-	defer testutil.DisableLogging()()
+// prepareUploadS3TestFolder creates a temp forlder and the selected number of files in it
+func prepareUploadS3TestFolder(t *testing.T, numFiles int) (string, []string) {
+	t.Helper()
 
 	// Create a folder to store files to be uploaded
 	srcDir, err := ioutil.TempDir("/tmp", "upload_s3_test")
@@ -232,14 +236,25 @@ func Test_uploadDirectoryError(t *testing.T) {
 	defer os.Remove(srcDir)
 
 	// Write a bunch of files
-	numFiles := 10
+	var fnames []string
 	for i := 0; i < numFiles; i++ {
 		fname := filepath.Join(srcDir, fmt.Sprintf("test_file_%d", i))
 
 		if err := ioutil.WriteFile(fname, []byte("abc"), 0644); err != nil {
 			t.Fatalf("can't create temp file: %v", err)
 		}
+
+		fnames = append(fnames, fname)
 	}
+
+	return srcDir, fnames
+}
+
+func Test_uploadDirectoryError(t *testing.T) {
+	defer testutil.DisableLogging()()
+
+	numFiles := 10
+	srcDir, _ := prepareUploadS3TestFolder(t, numFiles)
 
 	mockUploadFn := func(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath string) error {
 		time.Sleep(100 * time.Millisecond)
@@ -247,7 +262,7 @@ func Test_uploadDirectoryError(t *testing.T) {
 	}
 
 	t.Run("ExitOnError: false", func(t *testing.T) {
-		s3 := &S3{
+		s3Comp := &S3{
 			Cfg: &S3Config{
 				StagingPath: srcDir,
 				Concurrency: 5,
@@ -255,20 +270,20 @@ func Test_uploadDirectoryError(t *testing.T) {
 			},
 			uploadFn: mockUploadFn,
 		}
-		if err := s3.uploadDirectory(); err != nil {
+		if err := s3Comp.uploadDirectory(); err != nil {
 			log.Fatal(err)
 		}
-		if int(s3.totaln) != 0 {
-			t.Fatalf("uploaded: want: %d, got: %d", 0, int(s3.totaln))
+		if int(s3Comp.totaln) != 0 {
+			t.Fatalf("uploaded: want: %d, got: %d", 0, int(s3Comp.totaln))
 		}
 
-		if int(s3.totalerr) != numFiles*s3.Cfg.Retries {
-			t.Fatalf("errors: want: %d, got: %d", numFiles*s3.Cfg.Retries, int(s3.totalerr))
+		if int(s3Comp.totalerr) != numFiles*s3Comp.Cfg.Retries {
+			t.Fatalf("errors: want: %d, got: %d", numFiles*s3Comp.Cfg.Retries, int(s3Comp.totalerr))
 		}
 	})
 
 	t.Run("ExitOnError: true", func(t *testing.T) {
-		s3 := &S3{
+		s3Comp := &S3{
 			Cfg: &S3Config{
 				StagingPath: srcDir,
 				Concurrency: 5,
@@ -277,20 +292,171 @@ func Test_uploadDirectoryError(t *testing.T) {
 			},
 			uploadFn: mockUploadFn,
 		}
-		if err := s3.uploadDirectory(); err == nil {
+		if err := s3Comp.uploadDirectory(); err == nil {
 			t.Fatalf("expected error")
-		}
-
-		if int(s3.totaln) != 0 {
-			t.Fatalf("uploaded: want: %d, got: %d", 0, int(s3.totaln))
 		}
 
 		// Uploads run parallelized so we can't expect that only 1 error will happen
 		// before returning, but for sure they can't be more than the number of concurrency
-		if int(s3.totalerr) > s3.Cfg.Concurrency {
-			t.Fatalf("errors: want: <= %d, got: %d", s3.Cfg.Concurrency, int(s3.totalerr))
+		if int(s3Comp.totalerr) > s3Comp.Cfg.Concurrency {
+			t.Fatalf("errors: want: <=%d, got: %d", s3Comp.Cfg.Concurrency, int(s3Comp.totalerr))
 		}
 	})
+}
+
+func TestRun(t *testing.T) {
+	defer testutil.DisableLogging()()
+
+	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
+	fname := fnames[0]
+
+	stagingDir, err := ioutil.TempDir("/tmp", "upload_s3_test_staging")
+	if err != nil {
+		t.Fatalf("Can't setup test: %v", err)
+	}
+	mockUploadFn := func(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath string) error {
+		// time.Sleep(100 * time.Millisecond)
+		// return errors.New("Fake error")
+		os.Remove(fpath)
+		return nil
+	}
+
+	s3Comp := &S3{
+		Cfg: &S3Config{
+			StagingPath:    stagingDir,
+			SourceBasePath: tmpDir,
+			Concurrency:    5,
+			Retries:        3,
+			Interval:       1 * time.Second,
+		},
+		quit:     make(chan struct{}),
+		uploadFn: mockUploadFn,
+	}
+
+	upCh := make(chan string)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if err := s3Comp.Run(upCh); err != nil {
+			t.Fatal(err)
+		}
+	}()
+
+	upCh <- fname
+	s3Comp.Stop()
+	wg.Wait()
+
+	if int(s3Comp.totalerr) != 0 {
+		t.Fatalf("totalerr: want: %d, got: %d", 0, int(s3Comp.totalerr))
+	}
+
+	if int(s3Comp.totaln) != 1 {
+		t.Fatalf("totaln: want: %d, got: %d", 1, int(s3Comp.totaln))
+	}
+}
+
+func TestRunExitOnError(t *testing.T) {
+	defer testutil.DisableLogging()()
+
+	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
+	fname := fnames[0]
+
+	stagingDir, err := ioutil.TempDir("/tmp", "upload_s3_test_staging")
+	if err != nil {
+		t.Fatalf("Can't setup test: %v", err)
+	}
+	mockUploadFn := func(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath string) error {
+		time.Sleep(100 * time.Millisecond)
+		return errors.New("Fake error")
+	}
+
+	s3Comp := &S3{
+		Cfg: &S3Config{
+			StagingPath:    stagingDir,
+			SourceBasePath: tmpDir,
+			ExitOnError:    true,
+			Concurrency:    5,
+			Retries:        3,
+			Interval:       1 * time.Second,
+		},
+		quit:     make(chan struct{}),
+		uploadFn: mockUploadFn,
+	}
+
+	upCh := make(chan string)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if err := s3Comp.Run(upCh); err != nil {
+			t.Fatal(err)
+		}
+	}()
+
+	upCh <- fname
+	time.Sleep(100 * time.Millisecond)
+	s3Comp.Stop()
+	wg.Wait()
+
+	if int(s3Comp.totalerr) != 1 {
+		t.Fatalf("totalerr: want: %d, got: %d", 1, int(s3Comp.totalerr))
+	}
+
+	if int(s3Comp.totaln) != 1 {
+		t.Fatalf("totaln: want: %d, got: %d", 1, int(s3Comp.totaln))
+	}
+}
+
+func TestRunNotExitOnError(t *testing.T) {
+	defer testutil.DisableLogging()()
+
+	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
+	fname := fnames[0]
+
+	stagingDir, err := ioutil.TempDir("/tmp", "upload_s3_test_staging")
+	if err != nil {
+		t.Fatalf("Can't setup test: %v", err)
+	}
+	mockUploadFn := func(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath string) error {
+		time.Sleep(100 * time.Millisecond)
+		return errors.New("Fake error")
+	}
+
+	s3Comp := &S3{
+		Cfg: &S3Config{
+			StagingPath:    stagingDir,
+			SourceBasePath: tmpDir,
+			ExitOnError:    false,
+			Concurrency:    5,
+			Retries:        3,
+			Interval:       1 * time.Second,
+		},
+		quit:     make(chan struct{}),
+		uploadFn: mockUploadFn,
+	}
+
+	upCh := make(chan string)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if err := s3Comp.Run(upCh); err != nil {
+			t.Fatal(err)
+		}
+	}()
+
+	upCh <- fname
+	s3Comp.Stop()
+	wg.Wait()
+
+	if int(s3Comp.totalerr) > 1*s3Comp.Cfg.Retries {
+		t.Fatalf("totalerr: want: <=%d, got: %d", 1*s3Comp.Cfg.Retries, int(s3Comp.totalerr))
+	}
+
+	if int(s3Comp.totaln) != 1 {
+		t.Fatalf("totaln: want: %d, got: %d", 1, int(s3Comp.totaln))
+	}
 }
 
 func Test_move(t *testing.T) {

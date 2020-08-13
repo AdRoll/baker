@@ -128,6 +128,11 @@ func newS3(cfg baker.UploadParams) (baker.Upload, error) {
 }
 
 func (u *S3) Run(upch <-chan string) error {
+	// Stop blocks until the upload goroutine has exited.
+	defer u.Stop()
+
+	errCh := make(chan error)
+
 	// Start a goroutine in which we periodically look at the source
 	// path for files and upload the ones we find.
 	u.wgUpload.Add(1)
@@ -137,7 +142,7 @@ func (u *S3) Run(upch <-chan string) error {
 			ticker.Stop()
 			if err := u.uploadDirectory(); err != nil {
 				if u.Cfg.ExitOnError {
-					log.Fatal(err)
+					errCh <- err
 				}
 				log.Error(err)
 			}
@@ -149,7 +154,8 @@ func (u *S3) Run(upch <-chan string) error {
 			case <-ticker.C:
 				if err := u.uploadDirectory(); err != nil {
 					if u.Cfg.ExitOnError {
-						log.Fatal(err)
+						errCh <- err
+						return
 					}
 					log.Error(err)
 				}
@@ -159,21 +165,24 @@ func (u *S3) Run(upch <-chan string) error {
 		}
 	}()
 
-	for sourceFilePath := range upch {
-		err := u.move(sourceFilePath)
-		atomic.AddInt64(&u.totaln, int64(1))
-		atomic.AddInt64(&u.queuedn, int64(1))
-		if err != nil {
-			if u.Cfg.ExitOnError {
-				return fmt.Errorf("couldn't move: %v", err)
+	for {
+		select {
+		case err := <-errCh:
+			return err
+		case sourceFilePath := <-upch:
+			err := u.move(sourceFilePath)
+			atomic.AddInt64(&u.totaln, int64(1))
+			atomic.AddInt64(&u.queuedn, int64(1))
+			if err != nil {
+				if u.Cfg.ExitOnError {
+					return fmt.Errorf("couldn't move: %v", err)
+				}
+				log.WithFields(log.Fields{"filepath": sourceFilePath}).WithError(err).Error("couldn't move")
 			}
-			log.WithFields(log.Fields{"filepath": sourceFilePath}).WithError(err).Error("couldn't move")
+		case <-u.quit:
+			return nil
 		}
 	}
-
-	// Stop blocks until the upload goroutine has exited.
-	u.Stop()
-	return nil
 }
 
 func (u *S3) move(sourceFilePath string) error {
@@ -252,7 +261,6 @@ func (u *S3) uploadDirectory() error {
 					return
 				}
 				if err := u.uploadFn(u.uploader, u.Cfg.Bucket, u.Cfg.Prefix, u.Cfg.StagingPath, fpath); err == nil {
-					atomic.AddInt64(&u.totaln, int64(1))
 					atomic.AddInt64(&u.queuedn, int64(-1))
 					break
 				} else {
