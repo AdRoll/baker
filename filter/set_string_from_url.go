@@ -79,7 +79,7 @@ func (f *setStringFromURL) Process(l baker.Record, next func(baker.Record)) {
 
 	iurl, ok := l.Meta(inpututils.MetadataURL)
 	if !ok {
-		log.Infof("no metadata['url'] found on log line")
+		log.Infof("record metadata has no 'url' key")
 		atomic.AddInt64(&f.numFilteredLines, 1)
 	}
 
