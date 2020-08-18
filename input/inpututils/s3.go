@@ -117,7 +117,7 @@ type errUnsupportedURLScheme string
 
 // Error implements the error interface.
 func (e errUnsupportedURLScheme) Error() string {
-	return fmt.Sprintf("%s unsupported, should be s3[a]://BUCKET/DIR_PATH/FILE_NAME or DIR_PATH/FILE_NAME (no scheme)", e)
+	return fmt.Sprintf("%s unsupported, should be s3[a]://BUCKET/DIR_PATH/FILE_NAME or DIR_PATH/FILE_NAME (no scheme)", string(e))
 }
 
 // If the path is a full s3/s3a/s3n url the extract the bucket, key and scheme from

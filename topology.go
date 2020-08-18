@@ -60,10 +60,11 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	// * Create input
 	inCfg := InputParams{
 		ComponentParams{
-			DecodedConfig: cfg.Input.DecodedConfig,
-			FieldByName:   cfg.fieldByName,
-			FieldName:     cfg.fieldName,
-			CreateRecord:  cfg.createRecord,
+			DecodedConfig:  cfg.Input.DecodedConfig,
+			FieldByName:    cfg.fieldByName,
+			FieldName:      cfg.fieldName,
+			CreateRecord:   cfg.createRecord,
+			ValidateRecord: cfg.validate,
 		},
 	}
 	tp.Input, err = cfg.Input.desc.New(inCfg)
@@ -75,10 +76,11 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	for idx := range cfg.Filter {
 		filCfg := FilterParams{
 			ComponentParams{
-				DecodedConfig: cfg.Filter[idx].DecodedConfig,
-				FieldByName:   cfg.fieldByName,
-				FieldName:     cfg.fieldName,
-				CreateRecord:  cfg.createRecord,
+				DecodedConfig:  cfg.Filter[idx].DecodedConfig,
+				FieldByName:    cfg.fieldByName,
+				FieldName:      cfg.fieldName,
+				CreateRecord:   cfg.createRecord,
+				ValidateRecord: cfg.validate,
 			},
 		}
 		fil, err := cfg.Filter[idx].desc.New(filCfg)
@@ -104,10 +106,11 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	for i := 0; i < cfg.Output.Procs; i++ {
 		outCfg := OutputParams{
 			ComponentParams: ComponentParams{
-				DecodedConfig: cfg.Output.DecodedConfig,
-				FieldByName:   cfg.fieldByName,
-				FieldName:     cfg.fieldName,
-				CreateRecord:  cfg.createRecord,
+				DecodedConfig:  cfg.Output.DecodedConfig,
+				FieldByName:    cfg.fieldByName,
+				FieldName:      cfg.fieldName,
+				CreateRecord:   cfg.createRecord,
+				ValidateRecord: cfg.validate,
 			},
 			Index:  i,
 			Fields: tp.outFields,
@@ -154,10 +157,11 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	if cfg.Upload.Name != "" {
 		upCfg := UploadParams{
 			ComponentParams{
-				DecodedConfig: cfg.Upload.DecodedConfig,
-				FieldByName:   cfg.fieldByName,
-				FieldName:     cfg.fieldName,
-				CreateRecord:  cfg.createRecord,
+				DecodedConfig:  cfg.Upload.DecodedConfig,
+				FieldByName:    cfg.fieldByName,
+				FieldName:      cfg.fieldName,
+				CreateRecord:   cfg.createRecord,
+				ValidateRecord: cfg.validate,
 			},
 		}
 		tp.Upload, err = cfg.Upload.desc.New(upCfg)
