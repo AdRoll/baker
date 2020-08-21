@@ -34,7 +34,8 @@ type Client interface {
 	DeltaCountWithTags(name string, delta int64, tags []string)
 
 	// Histogram adds a sample to a metric of type histogram. A histogram
-	// samples observations and counts them in different 'buckets'.
+	// samples observations and counts them in different 'buckets' in order
+	// to track and show the statistical distribution of a set of values.
 	Histogram(name string, value float64)
 
 	// HistogramWithTags adds a sample to an histogram and associates that
