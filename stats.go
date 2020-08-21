@@ -2,6 +2,8 @@ package baker
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"runtime"
 	"sync"
 	"time"
@@ -22,6 +24,7 @@ func countInvalid(invalid *[LogLineNumFields]int64) int64 {
 type StatsDumper struct {
 	t     *Topology
 	start time.Time
+	w     io.Writer // stats destination
 
 	lock             sync.Mutex
 	prevwlines       int64
@@ -30,10 +33,15 @@ type StatsDumper struct {
 	prevUploadErrors int64
 }
 
-// NewStatsDumper creates and initializes a StatsDumper using t.
+// NewStatsDumper creates and initializes a StatsDumper using the given
+// topology and writing stats on standard output.
 func NewStatsDumper(t *Topology) (sd *StatsDumper) {
-	return &StatsDumper{t: t}
+	return &StatsDumper{t: t, w: os.Stdout}
 }
+
+// SetWriter sets the writer into which stats are written.
+// SetWriter must be called before Run().
+func (sd *StatsDumper) SetWriter(w io.Writer) { sd.w = w }
 
 func (sd *StatsDumper) dumpNow() {
 	sd.lock.Lock()
@@ -107,7 +115,7 @@ func (sd *StatsDumper) dumpNow() {
 		}
 	}
 
-	fmt.Printf("Stats: 1s[w:%d r:%d] total[w:%d r:%d u:%d] speed[w:%d r:%d] errors[p:%d i:%d f:%d o:%d u:%d]\n",
+	fmt.Fprintf(sd.w, "Stats: 1s[w:%d r:%d] total[w:%d r:%d u:%d] speed[w:%d r:%d] errors[p:%d i:%d f:%d o:%d u:%d]\n",
 		curwlines-sd.prevwlines, currlines-sd.prevrlines,
 		curwlines, currlines, numUploads,
 		curwlines/nsec, currlines/nsec,
@@ -118,7 +126,7 @@ func (sd *StatsDumper) dumpNow() {
 		numUploadErrors)
 
 	if istats.CustomStats != nil {
-		fmt.Printf("--- Input stats: %v\n", istats.CustomStats)
+		fmt.Fprintf(sd.w, "--- Input stats: %v\n", istats.CustomStats)
 	}
 
 	if invalid > 0 {
@@ -131,11 +139,11 @@ func (sd *StatsDumper) dumpNow() {
 				metrics.RawCount("error_lines."+name, int64(value))
 			}
 		}
-		fmt.Printf("--- Validation errors: %v\n", m)
+		fmt.Fprintf(sd.w, "--- Validation errors: %v\n", m)
 	}
 
 	if filtered > 0 {
-		fmt.Printf("--- Filtered lines: %v\n", filteredMap)
+		fmt.Fprintf(sd.w, "--- Filtered lines: %v\n", filteredMap)
 	}
 	metrics.RawCount("filtered_lines", filtered)
 
