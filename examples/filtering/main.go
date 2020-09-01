@@ -41,7 +41,7 @@ name = "LazyFilter"
 	[filter.config]
 	stakhanovite = true
 [output]
-name = "Files"
+name = "FileWriter"
 procs=1
     [output.config]
     PathString="./_out/list-clause-files-comma-sep.output.csv.gz"

@@ -23,7 +23,7 @@ func BenchmarkFilesOutput(b *testing.B) {
 		numlines = 10000
 
 	[output]
-	name="Files"
+	name="FileWriter"
 	procs=1
 
 		[output.config]
@@ -33,7 +33,7 @@ func BenchmarkFilesOutput(b *testing.B) {
 
 	c := baker.Components{
 		Inputs:  []baker.InputDesc{inputtest.RandomDesc},
-		Outputs: []baker.OutputDesc{FilesDesc},
+		Outputs: []baker.OutputDesc{FileWriterDesc},
 	}
 
 	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), c)
