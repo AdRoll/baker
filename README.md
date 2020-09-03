@@ -6,7 +6,7 @@ records (structured data), applying whatever transformation between input and
 output through easy-to-write filters.  
 Baker is fully parallel and maximizes usage of both CPU-bound and I/O bound pipelines.
 
-## Performances
+## Performance
 
 ### Read from S3 and write to local disk
 
