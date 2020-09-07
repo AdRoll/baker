@@ -60,7 +60,7 @@ type FileWriter struct {
 	workers map[string]*fileWorker
 	index   int
 
-	useSplitField bool
+	useReplField bool
 }
 
 func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
@@ -76,14 +76,14 @@ func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 	}
 
 	fw := &FileWriter{
-		Cfg:           dcfg,
-		Fields:        cfg.Fields,
-		workers:       make(map[string]*fileWorker),
-		index:         cfg.Index,
-		useSplitField: strings.Contains(dcfg.PathString, "{{.Field0}}"),
+		Cfg:          dcfg,
+		Fields:       cfg.Fields,
+		workers:      make(map[string]*fileWorker),
+		index:        cfg.Index,
+		useReplField: strings.Contains(dcfg.PathString, "{{.Field0}}"),
 	}
 
-	if fw.useSplitField && len(cfg.Fields) != 1 {
+	if fw.useReplField && len(cfg.Fields) != 1 {
 		return nil, errors.New("cannot use {{.Field0}} without an entry in the output's fields list")
 	}
 
@@ -95,7 +95,7 @@ func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) er
 
 	for lldata := range input {
 		wname := ""
-		if w.useSplitField {
+		if w.useReplField {
 			wname = lldata.Fields[0]
 		}
 		worker, ok := w.workers[wname]
@@ -168,12 +168,12 @@ type fileWorker struct {
 
 	cfg *FileWriterConfig
 
-	pathTemplate    *template.Template
-	splitFieldValue string
-	index           int
-	uid             string
-	region          string
-	rotateIdx       int64
+	pathTemplate   *template.Template
+	replFieldValue string
+	index          int
+	uid            string
+	region         string
+	rotateIdx      int64
 
 	currentPath string
 	fd          *os.File
@@ -190,24 +190,24 @@ const (
 	fileWorkerChunkBuffer = 128 * 1024
 )
 
-func newWorker(cfg *FileWriterConfig, splitFieldValue string, index int, uid string, upch chan<- string) *fileWorker {
+func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid string, upch chan<- string) *fileWorker {
 	pathTemplate, err := template.New("fileWorkerType").Parse(cfg.PathString)
 	if err != nil {
 		panic(err.Error())
 	}
 
 	fw := &fileWorker{
-		in:              make(chan []byte, 1),
-		done:            make(chan bool, 1),
-		upch:            upch,
-		cfg:             cfg,
-		pathTemplate:    pathTemplate,
-		splitFieldValue: splitFieldValue,
-		index:           index,
-		uid:             uid,
-		region:          cfg.Region,
-		useZstd:         false,
-		rotateIdx:       0,
+		in:             make(chan []byte, 1),
+		done:           make(chan bool, 1),
+		upch:           upch,
+		cfg:            cfg,
+		pathTemplate:   pathTemplate,
+		replFieldValue: replFieldValue,
+		index:          index,
+		uid:            uid,
+		region:         cfg.Region,
+		useZstd:        false,
+		rotateIdx:      0,
 	}
 
 	if strings.HasSuffix(cfg.PathString, ".zst") || strings.HasSuffix(cfg.PathString, ".zstd") {
@@ -243,7 +243,7 @@ func (fw *fileWorker) makePath() string {
 		"UUID":     fw.uid,
 		"Region":   fw.region,
 		"Rotation": fmt.Sprintf("%06d", fw.rotateIdx),
-		"Field0":   fw.splitFieldValue,
+		"Field0":   fw.replFieldValue,
 	}
 
 	err := fw.pathTemplate.Execute(&doc, replacementVars)
