@@ -24,35 +24,113 @@ import (
 	"github.com/AdRoll/baker"
 )
 
+const helpMsg = `This output writes the records into compressed files in a directory.
+Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.
+The file names can contain replacements that are populated by the output (see the keys help below).
+When the special {{.Field0}} placeholder is used, then the user must specify the field name to
+use for replacement in the fields configuration list.
+The value of that field, extracted from each record, is used as replacement and, moreover, this
+also means that each created file will contain only records with that same value for the field.
+Note that, with this option, the FileWriter creates as many workers as the different values
+of the field, and each one of these workers concurrently writes to a different file.
+`
+
 var FileWriterDesc = baker.OutputDesc{
 	Name:   "FileWriter",
 	New:    NewFileWriter,
 	Config: &FileWriterConfig{},
 	Raw:    true,
-	Help:   "This output writes the filtered log lines into typed files in a directory.\n",
+	Help:   helpMsg,
 }
 
 type FileWriterConfig struct {
-	PathString           string        `help:"Template to describe location of the output directory: supports .SplitField (required when SplitByField is true), .Year, .Month, .Day, .Region, .Instance, and .Rotation."`
+	PathString           string        `help:"Template to describe location of the output directory: supports .Year, .Month, .Day, .Region, .Instance, and .Rotation. Also .Field0 if a field name has been specified in the output's fields list."`
 	RotateInterval       time.Duration `help:"Time after which data will be rotated. If -1, it will not rotate until the end." default:"60s"`
 	StagingPathString    string        `help:"Staging directory for the upload functionality"`
 	Region               string        `help:"Replaces {{.Region}} in PathString. If empty it is set to 'region' from EC2 Metadata."`
 	InstanceID           string        `help:"Replaces {{.Instance}} in PathString. If empty it is set to 'instance-id' from EC2 Metadata."`
 	ZstdCompressionLevel int           `help:"zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
 	ZstdWindowLog        int           `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
-
-	SplitByField bool `help:"If true, add support for {{.SplitField}} replacement in PathString using the first field (requires the fields value to have at least 1 field and {{.SplitField}} to be present in PathString)"`
 }
 
-func (cfg *FileWriterConfig) checkConfAndfillDefaults(outCfg baker.OutputParams) error {
-	if cfg.SplitByField && len(outCfg.Fields) < 1 {
-		return errors.New("Cannot use SplitByField=true without a Field to use for sharding")
+type FileWriter struct {
+	Cfg *FileWriterConfig
+
+	Fields []baker.FieldIndex
+	totaln int64
+
+	workers map[string]*fileWorker
+	index   int
+
+	useSplitField bool
+}
+
+func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
+	log.WithFields(log.Fields{"fn": "NewFileWriter", "idx": cfg.Index}).Info("Initializing")
+
+	if cfg.DecodedConfig == nil {
+		cfg.DecodedConfig = &FileWriterConfig{}
+	}
+	dcfg := cfg.DecodedConfig.(*FileWriterConfig)
+	dcfg.fillDefaults()
+
+	useSplitField := strings.Contains(dcfg.PathString, "{{.Field0}}")
+	if useSplitField && len(cfg.Fields) != 1 {
+		return nil, errors.New("cannot use {{.Field0}} without an entry in the output's fields list")
 	}
 
-	if cfg.SplitByField && !strings.Contains(cfg.PathString, "{{.SplitField}}") {
-		return errors.New("PathString must contain {{.SplitField}} when SplitByField is true")
+	return &FileWriter{
+		Cfg:           dcfg,
+		Fields:        cfg.Fields,
+		workers:       make(map[string]*fileWorker),
+		index:         cfg.Index,
+		useSplitField: useSplitField,
+	}, nil
+}
+
+func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) error {
+	log.WithFields(log.Fields{"idx": w.index}).Info("FileWriter ready to log")
+
+	for lldata := range input {
+		wname := ""
+		if w.useSplitField {
+			wname = lldata.Fields[0]
+		}
+		worker, ok := w.workers[wname]
+		if !ok {
+			// Unique UUID for the output processes
+			uid := uuid.New().String()
+			worker = newWorker(w.Cfg, wname, w.index, uid, upch)
+			w.workers[wname] = worker
+		}
+
+		worker.Write(lldata.Record)
+
+		atomic.AddInt64(&w.totaln, int64(1))
 	}
 
+	log.WithFields(log.Fields{"idx": w.index}).Info("FileWriter Terminating")
+	for _, worker := range w.workers {
+		worker.Close()
+	}
+	for _, worker := range w.workers {
+		worker.Wait()
+	}
+
+	return nil
+}
+
+func (w *FileWriter) Stats() baker.OutputStats {
+	return baker.OutputStats{
+		NumProcessedLines: atomic.LoadInt64(&w.totaln),
+	}
+}
+
+func (w *FileWriter) CanShard() bool {
+	return false
+}
+
+func (cfg *FileWriterConfig) fillDefaults() {
 	if cfg.PathString == "" {
 		cfg.PathString = "/tmp/baker/ologs/logs/{{.Year}}/{{.Month}}/{{.Day}}/baker-{{.Instance}}-{{.Region}}/{{.Year}}{{.Month}}{{.Day}}-{{.Hour}}{{.Minute}}{{.Second}}.{{.Index}}.log.gz"
 	}
@@ -87,85 +165,6 @@ func (cfg *FileWriterConfig) checkConfAndfillDefaults(outCfg baker.OutputParams)
 	if cfg.ZstdCompressionLevel == 0 {
 		cfg.ZstdCompressionLevel = 3
 	}
-
-	return nil
-}
-
-type FileWriter struct {
-	Cfg *FileWriterConfig
-
-	Fields []baker.FieldIndex
-	totaln int64
-	errn   int64
-
-	workers map[string]*fileWorker
-	index   int
-}
-
-func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
-	log.WithFields(log.Fields{"fn": "NewFileWriter", "idx": cfg.Index}).Info("Initializing")
-
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &FileWriterConfig{}
-	}
-	dcfg := cfg.DecodedConfig.(*FileWriterConfig)
-	if err := dcfg.checkConfAndfillDefaults(cfg); err != nil {
-		return nil, err
-	}
-
-	return &FileWriter{
-		Cfg:     dcfg,
-		Fields:  cfg.Fields,
-		workers: make(map[string]*fileWorker),
-		index:   cfg.Index,
-	}, nil
-}
-
-func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) error {
-	log.WithFields(log.Fields{"idx": w.index}).Info("FileWriter ready to log")
-
-	for lldata := range input {
-		wname := ""
-		if w.Cfg.SplitByField {
-			if lldata.Fields[0] == "" {
-				atomic.AddInt64(&w.errn, int64(1))
-				continue // bad line
-			}
-			wname = lldata.Fields[0]
-		}
-		worker, ok := w.workers[wname]
-		if !ok {
-			// Unique UUID for the output processes
-			uid := uuid.New().String()
-			worker = newWorker(w.Cfg, wname, w.index, uid, upch)
-			w.workers[wname] = worker
-		}
-
-		worker.Write(lldata.Record)
-
-		atomic.AddInt64(&w.totaln, int64(1))
-	}
-
-	log.WithFields(log.Fields{"idx": w.index}).Info("FileWriter Terminating")
-	for _, worker := range w.workers {
-		worker.Close()
-	}
-	for _, worker := range w.workers {
-		worker.Wait()
-	}
-
-	return nil
-}
-
-func (w *FileWriter) Stats() baker.OutputStats {
-	return baker.OutputStats{
-		NumProcessedLines: atomic.LoadInt64(&w.totaln),
-		NumErrorLines:     atomic.LoadInt64(&w.errn),
-	}
-}
-
-func (w *FileWriter) CanShard() bool {
-	return false
 }
 
 // Internal object only.
@@ -255,10 +254,7 @@ func (fw *fileWorker) makePath() string {
 		"UUID":     fw.uid,
 		"Region":   fw.region,
 		"Rotation": fmt.Sprintf("%06d", fw.rotateIdx),
-	}
-
-	if fw.cfg.SplitByField {
-		replacementVars["SplitField"] = fw.splitFieldValue
+		"Field0":   fw.splitFieldValue,
 	}
 
 	err := fw.pathTemplate.Execute(&doc, replacementVars)
