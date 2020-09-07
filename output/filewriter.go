@@ -69,9 +69,7 @@ func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 	}
 	dcfg := cfg.DecodedConfig.(*FileWriterConfig)
 
-	if err := dcfg.checkConfigAndFillDefaults(); err != nil {
-		return nil, err
-	}
+	dcfg.fillDefaults()
 
 	fw := &FileWriter{
 		Cfg:          dcfg,
@@ -130,7 +128,7 @@ func (w *FileWriter) CanShard() bool {
 	return false
 }
 
-func (cfg *FileWriterConfig) checkConfigAndFillDefaults() error {
+func (cfg *FileWriterConfig) fillDefaults() {
 	if cfg.PathString == "" {
 		cfg.PathString = "/tmp/baker/ologs/logs/{{.Year}}/{{.Month}}/{{.Day}}/baker/{{.Year}}{{.Month}}{{.Day}}-{{.Hour}}{{.Minute}}{{.Second}}.{{.Index}}.log.gz"
 	}
@@ -142,8 +140,6 @@ func (cfg *FileWriterConfig) checkConfigAndFillDefaults() error {
 	if cfg.ZstdCompressionLevel == 0 {
 		cfg.ZstdCompressionLevel = 3
 	}
-
-	return nil
 }
 
 // Internal object only.
