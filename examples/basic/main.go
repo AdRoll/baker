@@ -39,7 +39,7 @@ name = "List"
 	files=["testdata/input.csv.zst"]
 
 [output]
-name = "Files"
+name = "FileWriter"
 procs=1
 
 	[output.config]
