@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - filter: add ClearFields filter [#19](https://github.com/AdRoll/baker/pull/19)
 - output: add Stats output [#23](https://github.com/AdRoll/baker/pull/23)
 - filter: add SetStringFromURL filter [#28](https://github.com/AdRoll/baker/pull/28)
+- output: add FileWriter output in replacement of Files output  [#31](https://github.com/AdRoll/baker/pull/31)
 
 ### Changed
 
@@ -23,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- 
+- output: remove the Files output in favor of the more generic FileWriter [#31](https://github.com/AdRoll/baker/pull/31)
 
 ### Maintenance
 
