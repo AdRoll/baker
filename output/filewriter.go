@@ -15,8 +15,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws/ec2metadata"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	zstd "github.com/valyala/gozstd"
@@ -72,20 +70,24 @@ func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 		cfg.DecodedConfig = &FileWriterConfig{}
 	}
 	dcfg := cfg.DecodedConfig.(*FileWriterConfig)
-	dcfg.fillDefaults()
 
-	useSplitField := strings.Contains(dcfg.PathString, "{{.Field0}}")
-	if useSplitField && len(cfg.Fields) != 1 {
-		return nil, errors.New("cannot use {{.Field0}} without an entry in the output's fields list")
+	if err := dcfg.checkConfigAndFillDefaults(); err != nil {
+		return nil, err
 	}
 
-	return &FileWriter{
+	fw := &FileWriter{
 		Cfg:           dcfg,
 		Fields:        cfg.Fields,
 		workers:       make(map[string]*fileWorker),
 		index:         cfg.Index,
-		useSplitField: useSplitField,
-	}, nil
+		useSplitField: strings.Contains(dcfg.PathString, "{{.Field0}}"),
+	}
+
+	if fw.useSplitField && len(cfg.Fields) != 1 {
+		return nil, errors.New("cannot use {{.Field0}} without an entry in the output's fields list")
+	}
+
+	return fw, nil
 }
 
 func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) error {
@@ -130,9 +132,9 @@ func (w *FileWriter) CanShard() bool {
 	return false
 }
 
-func (cfg *FileWriterConfig) fillDefaults() {
+func (cfg *FileWriterConfig) checkConfigAndFillDefaults() error {
 	if cfg.PathString == "" {
-		cfg.PathString = "/tmp/baker/ologs/logs/{{.Year}}/{{.Month}}/{{.Day}}/baker-{{.Instance}}-{{.Region}}/{{.Year}}{{.Month}}{{.Day}}-{{.Hour}}{{.Minute}}{{.Second}}.{{.Index}}.log.gz"
+		cfg.PathString = "/tmp/baker/ologs/logs/{{.Year}}/{{.Month}}/{{.Day}}/baker/{{.Year}}{{.Month}}{{.Day}}-{{.Hour}}{{.Minute}}{{.Second}}.{{.Index}}.log.gz"
 	}
 	var z time.Duration
 	if cfg.RotateInterval == z {
@@ -140,31 +142,18 @@ func (cfg *FileWriterConfig) fillDefaults() {
 	}
 
 	if strings.Contains(cfg.PathString, "{{.Region}}") && cfg.Region == "" {
-		md := ec2metadata.New(session.New())
-
-		region, err := md.Region()
-		if err != nil {
-			log.WithError(err).Error("Couldn't fetch region")
-			region = ""
-		}
-		cfg.Region = region
+		return errors.New("Cannot use {{.Region}} replacement with an unconfigured Region")
 	}
 
 	if strings.Contains(cfg.PathString, "{{.Instance}}") && cfg.InstanceID == "" {
-		md := ec2metadata.New(session.New())
-
-		instanceid, err := md.GetMetadata("instance-id")
-		if err != nil {
-			log.WithError(err).Error("Couldn't fetch instance-id")
-			instanceid = ""
-		}
-
-		cfg.InstanceID = instanceid
+		return errors.New("Cannot use {{.Instance}} replacement with an unconfigured InstanceID")
 	}
 
 	if cfg.ZstdCompressionLevel == 0 {
 		cfg.ZstdCompressionLevel = 3
 	}
+
+	return nil
 }
 
 // Internal object only.
