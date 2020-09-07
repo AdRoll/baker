@@ -33,36 +33,6 @@ func TestFileWriterConfig(t *testing.T) {
 			fields:  []baker.FieldIndex{1},
 			wantErr: false,
 		},
-		{
-			name: "with region / no config",
-			cfg: &FileWriterConfig{
-				PathString: "/path/{{.Region}}/file.gz",
-			},
-			wantErr: true,
-		},
-		{
-			name: "with region / with config",
-			cfg: &FileWriterConfig{
-				PathString: "/path/{{.Region}}/file.gz",
-				Region:     "someRegion",
-			},
-			wantErr: false,
-		},
-		{
-			name: "with instanceId / no config",
-			cfg: &FileWriterConfig{
-				PathString: "/path/{{.Instance}}/file.gz",
-			},
-			wantErr: true,
-		},
-		{
-			name: "with instanceId / with config",
-			cfg: &FileWriterConfig{
-				PathString: "/path/{{.Instance}}/file.gz",
-				InstanceID: "id1",
-			},
-			wantErr: false,
-		},
 	}
 
 	for _, tt := range tests {
