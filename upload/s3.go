@@ -164,12 +164,14 @@ func (u *S3) Run(upch <-chan string) error {
 			}
 		}
 	}()
-
 	for {
 		select {
 		case err := <-errCh:
 			return err
-		case sourceFilePath := <-upch:
+		case sourceFilePath, more := <-upch:
+			if !more {
+				return nil
+			}
 			err := u.move(sourceFilePath)
 			atomic.AddInt64(&u.totaln, int64(1))
 			atomic.AddInt64(&u.queuedn, int64(1))
