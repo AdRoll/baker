@@ -131,6 +131,7 @@ func TestS3Upload(t *testing.T) {
 				Region:         "us-west-2",
 				Bucket:         "my-bucket",
 				Prefix:         "my-prefix",
+				Concurrency:    16,
 				Interval:       1 * time.Millisecond,
 			},
 		},
@@ -144,6 +145,7 @@ func TestS3Upload(t *testing.T) {
 	s, ops, params := mockS3Service(false)
 	u := iu.(*S3)
 	u.uploader = s3manager.NewUploaderWithClient(s)
+	u.uploader.Concurrency = 10
 
 	// Fill the uploader channel with 10k files.
 	upch := make(chan string, len(paths))
