@@ -1,4 +1,4 @@
-package metrics
+package datadog
 
 import (
 	"fmt"
@@ -9,6 +9,15 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type datadogConfig struct {
+	Prefix string
+	Host   string
+	Tags   []string
+	// DatadogSendLogs indicates whether baker log entries are forwarded as
+	// statsd events to the datadog-agent listening at DatadogHost.
+	SendLogs bool `toml:"datadog_send_logs"`
+}
+
 type Datadog struct {
 	dog      *statsd.Client
 	basetags []string
@@ -17,7 +26,7 @@ type Datadog struct {
 	counters map[string]int64
 }
 
-// NewDatadogClient creates a Client that pushes to the datadog server using
+// newDatadogClient creates a Client that pushes to the datadog server using
 // the dogstatsd format. All exported metrics will have a name prepended with
 // the given prefix and will be tagged with the provided set of tags.
 func NewDatadogClient(host, prefix string, tags []string) (*Datadog, error) {
@@ -37,7 +46,7 @@ func NewDatadogClient(host, prefix string, tags []string) (*Datadog, error) {
 
 // Client returns the global statsd client.
 // TODO(arl): check if and where it's used, but in theory we should remove this
-func Client() *statsd.Client { return dog }
+// func Client() *statsd.Client { return dog }
 
 // Gauge sets the value of a metric of type gauge. A Gauge represents a
 // single numerical data point that can arbitrarily go up and down.
