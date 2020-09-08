@@ -23,7 +23,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
-// mockS3Service(false) returns a mocked s3.S3 service which records all operations
+// mockS3Service returns a mocked s3.S3 service which records all operations
 // related to Upload S3 API calls.
 //
 // Once all interactions with the returned service have ended, and not before
