@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// A Client allows Baker omponents to different kinds of metrics such as Gauges,
+// A Client allows Baker components to different kinds of metrics such as Gauges,
 // Counters or Histograms.
 type Client interface {
 
