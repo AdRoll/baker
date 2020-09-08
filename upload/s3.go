@@ -105,8 +105,6 @@ type S3 struct {
 	totaln   int64
 	totalerr int64
 	queuedn  int64
-
-	uploadFn func(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath string) error
 }
 
 func newS3(cfg baker.UploadParams) (baker.Upload, error) {
@@ -123,7 +121,6 @@ func newS3(cfg baker.UploadParams) (baker.Upload, error) {
 		Cfg:      dcfg,
 		uploader: s3manager.NewUploaderWithClient(s3svc),
 		quit:     make(chan struct{}),
-		uploadFn: s3UploadFile,
 	}, nil
 }
 
@@ -263,17 +260,18 @@ func (u *S3) uploadDirectory() error {
 				if exitErr.Load() != nil {
 					return
 				}
-				if err := u.uploadFn(u.uploader, u.Cfg.Bucket, u.Cfg.Prefix, u.Cfg.StagingPath, fpath); err == nil {
+				err := s3UploadFile(u.uploader, u.Cfg.Bucket, u.Cfg.Prefix, u.Cfg.StagingPath, fpath)
+				if err == nil {
 					atomic.AddInt64(&u.queuedn, int64(-1))
 					break
-				} else {
-					atomic.AddInt64(&u.totalerr, int64(1))
-					if u.Cfg.ExitOnError {
-						exitErr.Store(err)
-						return
-					}
-					log.WithError(err).WithFields(log.Fields{"retry#": i + 1}).Error("failed upload")
 				}
+
+				atomic.AddInt64(&u.totalerr, int64(1))
+				if u.Cfg.ExitOnError {
+					exitErr.Store(err)
+					return
+				}
+				log.WithError(err).WithFields(log.Fields{"retry#": i + 1}).Error("failed upload")
 			}
 		}(fpath)
 		return nil
