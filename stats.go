@@ -172,6 +172,7 @@ func (sd *StatsDumper) dumpNow() {
 func (sd *StatsDumper) Run() (stop func()) {
 	sd.start = time.Now().UTC()
 
+	quit := make(chan struct{})
 	done := make(chan struct{})
 	go func() {
 		tick := time.NewTicker(1 * time.Second)
@@ -179,7 +180,8 @@ func (sd *StatsDumper) Run() (stop func()) {
 
 		for {
 			select {
-			case <-done:
+			case <-quit:
+				close(done)
 				return
 			case <-tick.C:
 				sd.dumpNow()
@@ -187,5 +189,5 @@ func (sd *StatsDumper) Run() (stop func()) {
 		}
 	}()
 
-	return func() { close(done); sd.dumpNow() }
+	return func() { close(quit); <-done; sd.dumpNow() }
 }
