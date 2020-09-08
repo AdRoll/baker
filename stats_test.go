@@ -96,8 +96,8 @@ func TestStatsDumper(t *testing.T) {
 	sd.SetWriter(buf)
 
 	stop := sd.Run()
-	// This is required or sd won't dump nothing
-	time.Sleep(1000 * time.Millisecond)
+	// StatsDumper does not print anything the first second
+	time.Sleep(1050 * time.Millisecond)
 	stop()
 
 	flag.Parse()
