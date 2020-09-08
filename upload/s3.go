@@ -239,14 +239,15 @@ func (u *S3) uploadDirectory() error {
 	ctx.Info("Uploading")
 	sem := make(sem, u.Cfg.Concurrency)
 	ctx.Info("Starting to walk...")
-	globFatalErr := atomic.Value{}
+	exitErr := atomic.Value{}
 	err := filepath.Walk(u.Cfg.StagingPath, func(fpath string, info os.FileInfo, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
 		}
 		// If a fatal error happened in any of the goroutines, then exit immediately
-		if globFatalErr.Load() != nil {
-			return globFatalErr.Load().(error)
+		e := exitErr.Load()
+		if e != nil {
+			return e.(error)
 		}
 
 		if info.IsDir() {
@@ -259,7 +260,7 @@ func (u *S3) uploadDirectory() error {
 			defer func() { sem.decr(); wg.Done() }()
 
 			for i := 0; i < u.Cfg.Retries; i++ {
-				if globFatalErr.Load() != nil {
+				if exitErr.Load() != nil {
 					return
 				}
 				if err := u.uploadFn(u.uploader, u.Cfg.Bucket, u.Cfg.Prefix, u.Cfg.StagingPath, fpath); err == nil {
@@ -268,7 +269,7 @@ func (u *S3) uploadDirectory() error {
 				} else {
 					atomic.AddInt64(&u.totalerr, int64(1))
 					if u.Cfg.ExitOnError {
-						globFatalErr.Store(err)
+						exitErr.Store(err)
 						return
 					}
 					log.WithError(err).WithFields(log.Fields{"retry#": i + 1}).Error("failed upload")

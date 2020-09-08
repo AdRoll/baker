@@ -93,19 +93,8 @@ func TestS3Upload(t *testing.T) {
 
 	// Create many files.
 	const nfiles = 10000
-	srcDir, rmSrcDir := testutil.TempDir(t)
+	srcDir, paths, rmSrcDir := prepareUploadS3TestFolder(t, nfiles)
 	defer rmSrcDir()
-
-	paths := make([]string, nfiles)
-	for i := range paths {
-		paths[i] = filepath.Join(srcDir, fmt.Sprintf("file%d", i))
-	}
-
-	for _, path := range paths {
-		if err := ioutil.WriteFile(path, []byte("foo"), os.ModePerm); err != nil {
-			t.Fatal(err)
-		}
-	}
 
 	cfg := baker.UploadParams{
 		ComponentParams: baker.ComponentParams{
@@ -181,21 +170,9 @@ func TestS3Upload(t *testing.T) {
 func Test_uploadDirectory(t *testing.T) {
 	defer testutil.DisableLogging()()
 	// Create a folder to store files to be uploaded
-	srcDir, err := ioutil.TempDir(".", "upload_s3_test")
-	if err != nil {
-		t.Fatalf("Can't setup test: %v", err)
-	}
-	defer os.Remove(srcDir)
-
-	// Write a bunch of files
 	numFiles := 10
-	for i := 0; i < numFiles; i++ {
-		fname := filepath.Join(srcDir, fmt.Sprintf("test_file_%d", i))
-
-		if err := ioutil.WriteFile(fname, []byte("abc"), 0644); err != nil {
-			t.Fatalf("can't create temp file: %v", err)
-		}
-	}
+	srcDir, _, rmSrcDir := prepareUploadS3TestFolder(t, numFiles)
+	defer rmSrcDir()
 
 	var total int64
 	mockUploadFn := func(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath string) error {
@@ -225,15 +202,11 @@ func Test_uploadDirectory(t *testing.T) {
 }
 
 // prepareUploadS3TestFolder creates a temp forlder and the selected number of files in it
-func prepareUploadS3TestFolder(t *testing.T, numFiles int) (string, []string) {
+func prepareUploadS3TestFolder(t *testing.T, numFiles int) (string, []string, func()) {
 	t.Helper()
 
 	// Create a folder to store files to be uploaded
-	srcDir, err := ioutil.TempDir(".", "upload_s3_test")
-	if err != nil {
-		t.Fatalf("Can't setup test: %v", err)
-	}
-	defer os.Remove(srcDir)
+	srcDir, rmSrcDir := testutil.TempDir(t)
 
 	// Write a bunch of files
 	var fnames []string
@@ -247,17 +220,17 @@ func prepareUploadS3TestFolder(t *testing.T, numFiles int) (string, []string) {
 		fnames = append(fnames, fname)
 	}
 
-	return srcDir, fnames
+	return srcDir, fnames, rmSrcDir
 }
 
 func Test_uploadDirectoryError(t *testing.T) {
 	defer testutil.DisableLogging()()
 
 	numFiles := 10
-	srcDir, _ := prepareUploadS3TestFolder(t, numFiles)
+	srcDir, _, rmSrcDir := prepareUploadS3TestFolder(t, numFiles)
+	defer rmSrcDir()
 
 	mockUploadFn := func(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath string) error {
-		time.Sleep(100 * time.Millisecond)
 		return errors.New("Fake error")
 	}
 
@@ -307,16 +280,17 @@ func Test_uploadDirectoryError(t *testing.T) {
 func TestRun(t *testing.T) {
 	defer testutil.DisableLogging()()
 
-	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
+	tmpDir, fnames, rmTmpDir := prepareUploadS3TestFolder(t, 1)
+	defer rmTmpDir()
 	fname := fnames[0]
 
-	stagingDir, err := ioutil.TempDir(".", "upload_s3_test_staging")
+	stagingDir, err := ioutil.TempDir("", t.Name())
 	if err != nil {
 		t.Fatalf("Can't setup test: %v", err)
 	}
+	defer os.RemoveAll(stagingDir)
+
 	mockUploadFn := func(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath string) error {
-		// time.Sleep(100 * time.Millisecond)
-		// return errors.New("Fake error")
 		os.Remove(fpath)
 		return nil
 	}
@@ -359,15 +333,17 @@ func TestRun(t *testing.T) {
 func TestRunExitOnError(t *testing.T) {
 	defer testutil.DisableLogging()()
 
-	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
+	tmpDir, fnames, rmTmpDir := prepareUploadS3TestFolder(t, 1)
+	defer rmTmpDir()
 	fname := fnames[0]
 
-	stagingDir, err := ioutil.TempDir(".", "upload_s3_test_staging")
+	stagingDir, err := ioutil.TempDir("", t.Name())
 	if err != nil {
 		t.Fatalf("Can't setup test: %v", err)
 	}
+	defer os.RemoveAll(stagingDir)
+
 	mockUploadFn := func(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath string) error {
-		time.Sleep(100 * time.Millisecond)
 		return errors.New("Fake error")
 	}
 
@@ -411,15 +387,17 @@ func TestRunExitOnError(t *testing.T) {
 func TestRunNotExitOnError(t *testing.T) {
 	defer testutil.DisableLogging()()
 
-	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
+	tmpDir, fnames, rmTmpDir := prepareUploadS3TestFolder(t, 1)
+	defer rmTmpDir()
 	fname := fnames[0]
 
-	stagingDir, err := ioutil.TempDir(".", "upload_s3_test_staging")
+	stagingDir, err := ioutil.TempDir("", t.Name())
 	if err != nil {
 		t.Fatalf("Can't setup test: %v", err)
 	}
+	defer os.RemoveAll(stagingDir)
+
 	mockUploadFn := func(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath string) error {
-		time.Sleep(100 * time.Millisecond)
 		return errors.New("Fake error")
 	}
 
@@ -460,17 +438,17 @@ func TestRunNotExitOnError(t *testing.T) {
 }
 
 func Test_move(t *testing.T) {
-	srcDir, err := ioutil.TempDir(".", "upload_s3_test")
+	srcDir, err := ioutil.TempDir("", t.Name())
 	if err != nil {
 		t.Fatalf("Can't setup test: %v", err)
 	}
-	defer os.Remove(srcDir)
+	defer os.RemoveAll(srcDir)
 
-	trgtDir, err := ioutil.TempDir(".", "upload_s3_test2")
+	trgtDir, err := ioutil.TempDir("", fmt.Sprintf("%s-trgt", t.Name()))
 	if err != nil {
 		t.Fatalf("Can't setup test: %v", err)
 	}
-	defer os.Remove(trgtDir)
+	defer os.RemoveAll(trgtDir)
 
 	srcFile := filepath.Join(srcDir, "test_file")
 	trgtFile := filepath.Join(trgtDir, "test_file")
