@@ -22,9 +22,10 @@ func countInvalid(invalid *[LogLineNumFields]int64) int64 {
 
 // A StatsDumper gathers statistics about all baker components of topology.
 type StatsDumper struct {
-	t     *Topology
-	start time.Time
-	w     io.Writer // stats destination
+	t       *Topology
+	start   time.Time
+	w       io.Writer      // stats destination
+	metrics metrics.Client // metrics implementation to use
 
 	lock             sync.Mutex
 	prevwlines       int64
@@ -35,8 +36,9 @@ type StatsDumper struct {
 
 // NewStatsDumper creates and initializes a StatsDumper using the given
 // topology and writing stats on standard output.
-func NewStatsDumper(t *Topology) (sd *StatsDumper) {
-	return &StatsDumper{t: t, w: os.Stdout}
+// TODO(arl) temporary parameters
+func NewStatsDumper(t *Topology, metrics metrics.Client) (sd *StatsDumper) {
+	return &StatsDumper{t: t, w: os.Stdout, metrics: metrics}
 }
 
 // SetWriter sets the writer into which stats are written.
@@ -57,7 +59,7 @@ func (sd *StatsDumper) dumpNow() {
 	for _, o := range t.Output {
 		curwlines += o.Stats().NumProcessedLines
 	}
-	metrics.RawCount("processed_lines", curwlines)
+	sd.metrics.RawCount("processed_lines", curwlines)
 
 	istats := t.Input.Stats()
 	currlines := istats.NumProcessedLines
@@ -90,8 +92,8 @@ func (sd *StatsDumper) dumpNow() {
 		uStats := t.Upload.Stats()
 		numUploads = uStats.NumProcessedFiles
 		numUploadErrors = uStats.NumErrorFiles
-		metrics.RawCount("uploads", numUploads)
-		metrics.RawCount("upload_errors", numUploadErrors)
+		sd.metrics.RawCount("uploads", numUploads)
+		sd.metrics.RawCount("upload_errors", numUploadErrors)
 		allMetrics.Merge(uStats.Metrics)
 	}
 
@@ -102,16 +104,16 @@ func (sd *StatsDumper) dumpNow() {
 	invalid := countInvalid(&t.invalid)
 	parseErrors := t.malformed
 	totalErrors := invalid + parseErrors + filtered + outErrors
-	metrics.RawCount("error_lines", totalErrors)
+	sd.metrics.RawCount("error_lines", totalErrors)
 
 	for k, v := range allMetrics {
 		switch k[0] {
 		case 'c':
-			metrics.RawCount(k[2:], v.(int64))
+			sd.metrics.RawCount(k[2:], v.(int64))
 		case 'd':
-			metrics.DeltaCount(k[2:], v.(int64))
+			sd.metrics.DeltaCount(k[2:], v.(int64))
 		case 'g':
-			metrics.Gauge(k[2:], v.(float64))
+			sd.metrics.Gauge(k[2:], v.(float64))
 		}
 	}
 
@@ -136,7 +138,7 @@ func (sd *StatsDumper) dumpNow() {
 				name := sd.t.fieldName(FieldIndex(f))
 				value := t.invalid[f]
 				m[name] = value
-				metrics.RawCount("error_lines."+name, int64(value))
+				sd.metrics.RawCount("error_lines."+name, int64(value))
 			}
 		}
 		fmt.Fprintf(sd.w, "--- Validation errors: %v\n", m)
@@ -145,21 +147,21 @@ func (sd *StatsDumper) dumpNow() {
 	if filtered > 0 {
 		fmt.Fprintf(sd.w, "--- Filtered lines: %v\n", filteredMap)
 	}
-	metrics.RawCount("filtered_lines", filtered)
+	sd.metrics.RawCount("filtered_lines", filtered)
 
 	// Go stats
-	metrics.Gauge("runtime.numgoroutines", float64(runtime.NumGoroutine()))
+	sd.metrics.Gauge("runtime.numgoroutines", float64(runtime.NumGoroutine()))
 
 	memstats := runtime.MemStats{}
 	runtime.ReadMemStats(&memstats)
-	metrics.Gauge("runtime.memstats.mallocs", float64(memstats.Mallocs))
-	metrics.Gauge("runtime.memstats.frees", float64(memstats.Frees))
-	metrics.Gauge("runtime.memstats.heapalloc", float64(memstats.HeapAlloc))
-	metrics.Gauge("runtime.memstats.heapsys", float64(memstats.HeapSys))
-	metrics.Gauge("runtime.memstats.heapreleased", float64(memstats.HeapReleased))
-	metrics.Gauge("runtime.memstats.heapobjects", float64(memstats.HeapObjects))
-	metrics.Gauge("runtime.memstats.stacksys", float64(memstats.StackSys))
-	metrics.Gauge("runtime.memstats.numgc", float64(memstats.NumGC))
+	sd.metrics.Gauge("runtime.memstats.mallocs", float64(memstats.Mallocs))
+	sd.metrics.Gauge("runtime.memstats.frees", float64(memstats.Frees))
+	sd.metrics.Gauge("runtime.memstats.heapalloc", float64(memstats.HeapAlloc))
+	sd.metrics.Gauge("runtime.memstats.heapsys", float64(memstats.HeapSys))
+	sd.metrics.Gauge("runtime.memstats.heapreleased", float64(memstats.HeapReleased))
+	sd.metrics.Gauge("runtime.memstats.heapobjects", float64(memstats.HeapObjects))
+	sd.metrics.Gauge("runtime.memstats.stacksys", float64(memstats.StackSys))
+	sd.metrics.Gauge("runtime.memstats.numgc", float64(memstats.NumGC))
 
 	sd.prevwlines = curwlines
 	sd.prevrlines = currlines

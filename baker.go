@@ -1,7 +1,11 @@
 package baker
 
 import (
+	"fmt"
 	"time"
+
+	"github.com/AdRoll/baker/metrics"
+	"github.com/AdRoll/baker/metrics/datadog"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -9,6 +13,7 @@ import (
 func Main(cfg *Config, duration time.Duration) error {
 	topology, err := NewTopologyFromConfig(cfg)
 	if err != nil {
+		// TODO: why log.Fatal? we should return an error here
 		log.Fatal(err)
 	}
 
@@ -26,7 +31,15 @@ func Main(cfg *Config, duration time.Duration) error {
 	}()
 
 	// Begin dump statistics
-	stats := NewStatsDumper(topology)
+	// TODO(arl) temporary parameter metrics (will be taken from cfg later)
+	var dog metrics.Client = metrics.NopClient{}
+	if cfg.General.Datadog {
+		dog, err = datadog.NewDatadogClient(cfg.General.DatadogHost, cfg.General.DatadogPrefix, cfg.General.DatadogTags)
+		if err != nil {
+			return fmt.Errorf("can't start datadog client: %s", err)
+		}
+	}
+	stats := NewStatsDumper(topology, dog)
 	stopStats := stats.Run()
 
 	var timeout <-chan time.Time
