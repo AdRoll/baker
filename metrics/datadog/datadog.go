@@ -16,22 +16,23 @@ import (
 // Desc describes the Datadog metrics client inteface.
 var Desc = baker.MetricsDesc{
 	Name:   "Datadog",
-	Config: datadogConfig{},
+	Config: Config{},
 	New:    newDatadogClient,
 }
 
-type datadogConfig struct {
-	Prefix string
-	Host   string
-	Tags   []string
 	// TODO(arl): for now the hook code is still in SemanticSugar/baker,
 	// it is going to be moved in a subsequent PR.
 	// DatadogSendLogs indicates whether baker log entries are forwarded as
 	// statsd events to the datadog-agent listening at DatadogHost.
 	// SendLogs bool `toml:"datadog_send_logs"`
+// Config is the configuration of the Datadog metrics client.
+type Config struct {
+	Prefix   string   // Prefix is the prefix of all metric names. defaults to baker.
+	Host     string   // Host is the address of the statsd host to send log to (in UDP). defaults to 127.0.0.1:8125.
+	Tags     []string // Tags is the list of tags to attach to all metrics.
 }
 
-type Datadog struct {
+type Client struct {
 	dog      *statsd.Client
 	basetags []string
 
@@ -43,7 +44,7 @@ type Datadog struct {
 // the dogstatsd format. All exported metrics will have a name prepended with
 // the given prefix and will be tagged with the provided set of tags.
 func newDatadogClient(icfg interface{}) (baker.MetricsClient, error) {
-	cfg := icfg.(*datadogConfig)
+	cfg := icfg.(*Config)
 
 	if cfg.Prefix == "" {
 		cfg.Prefix = "baker."
@@ -59,7 +60,7 @@ func newDatadogClient(icfg interface{}) (baker.MetricsClient, error) {
 	}
 	dog.Namespace = cfg.Prefix
 
-	dd := &Datadog{
+	dd := &Client{
 		dog:      dog,
 		basetags: cfg.Tags,
 		counters: make(map[string]int64),
@@ -73,38 +74,38 @@ func newDatadogClient(icfg interface{}) (baker.MetricsClient, error) {
 
 // Gauge sets the value of a metric of type gauge. A Gauge represents a
 // single numerical data point that can arbitrarily go up and down.
-func (dd *Datadog) Gauge(name string, value float64) {
-	if dd.dog != nil {
-		dd.dog.Gauge(name, value, dd.basetags, 1)
+func (c *Client) Gauge(name string, value float64) {
+	if c.dog != nil {
+		c.dog.Gauge(name, value, c.basetags, 1)
 	}
 }
 
 // DeltaCount increments the value of a metric of type counter by delta.
 // delta must be positive.
-func (dd *Datadog) DeltaCount(name string, delta int64) {
-	if dd.dog != nil {
-		dd.dog.Count(name, delta, dd.basetags, 1)
+func (c *Client) DeltaCount(name string, delta int64) {
+	if c.dog != nil {
+		c.dog.Count(name, delta, c.basetags, 1)
 	}
 }
 
 // RawCount sets the value of a metric of type counter. A counter is a
 // cumulative metrics that can only increase. RawCount sets the current
 // value of the counter.
-func (dd *Datadog) RawCount(name string, value int64) {
-	if dd.dog != nil {
-		dd.mu.Lock()
-		delta := value - dd.counters[name]
+func (c *Client) RawCount(name string, value int64) {
+	if c.dog != nil {
+		c.mu.Lock()
+		delta := value - c.counters[name]
 
 		// TODO: Once the sources of the weird data have been tracked
 		// down, instead of crashing we should just submit a delta of
 		// 0.
 		if delta < 0 {
-			log.Fatalf("encountered a negative delta! a metric of name '%s' that should always be increasing have decreased from last collection. old value %d, new value %d, delta %d\n", name, dd.counters[name], value, delta)
+			log.Fatalf("encountered a negative delta! a metric of name '%s' that should always be increasing have decreased from last collection. old value %d, new value %d, delta %d\n", name, c.counters[name], value, delta)
 		}
-		dd.counters[name] = value
-		dd.mu.Unlock()
+		c.counters[name] = value
+		c.mu.Unlock()
 
-		dd.dog.Count(name, delta, dd.basetags, 1)
+		c.dog.Count(name, delta, c.basetags, 1)
 	}
 }
 
@@ -115,9 +116,9 @@ func (dd *Datadog) RawCount(name string, value int64) {
 // In Datadog, this is shown as an 'Histogram', a DogStatsd metric type on
 // which percentiles, mean and other info are calculated.
 // see https://docs.datadoghq.com/developers/dogstatsd/data_types/#histograms
-func (dd *Datadog) Histogram(name string, value float64) {
-	if dd.dog != nil {
-		dd.dog.Histogram(name, value, dd.basetags, 1)
+func (c *Client) Histogram(name string, value float64) {
+	if c.dog != nil {
+		c.dog.Histogram(name, value, c.basetags, 1)
 	}
 }
 
@@ -128,69 +129,59 @@ func (dd *Datadog) Histogram(name string, value float64) {
 // In Datadog, this is shown as a 'Timer', an implementation of an 'Histogram'
 // DogStatsd  metric type, on which percentiles, mean and other info are calculated.
 // see https://docs.datadoghq.com/developers/dogstatsd/data_types/#timers
-func (dd *Datadog) Duration(name string, value time.Duration) {
-	if dd.dog != nil {
-		dd.dog.TimeInMilliseconds(name, float64(value/time.Millisecond), dd.basetags, 1)
+func (c *Client) Duration(name string, value time.Duration) {
+	if c.dog != nil {
+		c.dog.TimeInMilliseconds(name, float64(value/time.Millisecond), c.basetags, 1)
 	}
 }
 
 // GaugeWithTags sets the value of a metric of type gauge and associates
 // that value with a set of tags.
-func (dd *Datadog) GaugeWithTags(name string, value float64, tags []string) {
-	if dd.dog != nil {
-		dd.dog.Gauge(name, value, append(dd.basetags, tags...), 1)
+func (c *Client) GaugeWithTags(name string, value float64, tags []string) {
+	if c.dog != nil {
+		c.dog.Gauge(name, value, append(c.basetags, tags...), 1)
 	}
 }
 
 // DeltaCountWithTags increments the value of a metric or type counter and
 // associates that value with a set of tags.
-func (dd *Datadog) DeltaCountWithTags(name string, delta int64, tags []string) {
-	if dd.dog != nil {
-		dd.dog.Count(name, delta, append(tags, dd.basetags...), 1)
+func (c *Client) DeltaCountWithTags(name string, delta int64, tags []string) {
+	if c.dog != nil {
+		c.dog.Count(name, delta, append(tags, c.basetags...), 1)
 	}
 }
 
 // RawCountWithTags sets the value of a metric or type counter and associates
 // that value with a set of tags.
-func (dd *Datadog) RawCountWithTags(name string, value int64, tags []string) {
-	if dd.dog != nil {
-		dd.mu.Lock()
-		delta := value - dd.counters[name]
+func (c *Client) RawCountWithTags(name string, value int64, tags []string) {
+	if c.dog != nil {
+		c.mu.Lock()
+		delta := value - c.counters[name]
 
 		// TODO: Once the sources of the weird data have been tracked
 		// down, instead of crashing we should just submit a delta of
 		// 0.
 		if delta < 0 {
-			log.Fatalf("encountered a negative delta! a metric of name '%s' that should always be increasing have decreased from last collection. old value %d, new value %d, delta %d\n", name, dd.counters[name], value, delta)
+			log.Fatalf("encountered a negative delta! a metric of name '%s' that should always be increasing have decreased from last collection. old value %d, new value %d, delta %d\n", name, c.counters[name], value, delta)
 		}
-		dd.counters[name] = value
-		dd.mu.Unlock()
-		dd.dog.Count(name, delta, append(dd.basetags, tags...), 1)
+		c.counters[name] = value
+		c.mu.Unlock()
+		c.dog.Count(name, delta, append(c.basetags, tags...), 1)
 	}
 }
 
 // HistogramWithTags adds a sample to an histogram and associates that
 // sample with a set of tags.
-func (dd *Datadog) HistogramWithTags(name string, value float64, tags []string) {
-	if dd.dog != nil {
-		dd.dog.Histogram(name, value, append(dd.basetags, tags...), 1)
+func (c *Client) HistogramWithTags(name string, value float64, tags []string) {
+	if c.dog != nil {
+		c.dog.Histogram(name, value, append(c.basetags, tags...), 1)
 	}
 }
 
 // DurationWithTags adds a duration to an histogram and associates that
 // duration with a set of tags.
-func (dd *Datadog) DurationWithTags(name string, value time.Duration, tags []string) {
-	if dd.dog != nil {
-		dd.dog.TimeInMilliseconds(name, float64(value/time.Millisecond), append(dd.basetags, tags...), 1)
+func (c *Client) DurationWithTags(name string, value time.Duration, tags []string) {
+	if c.dog != nil {
+		c.dog.TimeInMilliseconds(name, float64(value/time.Millisecond), append(c.basetags, tags...), 1)
 	}
 }
-
-// // DurationMsWithTags tracks time durations.
-// //
-// // Same as DurationWithTags but avoid a conversion to float64 when the user value
-// // is already a float in milliseconds.
-// func (dd *Datadog) DurationMsWithTags(name string, ms float64, xtags []string) {
-// 	if dog != nil {
-// 		dog.TimeInMilliseconds(name, ms, append(tags, xtags...), 1)
-// 	}
-// }
