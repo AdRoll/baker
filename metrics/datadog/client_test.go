@@ -19,17 +19,22 @@ func TestClientMetrics(t *testing.T) {
 	defer conn.Close()
 
 	t.Run("metrics", func(t *testing.T) {
+		quit := make(chan struct{})
 		done := make(chan struct{})
+
 		var packets []string
 
 		go func() {
+			defer func() { close(done) }()
+
 			const maxsize = 32 * 1024
 			p := make([]byte, maxsize)
 			for {
 				select {
-				case <-done:
+				case <-quit:
 					return
 				default:
+					conn.SetDeadline(time.Now().Add(100 * time.Millisecond))
 					n, _, err := conn.ReadFrom(p)
 					if err != nil {
 						break
@@ -78,7 +83,8 @@ func TestClientMetrics(t *testing.T) {
 		logrus.WithFields(logrus.Fields{"field1": 27, "field2": "spiral"}).Warn("warn log message")
 
 		time.Sleep(500 * time.Millisecond)
-		close(done)
+		close(quit)
+		<-done
 
 		want := []string{"prefix.delta:1|c|#basetag1:abc,basetag2:xyz",
 			"prefix.delta-with-tags:2|c|#basetag1:abc,basetag2:xyz,tag1:1,tag2:2",
@@ -124,17 +130,21 @@ func TestClientMetrics(t *testing.T) {
 	})
 
 	t.Run("logs", func(t *testing.T) {
+		quit := make(chan struct{})
 		done := make(chan struct{})
 		packet := ""
 
 		go func() {
+			defer func() { close(done) }()
+
 			const maxsize = 32 * 1024
 			p := make([]byte, maxsize)
 			for {
 				select {
-				case <-done:
+				case <-quit:
 					return
 				default:
+					conn.SetDeadline(time.Now().Add(100 * time.Millisecond))
 					n, _, err := conn.ReadFrom(p)
 					if err != nil {
 						break
@@ -160,7 +170,8 @@ func TestClientMetrics(t *testing.T) {
 		logrus.WithFields(logrus.Fields{"field1": 27, "field2": "spiral"}).Warn("warn log message")
 
 		time.Sleep(500 * time.Millisecond)
-		close(done)
+		close(quit)
+		<-done
 
 		// Exact statds events depends on the timestamp and the order of map
 		// iteration let's just look at the presence of some values and consider
