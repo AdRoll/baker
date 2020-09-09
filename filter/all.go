@@ -8,5 +8,6 @@ import (
 var All = []baker.FilterDesc{
 	ClauseFilterDesc,
 	ClearFieldsDesc,
+	ConcatenateDesc,
 	SetStringFromURLDesc,
 }
