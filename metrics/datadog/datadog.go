@@ -67,10 +67,6 @@ func newDatadogClient(icfg interface{}) (baker.MetricsClient, error) {
 	return dd, nil
 }
 
-// Client returns the global statsd client.
-// TODO(arl): check if and where it's used, but in theory we should remove this
-// func Client() *statsd.Client { return dog }
-
 // Gauge sets the value of a metric of type gauge. A Gauge represents a
 // single numerical data point that can arbitrarily go up and down.
 func (c *Client) Gauge(name string, value float64) {
