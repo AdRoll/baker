@@ -8,6 +8,7 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/AdRoll/baker/metrics"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -23,6 +24,7 @@ type Topology struct {
 	rawOutput bool
 	upch      chan string
 
+	metrics   metrics.Client
 	invalid   [LogLineNumFields]int64 // count validation errors (by field)
 	malformed int64                   // count parse or empty records
 
@@ -170,6 +172,13 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 		}
 	}
 	tp.upch = make(chan string)
+
+	if cfg.Metrics.Name != "" {
+		tp.metrics, err = cfg.Metrics.desc.New()
+		if err != nil {
+			return nil, fmt.Errorf("error creating metrics interface: %q: %v", cfg.Metrics.Name, err)
+		}
+	}
 
 	// Create the filter chain
 	next := tp.filterChainEnd
