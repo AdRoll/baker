@@ -51,7 +51,6 @@ func (h *hook) Fire(ent *log.Entry) error {
 	}
 
 	evt := &statsd.Event{
-		Tags:           h.client.Tags,
 		Timestamp:      ent.Time,
 		SourceTypeName: "baker",
 		AlertType:      levelToAlertType(ent.Level),

@@ -19,7 +19,7 @@ func TestHookLevels(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(fmt.Sprintf("level=%s", tt.level), func(t *testing.T) {
-			h := NewHook(tt.level, nil, "", nil)
+			h := NewHook(tt.level, nil, "")
 			if got := h.Levels(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("hook.Levels() = %v, want %v", got, tt.want)
 			}
