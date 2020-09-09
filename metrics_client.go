@@ -1,12 +1,15 @@
-package metrics
+package baker
 
 import (
 	"time"
 )
 
-// A Client allows Baker components to different kinds of metrics such as Gauges,
-// Counters or Histograms.
-type Client interface {
+// A MetricsClient allows to instrument components code and communicate the
+// metrics to the metrics backend that is configured in Baker.
+//
+// New metrics backends must implement this interface and register their
+// description as a MetricDesc in Components.Metrics. See ./examples/metrics.
+type MetricsClient interface {
 
 	// Gauge sets the value of a metric of type gauge. A Gauge represents a
 	// single numerical data point that can arbitrarily go up and down.

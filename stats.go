@@ -8,7 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AdRoll/baker/metrics"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -24,8 +23,8 @@ func countInvalid(invalid *[LogLineNumFields]int64) int64 {
 type StatsDumper struct {
 	t       *Topology
 	start   time.Time
-	w       io.Writer      // stats destination
-	metrics metrics.Client // metrics implementation to use
+	w       io.Writer     // stats destination
+	metrics MetricsClient // metrics implementation to use
 
 	lock             sync.Mutex
 	prevwlines       int64
@@ -36,8 +35,7 @@ type StatsDumper struct {
 
 // NewStatsDumper creates and initializes a StatsDumper using the given
 // topology and writing stats on standard output.
-// TODO(arl) temporary parameters
-func NewStatsDumper(t *Topology, metrics metrics.Client) (sd *StatsDumper) {
+func NewStatsDumper(t *Topology, metrics MetricsClient) (sd *StatsDumper) {
 	return &StatsDumper{t: t, w: os.Stdout, metrics: metrics}
 }
 

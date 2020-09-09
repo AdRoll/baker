@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/AdRoll/baker"
-	"github.com/AdRoll/baker/metrics"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,7 +21,7 @@ type fooBarMetricsCfg struct {
 
 type fooBarMetrics struct{}
 
-func newFooBarMetrics(icfg interface{}) (metrics.Client, error) {
+func newFooBarMetrics(icfg interface{}) (baker.MetricsClient, error) {
 	cfg := icfg.(*fooBarMetricsCfg)
 	logrus.WithFields(logrus.Fields{"host": cfg.Host, "port": cfg.Port}).Info("FooBar metrics client instantiated")
 

@@ -8,7 +8,6 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/AdRoll/baker/metrics"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -24,7 +23,7 @@ type Topology struct {
 	rawOutput bool
 	upch      chan string
 
-	metrics   metrics.Client
+	metrics   MetricsClient
 	invalid   [LogLineNumFields]int64 // count validation errors (by field)
 	malformed int64                   // count parse or empty records
 

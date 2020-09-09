@@ -1,7 +1,5 @@
 package baker
 
-import "github.com/AdRoll/baker/metrics"
-
 // Components holds the descriptions of all components one can use
 // to build a topology.
 type Components struct {
@@ -104,7 +102,7 @@ type MetricsDesc struct {
 	Name string
 	// Config is the metrics client specific configuration
 	Config interface{}
-	New    func(interface{}) (metrics.Client, error)
+	New    func(interface{}) (MetricsClient, error)
 }
 
 // UserDesc describes user-specific configuration sections.
