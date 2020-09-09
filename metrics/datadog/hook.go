@@ -23,19 +23,13 @@ type hook struct {
 // to serve as configuring the stats connection (the client must already be
 // configured).
 // tags is a list of tags to include with all events.
-//
-// TODO[aurelien]: since we directly pass the client, we shouldn't need to pass
-// the tags as the client as a Tags fields for global tags set on each metrics.
-// However, the metrics package in Baker doesn't use client.Tags and pass the
-// tags each time, so there's a bit of refactoring to do.
-func NewHook(level log.Level, client *statsd.Client, host string, tags []string) log.Hook {
+func NewHook(level log.Level, client *statsd.Client, host string) log.Hook {
 	levels := make([]log.Level, level+1)
 	copy(levels[:level+1], log.AllLevels)
 
 	return &hook{
 		client: client,
 		levels: levels,
-		tags:   tags,
 		host:   host,
 	}
 }
@@ -57,7 +51,7 @@ func (h *hook) Fire(ent *log.Entry) error {
 	}
 
 	evt := &statsd.Event{
-		Tags:           h.tags,
+		Tags:           h.client.Tags,
 		Timestamp:      ent.Time,
 		SourceTypeName: "baker",
 		AlertType:      levelToAlertType(ent.Level),
