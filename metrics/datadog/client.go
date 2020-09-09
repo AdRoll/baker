@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/DataDog/datadog-go/statsd"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/AdRoll/baker"
 )
@@ -19,16 +20,12 @@ var Desc = baker.MetricsDesc{
 	New:    newClient,
 }
 
-	// TODO(arl): for now the hook code is still in SemanticSugar/baker,
-	// it is going to be moved in a subsequent PR.
-	// DatadogSendLogs indicates whether baker log entries are forwarded as
-	// statsd events to the datadog-agent listening at DatadogHost.
-	// SendLogs bool `toml:"datadog_send_logs"`
 // Config is the configuration of the Datadog metrics client.
 type Config struct {
 	Prefix   string   // Prefix is the prefix of all metric names. defaults to baker.
 	Host     string   // Host is the address (host:port) of the statsd host to send log to (in UDP). defaults to 127.0.0.1:8125.
 	Tags     []string // Tags is the list of tags to attach to all metrics.
+	SendLogs bool     // SendLogs indicates whether logs should be sent (as statds events) to the statsd client at Host.
 }
 
 // Client allows to instrument code and export the metrics to a dogstatds client.
@@ -64,6 +61,12 @@ func newClient(icfg interface{}) (baker.MetricsClient, error) {
 		dog:      dog,
 		counters: make(map[string]int64),
 	}
+
+	if cfg.SendLogs {
+		// Add Logrus hook converting log messages in statds events
+		log.AddHook(NewHook(log.GetLevel(), dog, cfg.Host))
+	}
+
 	return dd, nil
 }
 
