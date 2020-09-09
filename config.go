@@ -91,14 +91,6 @@ type ConfigCSV struct {
 
 // A ConfigGeneral specifies general configuration for the whole topology.
 type ConfigGeneral struct {
-	Datadog       bool
-	DatadogPrefix string   `toml:"datadog_prefix"`
-	DatadogHost   string   `toml:"datadog_host"`
-	DatadogTags   []string `toml:"datadog_tags"`
-	// DatadogSendLogs indicates whether baker log entries are forwarded as
-	// statsd events to the datadog-agent listening at DatadogHost.
-	DatadogSendLogs bool `toml:"datadog_send_logs"`
-
 	DontValidateFields bool `toml:"dont_validate_fields"`
 }
 
@@ -148,7 +140,6 @@ func (c *Config) fillDefaults() error {
 	c.FilterChain.fillDefaults()
 	c.Output.fillDefaults()
 	c.Upload.fillDefaults()
-	c.General.fillDefaults()
 	if err := c.fillCreateRecordDefault(); err != nil {
 		return err
 	}
@@ -200,15 +191,6 @@ func (c *ConfigOutput) fillDefaults() {
 }
 
 func (c *ConfigUpload) fillDefaults() {}
-
-func (c *ConfigGeneral) fillDefaults() {
-	if c.DatadogPrefix == "" {
-		c.DatadogPrefix = "baker."
-	}
-	if c.DatadogHost == "" {
-		c.DatadogHost = "127.0.0.1:8125"
-	}
-}
 
 // cloneConfig clones a configuration object.
 func cloneConfig(i interface{}) interface{} {
