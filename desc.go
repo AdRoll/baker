@@ -26,6 +26,7 @@ type ComponentParams struct {
 	FieldByName    func(string) (FieldIndex, bool) // translates field names to Record indexes
 	FieldName      func(FieldIndex) string         // returns the name of a field given its index in the Record
 	ValidateRecord ValidationFunc                  // function to validate a record
+	Metrics        MetricsClient                   // Metrics allows components to add code instrumentation and have metrics exported to the configured backend, if any?
 }
 
 // InputParams holds the parameters passed to Input constructor.

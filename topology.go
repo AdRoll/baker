@@ -58,6 +58,19 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 		},
 	}
 
+	// Create the metrics client first since it's injected into components parameters.
+	if cfg.Metrics.Name != "" {
+		tp.metrics, err = cfg.Metrics.desc.New(cfg.Metrics.DecodedConfig)
+		if err != nil {
+			return nil, fmt.Errorf("error creating metrics interface: %q: %v", cfg.Metrics.Name, err)
+		}
+	}
+
+	// Assign a dummy client if no one was installed
+	if tp.metrics == nil {
+		tp.metrics = NopMetrics{}
+	}
+
 	// * Create input
 	inCfg := InputParams{
 		ComponentParams{
@@ -66,6 +79,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 			FieldName:      cfg.fieldName,
 			CreateRecord:   cfg.createRecord,
 			ValidateRecord: cfg.validate,
+			Metrics:        tp.metrics,
 		},
 	}
 	tp.Input, err = cfg.Input.desc.New(inCfg)
@@ -82,6 +96,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 				FieldName:      cfg.fieldName,
 				CreateRecord:   cfg.createRecord,
 				ValidateRecord: cfg.validate,
+				Metrics:        tp.metrics,
 			},
 		}
 		fil, err := cfg.Filter[idx].desc.New(filCfg)
@@ -112,6 +127,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 				FieldName:      cfg.fieldName,
 				CreateRecord:   cfg.createRecord,
 				ValidateRecord: cfg.validate,
+				Metrics:        tp.metrics,
 			},
 			Index:  i,
 			Fields: tp.outFields,
@@ -163,6 +179,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 				FieldName:      cfg.fieldName,
 				CreateRecord:   cfg.createRecord,
 				ValidateRecord: cfg.validate,
+				Metrics:        tp.metrics,
 			},
 		}
 		tp.Upload, err = cfg.Upload.desc.New(upCfg)
@@ -171,13 +188,6 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 		}
 	}
 	tp.upch = make(chan string)
-
-	if cfg.Metrics.Name != "" {
-		tp.metrics, err = cfg.Metrics.desc.New(cfg.Metrics.DecodedConfig)
-		if err != nil {
-			return nil, fmt.Errorf("error creating metrics interface: %q: %v", cfg.Metrics.Name, err)
-		}
-	}
 
 	// Create the filter chain
 	next := tp.filterChainEnd
