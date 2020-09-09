@@ -102,6 +102,15 @@ type ConfigGeneral struct {
 	DontValidateFields bool `toml:"dont_validate_fields"`
 }
 
+// ConfigMetrics holds metrics configuration.
+type ConfigMetrics struct {
+	Name          string
+	DecodedConfig interface{}
+
+	Config *toml.Primitive
+	desc   *MetricsDesc
+}
+
 // A Config specifies the configuration for a topology.
 type Config struct {
 	Input       ConfigInput
@@ -110,6 +119,7 @@ type Config struct {
 	Output      ConfigOutput
 	Upload      ConfigUpload
 	General     ConfigGeneral
+	Metrics     ConfigMetrics
 	User        []ConfigUser
 	CSV         ConfigCSV
 
@@ -262,6 +272,18 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		}
 	}
 
+	if cfg.Metrics.Name != "" {
+		for _, mtr := range comp.Metrics {
+			if strings.EqualFold(mtr.Name, cfg.Metrics.Name) {
+				cfg.Metrics.desc = &mtr
+				break
+			}
+		}
+		if cfg.Metrics.desc == nil {
+			return nil, fmt.Errorf("metrics does not exist: %q", cfg.Metrics.Name)
+		}
+	}
+
 	// Copy custom configuration structure, to prepare for re-reading
 	cfg.Input.DecodedConfig = cfg.Input.desc.Config
 	if cfg.Input.Config != nil {
@@ -292,6 +314,15 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		if cfg.Upload.Config != nil {
 			if err := md.PrimitiveDecode(*cfg.Upload.Config, cfg.Upload.DecodedConfig); err != nil {
 				return nil, fmt.Errorf("error parsing upload config: %v", err)
+			}
+		}
+	}
+
+	if cfg.Metrics.Name != "" {
+		cfg.Metrics.DecodedConfig = cfg.Metrics.desc.Config
+		if cfg.Metrics.Config != nil {
+			if err := md.PrimitiveDecode(*cfg.Metrics.Config, cfg.Metrics.DecodedConfig); err != nil {
+				return nil, fmt.Errorf("error parsing metrics config: %v", err)
 			}
 		}
 	}

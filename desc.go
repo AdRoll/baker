@@ -1,5 +1,7 @@
 package baker
 
+import "github.com/AdRoll/baker/metrics"
+
 // Components holds the descriptions of all components one can use
 // to build a topology.
 type Components struct {
@@ -7,6 +9,8 @@ type Components struct {
 	Filters []FilterDesc
 	Outputs []OutputDesc
 	Uploads []UploadDesc
+
+	Metrics []MetricsDesc
 	User    []UserDesc
 
 	ShardingFuncs map[FieldIndex]ShardingFunc
@@ -92,6 +96,15 @@ type UploadDesc struct {
 	New    func(UploadParams) (Upload, error)
 	Config interface{}
 	Help   string
+}
+
+// MetricsDesc describes a Metrics interface to the topology.
+type MetricsDesc struct {
+	// Name of the metrics interface
+	Name string
+	// Config is the metrics client specific configuration
+	Config interface{}
+	New    func() (metrics.Client, error)
 }
 
 // UserDesc describes user-specific configuration sections.
