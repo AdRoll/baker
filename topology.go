@@ -174,7 +174,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	tp.upch = make(chan string)
 
 	if cfg.Metrics.Name != "" {
-		tp.metrics, err = cfg.Metrics.desc.New()
+		tp.metrics, err = cfg.Metrics.desc.New(cfg.Metrics.DecodedConfig)
 		if err != nil {
 			return nil, fmt.Errorf("error creating metrics interface: %q: %v", cfg.Metrics.Name, err)
 		}

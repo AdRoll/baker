@@ -104,7 +104,7 @@ type MetricsDesc struct {
 	Name string
 	// Config is the metrics client specific configuration
 	Config interface{}
-	New    func() (metrics.Client, error)
+	New    func(interface{}) (metrics.Client, error)
 }
 
 // UserDesc describes user-specific configuration sections.
