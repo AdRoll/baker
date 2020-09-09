@@ -199,7 +199,9 @@ func (t *Topology) Start() {
 	t.wgupl.Add(1)
 	go func() {
 		if t.Upload != nil {
-			t.Upload.Run(t.upch)
+			if err := t.Upload.Run(t.upch); err != nil {
+				log.WithError(err).Fatal("Upload returned an error")
+			}
 		} else {
 			// Just consume t.upch if there's no uploader available
 			for range t.upch {
