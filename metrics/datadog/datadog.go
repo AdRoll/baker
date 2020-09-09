@@ -7,15 +7,26 @@ import (
 
 	"github.com/DataDog/datadog-go/statsd"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/AdRoll/baker"
 )
+
+// Desc describes the Datadog metrics client inteface.
+var Desc = baker.MetricsDesc{
+	Name:   "Datadog",
+	Config: datadogConfig{},
+	New:    newDatadogClient,
+}
 
 type datadogConfig struct {
 	Prefix string
 	Host   string
 	Tags   []string
+	// TODO(arl): for now the hook code is still in SemanticSugar/baker,
+	// it is going to be moved in a subsequent PR.
 	// DatadogSendLogs indicates whether baker log entries are forwarded as
 	// statsd events to the datadog-agent listening at DatadogHost.
-	SendLogs bool `toml:"datadog_send_logs"`
+	// SendLogs bool `toml:"datadog_send_logs"`
 }
 
 type Datadog struct {
@@ -29,16 +40,26 @@ type Datadog struct {
 // newDatadogClient creates a Client that pushes to the datadog server using
 // the dogstatsd format. All exported metrics will have a name prepended with
 // the given prefix and will be tagged with the provided set of tags.
-func NewDatadogClient(host, prefix string, tags []string) (*Datadog, error) {
-	dog, err := statsd.NewBuffered(host, 256)
+func newDatadogClient(icfg interface{}) (baker.MetricsClient, error) {
+	cfg := icfg.(*datadogConfig)
+
+	if cfg.Prefix == "" {
+		cfg.Prefix = "baker."
+	}
+
+	if cfg.Host == "" {
+		cfg.Host = "127.0.0.1:8125"
+	}
+
+	dog, err := statsd.NewBuffered(cfg.Host, 256)
 	if err != nil {
 		return nil, fmt.Errorf("can't create datadog metrics client: %s", err)
 	}
-	dog.Namespace = prefix
+	dog.Namespace = cfg.Prefix
 
 	dd := &Datadog{
 		dog:      dog,
-		basetags: tags,
+		basetags: cfg.Tags,
 		counters: make(map[string]int64),
 	}
 	return dd, nil
