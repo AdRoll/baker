@@ -35,6 +35,10 @@ func main() {
 [metrics]
 name="Foobar"
 
+	[metrics.config]
+	host="metrics.foobar.com"
+	port=8080
+
 [input]
 name = "List"
 

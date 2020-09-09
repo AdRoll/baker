@@ -5,6 +5,7 @@ import (
 
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/metrics"
+	"github.com/sirupsen/logrus"
 )
 
 // fooBarDesc describes how to plug fooBar as a metrics backend to Baker.
@@ -21,7 +22,10 @@ type fooBarMetricsCfg struct {
 
 type fooBarMetrics struct{}
 
-func newFooBarMetrics() (metrics.Client, error) {
+func newFooBarMetrics(icfg interface{}) (metrics.Client, error) {
+	cfg := icfg.(*fooBarMetricsCfg)
+	logrus.WithFields(logrus.Fields{"host": cfg.Host, "port": cfg.Port}).Info("FooBar metrics client instantiated")
+
 	return fooBarMetrics{}, nil
 }
 
