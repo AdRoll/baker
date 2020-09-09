@@ -33,8 +33,7 @@ type Config struct {
 
 // Client allows to instrument code and export the metrics to a dogstatds client.
 type Client struct {
-	dog      *statsd.Client
-	basetags []string
+	dog *statsd.Client
 
 	mu       sync.Mutex
 	counters map[string]int64
@@ -59,10 +58,10 @@ func newClient(icfg interface{}) (baker.MetricsClient, error) {
 		return nil, fmt.Errorf("can't create datadog metrics client: %s", err)
 	}
 	dog.Namespace = cfg.Prefix
+	dog.Tags = cfg.Tags
 
 	dd := &Client{
 		dog:      dog,
-		basetags: cfg.Tags,
 		counters: make(map[string]int64),
 	}
 	return dd, nil
@@ -72,7 +71,7 @@ func newClient(icfg interface{}) (baker.MetricsClient, error) {
 // single numerical data point that can arbitrarily go up and down.
 func (c *Client) Gauge(name string, value float64) {
 	if c.dog != nil {
-		c.dog.Gauge(name, value, c.basetags, 1)
+		c.dog.Gauge(name, value, nil, 1)
 	}
 }
 
@@ -80,7 +79,7 @@ func (c *Client) Gauge(name string, value float64) {
 // delta must be positive.
 func (c *Client) DeltaCount(name string, delta int64) {
 	if c.dog != nil {
-		c.dog.Count(name, delta, c.basetags, 1)
+		c.dog.Count(name, delta, nil, 1)
 	}
 }
 
@@ -98,7 +97,7 @@ func (c *Client) RawCount(name string, value int64) {
 		c.counters[name] = value
 		c.mu.Unlock()
 
-		c.dog.Count(name, delta, c.basetags, 1)
+		c.dog.Count(name, delta, nil, 1)
 	}
 }
 
@@ -111,7 +110,7 @@ func (c *Client) RawCount(name string, value int64) {
 // see https://docs.datadoghq.com/developers/dogstatsd/data_types/#histograms
 func (c *Client) Histogram(name string, value float64) {
 	if c.dog != nil {
-		c.dog.Histogram(name, value, c.basetags, 1)
+		c.dog.Histogram(name, value, nil, 1)
 	}
 }
 
@@ -124,7 +123,7 @@ func (c *Client) Histogram(name string, value float64) {
 // see https://docs.datadoghq.com/developers/dogstatsd/data_types/#timers
 func (c *Client) Duration(name string, value time.Duration) {
 	if c.dog != nil {
-		c.dog.TimeInMilliseconds(name, float64(value/time.Millisecond), c.basetags, 1)
+		c.dog.TimeInMilliseconds(name, float64(value/time.Millisecond), nil, 1)
 	}
 }
 
@@ -132,7 +131,7 @@ func (c *Client) Duration(name string, value time.Duration) {
 // that value with a set of tags.
 func (c *Client) GaugeWithTags(name string, value float64, tags []string) {
 	if c.dog != nil {
-		c.dog.Gauge(name, value, append(c.basetags, tags...), 1)
+		c.dog.Gauge(name, value, tags, 1)
 	}
 }
 
@@ -140,7 +139,7 @@ func (c *Client) GaugeWithTags(name string, value float64, tags []string) {
 // associates that value with a set of tags.
 func (c *Client) DeltaCountWithTags(name string, delta int64, tags []string) {
 	if c.dog != nil {
-		c.dog.Count(name, delta, append(tags, c.basetags...), 1)
+		c.dog.Count(name, delta, tags, 1)
 	}
 }
 
@@ -156,7 +155,7 @@ func (c *Client) RawCountWithTags(name string, value int64, tags []string) {
 		}
 		c.counters[name] = value
 		c.mu.Unlock()
-		c.dog.Count(name, delta, append(c.basetags, tags...), 1)
+		c.dog.Count(name, delta, tags, 1)
 	}
 }
 
@@ -164,7 +163,7 @@ func (c *Client) RawCountWithTags(name string, value int64, tags []string) {
 // sample with a set of tags.
 func (c *Client) HistogramWithTags(name string, value float64, tags []string) {
 	if c.dog != nil {
-		c.dog.Histogram(name, value, append(c.basetags, tags...), 1)
+		c.dog.Histogram(name, value, tags, 1)
 	}
 }
 
@@ -172,6 +171,6 @@ func (c *Client) HistogramWithTags(name string, value float64, tags []string) {
 // duration with a set of tags.
 func (c *Client) DurationWithTags(name string, value time.Duration, tags []string) {
 	if c.dog != nil {
-		c.dog.TimeInMilliseconds(name, float64(value/time.Millisecond), append(c.basetags, tags...), 1)
+		c.dog.TimeInMilliseconds(name, float64(value/time.Millisecond), tags, 1)
 	}
 }
