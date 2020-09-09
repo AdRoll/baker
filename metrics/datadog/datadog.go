@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/DataDog/datadog-go/statsd"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/AdRoll/baker"
 )
@@ -96,11 +95,8 @@ func (c *Client) RawCount(name string, value int64) {
 		c.mu.Lock()
 		delta := value - c.counters[name]
 
-		// TODO: Once the sources of the weird data have been tracked
-		// down, instead of crashing we should just submit a delta of
-		// 0.
 		if delta < 0 {
-			log.Fatalf("encountered a negative delta! a metric of name '%s' that should always be increasing have decreased from last collection. old value %d, new value %d, delta %d\n", name, c.counters[name], value, delta)
+			delta = 0
 		}
 		c.counters[name] = value
 		c.mu.Unlock()
@@ -158,11 +154,8 @@ func (c *Client) RawCountWithTags(name string, value int64, tags []string) {
 		c.mu.Lock()
 		delta := value - c.counters[name]
 
-		// TODO: Once the sources of the weird data have been tracked
-		// down, instead of crashing we should just submit a delta of
-		// 0.
 		if delta < 0 {
-			log.Fatalf("encountered a negative delta! a metric of name '%s' that should always be increasing have decreased from last collection. old value %d, new value %d, delta %d\n", name, c.counters[name], value, delta)
+			delta = 0
 		}
 		c.counters[name] = value
 		c.mu.Unlock()
