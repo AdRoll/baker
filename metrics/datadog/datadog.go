@@ -1,3 +1,5 @@
+// Package datadog provides types and functions to export  metrics
+// and logs to Datadog via a statds client.
 package datadog
 
 import (
