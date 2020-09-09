@@ -31,6 +31,7 @@ type Config struct {
 	Tags     []string // Tags is the list of tags to attach to all metrics.
 }
 
+// Client allows to instrument code and export the metrics to a dogstatds client.
 type Client struct {
 	dog      *statsd.Client
 	basetags []string
