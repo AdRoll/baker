@@ -16,7 +16,7 @@ import (
 var Desc = baker.MetricsDesc{
 	Name:   "Datadog",
 	Config: Config{},
-	New:    newDatadogClient,
+	New:    newClient,
 }
 
 	// TODO(arl): for now the hook code is still in SemanticSugar/baker,
@@ -27,7 +27,7 @@ var Desc = baker.MetricsDesc{
 // Config is the configuration of the Datadog metrics client.
 type Config struct {
 	Prefix   string   // Prefix is the prefix of all metric names. defaults to baker.
-	Host     string   // Host is the address of the statsd host to send log to (in UDP). defaults to 127.0.0.1:8125.
+	Host     string   // Host is the address (host:port) of the statsd host to send log to (in UDP). defaults to 127.0.0.1:8125.
 	Tags     []string // Tags is the list of tags to attach to all metrics.
 }
 
@@ -40,10 +40,10 @@ type Client struct {
 	counters map[string]int64
 }
 
-// newDatadogClient creates a Client that pushes to the datadog server using
+// newClient creates a baker.MetricsClient that pushes to the datadog server using
 // the dogstatsd format. All exported metrics will have a name prepended with
 // the given prefix and will be tagged with the provided set of tags.
-func newDatadogClient(icfg interface{}) (baker.MetricsClient, error) {
+func newClient(icfg interface{}) (baker.MetricsClient, error) {
 	cfg := icfg.(*Config)
 
 	if cfg.Prefix == "" {
