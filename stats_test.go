@@ -13,7 +13,6 @@ import (
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/filter/filtertest"
 	"github.com/AdRoll/baker/input/inputtest"
-	"github.com/AdRoll/baker/metrics"
 	"github.com/AdRoll/baker/output/outputtest"
 	"github.com/AdRoll/baker/testutil"
 	"github.com/AdRoll/baker/upload/uploadtest"
@@ -88,14 +87,13 @@ func (statsUpload) Stats() baker.UploadStats {
 func TestStatsDumper(t *testing.T) {
 	buf := &bytes.Buffer{}
 
-	// TODO(arl): temporary argument, will come from config later
-	dog := metrics.NopClient{}
-	sd := baker.NewStatsDumper(&baker.Topology{
+	tp := &baker.Topology{
 		Input:   &statsInput{},
 		Filters: []baker.Filter{&statsFilter{}, &statsFilter{}, &statsFilter{}},
 		Output:  []baker.Output{&statsOutput{}, &statsOutput{}},
 		Upload:  &statsUpload{},
-	}, dog)
+	}
+	sd := baker.NewStatsDumper(tp, baker.NopMetrics{})
 	sd.SetWriter(buf)
 
 	stop := sd.Run()
