@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"reflect"
 	"strings"
@@ -208,24 +207,16 @@ func cloneConfig(i interface{}) interface{} {
 	return reflect.New(reflect.ValueOf(i).Elem().Type()).Interface()
 }
 
-// replaceEnvVars replaces any string in the format ${VALUE} with the corresponding
-// $VALUE environment variable. It returns error if the variable can't be found or
-// if any error occurs while reading from the input reader.
+// replaceEnvVars replaces any string in the format ${VALUE} or $VALUE with the corresponding
+// $VALUE environment variable
 func replaceEnvVars(f io.Reader) (io.Reader, error) {
-	buf, err := ioutil.ReadAll(f)
+	buf := new(bytes.Buffer)
+	_, err := buf.ReadFrom(f)
 	if err != nil {
 		return nil, fmt.Errorf("Error reading input: %v", err)
 	}
 
-	c := os.Expand(string(buf), func(s string) string {
-		v := os.Getenv(s)
-		if v != "" {
-			return v
-		}
-		return fmt.Sprintf("${%s}", s)
-	})
-
-	return bytes.NewReader([]byte(c)), nil
+	return strings.NewReader(os.ExpandEnv(buf.String())), nil
 }
 
 // NewConfigFromToml creates a Config from a reader reading from a TOML
