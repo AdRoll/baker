@@ -25,7 +25,7 @@ type Config struct {
 	Prefix   string   // Prefix is the prefix of all metric names. defaults to baker.
 	Host     string   // Host is the address (host:port) of the statsd host to send log to (in UDP). defaults to 127.0.0.1:8125.
 	Tags     []string // Tags is the list of tags to attach to all metrics.
-	SendLogs bool     // SendLogs indicates whether logs should be sent (as statds events) to the statsd client at Host.
+	SendLogs bool     `toml:"send_logs"` // SendLogs indicates whether logs should be sent (as statds events) to the statsd client at Host.
 }
 
 // Client allows to instrument code and export the metrics to a dogstatds client.
