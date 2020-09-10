@@ -16,7 +16,7 @@ import (
 // Desc describes the Datadog metrics client inteface.
 var Desc = baker.MetricsDesc{
 	Name:   "Datadog",
-	Config: Config{},
+	Config: &Config{},
 	New:    newClient,
 }
 
