@@ -27,9 +27,7 @@ func Main(cfg *Config, duration time.Duration) error {
 	}()
 
 	// Begin dump statistics
-	// TODO(arl) disable metrics temporarily (will be taken from cfg later)
-	client := NopMetrics{}
-	stats := NewStatsDumper(topology, client)
+	stats := NewStatsDumper(topology)
 	stopStats := stats.Run()
 
 	var timeout <-chan time.Time

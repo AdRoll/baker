@@ -34,9 +34,15 @@ type StatsDumper struct {
 }
 
 // NewStatsDumper creates and initializes a StatsDumper using the given
-// topology and writing stats on standard output.
-func NewStatsDumper(t *Topology, metrics MetricsClient) (sd *StatsDumper) {
-	return &StatsDumper{t: t, w: os.Stdout, metrics: metrics}
+// topology and writing stats on standard output. If also exports metrics
+// via the Metrics interface configured with the Topology, if any.
+func NewStatsDumper(t *Topology) (sd *StatsDumper) {
+	mc := t.metrics
+	if t.metrics == nil {
+		mc = NopMetrics{}
+	}
+
+	return &StatsDumper{t: t, w: os.Stdout, metrics: mc}
 }
 
 // SetWriter sets the writer into which stats are written.

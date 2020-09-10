@@ -93,7 +93,7 @@ func TestStatsDumper(t *testing.T) {
 		Output:  []baker.Output{&statsOutput{}, &statsOutput{}},
 		Upload:  &statsUpload{},
 	}
-	sd := baker.NewStatsDumper(tp, baker.NopMetrics{})
+	sd := baker.NewStatsDumper(tp)
 	sd.SetWriter(buf)
 
 	stop := sd.Run()
