@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"os"
 	"reflect"
-	"regexp"
 	"strings"
 	"unicode"
 
@@ -209,8 +208,6 @@ func cloneConfig(i interface{}) interface{} {
 	return reflect.New(reflect.ValueOf(i).Elem().Type()).Interface()
 }
 
-var envVarRegxp = regexp.MustCompile(`\${(\w+)}`)
-
 // replaceEnvVars replaces any string in the format ${VALUE} with the corresponding
 // $VALUE environment variable. It returns error if the variable can't be found or
 // if any error occurs while reading from the input reader.
@@ -220,14 +217,15 @@ func replaceEnvVars(f io.Reader) (io.Reader, error) {
 		return nil, fmt.Errorf("Error reading input: %v", err)
 	}
 
-	for _, match := range envVarRegxp.FindAllSubmatch(buf, -1) {
-		v := os.Getenv(string(match[1]))
+	c := os.Expand(string(buf), func(s string) string {
+		v := os.Getenv(s)
 		if v != "" {
-			buf = bytes.Replace(buf, match[0], []byte(v), 1)
+			return v
 		}
-	}
+		return fmt.Sprintf("${%s}", s)
+	})
 
-	return bytes.NewReader(buf), nil
+	return bytes.NewReader([]byte(c)), nil
 }
 
 // NewConfigFromToml creates a Config from a reader reading from a TOML
