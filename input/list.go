@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -281,17 +282,58 @@ func (s *List) processList(fn string) error {
 		}
 
 	case "s3":
-		resp, err := s.svc.GetObject(&s3.GetObjectInput{
-			Bucket: aws.String(u.Host),
-			Key:    aws.String(u.Path),
-		})
-		if err != nil {
-			return err
-		}
+		// ListObjectsV2Input prefix must not start with /
+		prefix := strings.TrimLeft(u.Path, "/")
 
-		s.processListFile(resp.Body)
-		resp.Body.Close()
-		return nil
+		paths := make(chan string)
+		errCh := make(chan error)
+
+		go func() {
+			defer close(paths)
+
+			var nextToken *string
+			for {
+				input := &s3.ListObjectsV2Input{
+					Bucket:  aws.String(u.Host),
+					Prefix:  aws.String(prefix),
+					MaxKeys: aws.Int64(1000), // 1000 is the max value
+				}
+				if nextToken != nil {
+					input.ContinuationToken = nextToken
+				}
+
+				resp, err := s.svc.ListObjectsV2(input)
+				if err != nil {
+					errCh <- err
+				}
+
+				for _, obj := range resp.Contents {
+					path := *obj.Key
+					if s.matchPath.MatchString(path) {
+						paths <- path
+					}
+				}
+
+				if *(resp.IsTruncated) == false {
+					return
+				}
+				nextToken = resp.NextContinuationToken
+			}
+		}()
+
+		for {
+			select {
+			case err := <-errCh:
+				return err
+			case line, ok := <-paths:
+				if !ok {
+					return nil
+				}
+				s.ci.ProcessFile(fmt.Sprintf("s3://%s/%s", u.Host, line))
+			case <-s.ci.Done:
+				return nil
+			}
+		}
 
 	case "http", "https":
 		resp, err := http.Get(u.Path)
