@@ -12,14 +12,11 @@ require (
 	github.com/klauspost/compress v0.0.0-20160229075208-2d3d403f37d2
 	github.com/klauspost/cpuid v0.0.0-20160302075316-09cded8978dc // indirect
 	github.com/klauspost/crc32 v0.0.0-20160219142609-19b0b332c9e4 // indirect
-	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/nsf/sexp v0.0.0-20130620094510-d3d2f2591f1d
 	github.com/rasky/toml v0.1.1-0.20160309013025-90bcb678a72a
 	github.com/sirupsen/logrus v1.4.2
-	github.com/stretchr/testify v1.3.0 // indirect
 	github.com/valyala/gozstd v1.7.0
+	github.com/vmware/vmware-go-kcl v0.0.0-20200605022506-bd2980e951b3
 	golang.org/x/net v0.0.0-20190522155817-f3200d17e092
 	golang.org/x/sys v0.0.0-20191003212358-c178f38b412c // indirect
-	golang.org/x/text v0.3.2 // indirect
-	gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 // indirect
 )
