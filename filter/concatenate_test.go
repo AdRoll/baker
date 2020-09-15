@@ -14,6 +14,7 @@ func TestConcatenateFilter(t *testing.T) {
 		record    string
 		separator string
 		want      string
+		wantErr   bool
 	}{
 		{
 			name:   "without separator",
@@ -34,6 +35,13 @@ func TestConcatenateFilter(t *testing.T) {
 			fields:    []string{"src2", "src0", "src1"},
 			separator: "~",
 			want:      "v2~v0~v1",
+		},
+		{
+			name:      "wrong separator",
+			record:    "v0,v1,v2,trgt\n",
+			fields:    []string{"src2", "src0", "src1"},
+			separator: "è",
+			wantErr:   true,
 		},
 	}
 
@@ -72,6 +80,12 @@ func TestConcatenateFilter(t *testing.T) {
 			}
 
 			f, err := NewConcatenate(params)
+			if tt.wantErr {
+				if err == nil {
+					t.Fatal("Expected conf err")
+				}
+				return
+			}
 			if err != nil {
 				t.Fatal(err)
 			}

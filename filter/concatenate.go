@@ -1,6 +1,7 @@
 package filter
 
 import (
+	"errors"
 	"fmt"
 	"sync/atomic"
 
@@ -11,13 +12,13 @@ var ConcatenateDesc = baker.FilterDesc{
 	Name:   "Concatenate",
 	New:    NewConcatenate,
 	Config: &ConcatenateConfig{},
-	Help:   `Concatenate multiple fields' values to a single field`,
+	Help:   `Concatenate up to 10 fields' values to a single field`,
 }
 
 type ConcatenateConfig struct {
 	Fields    []string `help:"The field names to concatenate, in order"`
 	Target    string   `help:"The field name to save the concatenated value to"`
-	Separator string   `help:"Use this separator to concatenate the values"`
+	Separator string   `help:"Use this separator to concatenate the values. Must be a single-byte convertible char"`
 }
 
 type Concatenate struct {
@@ -25,7 +26,7 @@ type Concatenate struct {
 	numFilteredLines  int64
 	fields            []baker.FieldIndex
 	target            baker.FieldIndex
-	separator         []byte
+	separator         byte
 }
 
 func NewConcatenate(cfg baker.FilterParams) (baker.Filter, error) {
@@ -48,10 +49,19 @@ func NewConcatenate(cfg baker.FilterParams) (baker.Filter, error) {
 		return nil, fmt.Errorf("Can't resolve target field %s", dcfg.Target)
 	}
 
+	var separator byte
+	if dcfg.Separator != "" {
+		sep := []byte(dcfg.Separator)
+		if len(sep) != 1 {
+			return nil, errors.New("Separator must be a 1-byte character")
+		}
+		separator = sep[0]
+	}
+
 	f := &Concatenate{
 		fields:    fields,
 		target:    target,
-		separator: []byte(dcfg.Separator),
+		separator: separator,
 	}
 
 	return f, nil
@@ -71,8 +81,8 @@ func (c *Concatenate) Process(l baker.Record, next func(baker.Record)) {
 	flen := len(c.fields) - 1
 	for i, f := range c.fields {
 		v := l.Get(f)
-		if i < flen {
-			v = append(v, c.separator...)
+		if i < flen && c.separator != 0 {
+			v = append(v, c.separator)
 		}
 		key = append(key, v...)
 	}
