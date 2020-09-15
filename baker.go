@@ -1,16 +1,18 @@
 package baker
 
 import (
+	"fmt"
 	"time"
-
-	log "github.com/sirupsen/logrus"
 )
 
+// Main xruns the topology corresponding to the provided configuration.
+// Depending on the input, it either blocks forever (daemon) or terminates when
+// all the records have been processed (batch).
+//
 func Main(cfg *Config, duration time.Duration) error {
 	topology, err := NewTopologyFromConfig(cfg)
 	if err != nil {
-		// TODO: why log.Fatal? we should return an error here
-		log.Fatal(err)
+		return fmt.Errorf("can't create topology: %s", err)
 	}
 
 	// Start the topology
