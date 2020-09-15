@@ -2,7 +2,6 @@ package baker
 
 import (
 	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 )
@@ -81,12 +80,18 @@ func TestEnvVarBaseReplace(t *testing.T) {
 	alt_form = "ok"
 	unexisting_var = ""
 	`
-	os.Setenv("DNT_VAL_FIELDS", "true")
-	os.Setenv("ALT_FORM", "ok")
-	defer os.Unsetenv("ALT_FORM")
-	defer os.Unsetenv("DNT_VAL_FIELDS")
 
-	s, err := replaceEnvVars(strings.NewReader(src_toml))
+	mapper := func(v string) string {
+		switch v {
+		case "DNT_VAL_FIELDS":
+			return "true"
+		case "ALT_FORM":
+			return "ok"
+		}
+		return ""
+	}
+
+	s, err := replaceEnvVars(strings.NewReader(src_toml), mapper)
 	if err != nil {
 		t.Fatalf("replaceEnvVars err: %v", err)
 	}
