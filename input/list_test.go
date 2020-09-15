@@ -7,23 +7,19 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math/rand"
-	"net/http"
 	"os"
 	"strconv"
-	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3"
 	log "github.com/sirupsen/logrus"
 	zstd "github.com/valyala/gozstd"
 
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/testutil"
-	"github.com/aws/aws-sdk-go/aws/request"
-	"github.com/aws/aws-sdk-go/awstesting/unit"
-	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 func randomLogLine() baker.Record {
@@ -262,47 +258,30 @@ func TestListS3(t *testing.T) {
 		buf = append(buf, '\n')
 	}
 	bufLen := len(buf)
-	compressedRecord := zstd.Compress(nil, buf)
-	lastModified := aws.Time(time.Now())
 
-	svc := s3.New(unit.Session)
-	svc.Handlers.Unmarshal.Clear()
-	svc.Handlers.UnmarshalMeta.Clear()
-	svc.Handlers.UnmarshalError.Clear()
-	svc.Handlers.Send.Clear()
-	var m sync.Mutex
-	svc.Handlers.Send.PushBack(func(r *request.Request) {
-		m.Lock()
-		defer m.Unlock()
-		r.HTTPResponse = &http.Response{
-			StatusCode: 200,
-			Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
-		}
-
-		switch data := r.Data.(type) {
+	dataFn := func(data interface{}) {
+		compressedRecord := zstd.Compress(nil, buf)
+		lastModified := aws.Time(time.Now())
+		switch d := data.(type) {
 		case *s3.ListObjectsV2Output:
-			data.IsTruncated = aws.Bool(false)
-			data.Contents = []*s3.Object{}
+			d.IsTruncated = aws.Bool(false)
+			d.Contents = []*s3.Object{}
 			for i := 0; i < numFiles; i++ {
-				data.Contents = append(data.Contents, &s3.Object{Key: aws.String(fmt.Sprintf("path/to/file-%d.log.zst", i))})
+				d.Contents = append(d.Contents, &s3.Object{Key: aws.String(fmt.Sprintf("path/to/file-%d.log.zst", i))})
 			}
 			// add a file that doesn't match MatchPath
-			data.Contents = append(data.Contents, &s3.Object{Key: aws.String("path/to/file3.log.gz")})
-
+			d.Contents = append(d.Contents, &s3.Object{Key: aws.String("path/to/file3.log.gz")})
 		case *s3.HeadObjectOutput:
-			data.ContentLength = aws.Int64(int64(len(compressedRecord)))
-			data.LastModified = lastModified
-
+			d.ContentLength = aws.Int64(int64(len(compressedRecord)))
+			d.LastModified = lastModified
 		case *s3.GetObjectOutput:
 			atomic.AddInt64(&getObjCounter, 1)
-			data.ContentLength = aws.Int64(int64(len(compressedRecord)))
-			data.LastModified = lastModified
-			data.Body = ioutil.NopCloser(bytes.NewReader(compressedRecord))
-		default:
-			t.Fatalf("Missing data case %T", r.Data)
+			d.ContentLength = aws.Int64(int64(len(compressedRecord)))
+			d.LastModified = lastModified
+			d.Body = ioutil.NopCloser(bytes.NewReader(compressedRecord))
 		}
-	})
-
+	}
+	svc, _, _ := testutil.MockS3Service(false, &testutil.MockS3{DataFn: dataFn})
 	list.(*List).svc = svc
 
 	finished := make(chan bool)
