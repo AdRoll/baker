@@ -91,15 +91,16 @@ type ConfigCSV struct {
 
 // A ConfigGeneral specifies general configuration for the whole topology.
 type ConfigGeneral struct {
-	Datadog       bool
-	DatadogPrefix string   `toml:"datadog_prefix"`
-	DatadogHost   string   `toml:"datadog_host"`
-	DatadogTags   []string `toml:"datadog_tags"`
-	// DatadogSendLogs indicates whether baker log entries are forwarded as
-	// statsd events to the datadog-agent listening at DatadogHost.
-	DatadogSendLogs bool `toml:"datadog_send_logs"`
-
 	DontValidateFields bool `toml:"dont_validate_fields"`
+}
+
+// ConfigMetrics holds metrics configuration.
+type ConfigMetrics struct {
+	Name          string
+	DecodedConfig interface{}
+
+	Config *toml.Primitive
+	desc   *MetricsDesc
 }
 
 // A Config specifies the configuration for a topology.
@@ -110,6 +111,7 @@ type Config struct {
 	Output      ConfigOutput
 	Upload      ConfigUpload
 	General     ConfigGeneral
+	Metrics     ConfigMetrics
 	User        []ConfigUser
 	CSV         ConfigCSV
 
@@ -138,7 +140,6 @@ func (c *Config) fillDefaults() error {
 	c.FilterChain.fillDefaults()
 	c.Output.fillDefaults()
 	c.Upload.fillDefaults()
-	c.General.fillDefaults()
 	if err := c.fillCreateRecordDefault(); err != nil {
 		return err
 	}
@@ -190,15 +191,6 @@ func (c *ConfigOutput) fillDefaults() {
 }
 
 func (c *ConfigUpload) fillDefaults() {}
-
-func (c *ConfigGeneral) fillDefaults() {
-	if c.DatadogPrefix == "" {
-		c.DatadogPrefix = "baker."
-	}
-	if c.DatadogHost == "" {
-		c.DatadogHost = "127.0.0.1:8125"
-	}
-}
 
 // cloneConfig clones a configuration object.
 func cloneConfig(i interface{}) interface{} {
@@ -262,6 +254,18 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		}
 	}
 
+	if cfg.Metrics.Name != "" {
+		for _, mtr := range comp.Metrics {
+			if strings.EqualFold(mtr.Name, cfg.Metrics.Name) {
+				cfg.Metrics.desc = &mtr
+				break
+			}
+		}
+		if cfg.Metrics.desc == nil {
+			return nil, fmt.Errorf("metrics does not exist: %q", cfg.Metrics.Name)
+		}
+	}
+
 	// Copy custom configuration structure, to prepare for re-reading
 	cfg.Input.DecodedConfig = cfg.Input.desc.Config
 	if cfg.Input.Config != nil {
@@ -292,6 +296,15 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		if cfg.Upload.Config != nil {
 			if err := md.PrimitiveDecode(*cfg.Upload.Config, cfg.Upload.DecodedConfig); err != nil {
 				return nil, fmt.Errorf("error parsing upload config: %v", err)
+			}
+		}
+	}
+
+	if cfg.Metrics.Name != "" {
+		cfg.Metrics.DecodedConfig = cfg.Metrics.desc.Config
+		if cfg.Metrics.Config != nil {
+			if err := md.PrimitiveDecode(*cfg.Metrics.Config, cfg.Metrics.DecodedConfig); err != nil {
+				return nil, fmt.Errorf("error parsing metrics config: %v", err)
 			}
 		}
 	}

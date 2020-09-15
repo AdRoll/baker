@@ -7,6 +7,8 @@ type Components struct {
 	Filters []FilterDesc
 	Outputs []OutputDesc
 	Uploads []UploadDesc
+
+	Metrics []MetricsDesc
 	User    []UserDesc
 
 	ShardingFuncs map[FieldIndex]ShardingFunc
@@ -24,6 +26,7 @@ type ComponentParams struct {
 	FieldByName    func(string) (FieldIndex, bool) // translates field names to Record indexes
 	FieldName      func(FieldIndex) string         // returns the name of a field given its index in the Record
 	ValidateRecord ValidationFunc                  // function to validate a record
+	Metrics        MetricsClient                   // Metrics allows components to add code instrumentation and have metrics exported to the configured backend, if any?
 }
 
 // InputParams holds the parameters passed to Input constructor.
@@ -92,6 +95,15 @@ type UploadDesc struct {
 	New    func(UploadParams) (Upload, error)
 	Config interface{}
 	Help   string
+}
+
+// MetricsDesc describes a Metrics interface to the topology.
+type MetricsDesc struct {
+	// Name of the metrics interface
+	Name string
+	// Config is the metrics client specific configuration
+	Config interface{}
+	New    func(interface{}) (MetricsClient, error)
 }
 
 // UserDesc describes user-specific configuration sections.
