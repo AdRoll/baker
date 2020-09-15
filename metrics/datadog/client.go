@@ -73,35 +73,29 @@ func newClient(icfg interface{}) (baker.MetricsClient, error) {
 // Gauge sets the value of a metric of type gauge. A Gauge represents a
 // single numerical data point that can arbitrarily go up and down.
 func (c *Client) Gauge(name string, value float64) {
-	if c.dog != nil {
-		c.dog.Gauge(name, value, nil, 1)
-	}
+	c.dog.Gauge(name, value, nil, 1)
 }
 
 // DeltaCount increments the value of a metric of type counter by delta.
 // delta must be positive.
 func (c *Client) DeltaCount(name string, delta int64) {
-	if c.dog != nil {
-		c.dog.Count(name, delta, nil, 1)
-	}
+	c.dog.Count(name, delta, nil, 1)
 }
 
 // RawCount sets the value of a metric of type counter. A counter is a
 // cumulative metrics that can only increase. RawCount sets the current
 // value of the counter.
 func (c *Client) RawCount(name string, value int64) {
-	if c.dog != nil {
-		c.mu.Lock()
-		delta := value - c.counters[name]
+	c.mu.Lock()
+	delta := value - c.counters[name]
 
-		if delta < 0 {
-			delta = 0
-		}
-		c.counters[name] = value
-		c.mu.Unlock()
-
-		c.dog.Count(name, delta, nil, 1)
+	if delta < 0 {
+		delta = 0
 	}
+	c.counters[name] = value
+	c.mu.Unlock()
+
+	c.dog.Count(name, delta, nil, 1)
 }
 
 // Histogram adds a sample to a metric of type histogram. A histogram
@@ -112,9 +106,7 @@ func (c *Client) RawCount(name string, value int64) {
 // which percentiles, mean and other info are calculated.
 // see https://docs.datadoghq.com/developers/dogstatsd/data_types/#histograms
 func (c *Client) Histogram(name string, value float64) {
-	if c.dog != nil {
-		c.dog.Histogram(name, value, nil, 1)
-	}
+	c.dog.Histogram(name, value, nil, 1)
 }
 
 // Duration adds a duration to a metric of type histogram. A histogram
@@ -125,55 +117,43 @@ func (c *Client) Histogram(name string, value float64) {
 // DogStatsd  metric type, on which percentiles, mean and other info are calculated.
 // see https://docs.datadoghq.com/developers/dogstatsd/data_types/#timers
 func (c *Client) Duration(name string, value time.Duration) {
-	if c.dog != nil {
-		c.dog.TimeInMilliseconds(name, float64(value/time.Millisecond), nil, 1)
-	}
+	c.dog.TimeInMilliseconds(name, float64(value/time.Millisecond), nil, 1)
 }
 
 // GaugeWithTags sets the value of a metric of type gauge and associates
 // that value with a set of tags.
 func (c *Client) GaugeWithTags(name string, value float64, tags []string) {
-	if c.dog != nil {
-		c.dog.Gauge(name, value, tags, 1)
-	}
+	c.dog.Gauge(name, value, tags, 1)
 }
 
 // DeltaCountWithTags increments the value of a metric or type counter and
 // associates that value with a set of tags.
 func (c *Client) DeltaCountWithTags(name string, delta int64, tags []string) {
-	if c.dog != nil {
-		c.dog.Count(name, delta, tags, 1)
-	}
+	c.dog.Count(name, delta, tags, 1)
 }
 
 // RawCountWithTags sets the value of a metric or type counter and associates
 // that value with a set of tags.
 func (c *Client) RawCountWithTags(name string, value int64, tags []string) {
-	if c.dog != nil {
-		c.mu.Lock()
-		delta := value - c.counters[name]
+	c.mu.Lock()
+	delta := value - c.counters[name]
 
-		if delta < 0 {
-			delta = 0
-		}
-		c.counters[name] = value
-		c.mu.Unlock()
-		c.dog.Count(name, delta, tags, 1)
+	if delta < 0 {
+		delta = 0
 	}
+	c.counters[name] = value
+	c.mu.Unlock()
+	c.dog.Count(name, delta, tags, 1)
 }
 
 // HistogramWithTags adds a sample to an histogram and associates that
 // sample with a set of tags.
 func (c *Client) HistogramWithTags(name string, value float64, tags []string) {
-	if c.dog != nil {
-		c.dog.Histogram(name, value, tags, 1)
-	}
+	c.dog.Histogram(name, value, tags, 1)
 }
 
 // DurationWithTags adds a duration to an histogram and associates that
 // duration with a set of tags.
 func (c *Client) DurationWithTags(name string, value time.Duration, tags []string) {
-	if c.dog != nil {
-		c.dog.TimeInMilliseconds(name, float64(value/time.Millisecond), tags, 1)
-	}
+	c.dog.TimeInMilliseconds(name, float64(value/time.Millisecond), tags, 1)
 }
