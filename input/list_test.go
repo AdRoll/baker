@@ -223,18 +223,20 @@ func TestListS3(t *testing.T) {
 	defer testutil.DisableLogging()()
 
 	ch := make(chan *baker.Data)
-	defer close(ch)
 
-	matchLen := 0
-	var recordCounter int64
-	var getObjCounter int64
-	numFiles := 3
+	generatedFiles := 3
+	generatedRecords := 10
+	receivedBytesLen := 0
+	var receivedFilesContent int64
 
+	wg := sync.WaitGroup{}
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		for data := range ch {
 			if len(data.Bytes) > 0 {
-				atomic.AddInt64(&recordCounter, 1)
-				matchLen += len(data.Bytes)
+				atomic.AddInt64(&receivedFilesContent, 1)
+				receivedBytesLen += len(data.Bytes)
 			}
 		}
 	}()
@@ -254,14 +256,38 @@ func TestListS3(t *testing.T) {
 		return
 	}
 
-	numRecords := 10
+	svc, recordsLen, getObjCounter := mockS3Service(t, generatedFiles, generatedRecords)
+	list.(*List).svc = svc
+
+	if err := list.Run(ch); err != nil {
+		log.Fatalf("unexpected error %v", err)
+	}
+	close(ch)
+	wg.Wait()
+
+	if int(*getObjCounter) != generatedFiles {
+		t.Errorf("getObjCounter want: %d, got: %d", generatedFiles, int(*getObjCounter))
+	}
+
+	if int(receivedFilesContent) != generatedFiles {
+		t.Fatalf("receivedFilesContent want: %d, got: %d", generatedFiles, int(receivedFilesContent))
+	}
+
+	if recordsLen*generatedFiles != receivedBytesLen {
+		t.Fatalf("length want: %d, got: %d", recordsLen*generatedFiles, receivedBytesLen)
+	}
+}
+
+func mockS3Service(t *testing.T, generatedFiles, generatedRecords int) (*s3.S3, int, *int64) {
+	t.Helper()
+	var counter int64
 	var buf []byte
-	for i := 0; i < numRecords; i++ {
+	for i := 0; i < generatedRecords; i++ {
 		ll := randomLogLine()
 		buf = append(buf, ll.ToText(nil)...)
 		buf = append(buf, '\n')
 	}
-	bufLen := len(buf)
+
 	compressedRecord := zstd.Compress(nil, buf)
 	lastModified := aws.Time(time.Now())
 
@@ -283,7 +309,7 @@ func TestListS3(t *testing.T) {
 		case *s3.ListObjectsV2Output:
 			data.IsTruncated = aws.Bool(false)
 			data.Contents = []*s3.Object{}
-			for i := 0; i < numFiles; i++ {
+			for i := 0; i < generatedFiles; i++ {
 				data.Contents = append(data.Contents, &s3.Object{Key: aws.String(fmt.Sprintf("path/to/file-%d.log.zst", i))})
 			}
 			// add a file that doesn't match MatchPath
@@ -294,45 +320,12 @@ func TestListS3(t *testing.T) {
 			data.LastModified = lastModified
 
 		case *s3.GetObjectOutput:
-			atomic.AddInt64(&getObjCounter, 1)
+			atomic.AddInt64(&counter, 1)
 			data.ContentLength = aws.Int64(int64(len(compressedRecord)))
 			data.LastModified = lastModified
 			data.Body = ioutil.NopCloser(bytes.NewReader(compressedRecord))
-		default:
-			t.Fatalf("Missing data case %T", r.Data)
 		}
 	})
 
-	list.(*List).svc = svc
-
-	finished := make(chan bool)
-	go func() {
-		err = list.Run(ch)
-		if err != nil {
-			log.Fatalf("unexpected error %v", err)
-		}
-		finished <- true
-		close(finished)
-	}()
-
-	select {
-	case <-finished:
-		v := int(atomic.LoadInt64(&getObjCounter))
-		if v != numFiles {
-			t.Fatalf("getObjCounter want: %d, got: %d", numFiles, v)
-		}
-
-		v = int(atomic.LoadInt64(&recordCounter))
-		if v != numFiles {
-			t.Fatalf("recordCounter want: %d, got: %d", numFiles, v)
-		}
-
-		if bufLen*numFiles != matchLen {
-			t.Fatalf("length want: %d, got: %d", bufLen*numFiles, matchLen)
-		}
-		return
-	case <-time.After(1 * time.Second):
-		t.Fatal("input timeout")
-	}
-
+	return svc, len(buf), &counter
 }
