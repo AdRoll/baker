@@ -292,12 +292,12 @@ func (s *List) processList(fn string) error {
 			defer close(paths)
 
 			var nextToken *string
+			input := &s3.ListObjectsV2Input{
+				Bucket:  aws.String(u.Host),
+				Prefix:  aws.String(prefix),
+				MaxKeys: aws.Int64(1000), // 1000 is the max value
+			}
 			for {
-				input := &s3.ListObjectsV2Input{
-					Bucket:  aws.String(u.Host),
-					Prefix:  aws.String(prefix),
-					MaxKeys: aws.Int64(1000), // 1000 is the max value
-				}
 				if nextToken != nil {
 					input.ContinuationToken = nextToken
 				}
@@ -305,6 +305,7 @@ func (s *List) processList(fn string) error {
 				resp, err := s.svc.ListObjectsV2(input)
 				if err != nil {
 					errCh <- err
+					return
 				}
 
 				for _, obj := range resp.Contents {
