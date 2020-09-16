@@ -1,6 +1,8 @@
 package baker
 
 import (
+	"io/ioutil"
+	"strings"
 	"testing"
 )
 
@@ -61,5 +63,41 @@ func TestFillCreateRecordDefault(t *testing.T) {
 				t.Errorf(`got separator "%c" (%v), want "%c" (%v)`, sep, sep, tt.want, tt.want)
 			}
 		})
+	}
+}
+
+func TestEnvVarBaseReplace(t *testing.T) {
+	src_toml := `
+	[general]
+	dont_validate_fields = ${DNT_VAL_FIELDS}
+	alt_form = "$ALT_FORM"
+	unexisting_var = "${THIS_DOESNT_EXIST}"
+	`
+
+	want_toml := `
+	[general]
+	dont_validate_fields = true
+	alt_form = "ok"
+	unexisting_var = ""
+	`
+
+	mapper := func(v string) string {
+		switch v {
+		case "DNT_VAL_FIELDS":
+			return "true"
+		case "ALT_FORM":
+			return "ok"
+		}
+		return ""
+	}
+
+	s, err := replaceEnvVars(strings.NewReader(src_toml), mapper)
+	if err != nil {
+		t.Fatalf("replaceEnvVars err: %v", err)
+	}
+	buf, _ := ioutil.ReadAll(s)
+
+	if want_toml != string(buf) {
+		t.Fatalf("wrong toml: %s", string(buf))
 	}
 }

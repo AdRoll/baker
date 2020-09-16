@@ -1,8 +1,10 @@
 package baker
 
 import (
+	"bytes"
 	"fmt"
 	"io"
+	"os"
 	"reflect"
 	"strings"
 	"unicode"
@@ -197,9 +199,26 @@ func cloneConfig(i interface{}) interface{} {
 	return reflect.New(reflect.ValueOf(i).Elem().Type()).Interface()
 }
 
+// replaceEnvVars replaces any string in the format ${VALUE} or $VALUE with the corresponding
+// $VALUE environment variable
+func replaceEnvVars(f io.Reader, mapper func(string) string) (io.Reader, error) {
+	buf := new(bytes.Buffer)
+	_, err := buf.ReadFrom(f)
+	if err != nil {
+		return nil, fmt.Errorf("Error reading input: %v", err)
+	}
+
+	return strings.NewReader(os.Expand(buf.String(), mapper)), nil
+}
+
 // NewConfigFromToml creates a Config from a reader reading from a TOML
 // configuration. comp describes all the existing components.
 func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
+	f, err := replaceEnvVars(f, os.Getenv)
+	if err != nil {
+		return nil, fmt.Errorf("Can't replace config with env vars: %v", err)
+	}
+
 	// Parse che configuration. Part of the configuration will be
 	// captured as toml.Primitive for deferred parsing (see comment
 	// at top of the file)
