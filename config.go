@@ -291,6 +291,10 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		if err := md.PrimitiveDecode(*cfg.Input.Config, cfg.Input.DecodedConfig); err != nil {
 			return nil, fmt.Errorf("error parsing input config: %v", err)
 		}
+
+		if req := CheckRequiredFields(cfg.Input.DecodedConfig); req != "" {
+			return nil, fmt.Errorf("input %q: %q is a required field", cfg.Input.Name, req)
+		}
 	}
 
 	for idx := range cfg.Filter {
@@ -300,6 +304,10 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 			if err := md.PrimitiveDecode(*cfg.Filter[idx].Config, cfg.Filter[idx].DecodedConfig); err != nil {
 				return nil, fmt.Errorf("error parsing filter config: %v", err)
 			}
+
+			if req := CheckRequiredFields(cfg.Filter[idx].DecodedConfig); req != "" {
+				return nil, fmt.Errorf("filter %q: %q is a required field", cfg.Filter[idx].Name, req)
+			}
 		}
 	}
 
@@ -307,6 +315,10 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 	if cfg.Output.Config != nil {
 		if err := md.PrimitiveDecode(*cfg.Output.Config, cfg.Output.DecodedConfig); err != nil {
 			return nil, fmt.Errorf("error parsing output config: %v", err)
+		}
+
+		if req := CheckRequiredFields(cfg.Output.DecodedConfig); req != "" {
+			return nil, fmt.Errorf("output %q: %q is a required field", cfg.Output.Name, req)
 		}
 	}
 
@@ -316,6 +328,10 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 			if err := md.PrimitiveDecode(*cfg.Upload.Config, cfg.Upload.DecodedConfig); err != nil {
 				return nil, fmt.Errorf("error parsing upload config: %v", err)
 			}
+
+			if req := CheckRequiredFields(cfg.Upload.DecodedConfig); req != "" {
+				return nil, fmt.Errorf("upload %q: %q is a required field", cfg.Upload.Name, req)
+			}
 		}
 	}
 
@@ -324,6 +340,10 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		if cfg.Metrics.Config != nil {
 			if err := md.PrimitiveDecode(*cfg.Metrics.Config, cfg.Metrics.DecodedConfig); err != nil {
 				return nil, fmt.Errorf("error parsing metrics config: %v", err)
+			}
+
+			if req := CheckRequiredFields(cfg.Metrics.DecodedConfig); req != "" {
+				return nil, fmt.Errorf("metrics %q: %q is a required field", cfg.Metrics.Name, req)
 			}
 		}
 	}
