@@ -12,7 +12,7 @@ var MatchRegexDesc = baker.FilterDesc{
 	Name:   "RegexMatch",
 	New:    NewRegexMatch,
 	Config: &RegexMatchConfig{},
-	Help:   "Discard a record if a field doesn't match a regular expression",
+	Help:   "Discard a record if one or more fields don't match the corresponding regular expressions",
 }
 
 // RegexMatchConfig holds config parameters of the RegexMatch filter.
