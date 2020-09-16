@@ -37,6 +37,20 @@ func TestConcatenateFilter(t *testing.T) {
 			want:      "v2~v0~v1",
 		},
 		{
+			name:      "byte separator",
+			record:    "v0,v1,v2,trgt\n",
+			fields:    []string{"src2", "src0", "src1"},
+			separator: "\u007c",
+			want:      "v2|v0|v1",
+		},
+		{
+			name:      "explicit empty string separator",
+			record:    "v0,v1,v2,trgt\n",
+			fields:    []string{"src2", "src0", "src1"},
+			separator: "",
+			want:      "v2v0v1",
+		},
+		{
 			name:      "wrong separator",
 			record:    "v0,v1,v2,trgt\n",
 			fields:    []string{"src2", "src0", "src1"},

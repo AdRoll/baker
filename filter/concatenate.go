@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"sync/atomic"
+	"unicode"
 
 	"github.com/AdRoll/baker"
 )
@@ -51,11 +52,11 @@ func NewConcatenate(cfg baker.FilterParams) (baker.Filter, error) {
 
 	var separator byte
 	if dcfg.Separator != "" {
-		sep := []byte(dcfg.Separator)
-		if len(sep) != 1 {
-			return nil, errors.New("Separator must be a 1-byte character")
+		sep := []rune(dcfg.Separator)
+		if len(sep) != 1 || sep[0] > unicode.MaxASCII {
+			return nil, errors.New("Separator must be a 1-byte string or hex char")
 		}
-		separator = sep[0]
+		separator = byte(sep[0])
 	}
 
 	f := &Concatenate{
@@ -77,7 +78,7 @@ func (c *Concatenate) Stats() baker.FilterStats {
 func (c *Concatenate) Process(l baker.Record, next func(baker.Record)) {
 	atomic.AddInt64(&c.numProcessedLines, 1)
 
-	key := []byte{}
+	key := make([]byte, 0, 512)
 	flen := len(c.fields) - 1
 	for i, f := range c.fields {
 		v := l.Get(f)
@@ -87,6 +88,6 @@ func (c *Concatenate) Process(l baker.Record, next func(baker.Record)) {
 		key = append(key, v...)
 	}
 
-	l.Set(c.target, []byte(key))
+	l.Set(c.target, key)
 	next(l)
 }
