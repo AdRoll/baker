@@ -1,8 +1,10 @@
 package upload
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,9 +16,75 @@ import (
 	"github.com/AdRoll/baker/testutil"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/request"
+	"github.com/aws/aws-sdk-go/awstesting/unit"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
+
+// mockS3Service returns a mocked s3.S3 service which records all operations
+// related to Upload S3 API calls.
+//
+// Once all interactions with the returned service have ended, and not before
+// that, ops and params can be accessed. ops and params will hold the list of
+// AWS S3 API calls and their parameters. For instance, if ops[0] is "PutObject"
+// then params[0] is a *s3.PutObjectInput.
+func mockS3Service(wantErr bool) (svc *s3.S3, ops *[]string, params *[]interface{}) {
+	const respMsg = `<?xml version="1.0" encoding="UTF-8"?>
+	<CompleteMultipartUploadOutput>
+	   <Location>mockValue</Location>
+	   <Bucket>mockValue</Bucket>
+	   <Key>mockValue</Key>
+	   <ETag>mockValue</ETag>
+	</CompleteMultipartUploadOutput>`
+
+	var m sync.Mutex
+
+	ops = &[]string{}
+	params = &[]interface{}{}
+
+	partNum := 0
+	svc = s3.New(unit.Session)
+	svc.Handlers.Unmarshal.Clear()
+	svc.Handlers.UnmarshalMeta.Clear()
+	svc.Handlers.UnmarshalError.Clear()
+	svc.Handlers.Send.Clear()
+	svc.Handlers.Send.PushBack(func(r *request.Request) {
+		m.Lock()
+		defer m.Unlock()
+
+		*ops = append(*ops, r.Operation.Name)
+		*params = append(*params, r.Params)
+
+		if wantErr {
+			r.HTTPResponse = &http.Response{
+				StatusCode: 400,
+			}
+			return
+		}
+
+		r.HTTPResponse = &http.Response{
+			StatusCode: 200,
+			Body:       ioutil.NopCloser(bytes.NewReader([]byte(respMsg))),
+		}
+
+		switch data := r.Data.(type) {
+		case *s3.CreateMultipartUploadOutput:
+			data.UploadId = aws.String("UPLOAD-ID")
+		case *s3.UploadPartOutput:
+			partNum++
+			data.ETag = aws.String(fmt.Sprintf("ETAG%d", partNum))
+		case *s3.CompleteMultipartUploadOutput:
+			data.Location = aws.String("https://location")
+			data.VersionId = aws.String("VERSION-ID")
+		case *s3.PutObjectOutput:
+			data.VersionId = aws.String("VERSION-ID")
+		}
+	})
+
+	return svc, ops, params
+}
 
 // prepareUploadS3TestFolder creates a temp forlder and the selected number of files in it
 func prepareUploadS3TestFolder(t *testing.T, numFiles int) (string, []string, func()) {
@@ -74,7 +142,7 @@ func TestS3Upload(t *testing.T) {
 	}
 
 	// Replace S3Upload.manager with a mocked s3 service.
-	s, ops, params := testutil.MockS3Service(false, nil)
+	s, ops, params := mockS3Service(false)
 	u := iu.(*S3)
 	u.uploader = s3manager.NewUploaderWithClient(s)
 	u.uploader.Concurrency = 10
@@ -145,7 +213,7 @@ func Test_uploadDirectory(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
 	}
-	s, ops, _ := testutil.MockS3Service(false, nil)
+	s, ops, _ := mockS3Service(false)
 	u := iu.(*S3)
 	u.uploader = s3manager.NewUploaderWithClient(s)
 	u.uploader.Concurrency = 5
@@ -188,7 +256,7 @@ func Test_uploadDirectoryError(t *testing.T) {
 		if err != nil {
 			t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
 		}
-		s, _, _ := testutil.MockS3Service(true, nil)
+		s, _, _ := mockS3Service(true)
 		u := iu.(*S3)
 		u.uploader = s3manager.NewUploaderWithClient(s)
 
@@ -221,7 +289,7 @@ func Test_uploadDirectoryError(t *testing.T) {
 		if err != nil {
 			t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
 		}
-		s, _, _ := testutil.MockS3Service(true, nil)
+		s, _, _ := mockS3Service(true)
 		u := iu.(*S3)
 		u.uploader = s3manager.NewUploaderWithClient(s)
 
@@ -265,7 +333,7 @@ func TestRun(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
 	}
-	s, _, _ := testutil.MockS3Service(false, nil)
+	s, _, _ := mockS3Service(false)
 	u := iu.(*S3)
 	u.uploader = s3manager.NewUploaderWithClient(s)
 
@@ -319,7 +387,7 @@ func TestRunExitOnError(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
 	}
-	s, _, _ := testutil.MockS3Service(true, nil)
+	s, _, _ := mockS3Service(true)
 	u := iu.(*S3)
 	u.uploader = s3manager.NewUploaderWithClient(s)
 
@@ -375,7 +443,7 @@ func TestRunNotExitOnError(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
 	}
-	s, _, _ := testutil.MockS3Service(true, nil)
+	s, _, _ := mockS3Service(true)
 	u := iu.(*S3)
 	u.uploader = s3manager.NewUploaderWithClient(s)
 
