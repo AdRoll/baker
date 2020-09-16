@@ -366,3 +366,26 @@ func hasConfig(cfg interface{}) bool {
 	tf := reflect.TypeOf(cfg).Elem()
 	return tf.NumField() != 0
 }
+
+// RequiredFields returns the names of the underlying configuration structure
+// fields which are tagged as required. To tag a field as being required, a
+// "required" struct struct tag must be present and set to true.
+//
+// RequiredFields doesn't support struct embedding other structs.
+func RequiredFields(cfg interface{}) []string {
+	var fields []string
+
+	tf := reflect.TypeOf(cfg).Elem()
+	for i := 0; i < tf.NumField(); i++ {
+		field := tf.Field(i)
+
+		req := field.Tag.Get("required")
+		if req != "true" {
+			continue
+		}
+
+		fields = append(fields, field.Name)
+	}
+
+	return fields
+}
