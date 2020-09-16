@@ -389,3 +389,24 @@ func RequiredFields(cfg interface{}) []string {
 
 	return fields
 }
+
+// CheckRequiredFields checks that all fields that are tagged as required in
+// val's type have actually been set to a value other than the field type zero
+// value.  If not CheckRequiredFields returns the name of the first required
+// field that is not set, or, it returns an empty string if all required fields
+// are set of the struct doesn't have any required fields (or any fields at all).
+//
+// CheckRequiredFields doesn't support struct embedding other structs.
+func CheckRequiredFields(val interface{}) string {
+	fields := RequiredFields(val)
+
+	for _, name := range fields {
+		rv := reflect.ValueOf(val).Elem()
+		fv := rv.FieldByName(name)
+		if fv.IsZero() {
+			return name
+		}
+	}
+
+	return ""
+}

@@ -150,3 +150,66 @@ func TestRequiredFields(t *testing.T) {
 		})
 	}
 }
+
+func TestCheckRequiredFields(t *testing.T) {
+	type (
+		test1 struct {
+			Name  string
+			Value string `help:"field value" required:"false"`
+		}
+
+		test2 struct {
+			Name  string
+			Value string `help:"field value" required:"true"`
+		}
+
+		test3 struct {
+			Name  string `required:"true"`
+			Value string `help:"field value" required:"true"`
+		}
+	)
+
+	tests := []struct {
+		name string
+		val  interface{}
+		want string
+	}{
+		{
+			name: "no required fields",
+			val:  &test1{},
+			want: "",
+		},
+		{
+			name: "one missing required field ",
+			val:  &test2{Name: "name", Value: ""},
+			want: "Value",
+		},
+		{
+			name: "one present required field ",
+			val:  &test2{Name: "name", Value: "value"},
+			want: "",
+		},
+		{
+			name: "all required fields and all are missing",
+			val:  &test3{},
+			want: "Name",
+		},
+		{
+			name: "all required fields but the first missing",
+			val:  &test3{Value: "value"},
+			want: "Name",
+		},
+		{
+			name: "all required fields and all are present",
+			val:  &test3{Name: "name", Value: "value"},
+			want: "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := CheckRequiredFields(tt.val); got != tt.want {
+				t.Errorf("CheckRequiredFields() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
