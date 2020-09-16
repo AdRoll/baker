@@ -30,7 +30,7 @@ name="recorder"
 }
 
 func TestUserConfigSimple(t *testing.T) {
-	// This test checks that a single user configuration is correcly decoded.
+	// This test checks that a single user configuration is correctly decoded.
 	const toml = `
 [[user]]
 name="MyConfiG"
