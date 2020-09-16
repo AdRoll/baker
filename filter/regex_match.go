@@ -17,7 +17,7 @@ var MatchRegexDesc = baker.FilterDesc{
 
 // RegexMatchConfig holds config parameters of the RegexMatch filter.
 type RegexMatchConfig struct {
-	Fields []string `help:"list of fields to match with the regular expression in Regexs" default:"[]"`
+	Fields []string `help:"list of fields to match with the corresponding regular expression in Regexs" default:"[]"`
 	Regexs []string `help:"list of regular expression to match. Fields[0] must match Regexs[0], Fields[1] Regexs[1] and so on" default:"[]"`
 }
 
