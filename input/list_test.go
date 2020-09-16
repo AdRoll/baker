@@ -4,16 +4,26 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/hex"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
+	"net/http"
 	"os"
 	"strconv"
+	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	log "github.com/sirupsen/logrus"
+	zstd "github.com/valyala/gozstd"
+
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/testutil"
+	"github.com/aws/aws-sdk-go/aws/request"
+	"github.com/aws/aws-sdk-go/awstesting/unit"
+	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 func randomLogLine() baker.Record {
@@ -207,4 +217,115 @@ func TestListInvalidStdin(t *testing.T) {
 	case <-time.After(1 * time.Second):
 		t.Error("input timeout")
 	}
+}
+
+func TestListS3(t *testing.T) {
+	defer testutil.DisableLogging()()
+
+	ch := make(chan *baker.Data)
+
+	generatedFiles := 3
+	generatedRecords := 10
+	receivedBytesLen := 0
+	var receivedFilesContent int64
+
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for data := range ch {
+			if len(data.Bytes) > 0 {
+				atomic.AddInt64(&receivedFilesContent, 1)
+				receivedBytesLen += len(data.Bytes)
+			}
+		}
+	}()
+
+	cfg := baker.InputParams{
+		ComponentParams: baker.ComponentParams{
+			DecodedConfig: &ListConfig{
+				Files:     []string{"@s3://bucket-name/path-prefix/"},
+				MatchPath: ".*\\.log\\.zst",
+			},
+		},
+	}
+
+	list, err := NewList(cfg)
+	if err != nil {
+		t.Error("Error creating List:", err)
+		return
+	}
+
+	svc, recordsLen, getObjCounter := mockS3Service(t, generatedFiles, generatedRecords)
+	list.(*List).svc = svc
+
+	if err := list.Run(ch); err != nil {
+		log.Fatalf("unexpected error %v", err)
+	}
+	close(ch)
+	wg.Wait()
+
+	if int(*getObjCounter) != generatedFiles {
+		t.Errorf("getObjCounter want: %d, got: %d", generatedFiles, int(*getObjCounter))
+	}
+
+	if int(receivedFilesContent) != generatedFiles {
+		t.Fatalf("receivedFilesContent want: %d, got: %d", generatedFiles, int(receivedFilesContent))
+	}
+
+	if recordsLen*generatedFiles != receivedBytesLen {
+		t.Fatalf("length want: %d, got: %d", recordsLen*generatedFiles, receivedBytesLen)
+	}
+}
+
+func mockS3Service(t *testing.T, generatedFiles, generatedRecords int) (*s3.S3, int, *int64) {
+	t.Helper()
+	var counter int64
+	var buf []byte
+	for i := 0; i < generatedRecords; i++ {
+		ll := randomLogLine()
+		buf = append(buf, ll.ToText(nil)...)
+		buf = append(buf, '\n')
+	}
+
+	compressedRecord := zstd.Compress(nil, buf)
+	lastModified := aws.Time(time.Now())
+
+	svc := s3.New(unit.Session)
+	svc.Handlers.Unmarshal.Clear()
+	svc.Handlers.UnmarshalMeta.Clear()
+	svc.Handlers.UnmarshalError.Clear()
+	svc.Handlers.Send.Clear()
+	var m sync.Mutex
+	svc.Handlers.Send.PushBack(func(r *request.Request) {
+		m.Lock()
+		defer m.Unlock()
+		r.HTTPResponse = &http.Response{
+			StatusCode: 200,
+			Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+		}
+
+		switch data := r.Data.(type) {
+		case *s3.ListObjectsV2Output:
+			data.IsTruncated = aws.Bool(false)
+			data.Contents = []*s3.Object{}
+			for i := 0; i < generatedFiles; i++ {
+				data.Contents = append(data.Contents, &s3.Object{Key: aws.String(fmt.Sprintf("path/to/file-%d.log.zst", i))})
+			}
+			// add a file that doesn't match MatchPath
+			data.Contents = append(data.Contents, &s3.Object{Key: aws.String("path/to/file3.log.gz")})
+
+		case *s3.HeadObjectOutput:
+			data.ContentLength = aws.Int64(int64(len(compressedRecord)))
+			data.LastModified = lastModified
+
+		case *s3.GetObjectOutput:
+			atomic.AddInt64(&counter, 1)
+			data.ContentLength = aws.Int64(int64(len(compressedRecord)))
+			data.LastModified = lastModified
+			data.Body = ioutil.NopCloser(bytes.NewReader(compressedRecord))
+		}
+	})
+
+	return svc, len(buf), &counter
 }
