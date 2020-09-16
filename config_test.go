@@ -2,6 +2,7 @@ package baker
 
 import (
 	"io/ioutil"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -99,5 +100,53 @@ func TestEnvVarBaseReplace(t *testing.T) {
 
 	if want != string(buf) {
 		t.Fatalf("wrong toml: %s", string(buf))
+	}
+}
+
+func TestRequiredFields(t *testing.T) {
+	type (
+		test1 struct {
+			Name  string
+			Value string `help:"field value" required:"false"`
+		}
+
+		test2 struct {
+			Name  string
+			Value string `help:"field value" required:"true"`
+		}
+
+		test3 struct {
+			Name  string `required:"true"`
+			Value string `help:"field value" required:"true"`
+		}
+	)
+
+	tests := []struct {
+		name string
+		cfg  interface{}
+		want []string
+	}{
+		{
+			name: "no required fields",
+			cfg:  &test1{},
+			want: nil,
+		},
+		{
+			name: "one required field",
+			cfg:  &test2{},
+			want: []string{"Value"},
+		},
+		{
+			name: "all required fields",
+			cfg:  &test3{},
+			want: []string{"Name", "Value"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RequiredFields(tt.cfg); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("RequiredFields() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
