@@ -129,11 +129,6 @@ func PrintHelp(w io.Writer, name string, comp Components) {
 	}
 }
 
-func hasConfig(cfg interface{}) bool {
-	tf := reflect.TypeOf(cfg).Elem()
-	return tf.NumField() != 0
-}
-
 func dumpConfigHelp(w io.Writer, cfg interface{}) {
 	const sfmt = "%-18s | %-18s | %-26s | "
 	const sep = "----------------------------------------------------------------------------------------------------"

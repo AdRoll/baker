@@ -360,3 +360,9 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 	// Fill-in with missing defaults
 	return &cfg, cfg.fillDefaults()
 }
+
+// hasConfig returns true if the underlying structure has at least one field.
+func hasConfig(cfg interface{}) bool {
+	tf := reflect.TypeOf(cfg).Elem()
+	return tf.NumField() != 0
+}
