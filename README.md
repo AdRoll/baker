@@ -177,7 +177,7 @@ column where the fields will be written.
 
 Baker supports environment variables replacement in the configuration file. Use `${ENV_VAR_NAME}`
 or `$ENV_VAR_NAME` and the value in the file will be replaced at runtime. Note that if the
-variable doesn't exist, then an empty string will be used for replacement,
+variable doesn't exist, then an empty string will be used for replacement.
 
 ### How to create components
 
