@@ -2,7 +2,6 @@ package input
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/url"
 	"regexp"
 	"strings"
@@ -28,13 +27,15 @@ var SQSDesc = baker.InputDesc{
 		"It never exits.\n",
 }
 
-const MessageFormatPlain = "plain"
-const MessageFormatSNS = "sns"
+const (
+	sqsFormatPlain = "plain"
+	sqsFormatSNS   = "sns"
+)
 
 type SQSConfig struct {
 	AwsRegion      string   `help:"AWS region to connect to" default:"us-west-2"`
 	Bucket         string   `help:"S3 Bucket to use for processing" default:""`
-	QueuePrefixes  []string `help:"Prefixes of the names of the SQS queues to monitor"`
+	QueuePrefixes  []string `help:"Prefixes of the names of the SQS queues to monitor" required:"true"`
 	MessageFormat  string   `help:"The format of the SQS messages.\n'plain' the SQS messages received have the S3 file path as a plain string.\n'sns' the SQS messages were produced by a SNS notification." default:"sns"`
 	FilePathFilter string   `help:"If provided, will only use S3 files with the given path."`
 }
@@ -44,7 +45,7 @@ func (cfg *SQSConfig) fillDefaults() {
 		cfg.AwsRegion = "us-west-2"
 	}
 	if cfg.MessageFormat == "" {
-		cfg.MessageFormat = MessageFormatSNS
+		cfg.MessageFormat = sqsFormatSNS
 	} else {
 		cfg.MessageFormat = strings.ToLower(cfg.MessageFormat)
 	}
@@ -66,10 +67,6 @@ func NewSQS(cfg baker.InputParams) (baker.Input, error) {
 	}
 	dcfg := cfg.DecodedConfig.(*SQSConfig)
 	dcfg.fillDefaults()
-
-	if len(dcfg.QueuePrefixes) == 0 {
-		return nil, fmt.Errorf("\"queues\" not specified in SQS configuration")
-	}
 
 	sess := session.New(&aws.Config{Region: aws.String(dcfg.AwsRegion)})
 	svc := sqs.New(sess)
@@ -162,14 +159,14 @@ func (s *SQS) parseMessage(Body *string, ctxLog *log.Entry) (string, string, err
 	var snsMsgTimestamp string
 
 	switch s.Cfg.MessageFormat {
-	case MessageFormatPlain:
+	case sqsFormatPlain:
 		// The SQS queue is populated by a lambda function that
 		// just provides the path to the S3 file in the message's
 		// body.
 		s3FilePath = string(*Body)
 		snsMsgTimestamp = ""
 
-	case MessageFormatSNS:
+	case sqsFormatSNS:
 		// The SQS queue is populated by SNS messages. So the
 		// body is a JSON document with several fields; we only
 		// care about one field: "Message", which is the URL of
