@@ -293,7 +293,7 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		}
 
 		if req := CheckRequiredFields(cfg.Input.DecodedConfig); req != "" {
-			return nil, fmt.Errorf("input %q: %q is a required field", cfg.Input.Name, req)
+			return nil, fmt.Errorf("input: %w", ErrorRequiredField{cfg.Input.Name, req})
 		}
 	}
 
@@ -306,7 +306,7 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 			}
 
 			if req := CheckRequiredFields(cfg.Filter[idx].DecodedConfig); req != "" {
-				return nil, fmt.Errorf("filter %q: %q is a required field", cfg.Filter[idx].Name, req)
+				return nil, fmt.Errorf("filter: %w", ErrorRequiredField{cfg.Filter[idx].Name, req})
 			}
 		}
 	}
@@ -318,7 +318,7 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		}
 
 		if req := CheckRequiredFields(cfg.Output.DecodedConfig); req != "" {
-			return nil, fmt.Errorf("output %q: %q is a required field", cfg.Output.Name, req)
+			return nil, fmt.Errorf("output: %w", ErrorRequiredField{cfg.Output.Name, req})
 		}
 	}
 
@@ -330,7 +330,7 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 			}
 
 			if req := CheckRequiredFields(cfg.Upload.DecodedConfig); req != "" {
-				return nil, fmt.Errorf("upload %q: %q is a required field", cfg.Upload.Name, req)
+				return nil, fmt.Errorf("upload: %w", ErrorRequiredField{cfg.Upload.Name, req})
 			}
 		}
 	}
@@ -343,7 +343,7 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 			}
 
 			if req := CheckRequiredFields(cfg.Metrics.DecodedConfig); req != "" {
-				return nil, fmt.Errorf("metrics %q: %q is a required field", cfg.Metrics.Name, req)
+				return nil, fmt.Errorf("metrics: %w", ErrorRequiredField{cfg.Metrics.Name, req})
 			}
 		}
 	}
@@ -429,4 +429,15 @@ func CheckRequiredFields(val interface{}) string {
 	}
 
 	return ""
+}
+
+// ErrorRequiredField describes the absence of a required field
+// in a component configuration.
+type ErrorRequiredField struct {
+	Component string // Component is the component name
+	Field     string // Field is the name of the missing field
+}
+
+func (e ErrorRequiredField) Error() string {
+	return fmt.Sprintf("%q, %q is a required field", e.Component, e.Field)
 }
