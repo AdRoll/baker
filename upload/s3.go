@@ -41,8 +41,8 @@ var S3Desc = baker.UploadDesc{
 // SourceBasePath.
 type S3Config struct {
 	SourceBasePath string        `help:"Base path used to consider the final S3 path." default:"/tmp/baker/ologs/"`
-	Region         string        `help:"S3 region to upload to." default:"us-east-1"`
-	Bucket         string        `help:"S3 bucket to upload to. (required)"`
+	Region         string        `help:"S3 region to upload to" default:"us-east-1"`
+	Bucket         string        `help:"S3 bucket to upload to"  required:"true"`
 	Prefix         string        `help:"Prefix on the destination bucket" default:"/"`
 	StagingPath    string        `help:"Local staging area to copy files to before upload." default:"/tmp/baker/ologs/staging/"`
 	Retries        int           `help:"Number of retries before a failed upload" default:"3"`
@@ -52,10 +52,6 @@ type S3Config struct {
 }
 
 func (cfg *S3Config) fillDefaults() error {
-	if cfg.Bucket == "" {
-		return fmt.Errorf("Bucket is required")
-	}
-
 	if cfg.Region == "" {
 		cfg.Region = "us-east-1"
 	}
