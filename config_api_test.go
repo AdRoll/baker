@@ -1,10 +1,14 @@
 package baker_test
 
 import (
+	"errors"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/filter/filtertest"
+	"github.com/AdRoll/baker/input"
 )
 
 func TestRequiredFields(t *testing.T) {
@@ -115,5 +119,52 @@ func TestCheckRequiredFields(t *testing.T) {
 				t.Errorf("CheckRequiredFields() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestNewConfigFromTOMLRequiredField(t *testing.T) {
+	type dummyConfig struct {
+		Param1 string
+		Param2 string `required:"true"`
+	}
+	var dummyDesc = baker.OutputDesc{
+		Name:   "Dummy",
+		New:    func(baker.OutputParams) (baker.Output, error) { return nil, nil },
+		Config: &dummyConfig{},
+	}
+
+	toml := `
+[input]
+name = "List"
+
+[input.config]
+files=["testdata/input.csv.zst"]
+
+[output]
+name = "Dummy"
+procs=1
+    [output.config]
+    param1="this parameter is set"
+    #param2="this parameter is not set"
+`
+
+	components := baker.Components{
+		Inputs:  []baker.InputDesc{input.ListDesc},
+		Filters: []baker.FilterDesc{filtertest.PassThroughDesc},
+		Outputs: []baker.OutputDesc{dummyDesc},
+	}
+
+	_, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
+	if err == nil {
+		t.Fatal("expected an error")
+	}
+
+	var errReq baker.ErrorRequiredField
+	if !errors.As(err, &errReq) {
+		t.Fatalf("got %q, want a ErrorRequiredField", err)
+	}
+
+	if errReq.Component != "Dummy" || errReq.Field != "Param2" {
+		t.Errorf("got component=%q field=%q, want component=%q field=%q", errReq.Component, errReq.Field, "Dummy", "Param2")
 	}
 }
