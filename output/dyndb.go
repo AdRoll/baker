@@ -162,7 +162,7 @@ func (dp *dynamoProcess) Wait() bool {
 
 type DynamoWriterConfig struct {
 	Regions         []string      `help:"DynamoDB regions to connect to" default:"us-west-2"`
-	Table           string        `help:"Name of the table to modify"`
+	Table           string        `help:"Name of the table to modify" required:"true"`
 	Columns         []string      `help:"Table columns that correspond to each of the fields being written"`
 	FlushInterval   time.Duration `help:"Interval at which flush the data to DynamoDB even if we have not reached 25 records" default:"1s"`
 	MaxWritesPerSec int64         `help:"Maximum number of writes per second that DynamoDB can accept (0 for unlimited)" default:"0"`
@@ -210,7 +210,9 @@ type DynamoWriter struct {
 	errn     int64 // number of lines that were skipped because of errors
 }
 
-// Create a new DynamoWriter. TableName is the name of the DynamoDB table to be written.
+// NewDynamoWriter create a new DynamoWriter output.
+//
+// TableName is the name of the DynamoDB table to be written.
 // Columns is a slice listing the columns that will be written; the first item in the slice
 // *MUST* be the primary key of the table.
 func NewDynamoWriter(cfg baker.OutputParams) (baker.Output, error) {
@@ -220,9 +222,6 @@ func NewDynamoWriter(cfg baker.OutputParams) (baker.Output, error) {
 	dcfg := cfg.DecodedConfig.(*DynamoWriterConfig)
 	dcfg.fillDefaults()
 
-	if dcfg.Table == "" {
-		return nil, fmt.Errorf("\"table\" not specified in DynamoDB configuration")
-	}
 	if len(cfg.Fields) == 0 {
 		return nil, fmt.Errorf("\"fields\" not specified in [output] configuration")
 	}

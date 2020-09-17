@@ -30,7 +30,7 @@ var StatsDesc = baker.OutputDesc{
 type StatsConfig struct {
 	CountEmptyFields bool   `help:"Whether fields with empty values are counted or not" default:"false"`
 	CSVPath          string `help:"Path of the CSV file to create" default:"stats.csv"`
-	TimestampField   string `help:"Name of a field containing a POSIX timestamp (in seconds) used to build the times stats" default:"(none)"`
+	TimestampField   string `help:"Name of a field containing a POSIX timestamp (in seconds) used to build the times stats" required:"true"`
 }
 
 func (cfg *StatsConfig) fillDefaults() {
