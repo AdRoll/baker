@@ -274,13 +274,11 @@ func (t *Topology) Start() {
 }
 
 // Stop requires the currently running topology stop safely,
-// but ASAP. The stop request is forwarded to the input and to
-// the upload as well.
+// but ASAP. The stop request is forwarded to the input that
+// triggers the chain of stops from the components (managed
+// into Topology.Wait)
 func (t *Topology) Stop() {
 	t.Input.Stop()
-	if t.Upload != nil {
-		t.Upload.Stop()
-	}
 }
 
 // Wait until the topology shuts itself down. This can happen

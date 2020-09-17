@@ -123,11 +123,14 @@ func TestS3Upload(t *testing.T) {
 	srcDir, paths, rmSrcDir := prepareUploadS3TestFolder(t, nfiles)
 	defer rmSrcDir()
 
+	stagingDir, rmStagingDir := testutil.TempDir(t)
+	defer rmStagingDir()
+
 	cfg := baker.UploadParams{
 		ComponentParams: baker.ComponentParams{
 			DecodedConfig: &S3Config{
 				SourceBasePath: srcDir,
-				StagingPath:    "",
+				StagingPath:    stagingDir,
 				Region:         "us-west-2",
 				Bucket:         "my-bucket",
 				Prefix:         "my-prefix",
@@ -155,7 +158,9 @@ func TestS3Upload(t *testing.T) {
 	close(upch)
 
 	// Wait for the uploader to exit.
-	u.Run(upch)
+	if err := u.Run(upch); err != nil {
+		t.Fatalf("Run error: %v", err)
+	}
 
 	if len(*ops) != nfiles {
 		t.Fatalf("S3 operation params count = %d, want %d", len(*ops), nfiles)
@@ -348,7 +353,7 @@ func TestRun(t *testing.T) {
 	}()
 
 	upCh <- fname
-	u.Stop()
+	close(upCh)
 	wg.Wait()
 
 	if int(u.totalerr) != 0 {
@@ -402,7 +407,7 @@ func TestRunExitOnError(t *testing.T) {
 	}()
 
 	upCh <- fname
-	u.Stop()
+	close(upCh)
 	wg.Wait()
 
 	if int(u.totalerr) != 1 {
@@ -458,7 +463,7 @@ func TestRunNotExitOnError(t *testing.T) {
 	}()
 
 	upCh <- fname
-	u.Stop()
+	close(upCh)
 	wg.Wait()
 
 	if int(u.totalerr) > 1*u.Cfg.Retries {

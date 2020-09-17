@@ -146,11 +146,11 @@ func (u *S3) Run(upch <-chan string) error {
 		ticker := time.NewTicker(u.Cfg.Interval)
 		defer func() {
 			ticker.Stop()
+			log.Info("starting last upload")
 			if err := u.uploadDirectory(); err != nil {
-				if u.Cfg.ExitOnError {
-					errCh <- err
-				}
+				log.Errorf("can't complete last upload: %v", err)
 			}
+			log.Info("completed last upload")
 			u.wgUpload.Done()
 		}()
 
@@ -187,8 +187,6 @@ func (u *S3) Run(upch <-chan string) error {
 				}
 				log.WithFields(log.Fields{"filepath": sourceFilePath}).WithError(err).Error("couldn't move")
 			}
-		case <-u.quit:
-			return nil
 		}
 	}
 }
