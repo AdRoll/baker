@@ -116,6 +116,10 @@ func newS3(cfg baker.UploadParams) (baker.Upload, error) {
 		return nil, fmt.Errorf("upload.s3: %v", err)
 	}
 
+	if err := os.MkdirAll(dcfg.StagingPath, 0777); err != nil {
+		return nil, fmt.Errorf("staging path creation error: %v", err)
+	}
+
 	s3svc := s3.New(session.New(&aws.Config{Region: aws.String(dcfg.Region)}))
 	return &S3{
 		Cfg:      dcfg,
@@ -128,7 +132,12 @@ func (u *S3) Run(upch <-chan string) error {
 	// Stop blocks until the upload goroutine has exited.
 	defer u.Stop()
 
-	errCh := make(chan error)
+	// Use a buffered channel to allow an extra message to be pushed by
+	// the deferred function in the goroutine when the Run function
+	// exits because of an error from u.uploadDirectory.
+	// An unbuffered channel will cause a deadlock because u.wgUpload.Done()
+	// is never reached
+	errCh := make(chan error, 1)
 
 	// Start a goroutine in which we periodically look at the source
 	// path for files and upload the ones we find.
@@ -141,7 +150,6 @@ func (u *S3) Run(upch <-chan string) error {
 				if u.Cfg.ExitOnError {
 					errCh <- err
 				}
-				log.Error(err)
 			}
 			u.wgUpload.Done()
 		}()
@@ -161,6 +169,7 @@ func (u *S3) Run(upch <-chan string) error {
 			}
 		}
 	}()
+
 	for {
 		select {
 		case err := <-errCh:
