@@ -116,6 +116,10 @@ func newS3(cfg baker.UploadParams) (baker.Upload, error) {
 		return nil, fmt.Errorf("upload.s3: %v", err)
 	}
 
+	if err := os.MkdirAll(dcfg.StagingPath, 0777); err != nil {
+		return nil, fmt.Errorf("staging path creation error: %v", err)
+	}
+
 	s3svc := s3.New(session.New(&aws.Config{Region: aws.String(dcfg.Region)}))
 	return &S3{
 		Cfg:      dcfg,
