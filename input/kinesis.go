@@ -2,7 +2,6 @@ package input
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"sync"
 	"sync/atomic"
@@ -28,7 +27,7 @@ var KTailDesc = baker.InputDesc{
 
 type KTailConfig struct {
 	AwsRegion string        `help:"AWS region to connect to" default:"us-west-2"`
-	Stream    string        `help:"Stream name on Kinesis" default:"(required)"`
+	Stream    string        `help:"Stream name on Kinesis" required:"true"`
 	IdleTime  time.Duration `help:"Time between polls of each shard" default:"100ms"`
 }
 
@@ -39,10 +38,6 @@ func (cfg *KTailConfig) fillDefaults() error {
 	var z time.Duration
 	if cfg.IdleTime == z {
 		cfg.IdleTime = 100 * time.Millisecond
-	}
-
-	if cfg.Stream == "" {
-		return fmt.Errorf("Stream field is required")
 	}
 
 	return nil
@@ -58,16 +53,14 @@ type KTail struct {
 	numLines int64
 }
 
-// Create a Kinesis tail, and immediately do a first connection to get the current shard list
+// NewKTail creates a Kinesis tail, and immediately do a first connection to
+// get the current shard list.
 func NewKTail(cfg baker.InputParams) (baker.Input, error) {
 	if cfg.DecodedConfig == nil {
 		cfg.DecodedConfig = &KTailConfig{}
 	}
-	dcfg := cfg.DecodedConfig.(*KTailConfig)
-	if dcfg.Stream == "" {
-		return nil, errors.New("'Stream' is required")
-	}
 
+	dcfg := cfg.DecodedConfig.(*KTailConfig)
 	if err := dcfg.fillDefaults(); err != nil {
 		return nil, fmt.Errorf("Kinesis: %s", err)
 	}
