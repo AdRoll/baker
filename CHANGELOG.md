@@ -19,8 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - general: replace `${KEY}` in the TOML conf with the `$KEY` env var [#24](https://github.com/AdRoll/baker/pull/24)
 - input: add KCL input. [#36](https://github.com/AdRoll/baker/pull/36)
 - filter: add RegexMatch filter. [#37](https://github.com/AdRoll/baker/pull/37)
-- filter: add Concatenate filter [#33](https://github.com/AdRoll/baker/pull/33)
 - filter: add NotNull filter [#43](https://github.com/AdRoll/baker/pull/43)
+- filter: add Concatenate filter [#28](https://github.com/AdRoll/baker/pull/33)
+- Required configuration fields are now handled by Baker rather than by each component. [#41](https://github.com/AdRoll/baker/pull/41)
 
 ### Changed
 
