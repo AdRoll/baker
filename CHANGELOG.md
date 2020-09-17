@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - input: add KCL input. [#36](https://github.com/AdRoll/baker/pull/36)
 - filter: add RegexMatch filter. [#37](https://github.com/AdRoll/baker/pull/37)
 - filter: add Concatenate filter [#28](https://github.com/AdRoll/baker/pull/33)
+- Required configuration fields are now handled by Baker rather than by each component. [#41](https://github.com/AdRoll/baker/pull/41)
 
 ### Changed
 
