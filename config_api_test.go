@@ -164,7 +164,7 @@ procs=1
 		t.Fatalf("got %q, want a ErrorRequiredField", err)
 	}
 
-	if errReq.Component != "Dummy" || errReq.Field != "Param2" {
-		t.Errorf("got component=%q field=%q, want component=%q field=%q", errReq.Component, errReq.Field, "Dummy", "Param2")
+	if errReq.Field != "Param2" {
+		t.Errorf("got field=%q, want field=%q", errReq.Field, "Param2")
 	}
 }

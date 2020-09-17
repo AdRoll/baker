@@ -211,6 +211,49 @@ func replaceEnvVars(f io.Reader, mapper func(string) string) (io.Reader, error) 
 	return strings.NewReader(os.Expand(buf.String(), mapper)), nil
 }
 
+func decodeAndCheckConfig(md toml.MetaData, compCfg interface{}) error {
+	var (
+		cfg  *toml.Primitive // config
+		dcfg interface{}     // decoded config
+		name string          // component name
+		typ  string          // component type
+	)
+
+	switch t := compCfg.(type) {
+	case ConfigInput:
+		cfg, dcfg = t.Config, t.DecodedConfig
+		name, typ = t.Name, "input"
+	case ConfigFilter:
+		cfg, dcfg = t.Config, t.DecodedConfig
+		name, typ = t.Name, "filter"
+	case ConfigOutput:
+		cfg, dcfg = t.Config, t.DecodedConfig
+		name, typ = t.Name, "output"
+	case ConfigUpload:
+		cfg, dcfg = t.Config, t.DecodedConfig
+		name, typ = t.Name, "upload"
+	case ConfigMetrics:
+		cfg, dcfg = t.Config, t.DecodedConfig
+		name, typ = t.Name, "metrics"
+	default:
+		panic(fmt.Sprintf("unexpected type %#v", cfg))
+	}
+
+	if cfg == nil {
+		return nil
+	}
+
+	if err := md.PrimitiveDecode(*cfg, dcfg); err != nil {
+		return fmt.Errorf("%s %q: error parsing config: %v", typ, name, err)
+	}
+
+	if req := CheckRequiredFields(dcfg); req != "" {
+		return fmt.Errorf("%s %q: %w", typ, name, ErrorRequiredField{req})
+	}
+
+	return nil
+}
+
 // NewConfigFromToml creates a Config from a reader reading from a TOML
 // configuration. comp describes all the existing components.
 func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
@@ -287,64 +330,34 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 
 	// Copy custom configuration structure, to prepare for re-reading
 	cfg.Input.DecodedConfig = cfg.Input.desc.Config
-	if cfg.Input.Config != nil {
-		if err := md.PrimitiveDecode(*cfg.Input.Config, cfg.Input.DecodedConfig); err != nil {
-			return nil, fmt.Errorf("error parsing input config: %v", err)
-		}
-
-		if req := CheckRequiredFields(cfg.Input.DecodedConfig); req != "" {
-			return nil, fmt.Errorf("input: %w", ErrorRequiredField{cfg.Input.Name, req})
-		}
+	if err := decodeAndCheckConfig(md, cfg.Input); err != nil {
+		return nil, err
 	}
 
 	for idx := range cfg.Filter {
 		// Clone the configuration object to allow the use of multiple instances of the same filter
 		cfg.Filter[idx].DecodedConfig = cloneConfig(cfg.Filter[idx].desc.Config)
-		if cfg.Filter[idx].Config != nil {
-			if err := md.PrimitiveDecode(*cfg.Filter[idx].Config, cfg.Filter[idx].DecodedConfig); err != nil {
-				return nil, fmt.Errorf("error parsing filter config: %v", err)
-			}
-
-			if req := CheckRequiredFields(cfg.Filter[idx].DecodedConfig); req != "" {
-				return nil, fmt.Errorf("filter: %w", ErrorRequiredField{cfg.Filter[idx].Name, req})
-			}
+		if err := decodeAndCheckConfig(md, cfg.Filter[idx]); err != nil {
+			return nil, err
 		}
 	}
 
 	cfg.Output.DecodedConfig = cfg.Output.desc.Config
-	if cfg.Output.Config != nil {
-		if err := md.PrimitiveDecode(*cfg.Output.Config, cfg.Output.DecodedConfig); err != nil {
-			return nil, fmt.Errorf("error parsing output config: %v", err)
-		}
-
-		if req := CheckRequiredFields(cfg.Output.DecodedConfig); req != "" {
-			return nil, fmt.Errorf("output: %w", ErrorRequiredField{cfg.Output.Name, req})
-		}
+	if err := decodeAndCheckConfig(md, cfg.Output); err != nil {
+		return nil, err
 	}
 
 	if cfg.Upload.Name != "" {
 		cfg.Upload.DecodedConfig = cfg.Upload.desc.Config
-		if cfg.Upload.Config != nil {
-			if err := md.PrimitiveDecode(*cfg.Upload.Config, cfg.Upload.DecodedConfig); err != nil {
-				return nil, fmt.Errorf("error parsing upload config: %v", err)
-			}
-
-			if req := CheckRequiredFields(cfg.Upload.DecodedConfig); req != "" {
-				return nil, fmt.Errorf("upload: %w", ErrorRequiredField{cfg.Upload.Name, req})
-			}
+		if err := decodeAndCheckConfig(md, cfg.Upload); err != nil {
+			return nil, err
 		}
 	}
 
 	if cfg.Metrics.Name != "" {
 		cfg.Metrics.DecodedConfig = cfg.Metrics.desc.Config
-		if cfg.Metrics.Config != nil {
-			if err := md.PrimitiveDecode(*cfg.Metrics.Config, cfg.Metrics.DecodedConfig); err != nil {
-				return nil, fmt.Errorf("error parsing metrics config: %v", err)
-			}
-
-			if req := CheckRequiredFields(cfg.Metrics.DecodedConfig); req != "" {
-				return nil, fmt.Errorf("metrics: %w", ErrorRequiredField{cfg.Metrics.Name, req})
-			}
+		if err := decodeAndCheckConfig(md, cfg.Metrics); err != nil {
+			return nil, err
 		}
 	}
 
@@ -434,10 +447,9 @@ func CheckRequiredFields(val interface{}) string {
 // ErrorRequiredField describes the absence of a required field
 // in a component configuration.
 type ErrorRequiredField struct {
-	Component string // Component is the component name
-	Field     string // Field is the name of the missing field
+	Field string // Field is the name of the missing field
 }
 
 func (e ErrorRequiredField) Error() string {
-	return fmt.Sprintf("%q, %q is a required field", e.Component, e.Field)
+	return fmt.Sprintf("%q is a required field", e.Field)
 }
