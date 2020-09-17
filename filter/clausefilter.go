@@ -19,7 +19,7 @@ var ClauseFilterDesc = baker.FilterDesc{
 }
 
 type ClauseFilterConfig struct {
-	Clause string `help:"Boolean formula describing which events to let through. Empty = let everything through."`
+	Clause string `help:"Boolean formula describing which events to let through. If empty, let everything through."`
 }
 
 /*
