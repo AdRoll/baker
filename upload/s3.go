@@ -128,7 +128,12 @@ func (u *S3) Run(upch <-chan string) error {
 	// Stop blocks until the upload goroutine has exited.
 	defer u.Stop()
 
-	errCh := make(chan error)
+	// Use a buffered channel to allow an extra message to be pushed by
+	// the deferred function in the goroutine when the Run function
+	// exits because of an error from u.uploadDirectory.
+	// An unbuffered channel will cause a deadlock because u.wgUpload.Done()
+	// is never reached
+	errCh := make(chan error, 1)
 
 	// Start a goroutine in which we periodically look at the source
 	// path for files and upload the ones we find.
@@ -141,7 +146,6 @@ func (u *S3) Run(upch <-chan string) error {
 				if u.Cfg.ExitOnError {
 					errCh <- err
 				}
-				log.Error(err)
 			}
 			u.wgUpload.Done()
 		}()
@@ -161,6 +165,7 @@ func (u *S3) Run(upch <-chan string) error {
 			}
 		}
 	}()
+
 	for {
 		select {
 		case err := <-errCh:
