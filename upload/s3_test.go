@@ -87,11 +87,11 @@ func mockS3Service(wantErr bool) (svc *s3.S3, ops *[]string, params *[]interface
 }
 
 // prepareUploadS3TestFolder creates a temp forlder and the selected number of files in it
-func prepareUploadS3TestFolder(t *testing.T, numFiles int) (string, []string, func()) {
+func prepareUploadS3TestFolder(t *testing.T, numFiles int) (string, []string) {
 	t.Helper()
 
 	// Create a folder to store files to be uploaded
-	srcDir, rmSrcDir := testutil.TempDir(t)
+	srcDir := t.TempDir()
 
 	// Write a bunch of files
 	var fnames []string
@@ -105,7 +105,7 @@ func prepareUploadS3TestFolder(t *testing.T, numFiles int) (string, []string, fu
 		fnames = append(fnames, fname)
 	}
 
-	return srcDir, fnames, rmSrcDir
+	return srcDir, fnames
 }
 
 func TestS3Upload(t *testing.T) {
@@ -120,11 +120,9 @@ func TestS3Upload(t *testing.T) {
 
 	// Create many files.
 	const nfiles = 10000
-	srcDir, paths, rmSrcDir := prepareUploadS3TestFolder(t, nfiles)
-	defer rmSrcDir()
+	srcDir, paths := prepareUploadS3TestFolder(t, nfiles)
 
-	stagingDir, rmStagingDir := testutil.TempDir(t)
-	defer rmStagingDir()
+	stagingDir := t.TempDir()
 
 	cfg := baker.UploadParams{
 		ComponentParams: baker.ComponentParams{
@@ -200,8 +198,7 @@ func Test_uploadDirectory(t *testing.T) {
 	defer testutil.DisableLogging()()
 	// Create a folder to store files to be uploaded
 	numFiles := 10
-	srcDir, _, rmSrcDir := prepareUploadS3TestFolder(t, numFiles)
-	defer rmSrcDir()
+	srcDir, _ := prepareUploadS3TestFolder(t, numFiles)
 
 	cfg := baker.UploadParams{
 		ComponentParams: baker.ComponentParams{
@@ -241,8 +238,7 @@ func Test_uploadDirectoryError(t *testing.T) {
 	defer testutil.DisableLogging()()
 
 	numFiles := 10
-	srcDir, _, rmSrcDir := prepareUploadS3TestFolder(t, numFiles)
-	defer rmSrcDir()
+	srcDir, _ := prepareUploadS3TestFolder(t, numFiles)
 
 	t.Run("ExitOnError: false", func(t *testing.T) {
 		cfg := baker.UploadParams{
@@ -313,15 +309,10 @@ func Test_uploadDirectoryError(t *testing.T) {
 func TestRun(t *testing.T) {
 	defer testutil.DisableLogging()()
 
-	tmpDir, fnames, rmTmpDir := prepareUploadS3TestFolder(t, 1)
-	defer rmTmpDir()
+	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
 	fname := fnames[0]
 
-	stagingDir, err := ioutil.TempDir("", t.Name())
-	if err != nil {
-		t.Fatalf("Can't setup test: %v", err)
-	}
-	defer os.RemoveAll(stagingDir)
+	stagingDir := t.TempDir()
 
 	cfg := baker.UploadParams{
 		ComponentParams: baker.ComponentParams{
@@ -368,15 +359,10 @@ func TestRun(t *testing.T) {
 func TestRunExitOnError(t *testing.T) {
 	defer testutil.DisableLogging()()
 
-	tmpDir, fnames, rmTmpDir := prepareUploadS3TestFolder(t, 1)
-	defer rmTmpDir()
+	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
 	fname := fnames[0]
 
-	stagingDir, err := ioutil.TempDir("", t.Name())
-	if err != nil {
-		t.Fatalf("Can't setup test: %v", err)
-	}
-	defer os.RemoveAll(stagingDir)
+	stagingDir := t.TempDir()
 
 	cfg := baker.UploadParams{
 		ComponentParams: baker.ComponentParams{
@@ -422,14 +408,10 @@ func TestRunExitOnError(t *testing.T) {
 func TestRunNotExitOnError(t *testing.T) {
 	defer testutil.DisableLogging()()
 
-	tmpDir, fnames, rmTmpDir := prepareUploadS3TestFolder(t, 1)
-	defer rmTmpDir()
+	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
 	fname := fnames[0]
 
-	stagingDir, err := ioutil.TempDir("", t.Name())
-	if err != nil {
-		t.Fatalf("Can't setup test: %v", err)
-	}
+	stagingDir := t.TempDir()
 	defer os.RemoveAll(stagingDir)
 
 	cfg := baker.UploadParams{
@@ -476,17 +458,8 @@ func TestRunNotExitOnError(t *testing.T) {
 }
 
 func Test_move(t *testing.T) {
-	srcDir, err := ioutil.TempDir("", t.Name())
-	if err != nil {
-		t.Fatalf("Can't setup test: %v", err)
-	}
-	defer os.RemoveAll(srcDir)
-
-	trgtDir, err := ioutil.TempDir("", fmt.Sprintf("%s-trgt", t.Name()))
-	if err != nil {
-		t.Fatalf("Can't setup test: %v", err)
-	}
-	defer os.RemoveAll(trgtDir)
+	srcDir := t.TempDir()
+	trgtDir := t.TempDir()
 
 	srcFile := filepath.Join(srcDir, "test_file")
 	trgtFile := filepath.Join(trgtDir, "test_file")
