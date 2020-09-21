@@ -1,106 +1,88 @@
 package filter
 
 import (
-	"fmt"
 	"strconv"
 	"testing"
 
 	"github.com/AdRoll/baker"
-	"github.com/AdRoll/baker/testutil"
-	"github.com/SemanticSugar/baker/forklift"
 )
 
 func TestTimestampRange(t *testing.T) {
 	tests := []struct {
-		desc           string
-		fieldTimestamp string
-		startDate      string
-		endDate        string
-		discarded      bool
+		name      string
+		ts        int
+		startDate string
+		endDate   string
+		want      bool // true: kept, false: discarded
 	}{
 		{
-			desc:           "Valid",
-			fieldTimestamp: "1580981641", // 2020-02-06 09:34:01
-			startDate:      "2019-02-06 09:34:01",
-			endDate:        "2022-02-06 09:34:01",
-			discarded:      false,
+			name:      "valid",
+			ts:        1580981641, // 2020-02-06 09:34:01
+			startDate: "2019-02-06 09:34:01",
+			endDate:   "2022-02-06 09:34:01",
+			want:      true,
 		},
 		{
-			desc:           "Too old",
-			fieldTimestamp: "1528277641", // 2018-06-06 09:34:01
-			startDate:      "2019-02-06 09:34:01",
-			endDate:        "2022-02-06 09:34:01",
-			discarded:      true,
+			name:      "past lower bound",
+			ts:        1528277641, // 2018-06-06 09:34:01
+			startDate: "2019-02-06 09:34:01",
+			endDate:   "2022-02-06 09:34:01",
+			want:      false,
 		},
 		{
-			desc:           "Too new",
-			fieldTimestamp: "1565084041", // 2019-08-06 09:34:01
-			startDate:      "2017-02-06 09:34:01",
-			endDate:        "2018-02-06 09:34:01",
-			discarded:      true,
+			name:      "past upper bound",
+			ts:        1565084041, // 2019-08-06 09:34:01
+			startDate: "2017-02-06 09:34:01",
+			endDate:   "2018-02-06 09:34:01",
+			want:      false,
 		},
 		{
-			desc:           "Inclusive start",
-			fieldTimestamp: "1486373641", // 2017-02-06 09:34:01
-			startDate:      "2017-02-06 09:34:01",
-			endDate:        "2018-02-06 09:34:01",
-			discarded:      false,
+			name:      "on lower bound",
+			ts:        1486373641, // 2017-02-06 09:34:01
+			startDate: "2017-02-06 09:34:01",
+			endDate:   "2018-02-06 09:34:01",
+			want:      true,
 		},
 		{
-			desc:           "Exclusive end",
-			fieldTimestamp: "1517909641", // 2018-02-06 09:34:01
-			startDate:      "2017-02-06 09:34:01",
-			endDate:        "2018-02-06 09:34:01",
-			discarded:      true,
+			name:      "on upper bound",
+			ts:        1517909641, // 2018-02-06 09:34:01
+			startDate: "2017-02-06 09:34:01",
+			endDate:   "2018-02-06 09:34:01",
+			want:      false,
 		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.desc, func(t *testing.T) {
-			i, err := strconv.ParseInt(tt.fieldTimestamp, 10, 64)
-			if err != nil {
-				t.Errorf("Cannot convert fieldTimestamp")
-			}
-
-			fields := map[baker.FieldIndex]string{
-				forklift.FieldTimestamp: fmt.Sprintf("%d", i),
-			}
-			// Generate the logline
-			logline := testutil.NewLogLineFromMap(fields, forklift.LogLineFieldSeparator)
-			if ok, fidx := forklift.ValidateLogLine(logline); !ok {
-				t.Fatalf("invalid log line at field: %s", forklift.FieldName(fidx))
-			}
-
+		t.Run(tt.name, func(t *testing.T) {
 			// Init filter
-			cfg := baker.FilterParams{}
-			cfg.DecodedConfig = &TimestampRangeConfig{
-				StartDatetime: tt.startDate,
-				EndDatetime:   tt.endDate,
+			cfg := baker.FilterParams{
+				ComponentParams: baker.ComponentParams{
+					DecodedConfig: &TimestampRangeConfig{
+						StartDatetime: tt.startDate,
+						EndDatetime:   tt.endDate,
+					},
+					FieldByName: func(name string) (baker.FieldIndex, bool) { return 0, true },
+				},
 			}
 			filter, err := NewTimestampRange(cfg)
 			if err != nil {
-				t.Errorf("error initializing the filter %v", err.Error())
+				t.Fatal(err)
 			}
 
 			// Run the filter
-			discarded := true
-			numDiscardedLines := 1
-			filter.Process(logline, func(baker.Record) {
-				discarded = false
-				numDiscardedLines = 0
+			kept := false
+			ndiscarded := 1
+
+			ll := &baker.LogLine{FieldSeparator: ','}
+			ll.Set(0, []byte(strconv.Itoa(tt.ts)))
+			filter.Process(ll, func(baker.Record) {
+				kept = true
+				ndiscarded++
 			})
 
 			// Check result
-			if tt.discarded != discarded {
-				t.Errorf("got: %t, want: %t", tt.discarded, discarded)
-			}
-
-			s := filter.Stats()
-			if s.NumProcessedLines != 1 {
-				t.Errorf("got: %d, want: %d", 1, s.NumProcessedLines)
-			}
-			if s.NumFilteredLines != int64(numDiscardedLines) {
-				t.Errorf("got: %d, want: %d", 1, s.NumFilteredLines)
+			if kept != tt.want {
+				t.Errorf("got record kept=%t, want %t", kept, tt.want)
 			}
 		})
 	}
@@ -111,49 +93,51 @@ func TestNewTimestampRangeErrors(t *testing.T) {
 		desc      string
 		startDate string
 		endDate   string
+		field     string
 	}{
 		{
-			desc:      "empty start",
-			startDate: "",
-			endDate:   "2022-02-06 09:34:01",
-		},
-		{
-			desc:      "empty end",
-			startDate: "2019-02-06 09:34:01",
-			endDate:   "",
-		},
-		{
-			desc:      "wrong start",
+			desc:      "invalid lower bound",
 			startDate: "2017-32-06 09:34:01",
 			endDate:   "2018-02-06 09:34:01",
+			field:     "timestamp",
 		},
 		{
-			desc:      "wrong end",
+			desc:      "invalid upper bound",
 			startDate: "2017-02-06 09:34:01",
 			endDate:   "2018-02-06 09:34",
+			field:     "timestamp",
+		},
+		{
+			desc:      "unknown field",
+			startDate: "2017-02-06 09:34:01",
+			endDate:   "2018-02-06 09:34:01",
+			field:     "foobar",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.desc, func(t *testing.T) {
 			// Init filter
-			cfg := baker.FilterParams{}
-			cfg.DecodedConfig = &TimestampRangeConfig{
-				StartDatetime: tt.startDate,
-				EndDatetime:   tt.endDate,
+			cfg := baker.FilterParams{
+				ComponentParams: baker.ComponentParams{
+					DecodedConfig: &TimestampRangeConfig{
+						StartDatetime: tt.startDate,
+						EndDatetime:   tt.endDate,
+						Field:         tt.field,
+					},
+					FieldByName: func(name string) (baker.FieldIndex, bool) {
+						if name != "timestamp" {
+							return 0, false
+						}
+
+						return 0, true
+					},
+				},
 			}
-			_, err := NewTimestampRange(cfg)
-			if err == nil {
-				t.Errorf("expected error")
+
+			if _, err := NewTimestampRange(cfg); err == nil {
+				t.Errorf("err = nil, want an error")
 			}
 		})
 	}
-
-	// Empty config must return an error as well
-	t.Run("nil config", func(t *testing.T) {
-		_, err := NewTimestampRange(baker.FilterParams{})
-		if err == nil {
-			t.Errorf("expected error")
-		}
-	})
 }
