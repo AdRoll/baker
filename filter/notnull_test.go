@@ -1,60 +1,97 @@
 package filter
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/AdRoll/baker"
-	"github.com/AdRoll/baker/testutil"
-	"github.com/SemanticSugar/baker/forklift"
 )
 
 func TestNotNull(t *testing.T) {
 	tests := []struct {
-		advertisableEid string
-		discard         bool // want it discarded?
+		record  string
+		fields  []string
+		want    bool // true: kept, false: discarded
+		wantErr bool
 	}{
 		{
-			advertisableEid: "", discard: true,
+			record: "abc,def,ghi",
+			fields: nil,
+			want:   true,
 		},
 		{
-			advertisableEid: "N6SUJAEWLFHHLAIBDPNASB", discard: false,
+			record:  "abc,def,ghi",
+			fields:  []string{"foo", "non-existent"},
+			wantErr: true,
+		},
+		{
+			record: "abc,def,ghi",
+			fields: []string{},
+			want:   true,
+		},
+		{
+			record: "abc,def,ghi",
+			fields: []string{"foo"},
+			want:   true,
+		},
+		{
+			record: "abc,def,",
+			fields: []string{"foo"},
+			want:   true,
+		},
+		{
+			record: "abc,def,",
+			fields: []string{"foo", "bar", "baz"},
+			want:   false,
+		},
+		{
+			record: "abc,,ghi",
+			fields: []string{"bar"},
+			want:   false,
 		},
 	}
 
-	var fields map[baker.FieldIndex]string
+	fieldByName := func(name string) (baker.FieldIndex, bool) {
+		switch name {
+		case "foo":
+			return 0, true
+		case "bar":
+			return 1, true
+		case "baz":
+			return 2, true
+		}
+		return 0, false
+	}
+
 	for _, tt := range tests {
-		t.Run("", func(t *testing.T) {
-			if tt.advertisableEid != "" {
-				fields = map[baker.FieldIndex]string{
-					forklift.FieldAdvertisableEid: tt.advertisableEid,
-				}
-			} else {
-				fields = map[baker.FieldIndex]string{}
-			}
-			// Generate the logline
-			logline := testutil.NewLogLineFromMap(fields, forklift.LogLineFieldSeparator)
-			if ok, fidx := forklift.ValidateLogLine(logline); !ok {
-				t.Fatalf("invalid log line at field: %s", forklift.FieldName(fidx))
+		t.Run(strings.Join(tt.fields, ","), func(t *testing.T) {
+			f, err := NewNotNull(baker.FilterParams{
+				ComponentParams: baker.ComponentParams{
+					FieldByName: fieldByName,
+					DecodedConfig: &NotNullConfig{
+						Fields: tt.fields,
+					},
+				},
+			})
+
+			if (err != nil) != (tt.wantErr) {
+				t.Fatalf("got error = %v, want error = %v", err, tt.wantErr)
 			}
 
-			// Init filter
-			cfg := baker.FilterParams{}
-			cfg.DecodedConfig = &NotNullConfig{
-				Fields: []string{"advertisable_eid"},
+			if tt.wantErr {
+				return
 			}
-			filter, _ := NewNotNull(cfg)
 
-			// Run the filter
-			discarded := true
-			filter.Process(logline, func(baker.Record) { discarded = false })
+			kept := false
+			l := &baker.LogLine{FieldSeparator: ','}
+			if err := l.Parse([]byte(tt.record), nil); err != nil {
+				t.Fatalf("parse error: %q", err)
+			}
 
-			// Check result
-			if discarded != tt.discard {
-				if tt.discard {
-					t.Errorf("filter kept a line it shouldn't have: %v", tt.advertisableEid)
-				} else {
-					t.Errorf("filter discarded a line it shouldn't have: %v", tt.advertisableEid)
-				}
+			f.Process(l, func(baker.Record) { kept = true })
+
+			if kept != tt.want {
+				t.Errorf("got record kept=%t, want %t", kept, tt.want)
 			}
 		})
 	}
