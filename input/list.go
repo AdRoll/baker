@@ -42,7 +42,7 @@ var ListDesc = baker.InputDesc{
 		"    and each line will be read and parsed as a \"file specifier\"\n" +
 		"  * \"@\" followed by a S3 URL pointing to a file: the text file pointed by the URL will be\n" +
 		"    downloaded, and each line will be read and parsed as a \"file specifier\"\n" +
-		"  * \"@\" followed by a local path pointing to a directory: the directory will be recursively\n" +
+		"  * \"@\" followed by a local path pointing to a directory (must end with a slash): the directory will be recursively\n" +
 		"    walked, and all files matching the \"MatchPath\" option regexp will be processed as logfiles\n" +
 		"  * \"@\" followed by a S3 URL pointing to a directory: the directory on S3 will be recursively\n" +
 		"    walked, and all files matching the \"MatchPath\" option regexp will be processed as logfiles\n" +
@@ -282,58 +282,72 @@ func (s *List) processList(fn string) error {
 		}
 
 	case "s3":
-		// ListObjectsV2Input prefix must not start with /
-		prefix := strings.TrimLeft(u.Path, "/")
+		if u.Path[len(u.Path)-1:] == "/" {
+			// ListObjectsV2Input prefix must not start with /
+			prefix := strings.TrimLeft(u.Path, "/")
 
-		paths := make(chan string)
-		errCh := make(chan error)
+			paths := make(chan string)
+			errCh := make(chan error)
 
-		go func() {
-			defer close(paths)
+			go func() {
+				defer close(paths)
 
-			var nextToken *string
-			input := &s3.ListObjectsV2Input{
-				Bucket:  aws.String(u.Host),
-				Prefix:  aws.String(prefix),
-				MaxKeys: aws.Int64(1000), // 1000 is the max value
-			}
-			for {
-				if nextToken != nil {
-					input.ContinuationToken = nextToken
+				var nextToken *string
+				input := &s3.ListObjectsV2Input{
+					Bucket:  aws.String(u.Host),
+					Prefix:  aws.String(prefix),
+					MaxKeys: aws.Int64(1000), // 1000 is the max value
 				}
-
-				resp, err := s.svc.ListObjectsV2(input)
-				if err != nil {
-					errCh <- err
-					return
-				}
-
-				for _, obj := range resp.Contents {
-					path := *obj.Key
-					if s.matchPath.MatchString(path) {
-						paths <- path
+				for {
+					if nextToken != nil {
+						input.ContinuationToken = nextToken
 					}
-				}
 
-				if *(resp.IsTruncated) == false {
-					return
-				}
-				nextToken = resp.NextContinuationToken
-			}
-		}()
+					resp, err := s.svc.ListObjectsV2(input)
+					if err != nil {
+						errCh <- err
+						return
+					}
 
-		for {
-			select {
-			case err := <-errCh:
-				return err
-			case line, ok := <-paths:
-				if !ok {
+					for _, obj := range resp.Contents {
+						path := *obj.Key
+						if s.matchPath.MatchString(path) {
+							paths <- path
+						}
+					}
+
+					if *(resp.IsTruncated) == false {
+						return
+					}
+					nextToken = resp.NextContinuationToken
+				}
+			}()
+
+			for {
+				select {
+				case err := <-errCh:
+					return err
+				case line, ok := <-paths:
+					if !ok {
+						return nil
+					}
+					s.ci.ProcessFile(fmt.Sprintf("s3://%s/%s", u.Host, line))
+				case <-s.ci.Done:
 					return nil
 				}
-				s.ci.ProcessFile(fmt.Sprintf("s3://%s/%s", u.Host, line))
-			case <-s.ci.Done:
-				return nil
 			}
+		} else {
+			resp, err := s.svc.GetObject(&s3.GetObjectInput{
+				Bucket: aws.String(u.Host),
+				Key:    aws.String(u.Path),
+			})
+			if err != nil {
+				return err
+			}
+
+			s.processListFile(resp.Body)
+			resp.Body.Close()
+			return nil
 		}
 
 	case "http", "https":

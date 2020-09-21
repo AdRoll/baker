@@ -219,7 +219,7 @@ func TestListInvalidStdin(t *testing.T) {
 	}
 }
 
-func TestListS3(t *testing.T) {
+func TestListS3Folder(t *testing.T) {
 	defer testutil.DisableLogging()()
 
 	ch := make(chan *baker.Data)
@@ -256,7 +256,7 @@ func TestListS3(t *testing.T) {
 		return
 	}
 
-	svc, recordsLen, getObjCounter := mockS3Service(t, generatedFiles, generatedRecords)
+	svc, recordsLen, getObjCounter := mockS3Service(t, generatedFiles, generatedRecords, false)
 	list.(*List).svc = svc
 
 	if err := list.Run(ch); err != nil {
@@ -278,7 +278,58 @@ func TestListS3(t *testing.T) {
 	}
 }
 
-func mockS3Service(t *testing.T, generatedFiles, generatedRecords int) (*s3.S3, int, *int64) {
+func TestListS3Manifest(t *testing.T) {
+	defer testutil.DisableLogging()()
+
+	ch := make(chan *baker.Data)
+
+	var receivedFilesContent int64
+
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for data := range ch {
+			if len(data.Bytes) > 0 {
+				atomic.AddInt64(&receivedFilesContent, 1)
+			}
+		}
+	}()
+
+	cfg := baker.InputParams{
+		ComponentParams: baker.ComponentParams{
+			DecodedConfig: &ListConfig{
+				Files:     []string{"@s3://bucket-name/path-prefix/manifest"},
+				MatchPath: ".*\\.log\\.zst",
+			},
+		},
+	}
+
+	list, err := NewList(cfg)
+	if err != nil {
+		t.Error("Error creating List:", err)
+		return
+	}
+
+	svc, _, getObjCounter := mockS3Service(t, 0, 2, true)
+	list.(*List).svc = svc
+
+	if err := list.Run(ch); err != nil {
+		log.Fatalf("unexpected error %v", err)
+	}
+	close(ch)
+	wg.Wait()
+
+	if int(*getObjCounter) != 3 { // 1 manifest + 2 files into it
+		t.Errorf("getObjCounter want: %d, got: %d", 3, int(*getObjCounter))
+	}
+
+	if int(receivedFilesContent) != 2 {
+		t.Fatalf("receivedFilesContent want: %d, got: %d", 2, int(receivedFilesContent))
+	}
+}
+
+func mockS3Service(t *testing.T, generatedFiles, generatedRecords int, getManifest bool) (*s3.S3, int, *int64) {
 	t.Helper()
 	var counter int64
 	var buf []byte
@@ -290,6 +341,7 @@ func mockS3Service(t *testing.T, generatedFiles, generatedRecords int) (*s3.S3, 
 
 	compressedRecord := zstd.Compress(nil, buf)
 	lastModified := aws.Time(time.Now())
+	var manifestCalled bool
 
 	svc := s3.New(unit.Session)
 	svc.Handlers.Unmarshal.Clear()
@@ -321,9 +373,20 @@ func mockS3Service(t *testing.T, generatedFiles, generatedRecords int) (*s3.S3, 
 
 		case *s3.GetObjectOutput:
 			atomic.AddInt64(&counter, 1)
-			data.ContentLength = aws.Int64(int64(len(compressedRecord)))
-			data.LastModified = lastModified
-			data.Body = ioutil.NopCloser(bytes.NewReader(compressedRecord))
+			if getManifest && !manifestCalled {
+				var manifest []byte
+				for i := 0; i < generatedRecords; i++ {
+					manifest = append(manifest, []byte(fmt.Sprintf("s3://bucket-name/file-%d-from_manifest.log.zst\n", i))...)
+				}
+				manifestCalled = true
+				data.ContentLength = aws.Int64(int64(len(manifest)))
+				data.LastModified = lastModified
+				data.Body = ioutil.NopCloser(bytes.NewReader(manifest))
+			} else {
+				data.ContentLength = aws.Int64(int64(len(compressedRecord)))
+				data.LastModified = lastModified
+				data.Body = ioutil.NopCloser(bytes.NewReader(compressedRecord))
+			}
 		}
 	})
 
