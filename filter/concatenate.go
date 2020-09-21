@@ -53,7 +53,7 @@ func NewConcatenate(cfg baker.FilterParams) (baker.Filter, error) {
 	var separator []byte
 	if dcfg.Separator != "" {
 		if len(dcfg.Separator) != 1 || dcfg.Separator[0] > unicode.MaxASCII {
-			return nil, errors.New("Separator must be a 1-byte string or hex char")
+			return nil, errors.New("Separator must either be empty or a single ASCII, non-nil char")
 		}
 		separator = append(separator, dcfg.Separator[0])
 	}
