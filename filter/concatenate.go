@@ -27,7 +27,7 @@ type Concatenate struct {
 	numFilteredLines  int64
 	fields            []baker.FieldIndex
 	target            baker.FieldIndex
-	separator         byte
+	separator         []byte
 }
 
 func NewConcatenate(cfg baker.FilterParams) (baker.Filter, error) {
@@ -50,13 +50,12 @@ func NewConcatenate(cfg baker.FilterParams) (baker.Filter, error) {
 		return nil, fmt.Errorf("Can't resolve target field %s", dcfg.Target)
 	}
 
-	var separator byte
+	var separator []byte
 	if dcfg.Separator != "" {
-		sep := []rune(dcfg.Separator)
-		if len(sep) != 1 || sep[0] > unicode.MaxASCII {
+		if len(dcfg.Separator) != 1 || dcfg.Separator[0] > unicode.MaxASCII {
 			return nil, errors.New("Separator must be a 1-byte string or hex char")
 		}
-		separator = byte(sep[0])
+		separator = append(separator, dcfg.Separator[0])
 	}
 
 	f := &Concatenate{
@@ -82,8 +81,8 @@ func (c *Concatenate) Process(l baker.Record, next func(baker.Record)) {
 	flen := len(c.fields) - 1
 	for i, f := range c.fields {
 		v := l.Get(f)
-		if i < flen && c.separator != 0 {
-			v = append(v, c.separator)
+		if i < flen {
+			v = append(v, c.separator...)
 		}
 		key = append(key, v...)
 	}
