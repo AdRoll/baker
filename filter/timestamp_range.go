@@ -10,8 +10,7 @@ import (
 	"github.com/SemanticSugar/baker/forklift"
 )
 
-// TODO[open-source] this can become a generic filter but forklift.FieldTimestamp must be given as idx in the configuration file
-
+// TimestampRangeDesc describes the NotNull filter.
 var TimestampRangeDesc = baker.FilterDesc{
 	Name:   "TimestampRange",
 	New:    NewTimestampRange,
@@ -19,11 +18,14 @@ var TimestampRangeDesc = baker.FilterDesc{
 	Help:   "Discard all loglines not included in the provided time range\n",
 }
 
+// TimestampRangeConfig holds configuration paramters for the NotNull filter.
 type TimestampRangeConfig struct {
 	StartDatetime string `help:"The oldest accepted timestamp of the loglines (inclusive, UTC) format:'2006-01-31 15:04:05'" default:""`
 	EndDatetime   string `help:"The most recent accepted timestamp of the loglines (exclusive, UTC) format:'2006-01-31 15:04:05'" default:""`
 }
 
+// TimestampRange is a baker filter that discards records depending on the
+// value of a field representing a Unix timestamp.
 type TimestampRange struct {
 	numProcessedLines int64
 	numFilteredLines  int64
@@ -31,7 +33,7 @@ type TimestampRange struct {
 	endDate           int64
 }
 
-// NewTimestampRange returns a TimestampRange filter.
+// NewTimestampRange creates and configures a TimestampRange filter.
 func NewTimestampRange(cfg baker.FilterParams) (baker.Filter, error) {
 	if cfg.DecodedConfig == nil {
 		cfg.DecodedConfig = &TimestampRangeConfig{}
@@ -57,6 +59,7 @@ func NewTimestampRange(cfg baker.FilterParams) (baker.Filter, error) {
 	return &TimestampRange{startDate: s.Unix(), endDate: e.Unix()}, nil
 }
 
+// Stats implements baker.Filter.
 func (f *TimestampRange) Stats() baker.FilterStats {
 	return baker.FilterStats{
 		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
@@ -64,6 +67,7 @@ func (f *TimestampRange) Stats() baker.FilterStats {
 	}
 }
 
+// Process implements baker.Filter.
 func (f *TimestampRange) Process(l baker.Record, next func(baker.Record)) {
 	atomic.AddInt64(&f.numProcessedLines, 1)
 	// Convert the logline timestamp to unix time (int64)
