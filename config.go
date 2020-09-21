@@ -239,16 +239,16 @@ func decodeAndCheckConfig(md toml.MetaData, compCfg interface{}) error {
 		panic(fmt.Sprintf("unexpected type %#v", cfg))
 	}
 
+	if req := CheckRequiredFields(dcfg); req != "" {
+		return fmt.Errorf("%s %q: %w", typ, name, ErrorRequiredField{req})
+	}
+
 	if cfg == nil {
 		return nil
 	}
 
 	if err := md.PrimitiveDecode(*cfg, dcfg); err != nil {
 		return fmt.Errorf("%s %q: error parsing config: %v", typ, name, err)
-	}
-
-	if req := CheckRequiredFields(dcfg); req != "" {
-		return fmt.Errorf("%s %q: %w", typ, name, ErrorRequiredField{req})
 	}
 
 	return nil
