@@ -211,6 +211,49 @@ func replaceEnvVars(f io.Reader, mapper func(string) string) (io.Reader, error) 
 	return strings.NewReader(os.Expand(buf.String(), mapper)), nil
 }
 
+func decodeAndCheckConfig(md toml.MetaData, compCfg interface{}) error {
+	var (
+		cfg  *toml.Primitive // config
+		dcfg interface{}     // decoded config
+		name string          // component name
+		typ  string          // component type
+	)
+
+	switch t := compCfg.(type) {
+	case ConfigInput:
+		cfg, dcfg = t.Config, t.DecodedConfig
+		name, typ = t.Name, "input"
+	case ConfigFilter:
+		cfg, dcfg = t.Config, t.DecodedConfig
+		name, typ = t.Name, "filter"
+	case ConfigOutput:
+		cfg, dcfg = t.Config, t.DecodedConfig
+		name, typ = t.Name, "output"
+	case ConfigUpload:
+		cfg, dcfg = t.Config, t.DecodedConfig
+		name, typ = t.Name, "upload"
+	case ConfigMetrics:
+		cfg, dcfg = t.Config, t.DecodedConfig
+		name, typ = t.Name, "metrics"
+	default:
+		panic(fmt.Sprintf("unexpected type %#v", cfg))
+	}
+
+	if req := CheckRequiredFields(dcfg); req != "" {
+		return fmt.Errorf("%s %q: %w", typ, name, ErrorRequiredField{req})
+	}
+
+	if cfg == nil {
+		return nil
+	}
+
+	if err := md.PrimitiveDecode(*cfg, dcfg); err != nil {
+		return fmt.Errorf("%s %q: error parsing config: %v", typ, name, err)
+	}
+
+	return nil
+}
+
 // NewConfigFromToml creates a Config from a reader reading from a TOML
 // configuration. comp describes all the existing components.
 func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
@@ -287,44 +330,34 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 
 	// Copy custom configuration structure, to prepare for re-reading
 	cfg.Input.DecodedConfig = cfg.Input.desc.Config
-	if cfg.Input.Config != nil {
-		if err := md.PrimitiveDecode(*cfg.Input.Config, cfg.Input.DecodedConfig); err != nil {
-			return nil, fmt.Errorf("error parsing input config: %v", err)
-		}
+	if err := decodeAndCheckConfig(md, cfg.Input); err != nil {
+		return nil, err
 	}
 
 	for idx := range cfg.Filter {
 		// Clone the configuration object to allow the use of multiple instances of the same filter
 		cfg.Filter[idx].DecodedConfig = cloneConfig(cfg.Filter[idx].desc.Config)
-		if cfg.Filter[idx].Config != nil {
-			if err := md.PrimitiveDecode(*cfg.Filter[idx].Config, cfg.Filter[idx].DecodedConfig); err != nil {
-				return nil, fmt.Errorf("error parsing filter config: %v", err)
-			}
+		if err := decodeAndCheckConfig(md, cfg.Filter[idx]); err != nil {
+			return nil, err
 		}
 	}
 
 	cfg.Output.DecodedConfig = cfg.Output.desc.Config
-	if cfg.Output.Config != nil {
-		if err := md.PrimitiveDecode(*cfg.Output.Config, cfg.Output.DecodedConfig); err != nil {
-			return nil, fmt.Errorf("error parsing output config: %v", err)
-		}
+	if err := decodeAndCheckConfig(md, cfg.Output); err != nil {
+		return nil, err
 	}
 
 	if cfg.Upload.Name != "" {
 		cfg.Upload.DecodedConfig = cfg.Upload.desc.Config
-		if cfg.Upload.Config != nil {
-			if err := md.PrimitiveDecode(*cfg.Upload.Config, cfg.Upload.DecodedConfig); err != nil {
-				return nil, fmt.Errorf("error parsing upload config: %v", err)
-			}
+		if err := decodeAndCheckConfig(md, cfg.Upload); err != nil {
+			return nil, err
 		}
 	}
 
 	if cfg.Metrics.Name != "" {
 		cfg.Metrics.DecodedConfig = cfg.Metrics.desc.Config
-		if cfg.Metrics.Config != nil {
-			if err := md.PrimitiveDecode(*cfg.Metrics.Config, cfg.Metrics.DecodedConfig); err != nil {
-				return nil, fmt.Errorf("error parsing metrics config: %v", err)
-			}
+		if err := decodeAndCheckConfig(md, cfg.Metrics); err != nil {
+			return nil, err
 		}
 	}
 
@@ -359,4 +392,64 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 
 	// Fill-in with missing defaults
 	return &cfg, cfg.fillDefaults()
+}
+
+// hasConfig returns true if the underlying structure has at least one field.
+func hasConfig(cfg interface{}) bool {
+	tf := reflect.TypeOf(cfg).Elem()
+	return tf.NumField() != 0
+}
+
+// RequiredFields returns the names of the underlying configuration structure
+// fields which are tagged as required. To tag a field as being required, a
+// "required" struct struct tag must be present and set to true.
+//
+// RequiredFields doesn't support struct embedding other structs.
+func RequiredFields(cfg interface{}) []string {
+	var fields []string
+
+	tf := reflect.TypeOf(cfg).Elem()
+	for i := 0; i < tf.NumField(); i++ {
+		field := tf.Field(i)
+
+		req := field.Tag.Get("required")
+		if req != "true" {
+			continue
+		}
+
+		fields = append(fields, field.Name)
+	}
+
+	return fields
+}
+
+// CheckRequiredFields checks that all fields that are tagged as required in
+// cfg's type have actually been set to a value other than the field type zero
+// value.  If not CheckRequiredFields returns the name of the first required
+// field that is not set, or, it returns an empty string if all required fields
+// are set of the struct doesn't have any required fields (or any fields at all).
+//
+// CheckRequiredFields doesn't support struct embedding other structs.
+func CheckRequiredFields(cfg interface{}) string {
+	fields := RequiredFields(cfg)
+
+	for _, name := range fields {
+		rv := reflect.ValueOf(cfg).Elem()
+		fv := rv.FieldByName(name)
+		if fv.IsZero() {
+			return name
+		}
+	}
+
+	return ""
+}
+
+// ErrorRequiredField describes the absence of a required field
+// in a component configuration.
+type ErrorRequiredField struct {
+	Field string // Field is the name of the missing field
+}
+
+func (e ErrorRequiredField) Error() string {
+	return fmt.Sprintf("%q is a required field", e.Field)
 }

@@ -67,14 +67,14 @@ func TestFillCreateRecordDefault(t *testing.T) {
 }
 
 func TestEnvVarBaseReplace(t *testing.T) {
-	src_toml := `
+	src := `
 	[general]
 	dont_validate_fields = ${DNT_VAL_FIELDS}
 	alt_form = "$ALT_FORM"
 	unexisting_var = "${THIS_DOESNT_EXIST}"
 	`
 
-	want_toml := `
+	want := `
 	[general]
 	dont_validate_fields = true
 	alt_form = "ok"
@@ -91,13 +91,13 @@ func TestEnvVarBaseReplace(t *testing.T) {
 		return ""
 	}
 
-	s, err := replaceEnvVars(strings.NewReader(src_toml), mapper)
+	s, err := replaceEnvVars(strings.NewReader(src), mapper)
 	if err != nil {
 		t.Fatalf("replaceEnvVars err: %v", err)
 	}
 	buf, _ := ioutil.ReadAll(s)
 
-	if want_toml != string(buf) {
+	if want != string(buf) {
 		t.Fatalf("wrong toml: %s", string(buf))
 	}
 }

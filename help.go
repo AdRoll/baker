@@ -129,17 +129,12 @@ func PrintHelp(w io.Writer, name string, comp Components) {
 	}
 }
 
-func hasConfig(cfg interface{}) bool {
-	tf := reflect.TypeOf(cfg).Elem()
-	return tf.NumField() != 0
-}
-
 func dumpConfigHelp(w io.Writer, cfg interface{}) {
-	const sfmt = "%-18s | %-18s | %-26s | "
+	const sfmt = "%-18s | %-18s | %-18s | %-8s | "
 	const sep = "----------------------------------------------------------------------------------------------------"
 
-	hpad := fmt.Sprintf(sfmt, "", "", "")
-	fmt.Fprintf(w, sfmt, "Name", "Type", "Default")
+	hpad := fmt.Sprintf(sfmt, "", "", "", "")
+	fmt.Fprintf(w, sfmt, "Name", "Type", "Default", "Required")
 	fmt.Fprintf(w, "Help\n%s\n", sep)
 
 	tf := reflect.TypeOf(cfg).Elem()
@@ -180,9 +175,15 @@ func dumpConfigHelp(w io.Writer, cfg interface{}) {
 
 		help := field.Tag.Get("help")
 		def := field.Tag.Get("default")
+		req := field.Tag.Get("required")
+		if req == "true" {
+			req = "yes"
+		} else {
+			req = "no"
+		}
 
-		fmt.Fprintf(w, sfmt, field.Name, typ, def)
-		helpLines := strings.Split(wrapString(help, 40), "\n")
+		fmt.Fprintf(w, sfmt, field.Name, typ, def, req)
+		helpLines := strings.Split(wrapString(help, 60), "\n")
 		if len(helpLines) > 0 {
 			fmt.Fprint(w, helpLines[0], "\n")
 			for _, h := range helpLines[1:] {
