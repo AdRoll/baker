@@ -19,7 +19,7 @@ var ConcatenateDesc = baker.FilterDesc{
 type ConcatenateConfig struct {
 	Fields    []string `help:"The field names to concatenate, in order"`
 	Target    string   `help:"The field name to save the concatenated value to"`
-	Separator string   `help:"Use this separator to concatenate the values. Must be a single-byte convertible char"`
+	Separator string   `help:"Separator to concatenate the values. Must either be empty or a single ASCII, non-nil char"`
 }
 
 type Concatenate struct {
