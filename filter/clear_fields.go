@@ -17,7 +17,7 @@ var ClearFieldsDesc = baker.FilterDesc{
 
 // ClearFieldsConfig holds config parameters of the ClearFields filter.
 type ClearFieldsConfig struct {
-	Fields []string `help:"set of fields to clear" default:"[]"`
+	Fields []string `help:"set of fields to clear" required:"true"`
 }
 
 // ClearFields filter clears (i.e set to the empty string) a set of fields.

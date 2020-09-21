@@ -24,18 +24,6 @@ type setStringFromURLConfig struct {
 	Strings []string `help:"Strings to look for in the URL. Discard records not containing any of them." required:"true"`
 }
 
-func (cfg *setStringFromURLConfig) fillDefaults() error {
-	if cfg.Field == "" {
-		return fmt.Errorf("Field is a required parameter")
-	}
-
-	if len(cfg.Strings) == 0 {
-		return fmt.Errorf("Strings is a required parameter")
-	}
-
-	return nil
-}
-
 type setStringFromURL struct {
 	numProcessedLines int64
 	numFilteredLines  int64
@@ -49,10 +37,6 @@ func newSetStringFromURL(cfg baker.FilterParams) (baker.Filter, error) {
 		cfg.DecodedConfig = &setStringFromURLConfig{}
 	}
 	dcfg := cfg.DecodedConfig.(*setStringFromURLConfig)
-
-	if err := dcfg.fillDefaults(); err != nil {
-		return nil, fmt.Errorf("can't configure SetStringFromURL filter: %v", err)
-	}
 
 	f, ok := cfg.FieldByName(dcfg.Field)
 	if !ok {

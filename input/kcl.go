@@ -2,7 +2,6 @@ package input
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"math"
 	"os"
@@ -40,8 +39,8 @@ var KCLDesc = baker.InputDesc{
 // KCLConfig is the configuration for the KCL input.
 type KCLConfig struct {
 	AwsRegion       string        `help:"AWS region to connect to" default:"us-west-2"`
-	Stream          string        `help:"Name of Kinesis stream" default:""`
-	AppName         string        `help:"Used by KCL to allow multiple app to consume the same stream." default:""`
+	Stream          string        `help:"Name of Kinesis stream" required:"true"`
+	AppName         string        `help:"Used by KCL to allow multiple app to consume the same stream." required:"true"`
 	MaxShards       int           `help:"Max shards this Worker can handle at a time" default:"32767"`
 	ShardSync       time.Duration `help:"Time between tasks to sync leases and Kinesis shards" default:"60s"`
 	InitialPosition string        `help:"Position in the stream where a new application should start from. Values: LATEST or TRIM_HORIZON" default:"LATEST"`
@@ -51,12 +50,6 @@ type KCLConfig struct {
 var appNameRx = regexp.MustCompile(`^[a-zA-Z_0-9]+$`)
 
 func (cfg *KCLConfig) validate() error {
-	if cfg.Stream == "" {
-		return errors.New("'Stream' is required")
-	}
-	if cfg.AppName == "" {
-		return errors.New("'AppName' is required")
-	}
 	if !appNameRx.MatchString(cfg.AppName) {
 		return fmt.Errorf("invalid 'AppName' '%s', accepts only [A-Za-z0-9_]+", cfg.AppName)
 	}
