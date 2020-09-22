@@ -122,17 +122,41 @@ func TestCheckRequiredFields(t *testing.T) {
 	}
 }
 
-func TestNewConfigFromTOMLRequiredField(t *testing.T) {
-	type dummyConfig struct {
-		Param1 string
-		Param2 string `required:"true"`
-	}
-	var dummyDesc = baker.OutputDesc{
-		Name:   "Dummy",
-		New:    func(baker.OutputParams) (baker.Output, error) { return nil, nil },
-		Config: &dummyConfig{},
-	}
+func testNewConfigFromTOMLRequiredFields(t *testing.T, name, toml string) {
+	t.Run(name, func(t *testing.T) {
+		type dummyConfig struct {
+			Param1 string
+			Param2 string `required:"true"`
+		}
+		var dummyDesc = baker.OutputDesc{
+			Name:   "Dummy",
+			New:    func(baker.OutputParams) (baker.Output, error) { return nil, nil },
+			Config: &dummyConfig{},
+		}
 
+		components := baker.Components{
+			Inputs:  []baker.InputDesc{input.ListDesc},
+			Filters: []baker.FilterDesc{filtertest.PassThroughDesc},
+			Outputs: []baker.OutputDesc{dummyDesc},
+		}
+
+		_, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
+		if err == nil {
+			t.Fatal("expected an error")
+		}
+
+		var errReq baker.ErrorRequiredField
+		if !errors.As(err, &errReq) {
+			t.Fatalf("got %q, want a ErrorRequiredField", err)
+		}
+
+		if errReq.Field != "Param2" {
+			t.Errorf("got field=%q, want field=%q", errReq.Field, "Param2")
+		}
+	})
+}
+
+func TestNewConfigFromTOMLRequiredField(t *testing.T) {
 	toml := `
 [input]
 name = "List"
@@ -145,64 +169,28 @@ name = "Dummy"
     param1="this parameter is set"
     #param2="this parameter is not set"
 `
+	testNewConfigFromTOMLRequiredFields(t, "missing field", toml)
 
-	components := baker.Components{
-		Inputs:  []baker.InputDesc{input.ListDesc},
-		Filters: []baker.FilterDesc{filtertest.PassThroughDesc},
-		Outputs: []baker.OutputDesc{dummyDesc},
-	}
-
-	_, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
-	if err == nil {
-		t.Fatal("expected an error")
-	}
-
-	var errReq baker.ErrorRequiredField
-	if !errors.As(err, &errReq) {
-		t.Fatalf("got %q, want a ErrorRequiredField", err)
-	}
-
-	if errReq.Field != "Param2" {
-		t.Errorf("got field=%q, want field=%q", errReq.Field, "Param2")
-	}
-}
-
-func TestNewConfigFromTOMLRequiredFieldNilConfig(t *testing.T) {
-	type dummyConfig struct {
-		Param1 string
-		Param2 string `required:"true"`
-	}
-	var dummyDesc = baker.OutputDesc{
-		Name:   "Dummy",
-		New:    func(baker.OutputParams) (baker.Output, error) { return nil, nil },
-		Config: &dummyConfig{},
-	}
-
-	toml := `
+	toml = `
 [input]
 name = "List"
 
 [output]
 name = "Dummy"
 `
+	testNewConfigFromTOMLRequiredFields(t, "nil config", toml)
 
-	components := baker.Components{
-		Inputs:  []baker.InputDesc{input.ListDesc},
-		Filters: []baker.FilterDesc{filtertest.PassThroughDesc},
-		Outputs: []baker.OutputDesc{dummyDesc},
-	}
+	toml = `
+	[input]
+	name = "List"
 
-	_, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
-	if err == nil {
-		t.Fatal("expected an error")
-	}
+	[input.config]
 
-	var errReq baker.ErrorRequiredField
-	if !errors.As(err, &errReq) {
-		t.Fatalf("got %q, want a ErrorRequiredField", err)
-	}
-
-	if errReq.Field != "Param2" {
-		t.Errorf("got field=%q, want field=%q", errReq.Field, "Param2")
-	}
+	[output]
+	name = "Dummy"
+		[output.config]
+		PaRam1="this parameter is set"
+		#param2="this parameter is not set"
+	`
+	testNewConfigFromTOMLRequiredFields(t, "case insensitive", toml)
 }
