@@ -333,19 +333,16 @@ func TestRun(t *testing.T) {
 	u := iu.(*S3)
 	u.uploader = s3manager.NewUploaderWithClient(s)
 
-	upCh := make(chan string)
-	wg := sync.WaitGroup{}
-	wg.Add(1)
+	ch := make(chan string)
 	go func() {
-		defer wg.Done()
-		if err := u.Run(upCh); err != nil {
-			t.Fatal(err)
-		}
+		ch <- fname
+		close(ch)
 	}()
 
-	upCh <- fname
-	close(upCh)
-	wg.Wait()
+	err = u.Run(ch)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if int(u.totalerr) != 0 {
 		t.Fatalf("totalerr: want: %d, got: %d", 0, int(u.totalerr))
@@ -382,19 +379,16 @@ func TestRunExitOnError(t *testing.T) {
 	u := iu.(*S3)
 	u.uploader = s3manager.NewUploaderWithClient(s)
 
-	upCh := make(chan string)
-	wg := sync.WaitGroup{}
-	wg.Add(1)
+	ch := make(chan string)
 	go func() {
-		defer wg.Done()
-		if err := u.Run(upCh); err != nil {
-			t.Fatal(err)
-		}
+		ch <- fname
+		close(ch)
 	}()
 
-	upCh <- fname
-	close(upCh)
-	wg.Wait()
+	err = u.Run(ch)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if int(u.totalerr) != 1 {
 		t.Fatalf("totalerr: want: %d, got: %d", 1, int(u.totalerr))
@@ -434,19 +428,16 @@ func TestRunNotExitOnError(t *testing.T) {
 	u := iu.(*S3)
 	u.uploader = s3manager.NewUploaderWithClient(s)
 
-	upCh := make(chan string)
-	wg := sync.WaitGroup{}
-	wg.Add(1)
+	ch := make(chan string)
 	go func() {
-		defer wg.Done()
-		if err := u.Run(upCh); err != nil {
-			t.Fatal(err)
-		}
+		ch <- fname
+		close(ch)
 	}()
 
-	upCh <- fname
-	close(upCh)
-	wg.Wait()
+	err = u.Run(ch)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if int(u.totalerr) > 1*u.Cfg.Retries {
 		t.Fatalf("totalerr: want: <=%d, got: %d", 1*u.Cfg.Retries, int(u.totalerr))
