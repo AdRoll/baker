@@ -80,7 +80,7 @@ func (f *TimestampRange) Stats() baker.FilterStats {
 func (f *TimestampRange) Process(l baker.Record, next func(baker.Record)) {
 	atomic.AddInt64(&f.numProcessedLines, 1)
 
-	// Convert the logline timestamp to unix time (int64)
+	// Convert the record timestamp to unix time (int64)
 	ts, err := strconv.ParseInt(string(l.Get(f.fidx)), 10, 64)
 	if err != nil {
 		atomic.AddInt64(&f.numFilteredLines, 1)
