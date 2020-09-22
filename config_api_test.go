@@ -122,49 +122,75 @@ func TestCheckRequiredFields(t *testing.T) {
 	}
 }
 
-func TestNewConfigFromTOMLRequiredField(t *testing.T) {
-	type dummyConfig struct {
-		Param1 string
-		Param2 string `required:"true"`
-	}
-	var dummyDesc = baker.OutputDesc{
-		Name:   "Dummy",
-		New:    func(baker.OutputParams) (baker.Output, error) { return nil, nil },
-		Config: &dummyConfig{},
-	}
+func testNewConfigFromTOMLRequiredFields(t *testing.T, name, toml string) {
+	t.Run(name, func(t *testing.T) {
+		type dummyConfig struct {
+			Param1 string
+			Param2 string `required:"true"`
+		}
+		var dummyDesc = baker.OutputDesc{
+			Name:   "Dummy",
+			New:    func(baker.OutputParams) (baker.Output, error) { return nil, nil },
+			Config: &dummyConfig{},
+		}
 
+		components := baker.Components{
+			Inputs:  []baker.InputDesc{input.ListDesc},
+			Filters: []baker.FilterDesc{filtertest.PassThroughDesc},
+			Outputs: []baker.OutputDesc{dummyDesc},
+		}
+
+		_, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
+		if err == nil {
+			t.Fatal("expected an error")
+		}
+
+		var errReq baker.ErrorRequiredField
+		if !errors.As(err, &errReq) {
+			t.Fatalf("got %q, want a ErrorRequiredField", err)
+		}
+
+		if errReq.Field != "Param2" {
+			t.Errorf("got field=%q, want field=%q", errReq.Field, "Param2")
+		}
+	})
+}
+
+func TestNewConfigFromTOMLRequiredField(t *testing.T) {
 	toml := `
 [input]
 name = "List"
 
 [input.config]
-files=["testdata/input.csv.zst"]
 
 [output]
 name = "Dummy"
-procs=1
     [output.config]
     param1="this parameter is set"
     #param2="this parameter is not set"
 `
+	testNewConfigFromTOMLRequiredFields(t, "missing field", toml)
 
-	components := baker.Components{
-		Inputs:  []baker.InputDesc{input.ListDesc},
-		Filters: []baker.FilterDesc{filtertest.PassThroughDesc},
-		Outputs: []baker.OutputDesc{dummyDesc},
-	}
+	toml = `
+[input]
+name = "List"
 
-	_, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
-	if err == nil {
-		t.Fatal("expected an error")
-	}
+[output]
+name = "Dummy"
+`
+	testNewConfigFromTOMLRequiredFields(t, "nil config", toml)
 
-	var errReq baker.ErrorRequiredField
-	if !errors.As(err, &errReq) {
-		t.Fatalf("got %q, want a ErrorRequiredField", err)
-	}
+	toml = `
+	[input]
+	name = "List"
 
-	if errReq.Field != "Param2" {
-		t.Errorf("got field=%q, want field=%q", errReq.Field, "Param2")
-	}
+	[input.config]
+
+	[output]
+	name = "Dummy"
+		[output.config]
+		PaRam1="this parameter is set"
+		#param2="this parameter is not set"
+	`
+	testNewConfigFromTOMLRequiredFields(t, "case insensitive", toml)
 }
