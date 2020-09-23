@@ -9,6 +9,7 @@ var All = []baker.FilterDesc{
 	ClauseFilterDesc,
 	ClearFieldsDesc,
 	ConcatenateDesc,
+	CopyFieldsDesc,
 	MatchRegexDesc,
 	NotNullDesc,
 	SetStringFromURLDesc,
