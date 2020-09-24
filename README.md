@@ -9,6 +9,35 @@ output through easy-to-write filters.
 Baker is fully parallel and maximizes usage of both CPU-bound and I/O bound pipelines.
 
 
+- [Baker](#baker)
+  - [Pipelines](#pipelines)
+  - [Usage](#usage)
+  - [Performance](#performance)
+    - [Read from S3 and write to local disk](#read-from-s3-and-write-to-local-disk)
+    - [Read from S3 and write to DynamoDB (in the same region)](#read-from-s3-and-write-to-dynamodb-in-the-same-region)
+    - [Read from Kinesis and write to DynamoDB (in the same region)](#read-from-kinesis-and-write-to-dynamodb-in-the-same-region)
+  - [Baker and AWS Kinesis Data Firehose](#baker-and-aws-kinesis-data-firehose)
+  - [How to build a Baker executable](#how-to-build-a-baker-executable)
+  - [TOML Configuration files](#toml-configuration-files)
+    - [How to create components](#how-to-create-components)
+      - [Filters](#filters)
+        - [baker.FilterDesc](#bakerfilterdesc)
+          - [Name](#name)
+          - [New](#new)
+          - [Config](#config)
+          - [Help](#help)
+      - [Inputs](#inputs)
+      - [Outputs](#outputs)
+        - [Raw outputs](#raw-outputs)
+      - [Uploads](#uploads)
+    - [How to create a '-help' command line option](#how-to-create-a--help-command-line-option)
+  - [Tuning parallelism](#tuning-parallelism)
+  - [Sharding](#sharding)
+    - [How to implement a sharding function](#how-to-implement-a-sharding-function)
+  - [Stats](#stats)
+  - [Metrics](#metrics)
+  - [Aborting (CTRL+C)](#aborting-ctrlc)
+  - [Baker test suite](#baker-test-suite)
 
 
 ## Pipelines
