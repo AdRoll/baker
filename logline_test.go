@@ -82,7 +82,7 @@ func TestLogLineMeta(t *testing.T) {
 		t.Errorf("ll.Meta(%q) = _, %v;  want _, false", "foo", ok)
 	}
 
-	ll.Parse(nil, &Metadata{"foo": 23})
+	ll.Parse(nil, Metadata{"foo": 23})
 	val, ok := ll.Meta("foo")
 	if !ok || val != 23 {
 		t.Errorf("ll.Meta(%q) = %v, %v;  want 23, true", "foo", val, ok)

@@ -47,7 +47,7 @@ func TestSetStringFromURL(t *testing.T) {
 			}
 
 			ll := &baker.LogLine{}
-			ll.Parse(nil, &baker.Metadata{inpututils.MetadataURL: u})
+			ll.Parse(nil, baker.Metadata{inpututils.MetadataURL: u})
 
 			// Create and setup a filter with tt.strings
 			strings := make([][]byte, 0, len(tt.strings))

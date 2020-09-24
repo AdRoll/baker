@@ -12,7 +12,7 @@ type Record interface {
 	// The given Metadata will be attached to that record. Record
 	// implementations should also accept a nil in case the record has no
 	// Metadata attached.
-	Parse([]byte, *Metadata) error
+	Parse([]byte, Metadata) error
 
 	// ToText returns the reconstructed data format of a record.
 	//

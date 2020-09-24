@@ -113,7 +113,7 @@ var errLogLineTooManyFields = errors.New("LogLine has too many fields")
 // instance. For performance reasons, it doesn't reset all the writable fields
 // of the line. If you want to use Parse over an already parsed LogLine, use
 // Clear before.
-func (l *LogLine) Parse(text []byte, meta *Metadata) error {
+func (l *LogLine) Parse(text []byte, meta Metadata) error {
 	l.idx[0] = -1
 	fc := FieldIndex(1)
 	for i, ch := range text {
@@ -130,7 +130,7 @@ func (l *LogLine) Parse(text []byte, meta *Metadata) error {
 	}
 	l.data = text
 	if meta != nil {
-		l.meta = *meta
+		l.meta = meta
 	}
 
 	return nil

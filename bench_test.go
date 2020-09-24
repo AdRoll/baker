@@ -133,7 +133,7 @@ func BenchmarkLogLineParse(b *testing.B) {
 
 	b.ReportAllocs()
 	for n := 0; n < b.N; n++ {
-		ll.Parse(buf, &md)
+		ll.Parse(buf, md)
 	}
 	sink = ll
 }

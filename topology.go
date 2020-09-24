@@ -353,7 +353,7 @@ func (t *Topology) runFilterChain() {
 
 			// Get a new record from the pool and decode the buffer into it.
 			record := t.linePool.Get().(Record)
-			err := record.Parse(line, &bakerData.Meta)
+			err := record.Parse(line, bakerData.Meta)
 			if err != nil || len(line) == 0 {
 				// Count parse errors or empty records
 				atomic.AddInt64(&t.malformed, 1)
