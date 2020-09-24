@@ -194,7 +194,7 @@ func TestS3Upload(t *testing.T) {
 	}
 }
 
-func Test_uploadDirectory(t *testing.T) {
+func TestS3_uploadDirectory(t *testing.T) {
 	defer testutil.DisableLogging()()
 	// Create a folder to store files to be uploaded
 	numFiles := 10
@@ -234,7 +234,7 @@ func Test_uploadDirectory(t *testing.T) {
 	}
 }
 
-func Test_uploadDirectoryError(t *testing.T) {
+func TestS3_uploadDirectoryError(t *testing.T) {
 	defer testutil.DisableLogging()()
 
 	numFiles := 10
@@ -306,54 +306,7 @@ func Test_uploadDirectoryError(t *testing.T) {
 	})
 }
 
-func TestRun(t *testing.T) {
-	defer testutil.DisableLogging()()
-
-	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
-	fname := fnames[0]
-
-	stagingDir := t.TempDir()
-
-	cfg := baker.UploadParams{
-		ComponentParams: baker.ComponentParams{
-			DecodedConfig: &S3Config{
-				SourceBasePath: stagingDir,
-				StagingPath:    tmpDir,
-				Bucket:         "my-bucket",
-				Concurrency:    5,
-				Retries:        3,
-			},
-		},
-	}
-	iu, err := newS3(cfg)
-	if err != nil {
-		t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
-	}
-	s, _, _ := mockS3Service(false)
-	u := iu.(*S3)
-	u.uploader = s3manager.NewUploaderWithClient(s)
-
-	ch := make(chan string)
-	go func() {
-		ch <- fname
-		close(ch)
-	}()
-
-	err = u.Run(ch)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if int(u.totalerr) != 0 {
-		t.Fatalf("totalerr: want: %d, got: %d", 0, int(u.totalerr))
-	}
-
-	if int(u.totaln) != 1 {
-		t.Fatalf("totaln: want: %d, got: %d", 1, int(u.totaln))
-	}
-}
-
-func TestRunExitOnError(t *testing.T) {
+func TestS3RunExitOnError(t *testing.T) {
 	defer testutil.DisableLogging()()
 
 	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
@@ -399,7 +352,7 @@ func TestRunExitOnError(t *testing.T) {
 	}
 }
 
-func TestRunNotExitOnError(t *testing.T) {
+func TestS3RunNotExitOnError(t *testing.T) {
 	defer testutil.DisableLogging()()
 
 	tmpDir, fnames := prepareUploadS3TestFolder(t, 1)
@@ -448,7 +401,7 @@ func TestRunNotExitOnError(t *testing.T) {
 	}
 }
 
-func Test_move(t *testing.T) {
+func TestS3_move(t *testing.T) {
 	srcDir := t.TempDir()
 	trgtDir := t.TempDir()
 
