@@ -208,13 +208,39 @@ func (l *LogLine) Cache() *Cache {
 
 // Copy creates and returns a copy of the current log line.
 func (l *LogLine) Copy() Record {
+	// Copy metadata
 	md := make(Metadata)
-
 	for k, v := range l.meta {
 		md[k] = v
 	}
 
-	cpy := LogLine{}
-	cpy.Parse(l.ToText(nil), md)
-	return &cpy
+	cpy := &LogLine{
+		cache:          l.cache,
+		wcnt:           l.wcnt,
+		meta:           md,
+		FieldSeparator: l.FieldSeparator,
+	}
+
+	if l.data != nil {
+		cpy.data = make([]byte, len(l.data))
+		copy(cpy.data, l.data)
+	}
+
+	if cpy.wcnt == 0 {
+		// Log line hasn't been modified so we can early exit and
+		// let idx, wmask and wdata to their zero-values.
+		return cpy
+	}
+
+	copy(cpy.idx[:], l.idx[:])
+	copy(cpy.wmask[:], l.wmask[:])
+
+	for i := 0; i < len(l.wdata); i++ {
+		if l.wdata[i] != nil {
+			cpy.wdata[i] = make([]byte, len(l.wdata[i]))
+			copy(cpy.wdata[i], l.wdata[i])
+		}
+	}
+
+	return cpy
 }

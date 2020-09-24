@@ -137,3 +137,42 @@ func BenchmarkLogLineParse(b *testing.B) {
 	}
 	sink = ll
 }
+
+func BenchmarkLogLineCopyParsed(b *testing.B) {
+	var ll baker.Record
+	ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+	buf := bytes.Repeat([]byte(`hello,world,,`), 200)
+	ll.Parse(buf, nil)
+
+	b.ReportAllocs()
+
+	var cpy baker.Record
+	for n := 0; n < b.N; n++ {
+		cpy = ll.Copy()
+	}
+	sink = cpy
+
+	if !bytes.Equal(ll.ToText(nil), cpy.ToText(nil)) {
+		b.Error("copy != original")
+	}
+}
+
+func BenchmarkLogLineCopyModified(b *testing.B) {
+	var ll baker.Record
+	ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+	buf := bytes.Repeat([]byte(`hello,world,,`), 200)
+	ll.Parse(buf, nil)
+	ll.Set(0, []byte("foobar"))
+
+	b.ReportAllocs()
+
+	var cpy baker.Record
+	for n := 0; n < b.N; n++ {
+		cpy = ll.Copy()
+	}
+	sink = cpy
+
+	if !bytes.Equal(ll.ToText(nil), cpy.ToText(nil)) {
+		b.Error("copy != original")
+	}
+}
