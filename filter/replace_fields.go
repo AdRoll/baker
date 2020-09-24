@@ -16,7 +16,7 @@ var ReplaceFieldsDesc = baker.FilterDesc{
 }
 
 type ReplaceFieldsConfig struct {
-	CopyFields    []string `help:"List of fields to copy from->to, as: [\"sourceField1\", \"destField1\", \"sourceField2\", \"destField2\"]"`
+	CopyFields    []string `help:"List of src, dst field pairs, for example [\"srcField1\", \"dstField1\", \"srcField2\", \"dstField2\"]"`
 	ReplaceFields []string `help:"List of fields to replace with a fixed value, as: [\"fixedValue1\", \"destField1\", \"fixedValue2\", \"destField2\"]"`
 }
 
