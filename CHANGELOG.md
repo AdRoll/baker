@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - filter: add Concatenate filter [#28](https://github.com/AdRoll/baker/pull/33)
 - Required configuration fields are now handled by Baker rather than by each component. [#41](https://github.com/AdRoll/baker/pull/41)
 - filter: add TimestampRange filter [#46](https://github.com/AdRoll/baker/pull/46)
+- filter: add ReplaceFields filter [#49](https://github.com/AdRoll/baker/pull/49)
 
 ### Changed
 
