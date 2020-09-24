@@ -1,5 +1,7 @@
 # Baker
 
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/AdRoll/baker)](https://pkg.go.dev/github.com/AdRoll/baker) ![Go](https://github.com/AdRoll/baker/workflows/Go/badge.svg)
+
 Baker is a high performance, composable and extendable data-processing pipeline
 for the big data era. It shines at converting, processing, extracting or storing
 records (structured data), applying whatever transformation between input and
