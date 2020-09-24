@@ -20,6 +20,15 @@ type Record interface {
 	// record.
 	ToText(buf []byte) []byte
 
+	// Copy creates and returns a copy of the current record.
+	//
+	// The copied record could have been obtained by:
+	//  var dst Record
+	//  src.Parse(dst.ToText(), nil)
+	//
+	// but Record implementations should provide a more efficient way.
+	Copy() Record
+
 	// Clear clears the record internal state, making it empty.
 	Clear()
 

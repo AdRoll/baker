@@ -205,3 +205,16 @@ func (l *LogLine) Meta(key string) (interface{}, bool) {
 func (l *LogLine) Cache() *Cache {
 	return &l.cache
 }
+
+// Copy creates and returns a copy of the current log line.
+func (l *LogLine) Copy() Record {
+	md := make(Metadata)
+
+	for k, v := range l.meta {
+		md[k] = v
+	}
+
+	cpy := LogLine{}
+	cpy.Parse(l.ToText(nil), md)
+	return &cpy
+}

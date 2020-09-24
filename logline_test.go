@@ -124,7 +124,11 @@ func TestLogLineCache(t *testing.T) {
 }
 
 func TestLogLineRecordConformance(t *testing.T) {
-	RecordConformanceTest(t, &LogLine{FieldSeparator: DefaultLogLineFieldSeparator})
+	createLogLine := func() Record {
+		return &LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
+	}
+
+	RecordConformanceTest(t, createLogLine)
 }
 
 func TestLogLineParseCustomSeparator(t *testing.T) {
