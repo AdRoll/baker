@@ -221,26 +221,22 @@ func (l *LogLine) Copy() Record {
 		FieldSeparator: l.FieldSeparator,
 	}
 
+	if cpy.wcnt != 0 {
+		// If the log line has been modified, benchmarks have proven
+		// that it's more efficient to serialize and reparse to perform
+		// a copy (both in terms of time and allocation.
+		cpylen := len(l.data) + len(l.data)/2
+		text := l.ToText(make([]byte, 0, cpylen))
+		cpy.Parse(text, md)
+
+		return cpy
+	}
+
+	// If the log line hasn't been modified it's more efficient to recreate it
+	// from scratch and copying data (log line internal buffer).
 	if l.data != nil {
 		cpy.data = make([]byte, len(l.data))
 		copy(cpy.data, l.data)
 	}
-
-	if cpy.wcnt == 0 {
-		// Log line hasn't been modified so we can early exit and
-		// let idx, wmask and wdata to their zero-values.
-		return cpy
-	}
-
-	// Copy read-only fields
-	cpy.idx = l.idx
-
-	// Copy modified fields
-	cpy.wmask = l.wmask
-	for i := uint8(0); i <= cpy.wcnt; i++ {
-		cpy.wdata[i] = make([]byte, len(l.wdata[i]))
-		copy(cpy.wdata[i], l.wdata[i])
-	}
-
 	return cpy
 }
