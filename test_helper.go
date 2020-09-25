@@ -42,6 +42,23 @@ func RecordConformanceTest(t *testing.T, create func() Record) {
 		}
 	})
 
+	t.Run("Parse+ToText", func(t *testing.T) {
+		l := create()
+		l.Set(0, []byte("foo"))
+		l.Set(1, []byte("bar"))
+		l.Set(260, []byte("baz"))
+
+		l.Parse(l.ToText(nil), nil)
+		buf1 := l.ToText(nil)
+
+		l.Parse(buf1, nil)
+		buf2 := l.ToText(nil)
+
+		if !bytes.Equal(buf1, buf2) {
+			t.Errorf("Parse <-> ToText should be idempotent, got:\nbuf1 = %q\nbuf2 = %q", buf1, buf2)
+		}
+	})
+
 	t.Run("copy", func(t *testing.T) {
 		org := create()
 		org.Set(0, []byte("foo"))
@@ -50,7 +67,9 @@ func RecordConformanceTest(t *testing.T, create func() Record) {
 
 		cpy := org.Copy()
 
+		org.Parse(org.ToText(nil), nil)
 		want := org.ToText(nil)
+		cpy.Parse(cpy.ToText(nil), nil)
 		got := cpy.ToText(nil)
 
 		if !bytes.Equal(got, want) {
@@ -66,10 +85,31 @@ func RecordConformanceTest(t *testing.T, create func() Record) {
 
 		text := org.ToText(nil)
 
-		// Now parse but do not call Set
 		if err := org.Parse(text, nil); err != nil {
 			t.Errorf("Parse error: %v", err)
 		}
+
+		cpy := org.Copy()
+
+		want := org.ToText(nil)
+		got := cpy.ToText(nil)
+
+		if !bytes.Equal(got, want) {
+			t.Errorf("got %q\nwant %q", got, want)
+		}
+	})
+
+	t.Run("copy just parsed then modified", func(t *testing.T) {
+		org := create()
+		org.Set(0, []byte("foo"))
+		org.Set(1, []byte("bar"))
+		org.Set(260, []byte("baz"))
+
+		if err := org.Parse(org.ToText(nil), nil); err != nil {
+			t.Errorf("Parse error: %v", err)
+		}
+
+		org.Set(10, []byte("after parser"))
 
 		cpy := org.Copy()
 
