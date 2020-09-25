@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - filter: add TimestampRange filter [#46](https://github.com/AdRoll/baker/pull/46)
 - filter: add ReplaceFields filter [#49](https://github.com/AdRoll/baker/pull/49)
 - filter: add Timestamp filter [#54](https://github.com/AdRoll/baker/pull/54)
+- Add Record.Copy method [#53](https://github.com/AdRoll/baker/pull/53)
 
 ### Changed
 
