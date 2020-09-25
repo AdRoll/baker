@@ -232,14 +232,14 @@ func (l *LogLine) Copy() Record {
 		return cpy
 	}
 
-	copy(cpy.idx[:], l.idx[:])
-	copy(cpy.wmask[:], l.wmask[:])
+	// Copy read-only fields
+	cpy.idx = l.idx
 
-	for i := 0; i < len(l.wdata); i++ {
-		if l.wdata[i] != nil {
-			cpy.wdata[i] = make([]byte, len(l.wdata[i]))
-			copy(cpy.wdata[i], l.wdata[i])
-		}
+	// Copy modified fields
+	cpy.wmask = l.wmask
+	for i := uint8(0); i <= cpy.wcnt; i++ {
+		cpy.wdata[i] = make([]byte, len(l.wdata[i]))
+		copy(cpy.wdata[i], l.wdata[i])
 	}
 
 	return cpy
