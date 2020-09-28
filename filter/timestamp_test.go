@@ -20,7 +20,7 @@ func TestTimestamp(t *testing.T) {
 		// Init filter
 		cfg := baker.FilterParams{
 			ComponentParams: baker.ComponentParams{
-				DecodedConfig: &FilterTimestampConfig{
+				DecodedConfig: &TimestampConfig{
 					Field: "timestamp",
 				},
 				FieldByName: fieldByName,
@@ -59,7 +59,7 @@ func TestTimestamp(t *testing.T) {
 		// Init filter
 		cfg := baker.FilterParams{
 			ComponentParams: baker.ComponentParams{
-				DecodedConfig: &FilterTimestampConfig{
+				DecodedConfig: &TimestampConfig{
 					Field: "foobar",
 				},
 				FieldByName: fieldByName,
