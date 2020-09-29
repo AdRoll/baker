@@ -159,7 +159,7 @@ func TestIntegrationS3(t *testing.T) {
 	// The topology should end by itself without any error, we also checks that
 	t.Run("topololy.wait", testIntegrationS3(false))
 
-	// the expected number of files have been uploaded and their expected bucket/key.
+	// the expected number of files have been uploaded to their expected bucket/key.
 	// On the second subtest we immeditately stop the topology after starting it,
 	// but the outcome should be the same since we wait enough time for the input
 	// to produce the records, which means topology.Stop() should block until:
