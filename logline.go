@@ -221,13 +221,14 @@ func (l *LogLine) Copy() Record {
 	}
 
 	if l.wcnt != 0 {
-		// If the log line has been modified, benchmarks have proven
-		// that it's more efficient to serialize and reparse to perform
-		// a copy (both in terms of time and allocation.
-		cpylen := len(l.data) + len(l.data)/2
+		// If the log line has been modified, benchmarks have proven that it's
+		// more efficient to serialize and reparse to perform a copy (both in
+		// terms of time and allocation). Also, different benchmarks have shown
+		// that pre-allocating 120% of the original log line length in order to
+		// account for the potentially added fields is reasonable.
+		cpylen := len(l.data) + len(l.data)/5
 		text := l.ToText(make([]byte, 0, cpylen))
 		cpy.Parse(text, md)
-
 		return cpy
 	}
 
