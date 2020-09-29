@@ -67,9 +67,7 @@ func RecordConformanceTest(t *testing.T, create func() Record) {
 
 		cpy := org.Copy()
 
-		org.Parse(org.ToText(nil), nil)
 		want := org.ToText(nil)
-		cpy.Parse(cpy.ToText(nil), nil)
 		got := cpy.ToText(nil)
 
 		if !bytes.Equal(got, want) {

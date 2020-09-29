@@ -216,12 +216,11 @@ func (l *LogLine) Copy() Record {
 
 	cpy := &LogLine{
 		cache:          l.cache,
-		wcnt:           l.wcnt,
 		meta:           md,
 		FieldSeparator: l.FieldSeparator,
 	}
 
-	if cpy.wcnt != 0 {
+	if l.wcnt != 0 {
 		// If the log line has been modified, benchmarks have proven
 		// that it's more efficient to serialize and reparse to perform
 		// a copy (both in terms of time and allocation.
