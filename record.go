@@ -12,13 +12,22 @@ type Record interface {
 	// The given Metadata will be attached to that record. Record
 	// implementations should also accept a nil in case the record has no
 	// Metadata attached.
-	Parse([]byte, *Metadata) error
+	Parse([]byte, Metadata) error
 
 	// ToText returns the reconstructed data format of a record.
 	//
 	// In case a big enough buf is passed, it will be used to serialize the
 	// record.
 	ToText(buf []byte) []byte
+
+	// Copy creates and returns a copy of the current record.
+	//
+	// The copied record could have been obtained by:
+	//  var dst Record
+	//  src.Parse(dst.ToText(), nil)
+	//
+	// but Record implementations should provide a more efficient way.
+	Copy() Record
 
 	// Clear clears the record internal state, making it empty.
 	Clear()

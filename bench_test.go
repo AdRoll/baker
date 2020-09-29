@@ -133,7 +133,113 @@ func BenchmarkLogLineParse(b *testing.B) {
 
 	b.ReportAllocs()
 	for n := 0; n < b.N; n++ {
-		ll.Parse(buf, &md)
+		ll.Parse(buf, md)
 	}
 	sink = ll
+}
+
+func BenchmarkLogLineCopy(b *testing.B) {
+	b.Run("set=0", func(b *testing.B) {
+		var ll baker.Record
+		ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+		buf := bytes.Repeat([]byte(`hello,world,,`), 200)
+		ll.Parse(buf, nil)
+
+		b.ReportAllocs()
+
+		var cpy baker.Record
+		for n := 0; n < b.N; n++ {
+			cpy = ll.Copy()
+		}
+
+		if !bytes.Equal(ll.ToText(nil), cpy.ToText(nil)) {
+			b.Error("copy != original")
+		}
+	})
+
+	b.Run("set=1", func(b *testing.B) {
+		var ll baker.Record
+		ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+		buf := bytes.Repeat([]byte(`hello,world,,`), 200)
+		ll.Parse(buf, nil)
+		ll.Set(0, []byte("foobar"))
+
+		b.ReportAllocs()
+
+		var cpy baker.Record
+		for n := 0; n < b.N; n++ {
+			cpy = ll.Copy()
+		}
+
+		if !bytes.Equal(ll.ToText(nil), cpy.ToText(nil)) {
+			b.Error("copy != original")
+		}
+	})
+
+	b.Run("set=10", func(b *testing.B) {
+		var ll baker.Record
+		ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+		buf := bytes.Repeat([]byte(`hello,world,,`), 200)
+		ll.Parse(buf, nil)
+		ll.Set(0, []byte("foobar"))
+		ll.Set(2, []byte("foobar"))
+		ll.Set(3, []byte("foobar"))
+		ll.Set(6, []byte("foobar"))
+		ll.Set(30, []byte("foobar"))
+		ll.Set(79, []byte("foobar"))
+		ll.Set(124, []byte("foobar"))
+		ll.Set(189, []byte("foobar"))
+		ll.Set(234, []byte("foobar"))
+		ll.Set(798, []byte("foobar"))
+
+		b.ReportAllocs()
+
+		var cpy baker.Record
+		for n := 0; n < b.N; n++ {
+			cpy = ll.Copy()
+		}
+
+		if !bytes.Equal(ll.ToText(nil), cpy.ToText(nil)) {
+			b.Error("copy != original")
+		}
+	})
+
+	b.Run("set=20", func(b *testing.B) {
+		var ll baker.Record
+		ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+		buf := bytes.Repeat([]byte(`hello,world,,`), 200)
+		ll.Parse(buf, nil)
+		ll.Set(0, []byte("foobar"))
+		ll.Set(2, []byte("foobar"))
+		ll.Set(3, []byte("foobar"))
+		ll.Set(6, []byte("foobar"))
+		ll.Set(30, []byte("foobar"))
+		ll.Set(79, []byte("foobar"))
+		ll.Set(124, []byte("foobar"))
+		ll.Set(189, []byte("foobar"))
+		ll.Set(234, []byte("foobar"))
+		ll.Set(798, []byte("foobar"))
+
+		ll.Set(801, []byte("foobar"))
+		ll.Set(810, []byte("foobar"))
+		ll.Set(888, []byte("foobar"))
+		ll.Set(902, []byte("foobar"))
+		ll.Set(1000, []byte("foobar"))
+		ll.Set(1001, []byte("foobar"))
+		ll.Set(1002, []byte("foobar"))
+		ll.Set(1200, []byte("foobar"))
+		ll.Set(1356, []byte("foobar"))
+		ll.Set(1789, []byte("foobar"))
+
+		b.ReportAllocs()
+
+		var cpy baker.Record
+		for n := 0; n < b.N; n++ {
+			cpy = ll.Copy()
+		}
+
+		if !bytes.Equal(ll.ToText(nil), cpy.ToText(nil)) {
+			b.Error("copy != original")
+		}
+	})
 }

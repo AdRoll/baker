@@ -113,7 +113,7 @@ var errLogLineTooManyFields = errors.New("LogLine has too many fields")
 // instance. For performance reasons, it doesn't reset all the writable fields
 // of the line. If you want to use Parse over an already parsed LogLine, use
 // Clear before.
-func (l *LogLine) Parse(text []byte, meta *Metadata) error {
+func (l *LogLine) Parse(text []byte, meta Metadata) error {
 	l.idx[0] = -1
 	fc := FieldIndex(1)
 	for i, ch := range text {
@@ -130,7 +130,7 @@ func (l *LogLine) Parse(text []byte, meta *Metadata) error {
 	}
 	l.data = text
 	if meta != nil {
-		l.meta = *meta
+		l.meta = meta
 	}
 
 	return nil
@@ -204,4 +204,39 @@ func (l *LogLine) Meta(key string) (interface{}, bool) {
 // Cache returns the cache that is local to the current log line.
 func (l *LogLine) Cache() *Cache {
 	return &l.cache
+}
+
+// Copy creates and returns a copy of the current log line.
+func (l *LogLine) Copy() Record {
+	// Copy metadata
+	md := make(Metadata)
+	for k, v := range l.meta {
+		md[k] = v
+	}
+
+	cpy := &LogLine{
+		cache:          l.cache,
+		meta:           md,
+		FieldSeparator: l.FieldSeparator,
+	}
+
+	if l.wcnt != 0 {
+		// If the log line has been modified, benchmarks have proven that it's
+		// more efficient to serialize and reparse to perform a copy (both in
+		// terms of time and allocation). Also, different benchmarks have shown
+		// that pre-allocating 120% of the original log line length in order to
+		// account for the potentially added fields is reasonable.
+		cpylen := len(l.data) + len(l.data)/5
+		text := l.ToText(make([]byte, 0, cpylen))
+		cpy.Parse(text, md)
+		return cpy
+	}
+
+	// If the log line hasn't been modified it's more efficient to recreate it
+	// from scratch and copying data (log line internal buffer).
+	if l.data != nil {
+		cpy.data = make([]byte, len(l.data))
+		copy(cpy.data, l.data)
+	}
+	return cpy
 }
