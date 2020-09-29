@@ -9,7 +9,7 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-// TimestampRangeDesc describes the NotNull filter.
+// TimestampRangeDesc describes the TimestampRange filter.
 var TimestampRangeDesc = baker.FilterDesc{
 	Name:   "TimestampRange",
 	New:    NewTimestampRange,
@@ -17,7 +17,7 @@ var TimestampRangeDesc = baker.FilterDesc{
 	Help:   "Discard records if the value of a field containing a timestamp is out of the given time range (i.e StartDateTime <= value < EndDateTime)",
 }
 
-// TimestampRangeConfig holds configuration paramters for the NotNull filter.
+// TimestampRangeConfig holds configuration paramters for the TimestampRange filter.
 type TimestampRangeConfig struct {
 	StartDatetime string `help:"Lower bound of the accepted time interval (inclusive, UTC) format:'2006-01-31 15:04:05'" default:"no bound" required:"true"`
 	EndDatetime   string `help:"Upper bound of the accepted time interval (exclusive, UTC) format:'2006-01-31 15:04:05'" default:"no bound" required:"true"`
