@@ -474,3 +474,11 @@ If you need to abort right away, you can use CTRL+\ (SIGQUIT).
 
 Run baker test suite with: `go test -v -race ./...`  
 The code also includes several benchmarks.
+
+
+## Package structure
+
+`./pkg` contains reusable packages providing various utilities that are not
+specifically Baker-related, though of course they may come handy while
+developping new baker components.
+

@@ -7,14 +7,14 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/AdRoll/baker"
-	"github.com/AdRoll/baker/awsutils"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/pkg/awsutils"
 )
 
 var KTailDesc = baker.InputDesc{
