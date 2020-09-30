@@ -1,4 +1,4 @@
-package organizer
+package buffercache
 
 // Metrics holds a snapshot of the performance counters of a BufferCache instance.
 type Metrics struct {

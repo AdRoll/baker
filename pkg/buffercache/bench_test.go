@@ -1,4 +1,4 @@
-package organizer
+package buffercache
 
 import (
 	"math/rand"
@@ -36,7 +36,7 @@ func benchmarkHotPutNoFlush(b *testing.B, nkeys int) {
 		Buckets:         []int{1}, // so small that all goes in hot cache
 	}
 
-	cache, err := NewBufferCache(cfg)
+	cache, err := New(cfg)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -82,7 +82,7 @@ func benchmarkColdPutNoFlush(b *testing.B, ncells int) {
 		OnFlush:         flush,
 	}
 
-	cache, err := NewBufferCache(cfg)
+	cache, err := New(cfg)
 	if err != nil {
 		b.Fatal(err)
 	}

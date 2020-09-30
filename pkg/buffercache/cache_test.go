@@ -1,4 +1,4 @@
-package organizer
+package buffercache
 
 import (
 	"bytes"
@@ -15,7 +15,7 @@ func Test_NewCache(t *testing.T) {
 		OnFlush:         func([]byte) {},
 	}
 
-	c, _ := NewBufferCache(cfg)
+	c, _ := New(cfg)
 	if len(c.m.m) != 0 {
 		t.Errorf("Wrong hm: %v", c.m.m)
 	}
@@ -63,7 +63,7 @@ func TestBufferCache_PutAndFlushCompressed(t *testing.T) {
 		EnableCompression: true,
 	}
 
-	c, _ := NewBufferCache(cfg)
+	c, _ := New(cfg)
 
 	// Put a line in the cache for key1, must be in the cold cache
 	c.Put("key1", genBuffer("ciao", 32))
@@ -117,7 +117,7 @@ func TestBufferCache_PutAndFlush(t *testing.T) {
 		EnableCompression: false,
 	}
 
-	c, _ := NewBufferCache(cfg)
+	c, _ := New(cfg)
 
 	// Put a line in the cache for key1, must be in the cold cache
 	c.Put("key1", []byte("ciao"))
@@ -172,7 +172,7 @@ func TestBufferCacheAutoFlushCold(t *testing.T) {
 		OnFlush:         func([]byte) { flushed = true },
 	}
 
-	c, _ := NewBufferCache(cfg)
+	c, _ := New(cfg)
 
 	for i := 0; i < cfg.CellsPerBucket; i++ {
 		c.Put(fmt.Sprintf("key%d", i), genBuffer("ciao", 32))
@@ -210,7 +210,7 @@ func TestBufferCache_size(t *testing.T) {
 		Buckets:         []int{64},
 		OnFlush:         func([]byte) {},
 	}
-	c, _ := NewBufferCache(cfg)
+	c, _ := New(cfg)
 
 	coldSize := cfg.CellsPerBucket * cfg.Buckets[0]
 
@@ -247,7 +247,7 @@ func TestBufferCacheMoveToHotCache(t *testing.T) {
 		Buckets:         []int{64},
 		OnFlush:         func([]byte) {},
 	}
-	c, _ := NewBufferCache(cfg)
+	c, _ := New(cfg)
 
 	// Adding to cold cache must not change the size
 	c.Put("key1", []byte("ciao"))
@@ -277,7 +277,7 @@ func TestBufferCacheFlushAutoHotOnMaxBufferLength(t *testing.T) {
 		Buckets:         []int{64},
 		OnFlush:         func([]byte) {},
 	}
-	c, _ := NewBufferCache(cfg)
+	c, _ := New(cfg)
 
 	// Can't stay in a 64b cell, goes directly in hot cache.
 	c.Put("key1", incompressible[:100])
@@ -306,7 +306,7 @@ func TestBufferCacheFlushAutoHotOnMaxCapacity(t *testing.T) {
 			Buckets:         []int{64},
 			OnFlush:         func([]byte) {},
 		}
-		c, err := NewBufferCache(cfg)
+		c, err := New(cfg)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -342,7 +342,7 @@ func TestBufferCacheFlushAutoHotOnMaxCapacity(t *testing.T) {
 			Buckets:         []int{64},
 			OnFlush:         func([]byte) {},
 		}
-		c, _ := NewBufferCache(cfg)
+		c, _ := New(cfg)
 
 		// Can't stay in a 64b cell, goes directly in hot cache.
 		c.Put("key1", incompressible[:64])
@@ -378,14 +378,14 @@ func TestPutBufferBiggerThanBuckets(t *testing.T) {
 		OnFlush:         func([]byte) {},
 	}
 
-	c, _ := NewBufferCache(cfg)
+	c, _ := New(cfg)
 	for i := 0; i < 64; i++ {
 		c.Put("key", []byte("buff"))
 	}
 }
 
 func TestPutBufferBiggerThanMaxBufferLength(t *testing.T) {
-	cache, _ := NewBufferCache(Config{
+	cache, _ := New(Config{
 		MaxBufferLength: 16,
 		MaxCapacity:     256,
 		CellsPerBucket:  64,
@@ -401,7 +401,7 @@ func TestPutBufferBiggerThanMaxBufferLength(t *testing.T) {
 
 func TestInvalidConfig(t *testing.T) {
 	t.Run("maxbuflen > maxcap", func(t *testing.T) {
-		_, err := NewBufferCache(Config{
+		_, err := New(Config{
 			MaxBufferLength: 2,
 			MaxCapacity:     1,
 		})
@@ -409,7 +409,7 @@ func TestInvalidConfig(t *testing.T) {
 	})
 
 	t.Run("maxbuflen < 0", func(t *testing.T) {
-		_, err := NewBufferCache(Config{
+		_, err := New(Config{
 			MaxBufferLength: -1,
 			MaxCapacity:     0,
 		})
@@ -417,7 +417,7 @@ func TestInvalidConfig(t *testing.T) {
 	})
 
 	t.Run("maxbuflen < 0", func(t *testing.T) {
-		_, err := NewBufferCache(Config{
+		_, err := New(Config{
 			MaxBufferLength: 0,
 			MaxCapacity:     -1,
 		})
@@ -425,7 +425,7 @@ func TestInvalidConfig(t *testing.T) {
 	})
 
 	t.Run("ncells = 0", func(t *testing.T) {
-		_, err := NewBufferCache(Config{
+		_, err := New(Config{
 			MaxBufferLength: 1,
 			MaxCapacity:     2,
 			CellsPerBucket:  0,
@@ -434,7 +434,7 @@ func TestInvalidConfig(t *testing.T) {
 	})
 
 	t.Run("ncells not multiple of 64", func(t *testing.T) {
-		_, err := NewBufferCache(Config{
+		_, err := New(Config{
 			MaxBufferLength: 1,
 			MaxCapacity:     2,
 			CellsPerBucket:  63,
@@ -453,7 +453,7 @@ func TestHotCacheMetrics(t *testing.T) {
 		Buckets:           []int{1},
 		EnableCompression: false,
 	}
-	c, _ := NewBufferCache(cfg)
+	c, _ := New(cfg)
 
 	// put same key multiple times but do not exceed any limit so no flush
 	for i := 0; i < 10; i++ {
@@ -532,7 +532,7 @@ func TestFlushUncompressedBlocks(t *testing.T) {
 		Buckets:           []int{1},
 		EnableCompression: false,
 	}
-	c, _ := NewBufferCache(cfg)
+	c, _ := New(cfg)
 	c.comp.buf = make([]byte, 16)
 	c.decomp.buf = make([]byte, 16)
 

@@ -1,4 +1,4 @@
-package organizer
+package buffercache
 
 import (
 	"bytes"
@@ -83,7 +83,7 @@ func TestBufferCachePutDestination(t *testing.T) {
 		},
 	}
 
-	cache, _ := NewBufferCache(Config{
+	cache, _ := New(Config{
 		CellsPerBucket:  64,
 		Buckets:         []int{10, 20, 30},
 		MaxBufferLength: 100,
@@ -132,7 +132,7 @@ func TestColdCacheFlushAuto(t *testing.T) {
 		OnFlush:         func([]byte) { flushes++ },
 	}
 
-	cache, _ := NewBufferCache(cfg)
+	cache, _ := New(cfg)
 
 	// Fill all cells of our bucket
 	ikey := 0

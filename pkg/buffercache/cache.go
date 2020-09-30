@@ -1,4 +1,12 @@
-package organizer
+// Package buffercache provides the BufferCache type, a kind of map[string][]byte
+// that is optimized for appending new bytes to the cache values. BufferCache
+// has a maximum capacity and flushes itself when it's reached and calling a user-
+// provided callback with the flushed buffers.
+//
+// BufferCache also supports compressing the byte buffers it holds with lz4 in
+// order to trade cpu for memory, buffers are transparently uncompressed
+// when the flush callback is called.
+package buffercache
 
 import (
 	"encoding/binary"
@@ -42,7 +50,7 @@ type Config struct {
 }
 
 // A BufferCache is like a map[string][]byte that is optimized for appending
-// new bytes to values.
+// new bytes to the cache values.
 type BufferCache struct {
 	m    locationMap
 	cold *coldCache
@@ -68,7 +76,7 @@ func (e errInvalidConfig) Error() string {
 	return "BufferCache: invalid config: " + string(e)
 }
 
-// NewBufferCache creates a new BufferCache.
+// New creates a new BufferCache.
 //
 // A BufferCache is made of 2 components, a cold cache for keys that have been
 // presented to the cache only once, and a hot cache for the keys having been
@@ -85,7 +93,7 @@ func (e errInvalidConfig) Error() string {
 // - upon the insertion of new (key, buffer) pair, the total capacity of the
 // cache would exceed maxCapacity; in that case the whole cache is empty (i.e
 // buffers of all keys are passed to flush).
-func NewBufferCache(cfg Config) (*BufferCache, error) {
+func New(cfg Config) (*BufferCache, error) {
 	if cfg.MaxBufferLength < 0 {
 		return nil, errInvalidConfig("maxBufferLength must be positive")
 	}
