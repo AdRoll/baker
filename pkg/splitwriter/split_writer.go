@@ -1,3 +1,5 @@
+// Package splitwriter provides a WriteCloser that writes to a file and splits
+// it into smaller files when it's closed.
 package splitwriter
 
 import (
@@ -19,10 +21,11 @@ type splitWriter struct {
 	bufsize int64
 }
 
-// NewSplitWriter returns an io.WriteCloser that writes to fname and splits
-// the files at line feeds, each splits being having a maximum size of
-// maxsize bytes splits.
-func NewSplitWriter(fname string, maxsize, bufsize int64) (io.WriteCloser, error) {
+// New returns an io.WriteCloser that writes to fname; when it's closed, fname
+// will be split in multiple files each of which having at most maxsize bytes.
+// Files are split on offsets where a \n is found, but if no \n is found the
+// file isn't split.
+func New(fname string, maxsize, bufsize int64) (io.WriteCloser, error) {
 	// Ensure split buffer is smaller than the split size.
 	if maxsize < bufsize {
 		return nil, fmt.Errorf("SplitWriter: maxsize < bufsize")
