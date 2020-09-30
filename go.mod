@@ -13,6 +13,7 @@ require (
 	github.com/klauspost/cpuid v0.0.0-20160302075316-09cded8978dc // indirect
 	github.com/klauspost/crc32 v0.0.0-20160219142609-19b0b332c9e4 // indirect
 	github.com/nsf/sexp v0.0.0-20130620094510-d3d2f2591f1d
+	github.com/pierrec/lz4/v3 v3.3.2
 	github.com/rasky/toml v0.1.1-0.20160309013025-90bcb678a72a
 	github.com/sirupsen/logrus v1.4.2
 	github.com/valyala/gozstd v1.7.0
