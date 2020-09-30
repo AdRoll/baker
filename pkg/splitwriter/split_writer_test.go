@@ -24,10 +24,7 @@ func expectSplits(t *testing.T, dir string, splits map[string]int) {
 }
 
 func TestSplitWriter(t *testing.T) {
-	dir, err := ioutil.TempDir("", t.Name())
-	if err != nil {
-		t.Fatal(err)
-	}
+	dir := t.TempDir()
 
 	tests := []struct {
 		name             string            // test name
@@ -38,13 +35,22 @@ func TestSplitWriter(t *testing.T) {
 		want             map[string]int    // files we want after the close and their size
 	}{
 		{
-			name:    "just line feed",
+			name:    "just line feeds",
 			fname:   "just-line-feed",
 			maxsize: 3, bufsize: 2,
 			data: "\n\n\n\n",
 			want: map[string]int{
 				"just-line-feed-part-1": 3,
 				"just-line-feed-part-2": 1,
+			},
+		},
+		{
+			name:    "no line feeds",
+			fname:   "no-line-feeds",
+			maxsize: 4, bufsize: 2,
+			data: "0123456789abcdefghijklmnopqrstuvwxyz",
+			want: map[string]int{
+				"no-line-feeds": 36,
 			},
 		},
 		{
@@ -178,7 +184,7 @@ func TestSplitWriter(t *testing.T) {
 			}
 
 			path := path.Join(dir, tt.fname)
-			w, err := NewSplitWriter(path, int64(tt.maxsize), int64(tt.bufsize))
+			w, err := New(path, int64(tt.maxsize), int64(tt.bufsize))
 			if err != nil {
 				t.Fatal(err)
 			}
