@@ -5,6 +5,7 @@ import (
 	"github.com/AdRoll/baker/filter"
 	"github.com/AdRoll/baker/input"
 	"github.com/AdRoll/baker/output"
+	"github.com/AdRoll/baker/upload"
 )
 
 // Some example fields
@@ -18,6 +19,7 @@ var components = baker.Components{
 	Inputs:        input.All,
 	Filters:       filter.All,
 	Outputs:       output.All,
+	Uploads:       upload.All,
 	ShardingFuncs: shardingFuncs,
 	Validate:      validateLogLine,
 	FieldByName:   fieldByName,
