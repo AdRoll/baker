@@ -29,3 +29,9 @@ govet: ## Run go vet on the project
 
 build: ## Build an example baker binary
 	go build -v -o baker-bin-example ./examples/advanced/
+
+build-extra: ## Build an example baker binary with the "extra" components (sqlite3 output atm)
+	CGO_ENABLED=1 go build -v -tags cgo_sqlite -o baker-bin-example ./examples/advanced/
+
+test-short-extra: ## Run tests with -short flag
+	CGO_ENABLED=1 go test -tags cgo_sqlite -timeout 30s -short -race ./...

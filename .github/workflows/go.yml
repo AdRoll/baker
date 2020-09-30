@@ -36,3 +36,6 @@ jobs:
 
       - name: Build all examples
         run: go build ./examples/...
+
+      - name: Build with extras
+        run: CGO_ENABLED=1 go build -tags cgo_sqlite ./examples/advanced/
