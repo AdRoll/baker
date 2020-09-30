@@ -38,6 +38,7 @@ Baker is fully parallel and maximizes usage of both CPU-bound and I/O bound pipe
   - [Metrics](#metrics)
   - [Aborting (CTRL+C)](#aborting-ctrlc)
   - [Baker test suite](#baker-test-suite)
+  - [Package structure](#package-structure)
 
 
 ## Pipelines
@@ -216,7 +217,33 @@ Baker supports environment variables replacement in the configuration file. Use 
 or `$ENV_VAR_NAME` and the value in the file will be replaced at runtime. Note that if the
 variable doesn't exist, then an empty string will be used for replacement.
 
+
 ### How to create components
+
+To register a new component within Baker and make it available for your pipelines, 
+you must create and fill a description structure and provide it to `baker.Components`.
+The structure to fill up is either a `InputDesc`, `FilterDesc`, `OutputDesc`, 
+`UploadDesc` or `MetricsDesc`, depending on the component type.
+
+At runtime, components configurations (i.e `[input.config]`, `[output.config]` and so on)
+are serialized from TOML and each of them forwarded to the component constructor function.
+
+Configuration fields may contains some struct tags. Let's see their use with an example:
+
+```go
+type MyConfig struct {
+  Name string      `help:"Name is ..." required:"true"`
+  Value int        `help:"Value is ..."`
+  Strings []string `help:"Strings ..." default:"[a, b, c]"`
+}
+```
+
+Supported struct tags:
+
+- `help`: shown on the terminal when requesting this component's help
+- `default`: also shown in the component help
+- `required`: also shown in help. Configuration fails if the field is not set in TOML (or let to itds zero value).
+
 
 #### Filters
 
