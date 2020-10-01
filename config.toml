@@ -20,7 +20,7 @@ pygmentsUseClasses = false
 pygmentsUseClassic = false
 #pygmentsOptions = "linenos=table"
 # See https://help.farbox.com/pygments.html
-pygmentsStyle = "tango"
+pygmentsStyle = "dracula"
 
 # Configure how URLs look like per section.
 [permalinks]
@@ -70,8 +70,6 @@ weight = 1
 copyright = "© 2006-2020, NextRoll, Inc."
 privacy_policy = "https://www.nextroll.com/privacy"
 
-customCss = ["custom.css"]
-
 # First one is picked as the Twitter card image if not set on page.
 # images = ["images/project-illustration.png"]
 
@@ -91,7 +89,7 @@ version = "0.0"
 
 # A link to latest version of the docs. Used in the "version-banner" partial to
 # point people to the main doc site.
-url_latest_version = "https://example.com"
+url_latest_version = "https://github.com/adroll/baker"
 
 # Repository configuration (URLs for in-page links to opening issues and suggesting changes)
 github_repo = "https://github.com/adroll/baker"
