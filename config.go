@@ -67,8 +67,8 @@ type ConfigOutput struct {
 	// Only set Procs to a value greater than 1 if the output is concurrent safe.
 	Procs         int
 	ChanSize      int      // ChanSize represents the size of the channel to send records to the ouput component(s), the default value is 16384
-	Sharding      string   // field name to be used for sharding
-	Fields        []string // fields to provide to the output as values
+	Sharding      string   // Sharding is the name of the field used for sharding
+	Fields        []string // Fields holds the name of the record fields the output receives
 	DecodedConfig interface{}
 
 	Config *toml.Primitive

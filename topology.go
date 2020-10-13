@@ -14,10 +14,10 @@ import (
 // Topology defines the baker topology, that is how to retrieve records (input),
 // how to process them (filter), and where to output the results (output+upload)
 type Topology struct {
-	Input   Input    // The input component
-	Filters []Filter // The list of filters
-	Output  []Output // The output component (it's a slice because can be sharded)
-	Upload  Upload   // The optional upload component
+	Input   Input
+	Filters []Filter
+	Output  []Output
+	Upload  Upload
 
 	inerr     atomic.Value
 	inch      chan *Data
