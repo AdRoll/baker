@@ -402,7 +402,7 @@ help messages when used with `-help <ComponentName>`
 using [vmware-go-kcl](https://github.com/vmware/vmware-go-kcl), an
 implementation of the KCL (Kinesis Client Library).
 KCL provides a way to to process a single Kinesis stream from multiple Baker
-instances, each instances reading a specific set of shards.
+instances, each instance consuming a number of shards.
 
 The KCL takes care of balancing the shards between workers. At the time of
 writing, vmware-go-kcl doesn't implement shard stealing yet, so it's advised to
@@ -420,12 +420,18 @@ The dynamodb table also serves the purpose of checkpointing, that is keeping
 track of the per-shard advancement by writing the ID last read record
 (checkpoint).
 
-You can choose the initial position to read from when the application starts
-(that is when the dynamodb table doesn't exist) by setting InitialPosition
-either to LATEST or TRIM_HORIZON.
+InitialPosition defines the initial checkpoint position for consuming new
+shards. This parameter is only effective the first time a shard ID is
+encountered, since after that the lease will associate the shard and a record
+checkopint. It can either be set to LATEST or TRIM_HORIZON.
+
+Note that when new shards are created in the event of a resharding, KCL may not
+immediately be aware of their creation. Setting TRIM_HORIZON is thus a safer
+choice here since eventually all the records from the newly shards will be
+consumed, as opposed to LATEST, which can lead to some missing records.
 
 
-##### Implementation and prevent throttling prevention
+##### Implementation and throttling prevention
 
 Within a Baker instance, the KCL input creates as many record processors as
 there are shards to read from.  A record processor pulls records by way of the
@@ -433,10 +439,10 @@ there are shards to read from.  A record processor pulls records by way of the
 AWS Kinesis API call.
 
 AWS [imposes limits on GetRecords](https://docs.aws.amazon.com/streams/latest/dev/service-sizes-and-limits.html), 
-Each shard can support up to a maximum total data read rate of 2 MiB per second
+each shard can support up to a maximum total data read rate of 2 MiB per second
 via GetRecords. If a call to GetRecords returns 10 MiB, the maximum size
 GetRecords is allowed to return, subsequent calls made within the next 5 seconds
-will meet a ProvisionedThroughputExceededException.  Limiting the number of
+will meet a `ProvisionedThroughputExceededException.` Limiting the number of
 records per call would work but would increase the number of performed IO
 syscalls and will increase the risk to meet the limits imposed by AWS on API
 calls or to not process records as fast as possible.
