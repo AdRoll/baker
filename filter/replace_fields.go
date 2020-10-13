@@ -8,6 +8,7 @@ import (
 	"github.com/AdRoll/baker"
 )
 
+// ReplaceFieldsDesc describes the ReplaceFields filter
 var ReplaceFieldsDesc = baker.FilterDesc{
 	Name:   "ReplaceFields",
 	New:    NewReplaceFields,

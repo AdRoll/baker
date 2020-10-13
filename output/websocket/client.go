@@ -12,7 +12,7 @@ const channelBufSize = 100
 
 var maxId int = 0
 
-// Chat client.
+// Websocket client.
 type client struct {
 	id      int
 	ws      *ws.Conn
@@ -41,7 +41,7 @@ func getFieldIdInReturn(name string, cfg Conf) (int, error) {
 	return 0, errors.New("No Field")
 }
 
-// Create new chat client.
+// Create new ws client.
 func newClient(ws *ws.Conn, server *Server) *client {
 	maxId++
 	ch := make(chan []string, channelBufSize)
@@ -104,7 +104,7 @@ func (c *client) Done() {
 	close(c.doneCh)
 }
 
-// Listen Write and Read request via chanel
+// Listen Write and Read request via channel
 func (c *client) Listen() {
 	go c.listenWrite()
 	c.listenRead()

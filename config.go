@@ -35,7 +35,7 @@ import (
 // ConfigInput specifies the configuration for the input component.
 type ConfigInput struct {
 	Name          string
-	ChanSize      int
+	ChanSize      int // ChanSize represents the size of the channel to send records from the input to the filters, the default value is 1024
 	DecodedConfig interface{}
 
 	Config *toml.Primitive
@@ -44,6 +44,10 @@ type ConfigInput struct {
 
 // ConfigFilterChain specifies the configuration for the whole fitler chain.
 type ConfigFilterChain struct {
+	// Procs specifies the number of baker filters running concurrently.
+	// When set to a value greater than 1, filtering may be faster but
+	// record ordering is not guaranteed anymore.
+	// The default value is 16
 	Procs int
 }
 
@@ -58,11 +62,13 @@ type ConfigFilter struct {
 
 // ConfigOutput specifies the configuration for the output component.
 type ConfigOutput struct {
-	Name          string
+	Name string
+	// Procs defines the number of baker outputs running concurrently.
+	// Only set Procs to a value greater than 1 if the output is concurrent safe.
 	Procs         int
-	ChanSize      int
-	Sharding      string
-	Fields        []string
+	ChanSize      int      // ChanSize represents the size of the channel to send records to the ouput component(s), the default value is 16384
+	Sharding      string   // Sharding is the name of the field used for sharding
+	Fields        []string // Fields holds the name of the record fields the output receives
 	DecodedConfig interface{}
 
 	Config *toml.Primitive
@@ -92,6 +98,7 @@ type ConfigCSV struct {
 
 // A ConfigGeneral specifies general configuration for the whole topology.
 type ConfigGeneral struct {
+	// DontValidateFields reports whether records validation is skipped (by not calling Components.Validate)
 	DontValidateFields bool `toml:"dont_validate_fields"`
 }
 

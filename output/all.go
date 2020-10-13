@@ -1,3 +1,4 @@
+// Package output provides output components
 package output
 
 import (

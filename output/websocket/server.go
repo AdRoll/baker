@@ -8,7 +8,7 @@ import (
 	ws "golang.org/x/net/websocket"
 )
 
-// Chat server.
+// Server represents the websocket server.
 type Server struct {
 	clients   map[int]*client
 	addCh     chan *client
@@ -19,6 +19,7 @@ type Server struct {
 	cfg       Conf
 }
 
+// Conf holds required configurations that are passed to NewServer to configure the Server
 type Conf struct {
 	Fields      []baker.FieldIndex
 	FieldByName func(string) (baker.FieldIndex, bool)
@@ -45,6 +46,8 @@ func (s *Server) del(c *client) {
 	s.delCh <- c
 }
 
+// SendAll sends a message to all connected clients. Used by the output component to broadcast
+// the message to the clients
 func (s *Server) SendAll(msg []string) {
 	s.sendAllCh <- msg
 }
@@ -67,7 +70,7 @@ func (s *Server) sendAll(msg []string) {
 // It serves client connection and broadcast request.
 func (s *Server) Listen() {
 
-	log.Info("Listening server...")
+	log.Info("Listening ws server...")
 
 	// websocket handler
 	onConnected := func(ws *ws.Conn) {
