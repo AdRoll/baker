@@ -1,3 +1,18 @@
+/*
+Package baker provides types and functions to build a pipeline for the processing of structured data.
+
+Structured data is represented by the Record interface. LogLine implements that interface and
+represents a csv record.
+
+Using the functions in the package one can build and run a Topology, reading its configuration
+from a TOML file.
+
+The package doesn't include any component. They can be found in their respective packages
+(baker/input, baker/filter, baker/output and baker/upload).
+
+The README file in the project repository provides additional information and examples:
+https://github.com/AdRoll/baker/blob/main/README.md
+*/
 package baker
 
 import (
@@ -5,13 +20,9 @@ import (
 	"time"
 )
 
-// Main xruns the topology corresponding to the provided configuration.
+// Main runs the topology corresponding to the provided configuration.
 // Depending on the input, it either blocks forever (daemon) or terminates when
 // all the records have been processed (batch).
-//
-// TODO: duration should probably be removed from here, it's awkward to have to pass 0
-// here so as to not make baker terminates early. This is only used for taking profiles
-// so I think we should think about another API for that here.
 func Main(cfg *Config, duration time.Duration) error {
 	topology, err := NewTopologyFromConfig(cfg)
 	if err != nil {

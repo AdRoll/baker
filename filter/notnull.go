@@ -15,7 +15,7 @@ var NotNullDesc = baker.FilterDesc{
 	Help:   "Discard the records having null (i.e empty) fields.\n",
 }
 
-// NotNullConfig holds configuration paramters for the NotNull filter.
+// NotNullConfig holds configuration parameters for the NotNull filter.
 type NotNullConfig struct {
 	Fields []string `help:"Fields is the list of fields to check for null/empty values" required:"true"`
 }

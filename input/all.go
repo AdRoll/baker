@@ -1,3 +1,4 @@
+// Package input provides input components
 package input
 
 import (

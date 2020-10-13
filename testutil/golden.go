@@ -10,6 +10,9 @@ import (
 
 var UpdateGolden = flag.Bool("update", false, "update golden files")
 
+// DiffWithGolden is a test helper that compares the src bytes with a file content whose path
+// is provided in the 'golden' argument. If UpdateGolden flag is true, than the golden
+// file is updated with the provided new content in 'src'.
 func DiffWithGolden(t *testing.T, src []byte, golden string) {
 	t.Helper()
 

@@ -8,6 +8,7 @@ import (
 	"github.com/AdRoll/baker"
 )
 
+// ClearFieldsDesc describes the ClearFields filter
 var ClearFieldsDesc = baker.FilterDesc{
 	Name:   "ClearFields",
 	New:    NewClearFields,

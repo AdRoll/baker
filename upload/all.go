@@ -1,3 +1,4 @@
+// Package upload provides upload components
 package upload
 
 import "github.com/AdRoll/baker"
