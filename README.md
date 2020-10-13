@@ -31,6 +31,10 @@ Baker is fully parallel and maximizes usage of both CPU-bound and I/O bound pipe
         - [Raw outputs](#raw-outputs)
       - [Uploads](#uploads)
     - [How to create a '-help' command line option](#how-to-create-a--help-command-line-option)
+  - [Provided Baker components](#provided-baker-components)
+    - [Inputs](#inputs-1)
+      - [KCL](#kcl)
+        - [Implementation and prevent throttling prevention](#implementation-and-prevent-throttling-prevention)
   - [Tuning parallelism](#tuning-parallelism)
   - [Sharding](#sharding)
     - [How to implement a sharding function](#how-to-implement-a-sharding-function)
@@ -386,6 +390,62 @@ The uploader component is optional, if missing the string channel is simply igno
 The [./examples/help/](./examples/help/) folder contains a working example of
 command that shows a generic help/usage message and also specific component
 help messages when used with `-help <ComponentName>`
+
+
+## Provided Baker components
+
+### Inputs
+
+#### KCL
+
+`input.KCL` fetches records from AWS [Kinesis](https://aws.amazon.com/kinesis/)
+using [vmware-go-kcl](https://github.com/vmware/vmware-go-kcl), an
+implementation of the KCL (Kinesis Client Library).
+KCL provides a way to to process a single Kinesis stream from multiple Baker
+instances, each instances reading a specific set of shards.
+
+The KCL takes care of balancing the shards between workers. At the time of
+writing, vmware-go-kcl doesn't implement shard stealing yet, so it's advised to
+set MaxShards to a reasonable value. Since the number of shards doesn't change
+often, dividing the number of total shards by the expected number of baker
+instances and rounding up to the next integer has given us good results.
+
+The association between shards and baker instances (or workers) are called
+leases. Lease synchronization is taken care of by KCL; to do so it requires
+access to a DynamoDB table, which named depends on the configured AppName.
+
+Leases are updated at regular interval defined by ShardSync.
+
+The dynamodb table also serves the purpose of checkpointing, that is keeping
+track of the per-shard advancement by writing the ID last read record
+(checkpoint).
+
+You can choose the initial position to read from when the application starts
+(that is when the dynamodb table doesn't exist) by setting InitialPosition
+either to LATEST or TRIM_HORIZON.
+
+
+##### Implementation and prevent throttling prevention
+
+Within a Baker instance, the KCL input creates as many record processors as
+there are shards to read from.  A record processor pulls records by way of the
+[GetRecords](https://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetRecords.html)
+AWS Kinesis API call.
+
+AWS [imposes limits on GetRecords](https://docs.aws.amazon.com/streams/latest/dev/service-sizes-and-limits.html), 
+Each shard can support up to a maximum total data read rate of 2 MiB per second
+via GetRecords. If a call to GetRecords returns 10 MiB, the maximum size
+GetRecords is allowed to return, subsequent calls made within the next 5 seconds
+will meet a ProvisionedThroughputExceededException.  Limiting the number of
+records per call would work but would increase the number of performed IO
+syscalls and will increase the risk to meet the limits imposed by AWS on API
+calls or to not process records as fast as possible.
+
+The strategy we're using is to not limit MaxRecords but sleeping for 6s. 
+Doing so, we're guaranteed to never exceed the per-shard read througput limit of
+2MB/s, while being close to it on data peaks. This has the added advantage of
+reducing the number of IO syscalls.
+
 
 ## Tuning parallelism
 

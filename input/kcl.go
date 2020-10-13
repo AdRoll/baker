@@ -28,7 +28,7 @@ var KCLDesc = baker.InputDesc{
 	Name:   "KCL",
 	New:    NewKCL,
 	Config: &KCLConfig{},
-	Help: "This input fetches log lines from Kinesis with KCL. It consumes a specified stream, and\n" +
+	Help: "This input fetches records from Kinesis with KCL. It consumes a specified stream, and\n" +
 		"processes all shards in that stream. It never exits.\n" +
 		"Multiple baker instances can consume the same stream, in that case the KCL will take care of\n" +
 		"balancing the shards between workers. Careful (shard stealing is not implemented yet).\n" +
