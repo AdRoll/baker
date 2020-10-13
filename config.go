@@ -61,7 +61,6 @@ type ConfigOutput struct {
 	Name          string
 	Procs         int
 	ChanSize      int
-	RawChanSize   int
 	Sharding      string
 	Fields        []string
 	DecodedConfig interface{}
@@ -132,7 +131,7 @@ func (c *Config) String() string {
 	for i, f := range c.Filter {
 		s += fmt.Sprintf("Filter-%d:{Name:%s} ", i, f.Name)
 	}
-	s += fmt.Sprintf("Output:{Name:%s, Procs:%d, ChanSize:%d, RawChanSize:%d, Sharding:%s, Fields:[%s]} ", c.Output.Name, c.Output.Procs, c.Output.ChanSize, c.Output.RawChanSize, c.Output.Sharding, strings.Join(c.Output.Fields, ","))
+	s += fmt.Sprintf("Output:{Name:%s, Procs:%d, ChanSize:%d, Sharding:%s, Fields:[%s]} ", c.Output.Name, c.Output.Procs, c.Output.ChanSize, c.Output.Sharding, strings.Join(c.Output.Fields, ","))
 	s += fmt.Sprintf("Upload:{Name:%s}", c.Upload.Name)
 	return s
 }
@@ -183,9 +182,6 @@ func (c *ConfigFilterChain) fillDefaults() {
 func (c *ConfigOutput) fillDefaults() {
 	if c.ChanSize == 0 {
 		c.ChanSize = 16384
-	}
-	if c.RawChanSize == 0 {
-		c.RawChanSize = 16384
 	}
 	if c.Procs == 0 {
 		c.Procs = 32
