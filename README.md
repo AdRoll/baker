@@ -427,7 +427,7 @@ checkpoint. It can either be set to LATEST or TRIM_HORIZON.
 
 Note that when new shards are created in the event of a resharding, KCL may not
 immediately be aware of their creation. Setting TRIM_HORIZON is thus a safer
-choice here since eventually all the records from the newly shards will be
+choice here since eventually all the records from the newly created shards will be
 consumed, as opposed to LATEST, which can lead to some missing records.
 
 
