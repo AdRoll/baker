@@ -423,7 +423,7 @@ track of the per-shard advancement by writing the ID last read record
 InitialPosition defines the initial checkpoint position for consuming new
 shards. This parameter is only effective the first time a shard ID is
 encountered, since after that the lease will associate the shard and a record
-checkopint. It can either be set to LATEST or TRIM_HORIZON.
+checkpoint. It can either be set to LATEST or TRIM_HORIZON.
 
 Note that when new shards are created in the event of a resharding, KCL may not
 immediately be aware of their creation. Setting TRIM_HORIZON is thus a safer
@@ -574,4 +574,3 @@ The code also includes several benchmarks.
 `./pkg` contains reusable packages providing various utilities that are not
 specifically Baker-related, though of course they may come handy while
 developping new baker components.
-
