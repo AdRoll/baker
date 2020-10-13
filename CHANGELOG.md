@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Record.Copy method [#53](https://github.com/AdRoll/baker/pull/53)
 - Add pkg/splitwriter and pkg/buffercache reusable components [#55](https://github.com/AdRoll/baker/pull/55)
 - output: add SQLite output [#56](https://github.com/AdRoll/baker/pull/56)
+- README: document KCL input [#59](https://github.com/AdRoll/baker/pull/59)
 
 ### Changed
 
