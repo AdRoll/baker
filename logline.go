@@ -65,8 +65,7 @@ type LogLine struct {
 
 	cache Cache
 
-	// FieldSeparator is the byte used to separate fields value. Can be customized
-	// but it must always be a single byte
+	// FieldSeparator is the byte used to separate fields value.
 	FieldSeparator byte
 }
 
