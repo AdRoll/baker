@@ -1,7 +1,7 @@
 package baker
 
-// Data represents a bunch of bytes retrieved from the input,
-// before parsing them to a Record
+// Data represents raw data consumed by a baker input, possibly
+// containing multiple records before they're parsed.
 type Data struct {
 	Bytes []byte   // The raw content
 	Meta  Metadata // Some metadata, filled in by the input
