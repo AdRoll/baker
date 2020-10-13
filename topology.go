@@ -215,9 +215,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	return tp, nil
 }
 
-// Start the Topology, that is start all components.
-// Each component runs in a different goroutine (multiple
-// filters and outputs run in separated goroutines as well).
+// Start starts the Topology, that is start all components.
 // This function also intercepts the interrupt signal (ctrl+c)
 // starting the graceful shutdown (calling Topology.Stop())
 func (t *Topology) Start() {

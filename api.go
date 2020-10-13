@@ -3,8 +3,8 @@ package baker
 // Data represents raw data consumed by a baker input, possibly
 // containing multiple records before they're parsed.
 type Data struct {
-	Bytes []byte   // The raw content
-	Meta  Metadata // Some metadata, filled in by the input
+	Bytes []byte   // Bytes is the slice of raw bytes read by an input
+	Meta  Metadata // Meta is filled by the input and holds metadata that will be associated to the records parsed from Bytes
 }
 
 // Metadata about the input data; each Input will directly populate this
@@ -21,7 +21,7 @@ func (m *Metadata) get(key string) (val interface{}, ok bool) {
 }
 
 // InputStats contains statistics about the input component,
-// ready for export to the metric client and to print debug info
+// ready for export to the metric client and to print debug info.
 type InputStats struct {
 	NumProcessedLines int64
 	CustomStats       map[string]string

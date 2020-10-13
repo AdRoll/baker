@@ -1,13 +1,11 @@
 /*
-Package baker can be used as library to build a baker binary (see the examples/ folder).
+Package baker provides types and functions to build a pipeline for the processing of structured data.
 
-In its simplest form (see examples/basic/) a main() function that uses the baker library
-must provide a list of components (input, filter, output and upload) as well as a TOML
-configuration to the baker functions.
+Structured data is represented by the Record interface. LogLine implemets that interface and
+represents a csv record.
 
-Baker can run as batch, which means that the input component at some point ends (for example
-a list of S3 files to process), or as a daemon, a never-ending input (like reading from
-a Kinesis stream)
+Using the functions in the package one can build and run a Topology, reading its configuration
+from a TOML file.
 
 The package doesn't include any component. They can be found in their respective packages
 (baker/input, baker/filter, baker/output and baker/upload).

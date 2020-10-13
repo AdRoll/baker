@@ -1,4 +1,4 @@
-// Package filter provides filter components
+// Package filter provides filter components.
 package filter
 
 import (

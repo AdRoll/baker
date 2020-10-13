@@ -190,7 +190,7 @@ func (l *LogLine) ToText(buf []byte) []byte {
 	return buf
 }
 
-// Clear the logline, overwriting with a new logline, only inheriting the field separator
+// Clear clears the logline
 func (l *LogLine) Clear() {
 	*l = LogLine{FieldSeparator: l.FieldSeparator}
 }

@@ -35,7 +35,7 @@ import (
 // ConfigInput specifies the configuration for the input component.
 type ConfigInput struct {
 	Name          string
-	ChanSize      int // Size of the channel to send records from the input to the filters, the default value is 1024
+	ChanSize      int // ChanSize represents the size of the channel to send records from the input to the filters, the default value is 1024
 	DecodedConfig interface{}
 
 	Config *toml.Primitive
@@ -44,11 +44,9 @@ type ConfigInput struct {
 
 // ConfigFilterChain specifies the configuration for the whole fitler chain.
 type ConfigFilterChain struct {
-	// Procs defines the number of parallel filtering processes. As a single records
-	// will go through the filters one after the other, parallelizing the process
-	// means that multiple records can go throught the filtering in parallel.
-	// This speeds up the process but the ordering of the records can change
-	// depending on the speed of each filter.
+	// Procs specifies the number of baker filters running concurrently.
+	// When set to a value greater than 1, filtering may be faster but
+	// record ordering is not guaranteed anymore.
 	// The default value is 16
 	Procs int
 }
@@ -65,12 +63,10 @@ type ConfigFilter struct {
 // ConfigOutput specifies the configuration for the output component.
 type ConfigOutput struct {
 	Name string
-	// Procs defines the number of parallel processes. Use 1 if the output
-	// can't handle parallel processing (like a file writer writing the same file
-	// without concurrency support)
-	// The default value is 32
+	// Procs defines the number of baker outputs running concurrently.
+	// Only set Procs to a value greater than 1 if the output is concurrent safe.
 	Procs         int
-	ChanSize      int      // Size of the channel to send records to the ouput component(s), the default value is 16384
+	ChanSize      int      // ChanSize represents the size of the channel to send records to the ouput component(s), the default value is 16384
 	Sharding      string   // field name to be used for sharding
 	Fields        []string // fields to provide to the output as values
 	DecodedConfig interface{}
@@ -102,8 +98,7 @@ type ConfigCSV struct {
 
 // A ConfigGeneral specifies general configuration for the whole topology.
 type ConfigGeneral struct {
-	// DontValidateFields, when true, makes baker skip the validation of the records,
-	// or skip calling the Components.Validate
+	// DontValidateFields reports whether records validation is skipped (by not calling Components.Validate)
 	DontValidateFields bool `toml:"dont_validate_fields"`
 }
 
