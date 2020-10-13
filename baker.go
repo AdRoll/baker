@@ -1,7 +1,7 @@
 /*
 Package baker provides types and functions to build a pipeline for the processing of structured data.
 
-Structured data is represented by the Record interface. LogLine implemets that interface and
+Structured data is represented by the Record interface. LogLine implements that interface and
 represents a csv record.
 
 Using the functions in the package one can build and run a Topology, reading its configuration
