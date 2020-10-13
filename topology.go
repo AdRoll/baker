@@ -11,11 +11,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Topology defines the baker topology, that is how to retrieve records (input),
+// how to process them (filter), and where to output the results (output+upload)
 type Topology struct {
-	Input   Input
-	Filters []Filter
-	Output  []Output
-	Upload  Upload
+	Input   Input    // The input component
+	Filters []Filter // The list of filters
+	Output  []Output // The output component (it's a slice because can be sharded)
+	Upload  Upload   // The optional upload component
 
 	inerr     atomic.Value
 	inch      chan *Data
@@ -43,6 +45,7 @@ type Topology struct {
 	fieldName func(FieldIndex) string // Used by StatsDumper
 }
 
+// NewTopologyFromConfig gets a baker configuration and returns a Topology
 func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	var err error
 
@@ -212,6 +215,11 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	return tp, nil
 }
 
+// Start the Topology, that is start all components.
+// Each component runs in a different goroutine (multiple
+// filters and outputs run in separated goroutines as well).
+// This function also intercepts the interrupt signal (ctrl+c)
+// starting the graceful shutdown (calling Topology.Stop())
 func (t *Topology) Start() {
 	// Start the uploader
 	t.wgupl.Add(1)

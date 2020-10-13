@@ -3,20 +3,20 @@ package baker
 // Components holds the descriptions of all components one can use
 // to build a topology.
 type Components struct {
-	Inputs  []InputDesc
-	Filters []FilterDesc
-	Outputs []OutputDesc
-	Uploads []UploadDesc
+	Inputs  []InputDesc  // list of available inputs
+	Filters []FilterDesc // list of available filters
+	Outputs []OutputDesc // list of available outputs
+	Uploads []UploadDesc // list of available uploads
 
-	Metrics []MetricsDesc
-	User    []UserDesc
+	Metrics []MetricsDesc // list of available metrics clients
+	User    []UserDesc    // list of user-defined configurations
 
-	ShardingFuncs map[FieldIndex]ShardingFunc
-	Validate      ValidationFunc
-	CreateRecord  func() Record
+	ShardingFuncs map[FieldIndex]ShardingFunc // functions to calculate sharding based on field index
+	Validate      ValidationFunc              // function to use to validate a Records
+	CreateRecord  func() Record               // create a new record
 
-	FieldByName func(string) (FieldIndex, bool)
-	FieldName   func(FieldIndex) string
+	FieldByName func(string) (FieldIndex, bool) // get a field index by its name
+	FieldName   func(FieldIndex) string         // gets a field name by its index
 }
 
 // ComponentParams holds the common configuration parameters passed to components of all kinds.
@@ -65,6 +65,9 @@ type ShardingFunc func(Record) uint64
 type ValidationFunc func(Record) (bool, FieldIndex)
 
 // InputDesc describes an Input component to the topology.
+//
+// It has a name, a config object, a constructor function (New)
+// and a help string
 type InputDesc struct {
 	Name   string
 	New    func(InputParams) (Input, error)
@@ -73,6 +76,9 @@ type InputDesc struct {
 }
 
 // FilterDesc describes a Filter component to the topology.
+//
+// It has a name, a config object, a constructor function (New)
+// and a help string
 type FilterDesc struct {
 	Name   string
 	New    func(FilterParams) (Filter, error)
@@ -81,6 +87,10 @@ type FilterDesc struct {
 }
 
 // OutputDesc describes an Output component to the topology.
+//
+// It has a name, a config object, a constructor function (New)
+// and a help string. Raw defines whether the output accepts
+// raw records
 type OutputDesc struct {
 	Name   string
 	New    func(OutputParams) (Output, error)
@@ -90,6 +100,9 @@ type OutputDesc struct {
 }
 
 // UploadDesc describes an Upload component to the topology.
+//
+// It has a name, a config object, a constructor function (New)
+// and a help string
 type UploadDesc struct {
 	Name   string
 	New    func(UploadParams) (Upload, error)
@@ -99,11 +112,9 @@ type UploadDesc struct {
 
 // MetricsDesc describes a Metrics interface to the topology.
 type MetricsDesc struct {
-	// Name of the metrics interface
-	Name string
-	// Config is the metrics client specific configuration
-	Config interface{}
-	New    func(interface{}) (MetricsClient, error)
+	Name   string                                   // Name of the metrics interface
+	Config interface{}                              // Config is the metrics client specific configuration
+	New    func(interface{}) (MetricsClient, error) // Constructor
 }
 
 // UserDesc describes user-specific configuration sections.

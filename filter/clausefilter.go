@@ -11,6 +11,7 @@ import (
 	"github.com/AdRoll/baker"
 )
 
+// ClauseFilterDesc describes the ClauseFilter filter
 var ClauseFilterDesc = baker.FilterDesc{
 	Name:   "ClauseFilter",
 	New:    NewClauseFilter,
@@ -18,6 +19,7 @@ var ClauseFilterDesc = baker.FilterDesc{
 	Help:   "This filter lets you set a boolean expression (in s-expression format) that will be matched against all records and dropped if they don't match the expression.\nCheck the filter file for documentation what the format looks like.\n",
 }
 
+// ClauseFilterConfig describes the ClauseFilter filter config
 type ClauseFilterConfig struct {
 	Clause string `help:"Boolean formula describing which events to let through. If empty, let everything through."`
 }

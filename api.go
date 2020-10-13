@@ -1,14 +1,10 @@
 package baker
 
-type InputStats struct {
-	NumProcessedLines int64
-	CustomStats       map[string]string
-	Metrics           MetricsBag
-}
-
+// Data represents a bunch of bytes retrieved from the input,
+// before parsing them to a Record
 type Data struct {
-	Bytes []byte
-	Meta  Metadata
+	Bytes []byte   // The raw content
+	Meta  Metadata // Some metadata, filled in by the input
 }
 
 // Metadata about the input data; each Input will directly populate this
@@ -24,12 +20,24 @@ func (m *Metadata) get(key string) (val interface{}, ok bool) {
 	return
 }
 
+// InputStats contains statistics about the input component,
+// ready for export to the metric client and to print debug info
+type InputStats struct {
+	NumProcessedLines int64
+	CustomStats       map[string]string
+	Metrics           MetricsBag
+}
+
+// FilterStats contains statistics about the filter components,
+// ready for export to the metric client and to print debug info
 type FilterStats struct {
 	NumProcessedLines int64
 	NumFilteredLines  int64
 	Metrics           MetricsBag
 }
 
+// OutputStats contains statistics about the output component,
+// ready for export to the metric client and to print debug info
 type OutputStats struct {
 	NumProcessedLines int64
 	NumErrorLines     int64
@@ -37,6 +45,8 @@ type OutputStats struct {
 	Metrics           MetricsBag
 }
 
+// UploadStats contains statistics about the upload component,
+// ready for export to the metric client and to print debug info
 type UploadStats struct {
 	NumProcessedFiles int64
 	NumErrorFiles     int64

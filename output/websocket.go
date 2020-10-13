@@ -14,7 +14,7 @@ var WebSocketDesc = baker.OutputDesc{
 	New:    NewWebSocketWriter,
 	Config: &WebSocketWriterConfig{},
 	Raw:    false,
-	Help:   "This output writes the filtered log lines into any conenct WebSocket client.\n",
+	Help:   "This output writes the filtered log lines into any connected WebSocket client.\n",
 }
 
 type WebSocketWriterConfig struct{}

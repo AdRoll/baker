@@ -1,3 +1,4 @@
+// Package metrics provides the available metrics implementations
 package metrics
 
 import (

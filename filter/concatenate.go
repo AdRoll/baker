@@ -9,6 +9,7 @@ import (
 	"github.com/AdRoll/baker"
 )
 
+// ConcatenateDesc describes the Concatenate filter
 var ConcatenateDesc = baker.FilterDesc{
 	Name:   "Concatenate",
 	New:    NewConcatenate,

@@ -3,17 +3,13 @@ package baker
 import "errors"
 
 const (
-	// LogLineNumFields is the maximum number of fields in a log line.
-	// TODO[opensource]: solve this before releasing baker-core as open-source?
-	// how? pass it from outside? allocate idx and wmask dynamically?
+	// LogLineNumFields is the maximum number of standard fields in a log line.
 	LogLineNumFields FieldIndex = 3000
-	// original forklift.NumFieldsBaker depends on custom_params.json and it is 82 at the moment.
-	// TODO[opensource]: evaluate impact on wmask with a custom number
-	// we probably want to keep this for adroll-baker but not in the core.
-	// how one uses the field indices is up to them.
+	// NumFieldsBaker is an additional list of custom fields, not present
+	// in the input logline, that can be set during processing
 	NumFieldsBaker FieldIndex = 100
 
-	// DefaultLogLineFieldSeparator is comma
+	// DefaultLogLineFieldSeparator defines the default field separator, which is the comma
 	DefaultLogLineFieldSeparator byte = 44
 )
 
@@ -67,7 +63,10 @@ type LogLine struct {
 	wdata [256][]byte
 	wcnt  uint8
 
-	cache          Cache
+	cache Cache
+
+	// FieldSeparator is the byte used to separate fields value. Can be customized
+	// but it must always be a single byte
 	FieldSeparator byte
 }
 
@@ -107,7 +106,7 @@ var errLogLineTooManyFields = errors.New("LogLine has too many fields")
 // Parse finds the next newline in data and parse log line fields from it into
 // the current LogLine.
 //
-// This is the moral equivalent of bytes.Split(), but without memory allocations
+// This is the moral equivalent of bytes.Split(), but without memory allocations.
 //
 // NOTE: this function is meant to be called onto a just-constructed LogLine
 // instance. For performance reasons, it doesn't reset all the writable fields
@@ -192,6 +191,7 @@ func (l *LogLine) ToText(buf []byte) []byte {
 	return buf
 }
 
+// Clear the logline, overwriting with a new logline, only inheriting the field separator
 func (l *LogLine) Clear() {
 	*l = LogLine{FieldSeparator: l.FieldSeparator}
 }
