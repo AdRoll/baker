@@ -13,7 +13,8 @@ var LogLineDesc = baker.InputDesc{
 
 // LogLineConfig holds the log lines to be fed to the Baker topology.
 type LogLineConfig struct {
-	Lines []*baker.LogLine
+	Lines    []*baker.LogLine // Lines to pipe into the filter chain.
+	Metadata baker.Metadata   // Metadata to assign to every log line.
 }
 
 // A LogLine input is a Baker input used for testing.
@@ -33,7 +34,6 @@ func NewLogLine(cfg baker.InputParams) (baker.Input, error) {
 }
 
 func (in *LogLine) Run(output chan<- *baker.Data) error {
-
 	var buf []byte
 
 	// Send all lines via a single baker.Data blob.
@@ -41,7 +41,8 @@ func (in *LogLine) Run(output chan<- *baker.Data) error {
 		buf = ll.ToText(buf)
 		buf = append(buf, '\n')
 	}
-	output <- &baker.Data{Bytes: buf}
+
+	output <- &baker.Data{Bytes: buf, Meta: in.Metadata}
 
 	return nil
 }
