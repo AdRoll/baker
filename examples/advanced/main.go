@@ -41,8 +41,7 @@ func main() {
 	}
 	f.Close()
 
-	var duration time.Duration
-	if err := baker.Main(cfg, duration); err != nil {
+	if err := baker.Main(cfg); err != nil {
 		log.Fatal(err)
 	}
 }
