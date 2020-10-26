@@ -5,7 +5,6 @@ package main
 import (
 	"log"
 	"strings"
-	"time"
 
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/input"
@@ -54,9 +53,8 @@ procs=1
 	if err != nil {
 		log.Fatal(err)
 	}
-	var duration time.Duration
-	err = baker.Main(cfg, duration)
-	if err != nil {
+
+	if err := baker.Main(cfg); err != nil {
 		log.Fatal(err)
 	}
 }

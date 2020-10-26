@@ -17,13 +17,12 @@ package baker
 
 import (
 	"fmt"
-	"time"
 )
 
 // Main runs the topology corresponding to the provided configuration.
 // Depending on the input, it either blocks forever (daemon) or terminates when
 // all the records have been processed (batch).
-func Main(cfg *Config, duration time.Duration) error {
+func Main(cfg *Config) error {
 	topology, err := NewTopologyFromConfig(cfg)
 	if err != nil {
 		return fmt.Errorf("can't create topology: %s", err)
@@ -32,10 +31,8 @@ func Main(cfg *Config, duration time.Duration) error {
 	// Start the topology
 	topology.Start()
 
-	// Now setup the wait condition for exiting the process.
-	// We exit when:
-	//   * The topology is finished
-	//   * If profiling is active, after profileDuration has elapsed
+	// Now setup the wait condition for exiting the process in case the topology
+	// ends by itself.
 	topdone := make(chan bool)
 	go func() {
 		topology.Wait()
@@ -46,15 +43,8 @@ func Main(cfg *Config, duration time.Duration) error {
 	stats := NewStatsDumper(topology)
 	stopStats := stats.Run()
 
-	var timeout <-chan time.Time
-	if duration > 0 {
-		timeout = time.After(duration)
-	}
-
-	select {
-	case <-topdone:
-	case <-timeout:
-	}
+	// Block until topology termination.
+	<-topdone
 
 	// Stop the stats dumping goroutine (this also prints stats one last time).
 	stopStats()

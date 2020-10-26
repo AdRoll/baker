@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Outputs' `Run()` returns an error [#21](https://github.com/AdRoll/baker/pull/21)
 - Fix 2 panics: ValidateRecord and errUnsuportedURLScheme [#29](https://github.com/AdRoll/baker/pull/29)
 - Remove datadog-specific code from [general] section. Instead add [metrics] which can be extended with baker.MetricsClient interfaces. [#34](https://github.com/AdRoll/baker/pull/34)
+- Remove duration parameter from baker.Main [#62](https://github.com/AdRoll/baker/pull/62)
 
 ### Removed
 
