@@ -26,8 +26,10 @@ type Topology struct {
 	upch      chan string
 
 	metrics   MetricsClient
-	invalid   [LogLineNumFields]int64 // count validation errors (by field)
-	malformed int64                   // count parse or empty records
+	malformed int64 // count parse or empty records
+
+	mu      sync.RWMutex         // protects invalid map
+	invalid map[FieldIndex]int64 // tracks validation errors (by field)
 
 	shard func(l Record) uint64
 	chain func(l Record)
@@ -59,6 +61,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 				return cfg.createRecord()
 			},
 		},
+		invalid: make(map[FieldIndex]int64),
 	}
 
 	// Create the metrics client first since it's injected into components parameters.
@@ -369,8 +372,11 @@ func (t *Topology) runFilterChain() {
 			// Validate against patterns
 			if t.validate != nil {
 				// call external validation function
-				if ok, idx := t.validate(record); !ok {
-					atomic.AddInt64(&t.invalid[idx], 1)
+				ok, idx := t.validate(record)
+				if !ok {
+					t.mu.Lock()
+					t.invalid[idx]++
+					t.mu.Unlock()
 					continue
 				}
 			}

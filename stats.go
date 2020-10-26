@@ -11,14 +11,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func countInvalid(invalid *[LogLineNumFields]int64) int64 {
-	sum := int64(0)
-	for _, i := range invalid {
-		sum = sum + i
-	}
-	return sum
-}
-
 // A StatsDumper gathers statistics about all baker components of topology.
 type StatsDumper struct {
 	t       *Topology
@@ -105,7 +97,7 @@ func (sd *StatsDumper) dumpNow() {
 		log.Fatalf("numUploads < prevUploads: %d < %d\n", numUploads, sd.prevUploads)
 	}
 
-	invalid := countInvalid(&t.invalid)
+	invalid := sd.countInvalid()
 	parseErrors := t.malformed
 	totalErrors := invalid + parseErrors + filtered + outErrors
 	sd.metrics.RawCount("error_lines", totalErrors)
@@ -171,6 +163,17 @@ func (sd *StatsDumper) dumpNow() {
 	sd.prevrlines = currlines
 	sd.prevUploads = numUploads
 	sd.prevUploadErrors = numUploadErrors
+}
+
+func (sd *StatsDumper) countInvalid() int64 {
+	sd.t.mu.RLock()
+	defer sd.t.mu.RUnlock()
+
+	sum := int64(0)
+	for _, i := range sd.t.invalid {
+		sum = sum + i
+	}
+	return sum
 }
 
 // Run starts dumping stats every second on standard output. Call stop() to
