@@ -34,7 +34,9 @@ Baker is fully parallel and maximizes usage of both CPU-bound and I/O bound pipe
   - [Provided Baker components](#provided-baker-components)
     - [Inputs](#inputs-1)
       - [KCL](#kcl)
-        - [Implementation and prevent throttling prevention](#implementation-and-prevent-throttling-prevention)
+        - [Implementation and throttling prevention](#implementation-and-throttling-prevention)
+  - [Working with baker.Record](#working-with-bakerrecord)
+    - [`baker.LogLine` CSV record](#bakerlogline-csv-record)
   - [Tuning parallelism](#tuning-parallelism)
   - [Sharding](#sharding)
     - [How to implement a sharding function](#how-to-implement-a-sharding-function)
@@ -452,6 +454,39 @@ Doing so, we're guaranteed to never exceed the per-shard read througput limit of
 2MB/s, while being close to it on data peaks. This has the added advantage of
 reducing the number of IO syscalls.
 
+## Working with baker.Record
+
+`baker.Record` is an interface which provides an abstraction over a record of 
+flattened data, where columns of fields are indexed through integers.
+
+At the moment, `baker` proposes an unique `Record` implementation, `baker.LogLine`.
+
+### `baker.LogLine` CSV record
+
+`baker.LogLine` is an highly optimized CSV compatible Record implementation. It 
+supports any single-byte field separator and doesn't handle quotes (neither 
+single nor double). The maximum number of fields is hard-coded by the
+`LogLineNumFields` constant which is 3000. 100 extra fields can be stored at
+runtime in a `LogLine` (also hardcoded with `NumFieldsBaker`), these extra fields
+are a fast way to exchange data between filters and/or outputs but they are neither
+handled during `Parsing` (i.e `LogLine.Parse`) nor serialization (`LogLine.ToText`).
+
+If the hardcoded values for `LogLineNumFields` and `NumFieldsBaker` do not suit
+your needs, it's advised that you copy `logline.go` in your project and modify
+the constants declared at the top of the file. Your specialized `LogLine` will 
+still implement `baker.Record` and thus can be used in lieu of `baker.LogLine`.
+To do so, you need to provide a [CreateRecord](https://pkg.go.dev/github.com/AdRoll/baker#Components)
+function to `baker.Components` when calling `baker.NewConfigFromToml`.
+
+For example:
+
+```go
+comp := baker.Components{}
+
+comp.CreateRecord = func() baker.Record {
+  return &LogLine{FieldSeparator:','}
+}
+```
 
 ## Tuning parallelism
 

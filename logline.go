@@ -6,7 +6,9 @@ const (
 	// LogLineNumFields is the maximum number of standard fields in a log line.
 	LogLineNumFields FieldIndex = 3000
 	// NumFieldsBaker is an additional list of custom fields, not present
-	// in the input logline, that can be set during processing
+	// in the input logline nor in the output, that can be set during processing.
+	// Its main purpose it to fastly exchange values between filters (and possibly
+	// outputs) on a per-record basis.
 	NumFieldsBaker FieldIndex = 100
 
 	// DefaultLogLineFieldSeparator defines the default field separator, which is the comma
