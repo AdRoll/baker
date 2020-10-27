@@ -468,7 +468,7 @@ supports any single-byte field separator and doesn't handle quotes (neither
 single nor double). The maximum number of fields is hard-coded by the
 `LogLineNumFields` constant which is 3000. 100 extra fields can be stored at
 runtime in a `LogLine` (also hardcoded with `NumFieldsBaker`), these extra fields
-are a fast way to exchange between filters and/or outputs but they are neither
+are a fast way to exchange data between filters and/or outputs but they are neither
 handled during `Parsing` (i.e `LogLine.Parse`) nor serialization (`LogLine.ToText`).
 
 If the hardcoded values for `LogLineNumFields` and `NumFieldsBaker` do not suit
