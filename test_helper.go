@@ -97,6 +97,34 @@ func RecordConformanceTest(t *testing.T, create func() Record) {
 		}
 	})
 
+	t.Run("copy just parsed + Get", func(t *testing.T) {
+		org := create()
+		org.Set(0, []byte("foo"))
+		org.Set(1, []byte("bar"))
+		org.Set(260, []byte("baz"))
+
+		text := org.ToText(nil)
+
+		record := create()
+		if err := record.Parse(text, nil); err != nil {
+			t.Errorf("Parse error: %v", err)
+		}
+
+		cpy := record.Copy()
+
+		if !bytes.Equal(cpy.Get(0), []byte("foo")) {
+			t.Errorf("got %q, want %q", cpy.Get(0), []byte("foo"))
+		}
+
+		if !bytes.Equal(cpy.Get(1), []byte("bar")) {
+			t.Errorf("got %q, want %q", cpy.Get(1), []byte("bar"))
+		}
+
+		if !bytes.Equal(cpy.Get(260), []byte("baz")) {
+			t.Errorf("got %q, want %q", cpy.Get(260), []byte("baz"))
+		}
+	})
+
 	t.Run("copy just parsed then modified", func(t *testing.T) {
 		org := create()
 		org.Set(0, []byte("foo"))

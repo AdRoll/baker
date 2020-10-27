@@ -44,6 +44,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - output: remove the Files output in favor of the more generic FileWriter [#31](https://github.com/AdRoll/baker/pull/31)
 
+### Fixed
+
+- Fix a bug in `logline.Copy` [#64](https://github.com/AdRoll/baker/pull/64)
+
 ### Maintenance
 
 - input: Fixes `List` input not managing S3 "folders" [#35](https://github.com/AdRoll/baker/pull/35)
