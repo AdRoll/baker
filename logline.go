@@ -238,6 +238,7 @@ func (l *LogLine) Copy() Record {
 	if l.data != nil {
 		cpy.data = make([]byte, len(l.data))
 		copy(cpy.data, l.data)
+		cpy.idx = l.idx
 	}
 	return cpy
 }
