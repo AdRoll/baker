@@ -114,7 +114,7 @@ func TestStatsDumper(t *testing.T) {
 }
 
 func TestStatsDumperInvalidRecords(t *testing.T) {
-	// This test contols the correct integration of the StatsDumper with the
+	// This test controls the correct integration of the StatsDumper with the
 	// Topology  by counting the number of invalid fields, that is the number
 	// of fields which do not pass the user-specificed validation function, as
 	// reported by the StatsDumper, after the topology has finished its execution.
