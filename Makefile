@@ -1,5 +1,3 @@
-# This Makefile can be used to obtain a Linux binary through docker (eg: from OSX)
-# For normal development, Docker is not required. See README.md for build instructions.
 .PHONY: help
 
 help:
