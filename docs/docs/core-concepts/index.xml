@@ -1,13 +1,13 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Baker – Documentation</title>
-    <link>https://adroll.github.io/baker/docs/</link>
-    <description>Recent content in Documentation on Baker</description>
+    <title>Baker – Core concepts</title>
+    <link>https://adroll.github.io/baker/docs/core-concepts/</link>
+    <description>Recent content in Core concepts on Baker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 29 Oct 2020 00:00:00 +0000</lastBuildDate>
     
-	  <atom:link href="https://adroll.github.io/baker/docs/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://adroll.github.io/baker/docs/core-concepts/index.xml" rel="self" type="application/rss+xml" />
     
     
       
