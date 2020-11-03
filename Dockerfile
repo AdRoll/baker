@@ -1,7 +1,5 @@
-FROM baker-docs:base
+FROM node:alpine3.10
 
-ADD . /baker
-WORKDIR /baker
-
+RUN apk add hugo git
+RUN npm install -g postcss-cli autoprefixer postcss
 EXPOSE 1313
-ENTRYPOINT ["hugo", "server", "--minify", "--bind=0.0.0.0"]
