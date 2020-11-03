@@ -4,28 +4,32 @@ date: 2020-11-02
 weight: 3
 ---
 
-Baker filters and ouput can be configured with a high concurrency profile (input doesn't support
-parallel processing).
+Baker allows to tune concurrency at various levels of a pipeline:
 
-This means that those components will process Records in parallel during the pipeline,
-improving performances but adding a small cons: Records order isn't guaranteed anymore
-(due to possible different speed processing between concurrent components).
+* input: Baker configuration doesn't expose knobs to tune input concurrency as it highly depends
+on the input source and how the input is implemented
+* filters: Baker runs N concurrent filter chains
+* output: Baker runs M concurrent outputs
 
-{{% alert title="Default behaviour" color="primary" %}}
-The default behaviour of Baker is to use concurrency for both filters and output.
-{{% /alert %}}
+By default then, Baker processes records concurrently, without any guaranteed order.  
+However if you need to maintain the order of the records through the whole pipeline, it is still
+possible disabling concurrency ([see below for details](#guarantee-records-order)).
 
-### Concurrent filtering
+### Filter chain concurrency
 
-The filters concurrency can be set defining the `procs` key in the `[filterchain]` section:
+The filter chain is a synchronous list of filters and the order of filters in the chain depends
+on the topology configuration in the [TOML file](/docs/core-concepts/toml/).
+
+By default, though, Baker executes multiple concurrent filter chains (the default value is 16)
+
+Filterchain concurrency can be set defining the `procs` key in the `[filterchain]` section:
 
 ```toml
 [filterchain]
 procs=16
 ```
 
-The default value is **16**.  
-To disable concurrency, set **procs=1**.
+Setting the value to **procs=1** disables the filter chain concurrency.
 
 ### Concurrent output
 
@@ -41,19 +45,20 @@ To disable concurrency, set **procs=1**.
 
 #### Output concurrency support
 
-At the moment it is not possible to know whether an output supports concurrency. A good guess is to
-see if the can support sharding (the `CanShard()` function), but the proper way is to know the
-output, whether reading its doc or looking at the code.
-
-If an output doesn't support concurrency, you should use `procs=1` to avoid corrupted output or
+For outputs that don't support concurrency, `procs=1` must be used to avoid corrupted output or
 lost data.
 
-We'll soon add a new function to the output to declare its support for concurrency, and Baker will
-return an error if `procs>1` is used with an output that doesn't support it.
+Refer to the output documentation to know if it supports concurrent processing.
+
+{{% alert color="info" %}}
+We'll soon add a new function to the output to declare whether it supports concurrency,
+and Baker will return an error if `procs>1` is used with an output that doesn't support it.
+{{% /alert %}}
 
 ### Guarantee Records order
 
 Although it's not the primary goal of Baker, it is still possible to disable concurrency and thus
-guarantee that the order of Records coming from the input is maintained in the output.
+guarantee records ordering from input to output.
 
-To do so, add both `procs=1` for output and filterchain.
+To do so, add both `procs=1` for output and filterchain, disabling concurrent processing for
+those components.
