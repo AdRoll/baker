@@ -39,20 +39,20 @@ type Record interface {
 
 ### Parse([]byte, Metadata) error
 
-The `Parse` function receives a raw record in form of bytes, decoding it for internal use.
+The `Parse` creates a Record instance by deserializing a slice of byte.
 
-It also receives a map of metadata that the input can fill in (like record retrieval timestamp
-or any other useful info). The function must be able to accept a `nil` Metadata value.
+It also receives a, possibly nil, `Metadata` map that the input can fill in (like record retrieval
+timestamp or any other useful info). The function must be able to accept a `nil` Metadata value.
 
 ### ToText(buf []byte) []byte
 
-`ToText` returns the reconstructed data format of a record.
+`ToText` serializes the Record into a slice of bytes.
 
 In case the passed `buf` is not `nil` (and if big enough), it is used to serialize the record.
 
 ### Copy() Record
 
-`Copy` creates and returns a copy of the record.
+`Copy` creates and returns a deep-copy of the record.
 	
 There is a "simple" way to create a copy of a record:
 
@@ -197,6 +197,7 @@ The helper receives the implementation of `CreateRecord` and creates new records
 them against a set of requirements.
 
 {{% alert title="Warning" color="warning" %}}
-Users should run this test for all their custom implementations, as this is the primary
-test over those implementations!
+The conformance test provides a way to verify that a record implementation respects the
+invariant that Baker requires for a Record implementation and thus it should always
+be executed against all custom implementations of the Record.
 {{% /alert %}}
