@@ -25,12 +25,30 @@ npm install postcss-cli autoprefixer postcss
 
 Hugo will listen on a local port, auto updating the pages while editing the files:
 
-```bash
+```sh
 make dev
+```
+
+Or, with docker: 
+
+```sh
+make docker-dev
 ```
 
 ### Build the website
 
-```bash
+```sh
 make build
+```
+
+Or, with docker, use the following command to build the production version:
+
+```sh
+make docker-build-prod
+```
+
+And finally, this starts the server locally inside of Docker, with the website bound to host port 80::
+
+```sh
+make docker-run-prod
 ```
