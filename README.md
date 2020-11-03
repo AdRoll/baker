@@ -2,6 +2,9 @@
 
 The website is made with [Hugo](https://gohugo.io/) and the [Docsy theme](https://github.com/google/docsy)
 
+> The docsy theme requires hugo extended version! Check the [release page](https://github.com/gohugoio/hugo/releases)
+> and download the correct version
+
 ## Add content
 
 [Official documentation](https://www.docsy.dev/docs/adding-content/content/)
