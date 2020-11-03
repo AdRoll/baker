@@ -1,7 +1,7 @@
 ---
 title: "Pipeline configuration"
 date: 2020-10-29
-weight: 2
+weight: 1
 description: >
   How to configure Baker using TOML files
 ---
