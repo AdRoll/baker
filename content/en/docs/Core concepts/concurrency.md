@@ -12,13 +12,13 @@ on the input source and how the input is implemented
 * output: Baker runs M concurrent outputs
 
 By default then, Baker processes records concurrently, without any guaranteed order.  
-However if you need to maintain the order of the records through the whole pipeline, it is still
-possible disabling concurrency ([see below for details](#guarantee-records-order)).
+However, if you need to maintain the order of the records through the whole pipeline, it is still
+possible by disabling concurrency ([see below for details](#guarantee-records-order)).
 
 ### Filter chain concurrency
 
-The filter chain is a synchronous list of filters and the order of filters in the chain depends
-on the topology configuration in the [TOML file](/docs/core-concepts/toml/).
+The filter chain is a synchronous list of filters that are applied in the order in which they are
+listed in the topology [TOML configuration file](/docs/core-concepts/toml/).
 
 By default, though, Baker executes multiple concurrent filter chains (the default value is 16)
 
