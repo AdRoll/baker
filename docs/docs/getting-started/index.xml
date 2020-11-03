@@ -1,12 +1,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Baker – Getting started</title>
-    <link>https://adroll.github.io/baker/docs/getting-started/</link>
+    <link>https://getbaker.io/docs/getting-started/</link>
     <description>Recent content in Getting started on Baker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-	  <atom:link href="https://adroll.github.io/baker/docs/getting-started/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://getbaker.io/docs/getting-started/index.xml" rel="self" type="application/rss+xml" />
     
     
       

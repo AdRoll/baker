@@ -1,13 +1,13 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Baker – Core concepts</title>
-    <link>https://adroll.github.io/baker/docs/core-concepts/</link>
+    <link>https://getbaker.io/docs/core-concepts/</link>
     <description>Recent content in Core concepts on Baker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 29 Oct 2020 00:00:00 +0000</lastBuildDate>
     
-	  <atom:link href="https://adroll.github.io/baker/docs/core-concepts/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://getbaker.io/docs/core-concepts/index.xml" rel="self" type="application/rss+xml" />
     
     
       
@@ -17,15 +17,35 @@
     
     <item>
       <title>Docs: Pipeline configuration</title>
-      <link>https://adroll.github.io/baker/docs/core-concepts/toml/</link>
+      <link>https://getbaker.io/docs/core-concepts/toml/</link>
       <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://adroll.github.io/baker/docs/core-concepts/toml/</guid>
+      <guid>https://getbaker.io/docs/core-concepts/toml/</guid>
       <description>
         
         
-        &lt;p&gt;Baker is configured using a &lt;a href=&#34;https://toml.io/en/&#34;&gt;TOML file&lt;/a&gt;, whose content is processed by the
-&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#NewConfigFromToml&#34;&gt;&lt;code&gt;NewConfigFromToml&lt;/code&gt;&lt;/a&gt; function.&lt;/p&gt;
+        &lt;h3 id=&#34;pipelines&#34;&gt;Pipelines&lt;/h3&gt;
+&lt;p&gt;A pipeline is the configured set of operations that Baker performs during its execution.&lt;/p&gt;
+&lt;p&gt;It is defined by:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;One input component, defining where to fetch records from&lt;/li&gt;
+&lt;li&gt;Zero or more filters, applied sequentially, which together define the &lt;strong&gt;filter chain&lt;/strong&gt;. A filter is
+a function that processes record (modifying fields, discarding or creating records).&lt;/li&gt;
+&lt;li&gt;One output component, defining where to send the filtered records to (and which fields)&lt;/li&gt;
+&lt;li&gt;One optional upload component, defining where to send files produced by the output component&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Notice that there are two main usage scenarios for Baker, batch or daemon processing, that depend on
+the input component behaviour:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Batch processing&lt;/strong&gt;: In this case, Baker goes through all the records that are fed
+by the input component, processes them as quickly as possible, and exits when the input component
+ends its job.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Daemon&lt;/strong&gt;: in this case, the input component never exits and thus also Baker, that keeps waiting
+for incoming records from the input (e.g.: Kinesis), processes them and sends them to the output.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;configuration-file&#34;&gt;Configuration file&lt;/h3&gt;
+&lt;p&gt;Baker is configured using a &lt;a href=&#34;https://toml.io/en/&#34;&gt;TOML file&lt;/a&gt;, whose content is processed by the
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/Baker#NewConfigFromToml&#34;&gt;&lt;code&gt;NewConfigFromToml&lt;/code&gt;&lt;/a&gt; function.&lt;/p&gt;
 &lt;p&gt;The file has several sections, described below:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -49,7 +69,7 @@
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;[[user]]&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;false&lt;/td&gt;
-&lt;td&gt;User-defined configurations&lt;/td&gt;
+&lt;td&gt;Array of user-defined configurations&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;[input]&lt;/code&gt;&lt;/td&gt;
@@ -59,7 +79,7 @@
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;[[filter]]&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;false&lt;/td&gt;
-&lt;td&gt;Filters configuration&lt;/td&gt;
+&lt;td&gt;Array of filters configuration&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;[output]&lt;/code&gt;&lt;/td&gt;
@@ -73,7 +93,7 @@
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;general-configuration&#34;&gt;General configuration&lt;/h3&gt;
+&lt;h4 id=&#34;general-configuration&#34;&gt;General configuration&lt;/h4&gt;
 &lt;p&gt;The &lt;code&gt;[general]&lt;/code&gt; section is used to configure the general behaviour of Baker.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -91,23 +111,14 @@
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;metrics-configuration&#34;&gt;Metrics configuration&lt;/h3&gt;
-&lt;p&gt;The &lt;code&gt;[metrics]&lt;/code&gt; section permits to configure the metrics host to use. Currently, only &lt;code&gt;datadog&lt;/code&gt; is
-supported.&lt;/p&gt;
-&lt;p&gt;See the dedicated page to learn how to configure DataDog metrics with Baker. (TODO: add link)&lt;/p&gt;
-&lt;h3 id=&#34;user-defined-configurations&#34;&gt;User defined configurations&lt;/h3&gt;
-&lt;p&gt;Using baker as library, one can profit of TOML parsing included in Baker to add custom configurations
-that can be used in other parts of the code.
-For details about how to use those configuration, read the dedicated page (TBD).&lt;/p&gt;
-&lt;h3 id=&#34;components-configuration&#34;&gt;Components configuration&lt;/h3&gt;
-&lt;p&gt;Components sections are &lt;code&gt;[input]&lt;/code&gt;, &lt;code&gt;[[filter]]&lt;/code&gt;, &lt;code&gt;[output]&lt;/code&gt; and &lt;code&gt;[upload]&lt;/code&gt; and will contain a
+&lt;h4 id=&#34;components-configuration&#34;&gt;Components configuration&lt;/h4&gt;
+&lt;p&gt;Components sections are &lt;code&gt;[input]&lt;/code&gt;, &lt;code&gt;[[filter]]&lt;/code&gt;, &lt;code&gt;[output]&lt;/code&gt; and &lt;code&gt;[upload]&lt;/code&gt; and contain a
 &lt;code&gt;name = &amp;quot;&amp;lt;component name&amp;gt;&amp;quot;&lt;/code&gt; line and an optional &lt;code&gt;config&lt;/code&gt; subsection (like &lt;code&gt;[input.config]&lt;/code&gt;)
 to set specific configuration values to the selected component.&lt;/p&gt;
 &lt;p&gt;Components&#39; specific configuration can be marked as required (within the component code). If a
-required config is missing, baker won&amp;rsquo;t start.&lt;/p&gt;
-&lt;p&gt;This is a minimalist baker configuration TOML, reading records from files (&lt;code&gt;List&lt;/code&gt;), applying the
-&lt;code&gt;ClauseFilter&lt;/code&gt; filter (without specific configurations) and writing the output to &lt;code&gt;DynamoDB&lt;/code&gt;,
-with some specific options:&lt;/p&gt;
+required config is missing, Baker won&amp;rsquo;t start.&lt;/p&gt;
+&lt;p&gt;This is a minimalist Baker configuration TOML, reading records from files (&lt;code&gt;List&lt;/code&gt;), applying the
+&lt;code&gt;TimestampRange&lt;/code&gt; filter and writing the output to &lt;code&gt;DynamoDB&lt;/code&gt;, with some specific options:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[input]
 name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;List&amp;#34;&lt;/span&gt;
 
@@ -115,7 +126,12 @@ name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;List&amp;#34;&lt;/span&g
     files=[&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;records.csv.gz&amp;#34;&lt;/span&gt;]
 
 [[filter]]
-name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;ClauseFilter&amp;#34;&lt;/span&gt;
+name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;TimestampRange&amp;#34;&lt;/span&gt;
+
+    [filter.config]
+    StartDatetime = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;2020-10-30 15:00:00&amp;#34;&lt;/span&gt;
+	EndDatetime = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;2020-11-01 00:00:00&amp;#34;&lt;/span&gt;
+	Field = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;timestamp&amp;#34;&lt;/span&gt;
 
 [output]
 name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;DynamoDB&amp;#34;&lt;/span&gt;
@@ -123,41 +139,81 @@ fields=[&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;source&amp;#34;&lt;/s
 
     [output.config]
     regions=[&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;us-west-2&amp;#34;&lt;/span&gt;,&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;us-east-1&amp;#34;&lt;/span&gt;]
-    table=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;TestTableName&amp;#34;&lt;/span&gt;
+    table=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyTable&amp;#34;&lt;/span&gt;
     columns=[&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;s:Source&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;n:Timestamp&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;s:User&amp;#34;&lt;/span&gt;]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;[input]&lt;/code&gt; selects the input component, or where to read the records from.&lt;br&gt;
-In this case, the List component is selected, which is a component that fetches CSV files from
-a list of local or remote paths/URLs. &lt;code&gt;[input.config]&lt;/code&gt; is where component-specific configurations
+In this case, the List component is selected, which is a component that fetches files from
+a list of local or remote paths/URLs. &lt;code&gt;[input.config]&lt;/code&gt; is where component-specific configuration
 can be specified, and in this case we simply provide the files option to List.&lt;br&gt;
 Notice that List would accept http:// or even s3:// URLs there in addition to local paths,&lt;br&gt;
-and some more (run ./baker-bin -help List in the help example for more details).&lt;/p&gt;
+and some more (run ./Baker-bin -help List in the help example for more details).&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;[[filter]]&lt;/code&gt; In TOML syntax, the double brackets indicates an array of sections.&lt;br&gt;
 This is where you declare the list of filters (i.e filter chain) to sequentially apply to your
-records. As other components, each filter may be followed by a &lt;code&gt;[filter.config]&lt;/code&gt; section.&lt;br&gt;
-This is an example:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[[filter]]
-name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;filterA&amp;#34;&lt;/span&gt;
-
-    [filter.config]
-    foo = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;bar&amp;#34;&lt;/span&gt;
-
-[[filter]]
-name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;filterB&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;[output]&lt;/code&gt; selects the output component; the output is where records that made it to the end of
+records. As other components, each filter may be followed by a &lt;code&gt;[filter.config]&lt;/code&gt; section.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;[output]&lt;/code&gt; selects the output component; the output is where records that made it to the end of
 the filter chain without being discarded end up. In this case, the &lt;code&gt;DynamoDB&lt;/code&gt; output is selected,
 and its configuration is specified in &lt;code&gt;[output.config]&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;fields&lt;/code&gt; option in the &lt;code&gt;[output]&lt;/code&gt; section selects which fields of the record will be send
+&lt;p&gt;The &lt;code&gt;fields&lt;/code&gt; option in the &lt;code&gt;[output]&lt;/code&gt; section selects which fields of the record are sent
 to the output.&lt;br&gt;
-In fact, most pipelines don&amp;rsquo;t want to send the full records to the output, but they will select
-a few important columns out of the many available columns.&lt;br&gt;
+In fact, most pipelines don&amp;rsquo;t want to send the full records to the output, but they select
+a few important fields out of the many available fields.&lt;br&gt;
 Notice that this is just a selection: it is up to the output component to decide how to
-physically serialize those columns. For instance, the &lt;code&gt;DynamoDB&lt;/code&gt; component requires the user
+physically serialize those fields. For instance, the &lt;code&gt;DynamoDB&lt;/code&gt; component requires the user
 to specify an option called columns that specifies the name and the type of the column where
-the fields will be written.&lt;/p&gt;
+the fields are written.&lt;/p&gt;
+&lt;h4 id=&#34;metrics-configuration&#34;&gt;Metrics configuration&lt;/h4&gt;
+&lt;p&gt;The &lt;code&gt;[metrics]&lt;/code&gt; section allows to configure the metrics backend to use. Currently, only &lt;code&gt;datadog&lt;/code&gt; is
+supported.&lt;/p&gt;
+&lt;p&gt;See the dedicated page to learn how to configure DataDog metrics with Baker. (TODO: add link)&lt;/p&gt;
+&lt;h4 id=&#34;user-defined-configurations&#34;&gt;User defined configurations&lt;/h4&gt;
+&lt;p&gt;The &lt;code&gt;baker.NewConfigFromToml&lt;/code&gt; function, used by Baker to parse the TOML configuration file, can be
+also used to add custom configurations to the TOML file (useful as Baker can be used as library in
+a more complex project).&lt;/p&gt;
+&lt;p&gt;This is an example of a TOML file defining also some of those user defined configurations (along
+with the input and output configurations):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[input]
+name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;random&amp;#34;&lt;/span&gt;
+
+[output]
+name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;recorder&amp;#34;&lt;/span&gt;
+
+[[user]]
+name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyConfiG&amp;#34;&lt;/span&gt;
+
+	[user.config]
+	field1 = &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;
+	field2 = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;hello!&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Using &lt;code&gt;NewConfigFromToml&lt;/code&gt; is then possible to retrieve those configurations:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;cfg &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; strings.&lt;span style=&#34;color:#50fa7b&#34;&gt;NewReader&lt;/span&gt;(toml) &lt;span style=&#34;color:#6272a4&#34;&gt;// toml is the content of the toml file
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#6272a4&#34;&gt;// myConfig contains the user-defined configurations we expect from the toml file
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; myConfig &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
+    Field1 &lt;span style=&#34;color:#8be9fd&#34;&gt;int&lt;/span&gt;
+    Field2 &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;
+}
+mycfg &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; myConfig{}
+
+&lt;span style=&#34;color:#6272a4&#34;&gt;// comp is the baker components configuration.
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;// Here we use Inputs and Outputs in addition to User because
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;// they are required configurations
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
+    Inputs:  []baker.InputDesc{inputtest.RandomDesc},
+    Outputs: []baker.OutputDesc{outputtest.RecorderDesc},
+    User:    []baker.UserDesc{{Name: &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;myconfig&amp;#34;&lt;/span&gt;, Config: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;mycfg}},
+}
+
+&lt;span style=&#34;color:#6272a4&#34;&gt;// Use baker to parse and ingest the configuration file
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;baker.&lt;span style=&#34;color:#50fa7b&#34;&gt;NewConfigFromToml&lt;/span&gt;(cfg, comp)
+
+&lt;span style=&#34;color:#6272a4&#34;&gt;// Now mycfg has been populated with the user defined configurations:
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;// myConfig{Field1: 1, Field2: &amp;#34;hello!&amp;#34;}
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;// and can be used anywhere in the program
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;More examples can be found in the
+&lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/user_config_test.go&#34;&gt;dedicated test file&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;environment-variables-replacement&#34;&gt;Environment variables replacement&lt;/h3&gt;
 &lt;p&gt;Baker supports environment variables replacement in the configuration file.&lt;/p&gt;
-&lt;p&gt;Use &lt;code&gt;${ENV_VAR_NAME}&lt;/code&gt; or &lt;code&gt;$ENV_VAR_NAME&lt;/code&gt; and the value in the file will be replaced at runtime.&lt;br&gt;
-Note that if the variable doesn&amp;rsquo;t exist, then an empty string will be used for replacement.&lt;/p&gt;
+&lt;p&gt;Use &lt;code&gt;${ENV_VAR_NAME}&lt;/code&gt; or &lt;code&gt;$ENV_VAR_NAME&lt;/code&gt; and the value in the file is replaced at runtime.&lt;br&gt;
+Note that if the variable doesn&amp;rsquo;t exist, then an empty string is used for replacement.&lt;/p&gt;
 
       </description>
     </item>

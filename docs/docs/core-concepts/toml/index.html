@@ -3,28 +3,28 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.77.0" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
-<link rel="apple-touch-icon" href="/baker/favicons/apple-touch-icon-180x180.png" sizes="180x180">
-<link rel="icon" type="image/png" href="/baker/favicons/favicon-16x16.png" sizes="16x16">
-<link rel="icon" type="image/png" href="/baker/favicons/favicon-32x32.png" sizes="32x32">
-<link rel="icon" type="image/png" href="/baker/favicons/android-36x36.png" sizes="36x36">
-<link rel="icon" type="image/png" href="/baker/favicons/android-48x48.png" sizes="48x48">
-<link rel="icon" type="image/png" href="/baker/favicons/android-72x72.png" sizes="72x72">
-<link rel="icon" type="image/png" href="/baker/favicons/android-96x96.png" sizes="96x96">
-<link rel="icon" type="image/png" href="/baker/favicons/android-144x144.png" sizes="144x144">
-<link rel="icon" type="image/png" href="/baker/favicons/android-192x192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/favicons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicons/android-36x36.png" sizes="36x36">
+<link rel="icon" type="image/png" href="/favicons/android-48x48.png" sizes="48x48">
+<link rel="icon" type="image/png" href="/favicons/android-72x72.png" sizes="72x72">
+<link rel="icon" type="image/png" href="/favicons/android-96x96.png" sizes="96x96">
+<link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
+<link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
 <title>Pipeline configuration | Baker</title><meta property="og:title" content="Pipeline configuration" />
 <meta property="og:description" content="How to configure Baker using TOML files
 " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://adroll.github.io/baker/docs/core-concepts/toml/" />
+<meta property="og:url" content="https://getbaker.io/docs/core-concepts/toml/" />
 <meta property="article:published_time" content="2020-10-29T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-10-29T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
 <meta itemprop="name" content="Pipeline configuration">
@@ -32,7 +32,7 @@
 ">
 <meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
-<meta itemprop="wordCount" content="585">
+<meta itemprop="wordCount" content="911">
 
 
 
@@ -46,8 +46,8 @@
 
 
 
-<link rel="preload" href="/baker/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" as="style">
-<link href="/baker/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" as="style">
+<link href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -63,7 +63,7 @@
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
-        <a class="navbar-brand" href="/baker/">
+        <a class="navbar-brand" href="/">
 		<span class="navbar-logo"><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" style="enable-background:new 0 0 500 500"><g><path style="fill:#fff" d="M116.8525 421.9722c-5.7041.0-10.3442-4.3127-10.3442-9.6129V88.183c0-5.3002 4.6401-9.6117 10.3442-9.6117H320.858c3.0347.0 9.3959.5498 11.7506 2.6302l.3545.3442 58.905 63.2912c2.3101 2.491 2.9202 8.4928 2.9202 11.3184v256.2039c0 5.3002-4.6407 9.6129-10.3436 9.6129H116.8525z"/><g><g><g><path style="fill:#767676" d="M384.4445 423.2066H116.852c-6.3839.0-11.5786-4.8658-11.5786-10.8474V88.1831c0-5.9804 5.1947-10.8461 11.5786-10.8461h204.0062c.377.0 9.2786.0329 12.568 2.9389l.3947.3833 58.9508 63.337c3.2135 3.4652 3.2514 11.7924 3.2514 12.1593v256.2036C396.0231 418.3408 390.8284 423.2066 384.4445 423.2066zM116.5079 411.9189c.0848.0278.1999.0531.3441.0531h267.5925c.1442.0.2581-.0253.3441-.0531V156.1556c-.0076-.9033-.3593-3.7347-.7034-5.0037l-57.6527-61.9416c-1.4651-.3176-4.4533-.6389-5.5742-.6389H116.852c-.143.0-.2594.024-.3441.0531V411.9189zm267.4533-261.149zM327.0321 89.371v.0013V89.371z"/></g></g></g><g><g><path style="fill:#5b7fc0" d="M189.0874 210.1754l.0012-.0012c7.7751.0012 15.0295 4.1862 18.932 10.9234 1.9177 3.3159 2.9305 7.1011 2.9293 10.9378.0 5.8394-2.2733 11.3304-6.4032 15.4604-4.1288 4.1288-9.6186 6.4032-15.458 6.4032s-11.328-2.2733-15.458-6.4032-6.4032-9.6186-6.4056-15.4628c.0012-6.025 2.454-11.4897 6.4116-15.4473C177.5953 212.627 183.0601 210.1742 189.0874 210.1754zM197.0804 232.033c.0012-1.4042-.3687-2.7868-1.063-3.9887-1.4293-2.4684-4.0833-3.9995-6.9299-4.0019-4.4077.0024-7.993 3.5877-7.993 7.993.0 2.1356.832 4.1431 2.3427 5.6539 1.5083 1.5083 3.5159 2.3403 5.6503 2.3415 2.1356.0 4.1443-.8308 5.6539-2.3403S197.0816 234.1722 197.0804 232.033z"/><path style="opacity:.3;fill:#fff" d="M189.0898 210.176c7.7763.0 15.0283 4.1826 18.926 10.9151 1.9201 3.3136 2.9377 7.0988 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8613-12.0547.0024-21.8636-9.8066-21.8612-21.8613.0-6.0285 2.4516-11.4921 6.4116-15.452C177.5977 212.6276 183.0612 210.176 189.0898 210.176zM197.0839 232.0372c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.1861 236.239 197.0839 234.2399 197.0839 232.0372z"/><g><defs><path id="SVGID_1_" d="M194.7376 237.6875c-1.4461 1.4461-3.4452 2.3439-5.6479 2.3439-4.4077-.0024-7.9918-3.5865-7.9942-7.9942.0024-4.4125 3.5937-7.999 7.9942-7.9942 2.8443.0 5.497 1.5323 6.924 3.9983.6991 1.2067 1.0702 2.5881 1.0702 3.9959C197.0839 234.2399 196.1861 236.239 194.7376 237.6875z"/></defs><clipPath id="SVGID_2_"><use xlink:href="#SVGID_1_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_2_);fill:#fff" d="M190.0704 225.0237c-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0011 1.9546.7088 3.7452 1.8782 5.1354-1.7447-1.4674-2.8575-3.663-2.8588-6.116.0024-4.4125 3.5936-7.999 7.9942-7.9942 2.3802-1e-4 4.616 1.0833 6.1218 2.8788C193.7885 225.7247 191.9774 225.0237 190.0704 225.0237z"/><path style="opacity:.13;clip-path:url(#SVGID_2_);fill:#020202" d="M190.0704 225.0237c-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0011 1.9546.7088 3.7452 1.8782 5.1354-1.7447-1.4674-2.8575-3.663-2.8588-6.116.0024-4.4125 3.5936-7.999 7.9942-7.9942 2.3802-1e-4 4.616 1.0833 6.1218 2.8788C193.7885 225.7247 191.9774 225.0237 190.0704 225.0237z"/></g><g><defs><path id="SVGID_3_" d="M189.0898 210.176c7.7763.0 15.0283 4.1826 18.926 10.9151 1.9201 3.3136 2.9377 7.0988 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8613-12.0547.0024-21.8636-9.8066-21.8612-21.8613.0-6.0285 2.4516-11.4921 6.4116-15.452C177.5977 212.6276 183.0612 210.176 189.0898 210.176zM197.0839 232.0372c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.1861 236.239 197.0839 234.2399 197.0839 232.0372z"/></defs><clipPath id="SVGID_4_"><use xlink:href="#SVGID_3_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_4_);fill:#5b7fc0" d="M172.6595 215.6045c-3.96 3.96-6.4116 9.4235-6.4116 15.452-.0024 12.0547 9.8066 21.8636 21.8613 21.8612 12.0547.0024 21.8636-9.797 21.8613-21.8612.0024-3.8475-1.0151-7.6326-2.9353-10.9462-3.8977-6.7324-11.1497-10.9151-18.926-10.9151C182.0806 209.1953 176.6171 211.647 172.6595 215.6045z"/></g></g><rect x="198.8952" y="225.1043" style="fill:#5b7fc0" width="122.6266" height="13.8671"/></g><g><path style="fill:#d95140" d="M189.0874 155.7611l.0012-.0012c7.7751.0012 15.0295 4.1862 18.932 10.9234 1.9177 3.3159 2.9305 7.1011 2.9293 10.9378.0 5.8394-2.2733 11.3304-6.4032 15.4604-4.1288 4.1288-9.6186 6.4032-15.458 6.4032s-11.328-2.2733-15.458-6.4032-6.4032-9.6186-6.4056-15.4628c.0012-6.0249 2.454-11.4897 6.4116-15.4473C177.5953 158.2128 183.0601 155.7599 189.0874 155.7611zM197.0804 177.6188c.0012-1.4042-.3687-2.7868-1.063-3.9887-1.4293-2.4684-4.0833-3.9995-6.9299-4.0019-4.4077.0024-7.993 3.5877-7.993 7.993.0 2.1356.832 4.1431 2.3427 5.6539 1.5083 1.5083 3.5159 2.3403 5.6503 2.3415 2.1356.0 4.1443-.8308 5.6539-2.3403C196.2508 181.7667 197.0816 179.758 197.0804 177.6188z"/><path style="opacity:.3;fill:#fff" d="M189.0898 155.7617c7.7763.0 15.0283 4.1826 18.926 10.9151 1.9201 3.3135 2.9377 7.0987 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8613-12.0547.0024-21.8636-9.8066-21.8612-21.8613.0-6.0285 2.4516-11.4921 6.4116-15.452C177.5977 158.2134 183.0612 155.7617 189.0898 155.7617zM197.0839 177.623c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.1861 181.8248 197.0839 179.8256 197.0839 177.623z"/><g><defs><path id="SVGID_5_" d="M194.7376 183.2733c-1.4461 1.4461-3.4452 2.3439-5.6479 2.3439-4.4077-.0024-7.9918-3.5865-7.9942-7.9942.0024-4.4125 3.5937-7.9989 7.9942-7.9942 2.8443.0 5.497 1.5323 6.924 3.9983.6991 1.2067 1.0702 2.5881 1.0702 3.9959C197.0839 179.8256 196.1861 181.8248 194.7376 183.2733z"/></defs><clipPath id="SVGID_6_"><use xlink:href="#SVGID_5_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_6_);fill:#fff" d="M190.0704 170.6095c-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0011 1.9546.7088 3.7452 1.8782 5.1354-1.7447-1.4674-2.8575-3.663-2.8588-6.116.0024-4.4125 3.5936-7.999 7.9942-7.9942 2.3802-1e-4 4.616 1.0833 6.1218 2.8788C193.7885 171.3104 191.9774 170.6095 190.0704 170.6095z"/><path style="opacity:.13;clip-path:url(#SVGID_6_);fill:#020202" d="M190.0704 170.6095c-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0011 1.9546.7088 3.7452 1.8782 5.1354-1.7447-1.4674-2.8575-3.663-2.8588-6.116.0024-4.4125 3.5936-7.999 7.9942-7.9942 2.3802-1e-4 4.616 1.0833 6.1218 2.8788C193.7885 171.3104 191.9774 170.6095 190.0704 170.6095z"/></g><g><defs><path id="SVGID_7_" d="M189.0898 155.7617c7.7763.0 15.0283 4.1826 18.926 10.9151 1.9201 3.3135 2.9377 7.0987 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8613-12.0547.0024-21.8636-9.8066-21.8612-21.8613.0-6.0285 2.4516-11.4921 6.4116-15.452C177.5977 158.2134 183.0612 155.7617 189.0898 155.7617zM197.0839 177.623c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.1861 181.8248 197.0839 179.8256 197.0839 177.623z"/></defs><clipPath id="SVGID_8_"><use xlink:href="#SVGID_7_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_8_);fill:#d95140" d="M172.6595 161.1903c-3.96 3.96-6.4116 9.4235-6.4116 15.452-.0024 12.0547 9.8066 21.8636 21.8613 21.8613 12.0547.0024 21.8636-9.797 21.8613-21.8613.0024-3.8474-1.0151-7.6326-2.9353-10.9462-3.8977-6.7324-11.1497-10.9151-18.926-10.9151C182.0806 154.7811 176.6171 157.2327 172.6595 161.1903z"/></g><rect x="198.8952" y="170.69" style="fill:#d95140" width="122.6266" height="13.8671"/></g><g><g><path style="fill:#56a55c" d="M189.5379 264.6147l.0012-.0012c7.7751.0012 15.0294 4.1862 18.932 10.9235 1.9177 3.3159 2.9305 7.1011 2.9293 10.9378.0 5.8394-2.2733 11.3304-6.4032 15.4604-4.1288 4.1288-9.6186 6.4032-15.458 6.4032-5.8394.0-11.3281-2.2733-15.458-6.4032-4.13-4.13-6.4032-9.6186-6.4056-15.4628.0012-6.0249 2.454-11.4897 6.4116-15.4472C178.0458 267.0663 183.5105 264.6135 189.5379 264.6147zM197.5309 286.4723c.0012-1.4042-.3687-2.7868-1.063-3.9887-1.4293-2.4684-4.0833-3.9995-6.9299-4.0019-4.4077.0024-7.993 3.5877-7.993 7.993.0 2.1356.832 4.1431 2.3427 5.6538 1.5083 1.5083 3.5159 2.3403 5.6503 2.3415 2.1356.0 4.1443-.8308 5.6539-2.3403C196.7013 290.6202 197.5321 288.6115 197.5309 286.4723z"/><path style="opacity:.3;fill:#fff" d="M189.5403 264.6153c7.7763.0 15.0283 4.1826 18.926 10.9151 1.9201 3.3135 2.9377 7.0987 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8613-12.0547.0024-21.8636-9.8065-21.8612-21.8613.0-6.0285 2.4516-11.492 6.4116-15.452C178.0482 267.0669 183.5117 264.6153 189.5403 264.6153zM197.5344 286.4765c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9941.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.6366 290.6783 197.5344 288.6792 197.5344 286.4765z"/><g><defs><path id="SVGID_9_" d="M195.1881 292.1268c-1.4461 1.4461-3.4452 2.3439-5.6479 2.3439-4.4077-.0024-7.9918-3.5865-7.9942-7.9942.0024-4.4125 3.5937-7.9989 7.9942-7.9941 2.8443.0 5.497 1.5323 6.924 3.9983.6991 1.2067 1.0702 2.5881 1.0702 3.9959C197.5344 288.6792 196.6366 290.6783 195.1881 292.1268z"/></defs><clipPath id="SVGID_10_"><use xlink:href="#SVGID_9_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_10_);fill:#fff" d="M190.5209 279.463c-4.4005-.0048-7.9918 3.5817-7.9942 7.9941.0011 1.9547.7088 3.7452 1.8782 5.1354-1.7446-1.4674-2.8575-3.6631-2.8588-6.1161.0024-4.4125 3.5936-7.999 7.9942-7.9941 2.3802-1e-4 4.616 1.0833 6.1218 2.8788C194.239 280.164 192.4279 279.463 190.5209 279.463z"/><path style="opacity:.13;clip-path:url(#SVGID_10_);fill:#020202" d="M190.5209 279.463c-4.4005-.0048-7.9918 3.5817-7.9942 7.9941.0011 1.9547.7088 3.7452 1.8782 5.1354-1.7446-1.4674-2.8575-3.6631-2.8588-6.1161.0024-4.4125 3.5936-7.999 7.9942-7.9941 2.3802-1e-4 4.616 1.0833 6.1218 2.8788C194.239 280.164 192.4279 279.463 190.5209 279.463z"/></g><g><defs><path id="SVGID_11_" d="M189.5403 264.6153c7.7763.0 15.0283 4.1826 18.926 10.9151 1.9201 3.3135 2.9377 7.0987 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8613-12.0547.0024-21.8636-9.8065-21.8612-21.8613.0-6.0285 2.4516-11.492 6.4116-15.452C178.0482 267.0669 183.5117 264.6153 189.5403 264.6153zM197.5344 286.4765c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9941.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.6366 290.6783 197.5344 288.6792 197.5344 286.4765z"/></defs><clipPath id="SVGID_12_"><use xlink:href="#SVGID_11_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_12_);fill:#56a55c" d="M173.11 270.0439c-3.96 3.96-6.4116 9.4235-6.4116 15.452-.0024 12.0547 9.8066 21.8636 21.8613 21.8613 12.0547.0024 21.8636-9.797 21.8613-21.8613.0024-3.8474-1.0151-7.6326-2.9353-10.9462-3.8977-6.7325-11.1497-10.9151-18.926-10.9151C182.5311 263.6346 177.0676 266.0863 173.11 270.0439z"/></g></g><rect x="199.3456" y="279.5436" style="fill:#56a55c" width="122.6266" height="13.8671"/></g><g><g><path style="fill:#f1bc42" d="M189.0874 318.7208l.0012-.0012c7.7751.0012 15.0295 4.1862 18.932 10.9234 1.9177 3.3159 2.9305 7.1011 2.9293 10.9378.0 5.8394-2.2733 11.3305-6.4032 15.4604-4.1288 4.1288-9.6186 6.4032-15.458 6.4032s-11.328-2.2733-15.458-6.4032-6.4032-9.6186-6.4056-15.4628c.0012-6.025 2.454-11.4897 6.4116-15.4472C177.5953 321.1724 183.0601 318.7196 189.0874 318.7208zM197.0804 340.5784c.0012-1.4042-.3687-2.7868-1.063-3.9887-1.4293-2.4684-4.0833-3.9995-6.9299-4.0019-4.4077.0024-7.993 3.5877-7.993 7.993.0 2.1356.832 4.1431 2.3427 5.6539 1.5083 1.5083 3.5159 2.3403 5.6503 2.3415 2.1356.0 4.1443-.8308 5.6539-2.3403S197.0816 342.7176 197.0804 340.5784z"/><path style="opacity:.3;fill:#fff" d="M189.0898 318.7214c7.7763.0 15.0283 4.1826 18.926 10.915 1.9201 3.3136 2.9377 7.0988 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8612-12.0547.0024-21.8636-9.8065-21.8612-21.8612.0-6.0285 2.4516-11.4921 6.4116-15.452C177.5977 321.173 183.0612 318.7214 189.0898 318.7214zM197.0839 340.5826c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.1861 344.7844 197.0839 342.7853 197.0839 340.5826z"/><g><defs><path id="SVGID_13_" d="M194.7376 346.2329c-1.4461 1.4461-3.4452 2.3439-5.6479 2.3439-4.4077-.0024-7.9918-3.5865-7.9942-7.9942.0024-4.4125 3.5937-7.999 7.9942-7.9942 2.8443.0 5.497 1.5323 6.924 3.9983.6991 1.2067 1.0702 2.5881 1.0702 3.9959C197.0839 342.7853 196.1861 344.7844 194.7376 346.2329z"/></defs><clipPath id="SVGID_14_"><use xlink:href="#SVGID_13_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_14_);fill:#fff" d="M190.0704 333.5691c-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0011 1.9547.7088 3.7452 1.8782 5.1354-1.7447-1.4674-2.8575-3.6631-2.8588-6.1161.0024-4.4125 3.5936-7.999 7.9942-7.9942 2.3802-1e-4 4.616 1.0834 6.1218 2.8788C193.7885 334.2701 191.9774 333.5691 190.0704 333.5691z"/><path style="opacity:.13;clip-path:url(#SVGID_14_);fill:#020202" d="M190.0704 333.5691c-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0011 1.9547.7088 3.7452 1.8782 5.1354-1.7447-1.4674-2.8575-3.6631-2.8588-6.1161.0024-4.4125 3.5936-7.999 7.9942-7.9942 2.3802-1e-4 4.616 1.0834 6.1218 2.8788C193.7885 334.2701 191.9774 333.5691 190.0704 333.5691z"/></g><g><defs><path id="SVGID_15_" d="M189.0898 318.7214c7.7763.0 15.0283 4.1826 18.926 10.915 1.9201 3.3136 2.9377 7.0988 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8612-12.0547.0024-21.8636-9.8065-21.8612-21.8612.0-6.0285 2.4516-11.4921 6.4116-15.452C177.5977 321.173 183.0612 318.7214 189.0898 318.7214zM197.0839 340.5826c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.1861 344.7844 197.0839 342.7853 197.0839 340.5826z"/></defs><clipPath id="SVGID_16_"><use xlink:href="#SVGID_15_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_16_);fill:#f1bc42" d="M172.6595 324.15c-3.96 3.96-6.4116 9.4235-6.4116 15.452-.0024 12.0547 9.8066 21.8636 21.8613 21.8612 12.0547.0024 21.8636-9.797 21.8613-21.8612.0024-3.8474-1.0151-7.6327-2.9353-10.9462-3.8977-6.7324-11.1497-10.9151-18.926-10.9151C182.0806 317.7407 176.6171 320.1924 172.6595 324.15z"/></g></g><rect x="198.8952" y="333.6497" style="fill:#f1bc42" width="122.6266" height="13.8671"/></g></g></svg></span><span class="text-uppercase font-weight-bold">Baker</span>
 	</a>
 	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
@@ -77,7 +77,7 @@
 				
 				
 				
-				<a class="nav-link active" href="/baker/docs/" ><span class="active">Documentation</span></a>
+				<a class="nav-link active" href="/docs/" ><span class="active">Documentation</span></a>
 			</li>
 			
 			
@@ -118,10 +118,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/baker/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Documentation</a>
+    <a  href="/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Documentation</a>
   </li>
   <ul>
-    <li class="collapse show" id="bakerdocs">
+    <li class="collapse show" id="docs">
       
       
       
@@ -135,10 +135,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/baker/docs/getting-started/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Getting Started</a>
+    <a  href="/docs/getting-started/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Getting Started</a>
   </li>
   <ul>
-    <li class="collapse " id="bakerdocsgetting-started">
+    <li class="collapse " id="docsgetting-started">
       
       
       
@@ -158,17 +158,17 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/baker/docs/core-concepts/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Core concepts</a>
+    <a  href="/docs/core-concepts/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Core concepts</a>
   </li>
   <ul>
-    <li class="collapse show" id="bakerdocscore-concepts">
+    <li class="collapse show" id="docscore-concepts">
       
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-bakerdocscore-conceptstoml" href="/baker/docs/core-concepts/toml/">Pipeline configuration</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscore-conceptstoml" href="/docs/core-concepts/toml/">Pipeline configuration</a>
       
       
     </li>
@@ -216,10 +216,8 @@
   <ul>
     <li>
       <ul>
-        <li><a href="#general-configuration">General configuration</a></li>
-        <li><a href="#metrics-configuration">Metrics configuration</a></li>
-        <li><a href="#user-defined-configurations">User defined configurations</a></li>
-        <li><a href="#components-configuration">Components configuration</a></li>
+        <li><a href="#pipelines">Pipelines</a></li>
+        <li><a href="#configuration-file">Configuration file</a></li>
         <li><a href="#environment-variables-replacement">Environment variables replacement</a></li>
       </ul>
     </li>
@@ -247,21 +245,21 @@
 
 
 <li class="breadcrumb-item" >
-	<a href="https://adroll.github.io/baker/docs/">Documentation</a>
+	<a href="https://getbaker.io/docs/">Documentation</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item" >
-	<a href="https://adroll.github.io/baker/docs/core-concepts/">Core concepts</a>
+	<a href="https://getbaker.io/docs/core-concepts/">Core concepts</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://adroll.github.io/baker/docs/core-concepts/toml/">Pipeline configuration</a>
+	<a href="https://getbaker.io/docs/core-concepts/toml/">Pipeline configuration</a>
 </li>
 
 	</ol>
@@ -272,8 +270,28 @@
 	<h1>Pipeline configuration</h1>
     <div class="lead">How to configure Baker using TOML files</div>
 	       
-	<p>Baker is configured using a <a href="https://toml.io/en/">TOML file</a>, whose content is processed by the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#NewConfigFromToml"><code>NewConfigFromToml</code></a> function.</p>
+	<h3 id="pipelines">Pipelines</h3>
+<p>A pipeline is the configured set of operations that Baker performs during its execution.</p>
+<p>It is defined by:</p>
+<ul>
+<li>One input component, defining where to fetch records from</li>
+<li>Zero or more filters, applied sequentially, which together define the <strong>filter chain</strong>. A filter is
+a function that processes record (modifying fields, discarding or creating records).</li>
+<li>One output component, defining where to send the filtered records to (and which fields)</li>
+<li>One optional upload component, defining where to send files produced by the output component</li>
+</ul>
+<p>Notice that there are two main usage scenarios for Baker, batch or daemon processing, that depend on
+the input component behaviour:</p>
+<ul>
+<li><strong>Batch processing</strong>: In this case, Baker goes through all the records that are fed
+by the input component, processes them as quickly as possible, and exits when the input component
+ends its job.</li>
+<li><strong>Daemon</strong>: in this case, the input component never exits and thus also Baker, that keeps waiting
+for incoming records from the input (e.g.: Kinesis), processes them and sends them to the output.</li>
+</ul>
+<h3 id="configuration-file">Configuration file</h3>
+<p>Baker is configured using a <a href="https://toml.io/en/">TOML file</a>, whose content is processed by the
+<a href="https://pkg.go.dev/github.com/AdRoll/Baker#NewConfigFromToml"><code>NewConfigFromToml</code></a> function.</p>
 <p>The file has several sections, described below:</p>
 <table>
 <thead>
@@ -297,7 +315,7 @@
 <tr>
 <td><code>[[user]]</code></td>
 <td>false</td>
-<td>User-defined configurations</td>
+<td>Array of user-defined configurations</td>
 </tr>
 <tr>
 <td><code>[input]</code></td>
@@ -307,7 +325,7 @@
 <tr>
 <td><code>[[filter]]</code></td>
 <td>false</td>
-<td>Filters configuration</td>
+<td>Array of filters configuration</td>
 </tr>
 <tr>
 <td><code>[output]</code></td>
@@ -321,7 +339,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="general-configuration">General configuration</h3>
+<h4 id="general-configuration">General configuration</h4>
 <p>The <code>[general]</code> section is used to configure the general behaviour of Baker.</p>
 <table>
 <thead>
@@ -339,23 +357,14 @@
 </tr>
 </tbody>
 </table>
-<h3 id="metrics-configuration">Metrics configuration</h3>
-<p>The <code>[metrics]</code> section permits to configure the metrics host to use. Currently, only <code>datadog</code> is
-supported.</p>
-<p>See the dedicated page to learn how to configure DataDog metrics with Baker. (TODO: add link)</p>
-<h3 id="user-defined-configurations">User defined configurations</h3>
-<p>Using baker as library, one can profit of TOML parsing included in Baker to add custom configurations
-that can be used in other parts of the code.
-For details about how to use those configuration, read the dedicated page (TBD).</p>
-<h3 id="components-configuration">Components configuration</h3>
-<p>Components sections are <code>[input]</code>, <code>[[filter]]</code>, <code>[output]</code> and <code>[upload]</code> and will contain a
+<h4 id="components-configuration">Components configuration</h4>
+<p>Components sections are <code>[input]</code>, <code>[[filter]]</code>, <code>[output]</code> and <code>[upload]</code> and contain a
 <code>name = &quot;&lt;component name&gt;&quot;</code> line and an optional <code>config</code> subsection (like <code>[input.config]</code>)
 to set specific configuration values to the selected component.</p>
 <p>Components' specific configuration can be marked as required (within the component code). If a
-required config is missing, baker won&rsquo;t start.</p>
-<p>This is a minimalist baker configuration TOML, reading records from files (<code>List</code>), applying the
-<code>ClauseFilter</code> filter (without specific configurations) and writing the output to <code>DynamoDB</code>,
-with some specific options:</p>
+required config is missing, Baker won&rsquo;t start.</p>
+<p>This is a minimalist Baker configuration TOML, reading records from files (<code>List</code>), applying the
+<code>TimestampRange</code> filter and writing the output to <code>DynamoDB</code>, with some specific options:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[input]
 name=<span style="color:#f1fa8c">&#34;List&#34;</span>
 
@@ -363,7 +372,12 @@ name=<span style="color:#f1fa8c">&#34;List&#34;</span>
     files=[<span style="color:#f1fa8c">&#34;records.csv.gz&#34;</span>]
 
 [[filter]]
-name=<span style="color:#f1fa8c">&#34;ClauseFilter&#34;</span>
+name=<span style="color:#f1fa8c">&#34;TimestampRange&#34;</span>
+
+    [filter.config]
+    StartDatetime = <span style="color:#f1fa8c">&#34;2020-10-30 15:00:00&#34;</span>
+	EndDatetime = <span style="color:#f1fa8c">&#34;2020-11-01 00:00:00&#34;</span>
+	Field = <span style="color:#f1fa8c">&#34;timestamp&#34;</span>
 
 [output]
 name=<span style="color:#f1fa8c">&#34;DynamoDB&#34;</span>
@@ -371,41 +385,81 @@ fields=[<span style="color:#f1fa8c">&#34;source&#34;</span>,<span style="color:#
 
     [output.config]
     regions=[<span style="color:#f1fa8c">&#34;us-west-2&#34;</span>,<span style="color:#f1fa8c">&#34;us-east-1&#34;</span>]
-    table=<span style="color:#f1fa8c">&#34;TestTableName&#34;</span>
+    table=<span style="color:#f1fa8c">&#34;MyTable&#34;</span>
     columns=[<span style="color:#f1fa8c">&#34;s:Source&#34;</span>, <span style="color:#f1fa8c">&#34;n:Timestamp&#34;</span>, <span style="color:#f1fa8c">&#34;s:User&#34;</span>]
 </code></pre></div><p><code>[input]</code> selects the input component, or where to read the records from.<br>
-In this case, the List component is selected, which is a component that fetches CSV files from
-a list of local or remote paths/URLs. <code>[input.config]</code> is where component-specific configurations
+In this case, the List component is selected, which is a component that fetches files from
+a list of local or remote paths/URLs. <code>[input.config]</code> is where component-specific configuration
 can be specified, and in this case we simply provide the files option to List.<br>
 Notice that List would accept http:// or even s3:// URLs there in addition to local paths,<br>
-and some more (run ./baker-bin -help List in the help example for more details).</p>
+and some more (run ./Baker-bin -help List in the help example for more details).</p>
 <p><code>[[filter]]</code> In TOML syntax, the double brackets indicates an array of sections.<br>
 This is where you declare the list of filters (i.e filter chain) to sequentially apply to your
-records. As other components, each filter may be followed by a <code>[filter.config]</code> section.<br>
-This is an example:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[[filter]]
-name=<span style="color:#f1fa8c">&#34;filterA&#34;</span>
-
-    [filter.config]
-    foo = <span style="color:#f1fa8c">&#34;bar&#34;</span>
-
-[[filter]]
-name=<span style="color:#f1fa8c">&#34;filterB&#34;</span>
-</code></pre></div><p><code>[output]</code> selects the output component; the output is where records that made it to the end of
+records. As other components, each filter may be followed by a <code>[filter.config]</code> section.</p>
+<p><code>[output]</code> selects the output component; the output is where records that made it to the end of
 the filter chain without being discarded end up. In this case, the <code>DynamoDB</code> output is selected,
 and its configuration is specified in <code>[output.config]</code>.</p>
-<p>The <code>fields</code> option in the <code>[output]</code> section selects which fields of the record will be send
+<p>The <code>fields</code> option in the <code>[output]</code> section selects which fields of the record are sent
 to the output.<br>
-In fact, most pipelines don&rsquo;t want to send the full records to the output, but they will select
-a few important columns out of the many available columns.<br>
+In fact, most pipelines don&rsquo;t want to send the full records to the output, but they select
+a few important fields out of the many available fields.<br>
 Notice that this is just a selection: it is up to the output component to decide how to
-physically serialize those columns. For instance, the <code>DynamoDB</code> component requires the user
+physically serialize those fields. For instance, the <code>DynamoDB</code> component requires the user
 to specify an option called columns that specifies the name and the type of the column where
-the fields will be written.</p>
+the fields are written.</p>
+<h4 id="metrics-configuration">Metrics configuration</h4>
+<p>The <code>[metrics]</code> section allows to configure the metrics backend to use. Currently, only <code>datadog</code> is
+supported.</p>
+<p>See the dedicated page to learn how to configure DataDog metrics with Baker. (TODO: add link)</p>
+<h4 id="user-defined-configurations">User defined configurations</h4>
+<p>The <code>baker.NewConfigFromToml</code> function, used by Baker to parse the TOML configuration file, can be
+also used to add custom configurations to the TOML file (useful as Baker can be used as library in
+a more complex project).</p>
+<p>This is an example of a TOML file defining also some of those user defined configurations (along
+with the input and output configurations):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[input]
+name=<span style="color:#f1fa8c">&#34;random&#34;</span>
+
+[output]
+name=<span style="color:#f1fa8c">&#34;recorder&#34;</span>
+
+[[user]]
+name=<span style="color:#f1fa8c">&#34;MyConfiG&#34;</span>
+
+	[user.config]
+	field1 = <span style="color:#bd93f9">1</span>
+	field2 = <span style="color:#f1fa8c">&#34;hello!&#34;</span>
+</code></pre></div><p>Using <code>NewConfigFromToml</code> is then possible to retrieve those configurations:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">cfg <span style="color:#ff79c6">:=</span> strings.<span style="color:#50fa7b">NewReader</span>(toml) <span style="color:#6272a4">// toml is the content of the toml file
+</span><span style="color:#6272a4"></span>
+<span style="color:#6272a4">// myConfig contains the user-defined configurations we expect from the toml file
+</span><span style="color:#6272a4"></span><span style="color:#8be9fd;font-style:italic">type</span> myConfig <span style="color:#8be9fd;font-style:italic">struct</span> {
+    Field1 <span style="color:#8be9fd">int</span>
+    Field2 <span style="color:#8be9fd">string</span>
+}
+mycfg <span style="color:#ff79c6">:=</span> myConfig{}
+
+<span style="color:#6272a4">// comp is the baker components configuration.
+</span><span style="color:#6272a4">// Here we use Inputs and Outputs in addition to User because
+</span><span style="color:#6272a4">// they are required configurations
+</span><span style="color:#6272a4"></span>comp <span style="color:#ff79c6">:=</span> baker.Components{
+    Inputs:  []baker.InputDesc{inputtest.RandomDesc},
+    Outputs: []baker.OutputDesc{outputtest.RecorderDesc},
+    User:    []baker.UserDesc{{Name: <span style="color:#f1fa8c">&#34;myconfig&#34;</span>, Config: <span style="color:#ff79c6">&amp;</span>mycfg}},
+}
+
+<span style="color:#6272a4">// Use baker to parse and ingest the configuration file
+</span><span style="color:#6272a4"></span>baker.<span style="color:#50fa7b">NewConfigFromToml</span>(cfg, comp)
+
+<span style="color:#6272a4">// Now mycfg has been populated with the user defined configurations:
+</span><span style="color:#6272a4">// myConfig{Field1: 1, Field2: &#34;hello!&#34;}
+</span><span style="color:#6272a4">// and can be used anywhere in the program
+</span></code></pre></div><p>More examples can be found in the
+<a href="https://github.com/AdRoll/baker/blob/main/user_config_test.go">dedicated test file</a>.</p>
 <h3 id="environment-variables-replacement">Environment variables replacement</h3>
 <p>Baker supports environment variables replacement in the configuration file.</p>
-<p>Use <code>${ENV_VAR_NAME}</code> or <code>$ENV_VAR_NAME</code> and the value in the file will be replaced at runtime.<br>
-Note that if the variable doesn&rsquo;t exist, then an empty string will be used for replacement.</p>
+<p>Use <code>${ENV_VAR_NAME}</code> or <code>$ENV_VAR_NAME</code> and the value in the file is replaced at runtime.<br>
+Note that if the variable doesn&rsquo;t exist, then an empty string is used for replacement.</p>
 
 	
 	
@@ -478,7 +532,7 @@ Note that if the variable doesn&rsquo;t exist, then an empty string will be used
 
 
 
-<script src="/baker/js/main.min.e558a0a4eb36d79d4780b857f43767f28b7d17a7666b959d42b5555b4312b346.js" integrity="sha256-5VigpOs2151HgLhX9Ddn8ot9F6dma5WdQrVVW0MSs0Y=" crossorigin="anonymous"></script>
+<script src="/js/main.min.892986603b6bef314ea40220f0ba27d7002af6aa24e02219e4060f212fe29d21.js" integrity="sha256-iSmGYDtr7zFOpAIg8Lon1wAq9qok4CIZ5AYPIS/inSE=" crossorigin="anonymous"></script>
 
 
 
