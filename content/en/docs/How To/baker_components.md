@@ -6,11 +6,15 @@ description: >
   baker.Components is the main object used to create a Baker topology
 ---
 
-`baker.Components` is a struct that is used to configure the Baker topology, before running it.
+To create a Topology, Baker requires 2 elements:
 
-It contains the available components and some functions used by Baker to deal with records.
+* `baker.Components` describes the list of components Baker can use in topologies
+* a TOML configuration that specifically describes a single topology, using components from 1)
 
-Read the [full API reference](https://pkg.go.dev/github.com/AdRoll/baker#Components).
+The next paragraphs gives you a high level overview of each section of `baker.Components`.
+
+To get a deeper understanding, read the
+[full API reference for `baker.Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components).
 
 ## Inputs, Filters, Outputs and Uploads
 
@@ -19,7 +23,7 @@ These fields contain the list of components that are available to the topology.
 The [TOML configuration file](/docs/core-concepts/toml/) must specify components that are
 present in these lists.
 
-Both components already available to Baker or custom components can be set here.
+All components already available to Baker or custom components can be set here.
 
 The following is an example of `baker.Components` configuration where:
 
@@ -45,19 +49,17 @@ comp := baker.Components{
 
 ## Metrics
 
-The list of available metrics bakends.
+The list of available metrics backends.
 
-As for the components explained in the previous paragraph, metrics can be imported from what
-is included into Baker or can be a custom implementation of the `baker.MetricsClient` interface
-(or a mix of the two options).
+This list can contain a metric backend already included into Baker or a custom implementation
+of the `baker.MetricsClient` interface.
 
 For details about metrics, [see the dedicated page](/docs/core-concepts/metrics).
 
 ## User
 
-This field contains the list of user-defined configurations, that are configurations not strictly
-used by the Baker topology but that a user can read from the Baker TOML configuration file and use
-anywhere in the code.
+This field contains a list of user-defined configurations structures that are not strictly
+useful to Baker but that users can add to Baker TOML file and use for other purposes.
 
 To learn more about this topic, read the
 [dedicated section](/docs/core-concepts/toml/#user-defined-configurations) in the Pipeline
@@ -65,25 +67,8 @@ configuration page.
 
 ## ShardingFuncs
 
-This field is a dictionary of functions used to calculate how to shard records among the
-available output goroutines (see [Tuning concurrency](/docs/core-concepts/concurrency) for
-details about output concurrency).
-
-The `[output.sharding]` configuration in the TOML file tells which field of the records must be
-used to calculate the sharding.
-
-The field name, transformed to `FieldIndex` thanks to the `FieldByName` function (see
-[below](#fieldbyname)), is the index of the map that corresponds to a sharding function.
-
-The sharding function receives a Record and returns a sharding value (`uint64`) that Baker
-uses to send the Record to an output process.
-
-{{% alert color="info" %}}
-How the sharding value is calculated is up to the function, but it should try to have a linear
-distribution of records (to evenly distribute the load among the output concurrent processes)
-and, although not required, it should also use value of the field that has been configured in
-`[output.sharding]`.
-{{% /alert %}}
+This field holds a dictionary associating field indices to hash functions. When sharding
+is enabled, these hash functions are used to determine which shard a record is sent to.
 
 ### Validate
 
