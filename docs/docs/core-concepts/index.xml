@@ -219,7 +219,7 @@ Note that if the variable doesn&amp;rsquo;t exist, then an empty string is used 
     </item>
     
     <item>
-      <title>Docs: Record implementation</title>
+      <title>Docs: Record and LogLine</title>
       <link>https://getbaker.io/docs/core-concepts/record_implementation/</link>
       <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
       
@@ -230,137 +230,27 @@ Note that if the variable doesn&amp;rsquo;t exist, then an empty string is used 
         &lt;p&gt;Baker processes objects in form of &amp;ldquo;records&amp;rdquo;. A Record, in Baker, is an interface that
 provides an abstraction over a record of flattened data, where columns of fields are
 indexed through integers.&lt;/p&gt;
-&lt;p&gt;Baker currently provides a single implementation of Record, called
-&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#LogLine&#34;&gt;&lt;code&gt;LogLine&lt;/code&gt;&lt;/a&gt;.&lt;br&gt;
-If &lt;code&gt;LogLine&lt;/code&gt; doesn&amp;rsquo;t fit your needs, you can easily implement the Record interface with your
-logic.&lt;/p&gt;
-&lt;h2 id=&#34;record-interface&#34;&gt;Record interface&lt;/h2&gt;
-&lt;p&gt;This is the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Record&#34;&gt;Record interface&lt;/a&gt; as
-declared in &lt;code&gt;record.go&lt;/code&gt;. Each method is explained below:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; FieldIndex &lt;span style=&#34;color:#8be9fd&#34;&gt;int&lt;/span&gt;
-&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Metadata &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;]&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt;{}
-
-&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Record &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
-	&lt;span style=&#34;color:#50fa7b&#34;&gt;Parse&lt;/span&gt;([]&lt;span style=&#34;color:#8be9fd&#34;&gt;byte&lt;/span&gt;, Metadata) &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;
-	&lt;span style=&#34;color:#50fa7b&#34;&gt;ToText&lt;/span&gt;(buf []&lt;span style=&#34;color:#8be9fd&#34;&gt;byte&lt;/span&gt;) []&lt;span style=&#34;color:#8be9fd&#34;&gt;byte&lt;/span&gt;
-	&lt;span style=&#34;color:#50fa7b&#34;&gt;Copy&lt;/span&gt;() Record
-	&lt;span style=&#34;color:#50fa7b&#34;&gt;Clear&lt;/span&gt;()
-	&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(FieldIndex) []&lt;span style=&#34;color:#8be9fd&#34;&gt;byte&lt;/span&gt;
-	&lt;span style=&#34;color:#50fa7b&#34;&gt;Set&lt;/span&gt;(FieldIndex, []&lt;span style=&#34;color:#8be9fd&#34;&gt;byte&lt;/span&gt;)
-	&lt;span style=&#34;color:#50fa7b&#34;&gt;Meta&lt;/span&gt;(key &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) (v &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt;{}, ok &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;)
-	&lt;span style=&#34;color:#50fa7b&#34;&gt;Cache&lt;/span&gt;() &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;Cache
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;parsebyte-metadata-error&#34;&gt;Parse([]byte, Metadata) error&lt;/h3&gt;
-&lt;p&gt;The &lt;code&gt;Parse&lt;/code&gt; creates a Record instance by deserializing a slice of byte.&lt;/p&gt;
-&lt;p&gt;It also receives a, possibly nil, &lt;code&gt;Metadata&lt;/code&gt; map that the input can fill in (like record retrieval
-timestamp or any other useful info). The function must be able to accept a &lt;code&gt;nil&lt;/code&gt; Metadata value.&lt;/p&gt;
-&lt;h3 id=&#34;totextbuf-byte-byte&#34;&gt;ToText(buf []byte) []byte&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;ToText&lt;/code&gt; serializes the Record into a slice of bytes.&lt;/p&gt;
-&lt;p&gt;In case the passed &lt;code&gt;buf&lt;/code&gt; is not &lt;code&gt;nil&lt;/code&gt; (and if big enough), it is used to serialize the record.&lt;/p&gt;
-&lt;h3 id=&#34;copy-record&#34;&gt;Copy() Record&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;Copy&lt;/code&gt; creates and returns a deep-copy of the record.&lt;/p&gt;
-&lt;p&gt;There is a &amp;ldquo;simple&amp;rdquo; way to create a copy of a record:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; dst Record
-dst.&lt;span style=&#34;color:#50fa7b&#34;&gt;Parse&lt;/span&gt;(src.&lt;span style=&#34;color:#50fa7b&#34;&gt;ToText&lt;/span&gt;(), &lt;span style=&#34;color:#ff79c6&#34;&gt;nil&lt;/span&gt;)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;but the &lt;code&gt;Copy&lt;/code&gt; function should provide a more efficient way, optimized for the
-custom record implementation.&lt;/p&gt;
-&lt;h3 id=&#34;clear&#34;&gt;Clear()&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;Clear&lt;/code&gt; clears the record internal state, making it empty and re-usable as an empty record.&lt;/p&gt;
-&lt;h3 id=&#34;getfieldindex-byte&#34;&gt;Get(FieldIndex) []byte&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;Get&lt;/code&gt; returns the value of a field at the given index.&lt;/p&gt;
-&lt;h3 id=&#34;setfieldindex-byte&#34;&gt;Set(FieldIndex, []byte)&lt;/h3&gt;
-&lt;p&gt;Set the value of a field at the give index.&lt;/p&gt;
-&lt;h3 id=&#34;metakey-string-v-interface-ok-bool&#34;&gt;Meta(key string) (v interface{}, ok bool)&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;Meta&lt;/code&gt; returns the value of the attached metadata for the given key, if any.&lt;/p&gt;
-&lt;p&gt;The simplest implementation could be:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; MyRecord &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
-    meta baker.Metadata
-}
-
-&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (r &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyRecord) &lt;span style=&#34;color:#50fa7b&#34;&gt;Meta&lt;/span&gt;(key &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) (&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt;{}, &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;) {
-    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; l.meta.&lt;span style=&#34;color:#50fa7b&#34;&gt;get&lt;/span&gt;(key)
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;cache-cache&#34;&gt;Cache() *Cache&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;Cache&lt;/code&gt; holds a cache which is local to the record.&lt;br&gt;
-It may be used to speed up parsing of specific fields by caching the result.&lt;br&gt;
-When accessing a field and parsing its value, we want to try caching as much as
-possible the parsing we do, to avoid redoing it later when the same record
-is processed by different code.&lt;/p&gt;
-&lt;p&gt;Since cached values are interfaces, it&amp;rsquo;s up to who fetches a value to know the underlying
-type of the cached value and perform a type assertion.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; ll Record
-val, ok &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; ll.Cache.&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;mykey&amp;#34;&lt;/span&gt;)
-&lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; !ok {
-    &lt;span style=&#34;color:#6272a4&#34;&gt;// long computation/parsing...
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    val = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;14/07/1789&amp;#34;&lt;/span&gt;
-    ll.Cache.&lt;span style=&#34;color:#50fa7b&#34;&gt;Set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;mykey&amp;#34;&lt;/span&gt;, val)
-}
-
-&lt;span style=&#34;color:#6272a4&#34;&gt;// do something with the result
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;result &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; val.(&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;logline&#34;&gt;LogLine&lt;/h2&gt;
-&lt;p&gt;A &lt;code&gt;LogLine&lt;/code&gt; is a highly optimized CSV. It supports any single-byte field separator and doesn&amp;rsquo;t
-handle quotes (neither single nor double).&lt;br&gt;
-The maximum number of fields is hard-coded by the &lt;code&gt;LogLineNumFields&lt;/code&gt; constant which is 3000.&lt;br&gt;
-100 extra fields can be stored at runtime in a &lt;code&gt;LogLine&lt;/code&gt; (also hardcoded with &lt;code&gt;NumFieldsBaker&lt;/code&gt;),
+&lt;p&gt;Baker currently provides a single implementation of Record, called &lt;code&gt;LogLine&lt;/code&gt; (
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#LogLine&#34;&gt;API reference&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;If &lt;code&gt;LogLine&lt;/code&gt; doesn&amp;rsquo;t fit your needs, you can easily implement the Record interface with your
+&lt;a href=&#34;#custom-logline&#34;&gt;custom logic&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;logline&#34;&gt;LogLine&lt;/h2&gt;
+&lt;p&gt;A &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#LogLine&#34;&gt;&lt;code&gt;LogLine&lt;/code&gt;&lt;/a&gt; is a Record implementation which is highly optimized for fast parsing and serializing of CSV records.&lt;/p&gt;
+&lt;p&gt;It supports any single-byte field separator and doesn&amp;rsquo;t handle quotes (neither single nor double).&lt;/p&gt;
+&lt;p&gt;The maximum number of fields is hard-coded by the &lt;code&gt;LogLineNumFields&lt;/code&gt; constant which is 3000.&lt;/p&gt;
+&lt;p&gt;100 extra fields can be stored at runtime in a &lt;code&gt;LogLine&lt;/code&gt; (also hardcoded with &lt;code&gt;NumFieldsBaker&lt;/code&gt;),
 these extra fields are a fast way to exchange data between filters and/or outputs but they are
 neither handled during Parsing (i.e &lt;code&gt;LogLine.Parse&lt;/code&gt;) nor serialization (&lt;code&gt;LogLine.ToText&lt;/code&gt;).&lt;/p&gt;
 &lt;h3 id=&#34;custom-logline&#34;&gt;Custom LogLine&lt;/h3&gt;
-&lt;p&gt;If the hardcoded values for &lt;code&gt;LogLineNumFields&lt;/code&gt; and &lt;code&gt;NumFieldsBaker&lt;/code&gt; do not suit your needs,
-it&amp;rsquo;s advised that you copy &lt;code&gt;LogLine.go&lt;/code&gt; in your project and modify the constants declared at
-the top of the file. Your specialized &lt;code&gt;LogLine&lt;/code&gt; will still implement &lt;code&gt;baker.Record&lt;/code&gt; and thus
-can be used in lieu of &lt;code&gt;baker.LogLine&lt;/code&gt;. To do so, you need to provide a &lt;code&gt;CreateRecord&lt;/code&gt;
-function to &lt;code&gt;baker.Components&lt;/code&gt; when calling &lt;code&gt;baker.NewConfigFromToml&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;For example (&lt;code&gt;my.LogLine&lt;/code&gt; is your custom implementation):&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{}
-
-comp.CreateRecord = &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() baker.Record {
-  &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;my.LogLine{ FieldSeparator: &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;,&amp;#39;&lt;/span&gt; }
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;how-to-use-a-custom-version-of-the-record&#34;&gt;How to use a custom version of the Record&lt;/h2&gt;
-&lt;p&gt;Once a customized version of a Record has been implemented, you want to use it in your code.
-In order to do so, some functions may be implemented while instantiating &lt;code&gt;baker.Components&lt;/code&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Components &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
-	Validate      ValidationFunc
-    CreateRecord  &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() Record
-    FieldByName &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) (FieldIndex, &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;)
-    FieldName   &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(FieldIndex) &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;
-    &lt;span style=&#34;color:#6272a4&#34;&gt;//... other functions
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;validate&#34;&gt;Validate&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;Validate&lt;/code&gt; is the function used to validate a record. It is called for each processed record
-unless not set or when the &lt;code&gt;[general] dont_validate_fields = true&lt;/code&gt; configuration is set in
-the TOML file.&lt;/p&gt;
-&lt;p&gt;Regardless of the TOML configuration, the function is passed to all components that can use
-it at their will.&lt;/p&gt;
-&lt;h3 id=&#34;createrecord&#34;&gt;CreateRecord&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;CreateRecord&lt;/code&gt; is the function that creates a new record. If not set, a default function is
-used that creates a &lt;code&gt;LogLine&lt;/code&gt; with &lt;code&gt;,&lt;/code&gt; as field separator.&lt;/p&gt;
-&lt;p&gt;The function is used internally by Baker to create new records every time a new one comes from
-the input.&lt;/p&gt;
-&lt;p&gt;The function is also passed to components that can use it to create new records while processing.&lt;/p&gt;
-&lt;h3 id=&#34;fieldbyname&#34;&gt;FieldByName&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;FieldByName&lt;/code&gt; gets a field index by its name. The function is mainly used by the components
-(that receive it during setup) to retrieve the index of a field they need for filtering or
-processing, but it is also used internally by Baker when sending fields to the output
-(when at least one field is selected in the output TOML configuration).&lt;/p&gt;
-&lt;h3 id=&#34;fieldindex&#34;&gt;FieldIndex&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;FieldName&lt;/code&gt; gets a field name by its index. The function is passed to components that can use
-it for their internal logic.&lt;/p&gt;
-&lt;h2 id=&#34;recordconformancetest&#34;&gt;RecordConformanceTest&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;test_helper.go&lt;/code&gt; provides a &lt;code&gt;RecordConformanceTest&lt;/code&gt; test helper whose goal is to give the
-user a structured test for new implementations of the Record.&lt;/p&gt;
-&lt;p&gt;The helper receives the implementation of &lt;code&gt;CreateRecord&lt;/code&gt; and creates new records testing
-them against a set of requirements.&lt;/p&gt;
-
-
-&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
-&lt;h4 class=&#34;alert-heading&#34;&gt;Warning&lt;/h4&gt;
-The conformance test provides a way to verify that a record implementation respects the
-invariant that Baker requires for a Record implementation and thus it should always
-be executed against all custom implementations of the Record.
-&lt;/div&gt;
-
+&lt;p&gt;If the hardcoded values for
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#pkg-constants&#34;&gt;&lt;code&gt;LogLineNumFields&lt;/code&gt; and &lt;code&gt;NumFieldsBaker&lt;/code&gt;&lt;/a&gt;
+do not suit your needs, it&amp;rsquo;s advised that you copy &lt;code&gt;logline.go&lt;/code&gt; in your project and modify the
+constants declared at the top of the file.&lt;/p&gt;
+&lt;p&gt;Your specialized &lt;code&gt;LogLine&lt;/code&gt; will still implement &lt;code&gt;baker.Record&lt;/code&gt; and thus can be used in lieu
+of &lt;code&gt;baker.LogLine&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;CreateRecord&lt;/code&gt; function set into
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt; must return an
+instance of your custom LogLine instead of the default one.&lt;/p&gt;
 
       </description>
     </item>
@@ -514,6 +404,36 @@ a Baker pipeline to report metrics. During construction, components receive the
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;MetricsClient&lt;/code&gt;&lt;/a&gt; instance.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
 supports the most common type of metric types: &lt;em&gt;gauges&lt;/em&gt;, &lt;em&gt;counters&lt;/em&gt; and &lt;em&gt;histograms&lt;/em&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Sharding</title>
+      <link>https://getbaker.io/docs/core-concepts/sharding/</link>
+      <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/core-concepts/sharding/</guid>
+      <description>
+        
+        
+        &lt;h1 id=&#34;tbd---these-are-just-notes&#34;&gt;TBD - these are just notes&lt;/h1&gt;
+&lt;p&gt;The &lt;code&gt;[output.sharding]&lt;/code&gt; configuration in the TOML file tells which field of the records must be
+used to calculate the sharding.&lt;/p&gt;
+&lt;p&gt;The field name, transformed to &lt;code&gt;FieldIndex&lt;/code&gt; thanks to the &lt;code&gt;FieldByName&lt;/code&gt; function (see
+&lt;a href=&#34;#fieldbyname&#34;&gt;below&lt;/a&gt;), is the index of the map that corresponds to a sharding function.&lt;/p&gt;
+&lt;p&gt;The sharding function receives a Record and returns a sharding value (&lt;code&gt;uint64&lt;/code&gt;) that Baker
+uses to send the Record to an output process.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+
+How the sharding value is calculated is up to the function, but it should try to have a linear
+distribution of records (to evenly distribute the load among the output concurrent processes)
+and, although not required, it should also use value of the field that has been configured in
+&lt;code&gt;[output.sharding]&lt;/code&gt;.
+&lt;/div&gt;
+
 
       </description>
     </item>

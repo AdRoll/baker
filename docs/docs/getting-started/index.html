@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.77.0" />
+<meta name="generator" content="Hugo 0.78.0" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
@@ -22,18 +22,15 @@
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
 <title>Getting started | Baker</title><meta property="og:title" content="Getting started" />
-<meta property="og:description" content="How to start with Baker.
-" />
+<meta property="og:description" content="A high performance, composable and extendable data-processing pipeline for the big data era" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://getbaker.io/docs/getting-started/" />
 <meta property="og:site_name" content="Baker" />
 <meta itemprop="name" content="Getting started">
-<meta itemprop="description" content="How to start with Baker.
-">
+<meta itemprop="description" content="A high performance, composable and extendable data-processing pipeline for the big data era">
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Getting started"/>
-<meta name="twitter:description" content="How to start with Baker.
-"/>
+<meta name="twitter:description" content="A high performance, composable and extendable data-processing pipeline for the big data era"/>
 
 
 
@@ -167,7 +164,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsrecord_implementation" href="/docs/core-concepts/record_implementation/">Record implementation</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsrecord_implementation" href="/docs/core-concepts/record_implementation/">Record and LogLine</a>
       
       
       
@@ -180,6 +177,47 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsmetrics" href="/docs/core-concepts/metrics/">Metrics</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptssharding" href="/docs/core-concepts/sharding/">Sharding</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Using Baker library</a>
+  </li>
+  <ul>
+    <li class="collapse " id="docshow-to">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tobaker_components" href="/docs/how-to/baker_components/">baker.Components</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocustom_record" href="/docs/how-to/custom_record/">Create a custom Record</a>
       
       
     </li>
@@ -257,15 +295,19 @@
             
 <div class="td-content">
 	<h1>Getting started</h1>
-        <div class="lead">How to start with Baker.</div>
+        
 	
-	
-
-<div class="pageinfo pageinfo-primary">
-<p>This page is only a draft, please check out the <a href="https://github.com/AdRoll/baker/blob/main/README.md">README file in the repository</a></p>
-
-</div>
-
+	<p>Baker is a Go library and it must be included into your Go program.</p>
+<p>To create a new Go project using Go modules and adding Baker:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mkdir myProject
+<span style="color:#8be9fd;font-style:italic">cd</span> myProject
+go mod init github.com/myUser/myProject
+go get github.com/adroll/baker
+</code></pre></div><p>If you are adding Baker to a project already configured to use Go modules, just type:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#8be9fd;font-style:italic">cd</span> myProject
+go get github.com/adroll/baker
+</code></pre></div><p>Read <a href="/docs/core-concepts/">Baker Core concepts</a> to know how Baker works or go to the
+<a href="https://pkg.go.dev/github.com/AdRoll/baker">API reference</a> to learn how to use it in your code.</p>
 
         <div class="section-index">
     
@@ -273,6 +315,14 @@
     
     
     <hr class="panel-line">
+        
+            
+        
+            
+        
+            
+        
+            
         
             
         

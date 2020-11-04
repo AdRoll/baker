@@ -1,0 +1,163 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Baker – Using Baker library</title>
+    <link>https://getbaker.io/docs/how-to/</link>
+    <description>Recent content in Using Baker library on Baker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 29 Oct 2020 00:00:00 +0000</lastBuildDate>
+    
+	  <atom:link href="https://getbaker.io/docs/how-to/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: baker.Components</title>
+      <link>https://getbaker.io/docs/how-to/baker_components/</link>
+      <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/how-to/baker_components/</guid>
+      <description>
+        
+        
+        &lt;p&gt;To create a Topology, Baker requires 2 elements:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;baker.Components&lt;/code&gt; describes the list of components Baker can use in topologies&lt;/li&gt;
+&lt;li&gt;a TOML configuration that specifically describes a single topology, using components from 1)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The next paragraphs gives you a high level overview of each section of &lt;code&gt;baker.Components&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;To get a deeper understanding, read the
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;full API reference for &lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;inputs-filters-outputs-and-uploads&#34;&gt;Inputs, Filters, Outputs and Uploads&lt;/h2&gt;
+&lt;p&gt;These fields contain the list of components that are available to the topology.&lt;/p&gt;
+&lt;p&gt;The &lt;a href=&#34;https://getbaker.io/docs/core-concepts/toml/&#34;&gt;TOML configuration file&lt;/a&gt; must specify components that are
+present in these lists.&lt;/p&gt;
+&lt;p&gt;All components already available to Baker or custom components can be set here.&lt;/p&gt;
+&lt;p&gt;The following is an example of &lt;code&gt;baker.Components&lt;/code&gt; configuration where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;inputs&lt;/strong&gt; and &lt;strong&gt;uploads&lt;/strong&gt; are those already included into Baker&lt;/li&gt;
+&lt;li&gt;only a custom &lt;strong&gt;filter&lt;/strong&gt; is set&lt;/li&gt;
+&lt;li&gt;a custom &lt;strong&gt;output&lt;/strong&gt; is added to the outputs included into Baker&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; (
+	&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
+	&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker/input&amp;#34;&lt;/span&gt;
+	&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker/output&amp;#34;&lt;/span&gt;
+	&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker/upload&amp;#34;&lt;/span&gt;
+)
+
+comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
+    Inputs:        input.All,
+    Filters:       []baker.FilterDesc{MyCustomFilterDesc},
+	Outputs:       &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;append&lt;/span&gt;(output.All, MyCustomOutputDesc&lt;span style=&#34;color:#ff79c6&#34;&gt;...&lt;/span&gt;),
+	Uploads:       upload.All,
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;metrics&#34;&gt;Metrics&lt;/h2&gt;
+&lt;p&gt;The list of available metrics backends.&lt;/p&gt;
+&lt;p&gt;This list can contain a metric backend already included into Baker or a custom implementation
+of the &lt;code&gt;baker.MetricsClient&lt;/code&gt; interface.&lt;/p&gt;
+&lt;p&gt;For details about metrics, &lt;a href=&#34;https://getbaker.io/docs/core-concepts/metrics&#34;&gt;see the dedicated page&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;user&#34;&gt;User&lt;/h2&gt;
+&lt;p&gt;This field contains a list of user-defined configurations structures that are not strictly
+useful to Baker but that users can add to Baker TOML file and use for other purposes.&lt;/p&gt;
+&lt;p&gt;To learn more about this topic, read the
+&lt;a href=&#34;https://getbaker.io/docs/core-concepts/toml/#user-defined-configurations&#34;&gt;dedicated section&lt;/a&gt; in the Pipeline
+configuration page.&lt;/p&gt;
+&lt;h2 id=&#34;shardingfuncs&#34;&gt;ShardingFuncs&lt;/h2&gt;
+&lt;p&gt;This field holds a dictionary associating field indices to hash functions. When sharding
+is enabled, these hash functions are used to determine which shard a record is sent to.&lt;/p&gt;
+&lt;h3 id=&#34;validate&#34;&gt;Validate&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Validate&lt;/code&gt; is the function used to validate a record. It is called for each processed record
+unless &lt;code&gt;null&lt;/code&gt; or when &lt;code&gt;[general.dont_validate_fields]&lt;/code&gt; configuration is set to &lt;code&gt;true&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Regardless of the TOML configuration, the function is passed to all components that can use
+it at their will.&lt;/p&gt;
+&lt;h3 id=&#34;createrecord&#34;&gt;CreateRecord&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;CreateRecord&lt;/code&gt; is the function that creates a new record. If not set, a default function is
+used that creates a &lt;code&gt;LogLine&lt;/code&gt; with the &lt;strong&gt;comma&lt;/strong&gt; field separator.&lt;/p&gt;
+&lt;p&gt;The function is used internally by Baker to create new records every time a new byte buffer enters
+the filter chain.&lt;/p&gt;
+&lt;p&gt;The function is also passed to components that can use it to create new records while processing.&lt;/p&gt;
+&lt;h3 id=&#34;fieldbyname&#34;&gt;FieldByName&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;FieldByName&lt;/code&gt; returns a field index from its name.&lt;/p&gt;
+&lt;p&gt;The function is mainly used by the components (that receive it during setup) to retrieve the
+index of a field they need for filtering or processing, but it is also used internally by
+Baker when sending fields to the output (when at least one field is selected in the output
+TOML configuration).&lt;/p&gt;
+&lt;h3 id=&#34;fieldname&#34;&gt;FieldName&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;FieldName&lt;/code&gt; returns a field name from its index.&lt;/p&gt;
+&lt;p&gt;The function is passed to components that can use it internally.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Create a custom Record</title>
+      <link>https://getbaker.io/docs/how-to/custom_record/</link>
+      <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/how-to/custom_record/</guid>
+      <description>
+        
+        
+        &lt;p&gt;As you can read in the &lt;a href=&#34;https://getbaker.io/docs/core-concepts/record_implementation/&#34;&gt;Record and LogLine page&lt;/a&gt;,
+Baker processes objects in form of “records”.&lt;/p&gt;
+&lt;p&gt;A &lt;code&gt;Record&lt;/code&gt;, in Baker, is an interface that provides an abstraction over a record of flattened data,
+where columns of fields are indexed through integers.&lt;/p&gt;
+&lt;p&gt;If the Record implementations provided by Baker doesn&amp;rsquo;t fit your needs, you can create your own
+version of the Record, implementing the
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Record&#34;&gt;&lt;code&gt;Record&lt;/code&gt; inteface&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;how-to-use-a-custom-version-of-the-record&#34;&gt;How to use a custom version of the Record&lt;/h2&gt;
+&lt;p&gt;Once your Record version is ready, you need to use it in your code.&lt;/p&gt;
+&lt;p&gt;In order to do so, some functions may be implemented while instantiating
+&lt;a href=&#34;https://getbaker.io/docs/how-to/baker_components/&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Components &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
+	Validate      ValidationFunc
+    CreateRecord  &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() Record
+    FieldByName &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) (FieldIndex, &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;)
+    FieldName   &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(FieldIndex) &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;
+    &lt;span style=&#34;color:#6272a4&#34;&gt;//... other functions
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;validate&#34;&gt;Validate&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Validate&lt;/code&gt; is the function used to validate a record. It is called for each processed record
+unless not set or when the &lt;code&gt;[general] dont_validate_fields = true&lt;/code&gt; configuration is set in
+the TOML file.&lt;/p&gt;
+&lt;p&gt;Regardless of the TOML configuration, the function is passed to all components that can use
+it at their will.&lt;/p&gt;
+&lt;h3 id=&#34;createrecord&#34;&gt;CreateRecord&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;CreateRecord&lt;/code&gt; is the function that creates a new record. If not set, a default function is
+used that creates a &lt;code&gt;LogLine&lt;/code&gt; with &lt;code&gt;,&lt;/code&gt; as field separator.&lt;/p&gt;
+&lt;p&gt;The function is used internally by Baker to create new records every time a new one comes from
+the input.&lt;/p&gt;
+&lt;p&gt;The function is also passed to components that can use it to create new records while processing.&lt;/p&gt;
+&lt;h3 id=&#34;fieldbyname&#34;&gt;FieldByName&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;FieldByName&lt;/code&gt; gets a field index by its name. The function is mainly used by the components
+(that receive it during setup) to retrieve the index of a field they need for filtering or
+processing, but it is also used internally by Baker when sending fields to the output
+(when at least one field is selected in the output TOML configuration).&lt;/p&gt;
+&lt;h3 id=&#34;fieldindex&#34;&gt;FieldIndex&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;FieldName&lt;/code&gt; gets a field name by its index. The function is passed to components that can use
+it for their internal logic.&lt;/p&gt;
+&lt;h2 id=&#34;recordconformancetest&#34;&gt;RecordConformanceTest&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;test_helper.go&lt;/code&gt; provides a &lt;code&gt;RecordConformanceTest&lt;/code&gt; test helper whose goal is to give the
+user a structured test for new implementations of the Record.&lt;/p&gt;
+&lt;p&gt;The helper receives the implementation of &lt;code&gt;CreateRecord&lt;/code&gt; and creates new records testing
+them against a set of requirements.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Warning&lt;/h4&gt;
+The conformance test provides a way to verify that a record implementation respects the
+invariant that Baker requires for a Record implementation and thus it should always
+be executed against all custom implementations of the Record.
+&lt;/div&gt;
+
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

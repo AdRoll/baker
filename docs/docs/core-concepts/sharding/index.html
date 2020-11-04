@@ -20,27 +20,30 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Record and LogLine | Baker</title><meta property="og:title" content="Record and LogLine" />
-<meta property="og:description" content="Baker deals with &#34;record&#34; objects, an abstraction of flattened data with indexed fields.
-" />
+<title>Sharding | Baker</title><meta property="og:title" content="Sharding" />
+<meta property="og:description" content="TBD - these are just notes The [output.sharding] configuration in the TOML file tells which field of the records must be used to calculate the sharding.
+The field name, transformed to FieldIndex thanks to the FieldByName function (see below), is the index of the map that corresponds to a sharding function.
+The sharding function receives a Record and returns a sharding value (uint64) that Baker uses to send the Record to an output process." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://getbaker.io/docs/core-concepts/record_implementation/" />
-<meta property="article:published_time" content="2020-10-29T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-10-29T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Record and LogLine">
-<meta itemprop="description" content="Baker deals with &#34;record&#34; objects, an abstraction of flattened data with indexed fields.
-">
-<meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
-<meta itemprop="wordCount" content="220">
+<meta property="og:url" content="https://getbaker.io/docs/core-concepts/sharding/" />
+<meta property="article:published_time" content="2020-11-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-11-02T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Sharding">
+<meta itemprop="description" content="TBD - these are just notes The [output.sharding] configuration in the TOML file tells which field of the records must be used to calculate the sharding.
+The field name, transformed to FieldIndex thanks to the FieldByName function (see below), is the index of the map that corresponds to a sharding function.
+The sharding function receives a Record and returns a sharding value (uint64) that Baker uses to send the Record to an output process.">
+<meta itemprop="datePublished" content="2020-11-02T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-11-02T00:00:00+00:00" />
+<meta itemprop="wordCount" content="124">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Record and LogLine"/>
-<meta name="twitter:description" content="Baker deals with &#34;record&#34; objects, an abstraction of flattened data with indexed fields.
-"/>
+<meta name="twitter:title" content="Sharding"/>
+<meta name="twitter:description" content="TBD - these are just notes The [output.sharding] configuration in the TOML file tells which field of the records must be used to calculate the sharding.
+The field name, transformed to FieldIndex thanks to the FieldByName function (see below), is the index of the map that corresponds to a sharding function.
+The sharding function receives a Record and returns a sharding value (uint64) that Baker uses to send the Record to an output process."/>
 
 
 
@@ -174,7 +177,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscore-conceptsrecord_implementation" href="/docs/core-concepts/record_implementation/">Record and LogLine</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsrecord_implementation" href="/docs/core-concepts/record_implementation/">Record and LogLine</a>
       
       
       
@@ -192,7 +195,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptssharding" href="/docs/core-concepts/sharding/">Sharding</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscore-conceptssharding" href="/docs/core-concepts/sharding/">Sharding</a>
       
       
     </li>
@@ -261,8 +264,8 @@
 
 
 
-<a href="https://github.com/adroll/baker/edit/master/content/en/docs/Core%20concepts/record_implementation.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Record%20and%20LogLine" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/master/content/en/docs/Core%20concepts/sharding.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Sharding" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -306,7 +309,7 @@
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/core-concepts/record_implementation/">Record and LogLine</a>
+	<a href="https://getbaker.io/docs/core-concepts/sharding/">Sharding</a>
 </li>
 
 	</ol>
@@ -314,37 +317,30 @@
 
             
 <div class="td-content">
-	<h1>Record and LogLine</h1>
-    <div class="lead">Baker deals with &ldquo;record&rdquo; objects, an abstraction of flattened data with indexed fields.</div>
+	<h1>Sharding</h1>
+    
 	       
-	<p>Baker processes objects in form of &ldquo;records&rdquo;. A Record, in Baker, is an interface that
-provides an abstraction over a record of flattened data, where columns of fields are
-indexed through integers.</p>
-<p>Baker currently provides a single implementation of Record, called <code>LogLine</code> (
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine">API reference</a>).</p>
-<p>If <code>LogLine</code> doesn&rsquo;t fit your needs, you can easily implement the Record interface with your
-<a href="#custom-logline">custom logic</a>.</p>
-<h2 id="logline">LogLine</h2>
-<p>A <a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine"><code>LogLine</code></a> is a Record implementation which is highly optimized for fast parsing and serializing of CSV records.</p>
-<p>It supports any single-byte field separator and doesn&rsquo;t handle quotes (neither single nor double).</p>
-<p>The maximum number of fields is hard-coded by the <code>LogLineNumFields</code> constant which is 3000.</p>
-<p>100 extra fields can be stored at runtime in a <code>LogLine</code> (also hardcoded with <code>NumFieldsBaker</code>),
-these extra fields are a fast way to exchange data between filters and/or outputs but they are
-neither handled during Parsing (i.e <code>LogLine.Parse</code>) nor serialization (<code>LogLine.ToText</code>).</p>
-<h3 id="custom-logline">Custom LogLine</h3>
-<p>If the hardcoded values for
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#pkg-constants"><code>LogLineNumFields</code> and <code>NumFieldsBaker</code></a>
-do not suit your needs, it&rsquo;s advised that you copy <code>logline.go</code> in your project and modify the
-constants declared at the top of the file.</p>
-<p>Your specialized <code>LogLine</code> will still implement <code>baker.Record</code> and thus can be used in lieu
-of <code>baker.LogLine</code>.</p>
-<p>The <code>CreateRecord</code> function set into
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>baker.Components</code></a> must return an
-instance of your custom LogLine instead of the default one.</p>
+	<h1 id="tbd---these-are-just-notes">TBD - these are just notes</h1>
+<p>The <code>[output.sharding]</code> configuration in the TOML file tells which field of the records must be
+used to calculate the sharding.</p>
+<p>The field name, transformed to <code>FieldIndex</code> thanks to the <code>FieldByName</code> function (see
+<a href="#fieldbyname">below</a>), is the index of the map that corresponds to a sharding function.</p>
+<p>The sharding function receives a Record and returns a sharding value (<code>uint64</code>) that Baker
+uses to send the Record to an output process.</p>
+
+
+<div class="alert alert-info" role="alert">
+
+How the sharding value is calculated is up to the function, but it should try to have a linear
+distribution of records (to evenly distribute the load among the output concurrent processes)
+and, although not required, it should also use value of the field that has been configured in
+<code>[output.sharding]</code>.
+</div>
+
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified October 29, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified November 2, 2020
 </div>
 </div>
 
