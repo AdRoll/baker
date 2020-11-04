@@ -18,7 +18,7 @@ If `LogLine` doesn't fit your needs, you can easily implement the Record interfa
 
 ## LogLine
 
-A [`LogLine`](https://pkg.go.dev/github.com/AdRoll/baker#LogLine) is a highly optimized CSV.  
+A [`LogLine`](https://pkg.go.dev/github.com/AdRoll/baker#LogLine) is a Record implementation which is highly optimized for fast parsing and serializing of CSV records.  
 
 It supports any single-byte field separator and doesn't handle quotes (neither single nor double).  
 
