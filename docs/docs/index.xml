@@ -5,7 +5,7 @@
     <description>Recent content in Documentation on Baker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 29 Oct 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 03 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -214,6 +214,306 @@ mycfg &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; myConfig{}
 &lt;p&gt;Baker supports environment variables replacement in the configuration file.&lt;/p&gt;
 &lt;p&gt;Use &lt;code&gt;${ENV_VAR_NAME}&lt;/code&gt; or &lt;code&gt;$ENV_VAR_NAME&lt;/code&gt; and the value in the file is replaced at runtime.&lt;br&gt;
 Note that if the variable doesn&amp;rsquo;t exist, then an empty string is used for replacement.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Record implementation</title>
+      <link>https://getbaker.io/docs/core-concepts/record_implementation/</link>
+      <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/core-concepts/record_implementation/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Baker processes objects in form of &amp;ldquo;records&amp;rdquo;. A Record, in Baker, is an interface that
+provides an abstraction over a record of flattened data, where columns of fields are
+indexed through integers.&lt;/p&gt;
+&lt;p&gt;Baker currently provides a single implementation of Record, called
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#LogLine&#34;&gt;&lt;code&gt;LogLine&lt;/code&gt;&lt;/a&gt;.&lt;br&gt;
+If &lt;code&gt;LogLine&lt;/code&gt; doesn&amp;rsquo;t fit your needs, you can easily implement the Record interface with your
+logic.&lt;/p&gt;
+&lt;h2 id=&#34;record-interface&#34;&gt;Record interface&lt;/h2&gt;
+&lt;p&gt;This is the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Record&#34;&gt;Record interface&lt;/a&gt; as
+declared in &lt;code&gt;record.go&lt;/code&gt;. Each method is explained below:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; FieldIndex &lt;span style=&#34;color:#8be9fd&#34;&gt;int&lt;/span&gt;
+&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Metadata &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;]&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt;{}
+
+&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Record &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Parse&lt;/span&gt;([]&lt;span style=&#34;color:#8be9fd&#34;&gt;byte&lt;/span&gt;, Metadata) &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;ToText&lt;/span&gt;(buf []&lt;span style=&#34;color:#8be9fd&#34;&gt;byte&lt;/span&gt;) []&lt;span style=&#34;color:#8be9fd&#34;&gt;byte&lt;/span&gt;
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Copy&lt;/span&gt;() Record
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Clear&lt;/span&gt;()
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(FieldIndex) []&lt;span style=&#34;color:#8be9fd&#34;&gt;byte&lt;/span&gt;
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Set&lt;/span&gt;(FieldIndex, []&lt;span style=&#34;color:#8be9fd&#34;&gt;byte&lt;/span&gt;)
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Meta&lt;/span&gt;(key &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) (v &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt;{}, ok &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;)
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Cache&lt;/span&gt;() &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;Cache
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;parsebyte-metadata-error&#34;&gt;Parse([]byte, Metadata) error&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;Parse&lt;/code&gt; creates a Record instance by deserializing a slice of byte.&lt;/p&gt;
+&lt;p&gt;It also receives a, possibly nil, &lt;code&gt;Metadata&lt;/code&gt; map that the input can fill in (like record retrieval
+timestamp or any other useful info). The function must be able to accept a &lt;code&gt;nil&lt;/code&gt; Metadata value.&lt;/p&gt;
+&lt;h3 id=&#34;totextbuf-byte-byte&#34;&gt;ToText(buf []byte) []byte&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;ToText&lt;/code&gt; serializes the Record into a slice of bytes.&lt;/p&gt;
+&lt;p&gt;In case the passed &lt;code&gt;buf&lt;/code&gt; is not &lt;code&gt;nil&lt;/code&gt; (and if big enough), it is used to serialize the record.&lt;/p&gt;
+&lt;h3 id=&#34;copy-record&#34;&gt;Copy() Record&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Copy&lt;/code&gt; creates and returns a deep-copy of the record.&lt;/p&gt;
+&lt;p&gt;There is a &amp;ldquo;simple&amp;rdquo; way to create a copy of a record:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; dst Record
+dst.&lt;span style=&#34;color:#50fa7b&#34;&gt;Parse&lt;/span&gt;(src.&lt;span style=&#34;color:#50fa7b&#34;&gt;ToText&lt;/span&gt;(), &lt;span style=&#34;color:#ff79c6&#34;&gt;nil&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;but the &lt;code&gt;Copy&lt;/code&gt; function should provide a more efficient way, optimized for the
+custom record implementation.&lt;/p&gt;
+&lt;h3 id=&#34;clear&#34;&gt;Clear()&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Clear&lt;/code&gt; clears the record internal state, making it empty and re-usable as an empty record.&lt;/p&gt;
+&lt;h3 id=&#34;getfieldindex-byte&#34;&gt;Get(FieldIndex) []byte&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Get&lt;/code&gt; returns the value of a field at the given index.&lt;/p&gt;
+&lt;h3 id=&#34;setfieldindex-byte&#34;&gt;Set(FieldIndex, []byte)&lt;/h3&gt;
+&lt;p&gt;Set the value of a field at the give index.&lt;/p&gt;
+&lt;h3 id=&#34;metakey-string-v-interface-ok-bool&#34;&gt;Meta(key string) (v interface{}, ok bool)&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Meta&lt;/code&gt; returns the value of the attached metadata for the given key, if any.&lt;/p&gt;
+&lt;p&gt;The simplest implementation could be:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; MyRecord &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
+    meta baker.Metadata
+}
+
+&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (r &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyRecord) &lt;span style=&#34;color:#50fa7b&#34;&gt;Meta&lt;/span&gt;(key &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) (&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt;{}, &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;) {
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; l.meta.&lt;span style=&#34;color:#50fa7b&#34;&gt;get&lt;/span&gt;(key)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;cache-cache&#34;&gt;Cache() *Cache&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Cache&lt;/code&gt; holds a cache which is local to the record.&lt;br&gt;
+It may be used to speed up parsing of specific fields by caching the result.&lt;br&gt;
+When accessing a field and parsing its value, we want to try caching as much as
+possible the parsing we do, to avoid redoing it later when the same record
+is processed by different code.&lt;/p&gt;
+&lt;p&gt;Since cached values are interfaces, it&amp;rsquo;s up to who fetches a value to know the underlying
+type of the cached value and perform a type assertion.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; ll Record
+val, ok &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; ll.Cache.&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;mykey&amp;#34;&lt;/span&gt;)
+&lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; !ok {
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// long computation/parsing...
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    val = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;14/07/1789&amp;#34;&lt;/span&gt;
+    ll.Cache.&lt;span style=&#34;color:#50fa7b&#34;&gt;Set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;mykey&amp;#34;&lt;/span&gt;, val)
+}
+
+&lt;span style=&#34;color:#6272a4&#34;&gt;// do something with the result
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;result &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; val.(&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;logline&#34;&gt;LogLine&lt;/h2&gt;
+&lt;p&gt;A &lt;code&gt;LogLine&lt;/code&gt; is a highly optimized CSV. It supports any single-byte field separator and doesn&amp;rsquo;t
+handle quotes (neither single nor double).&lt;br&gt;
+The maximum number of fields is hard-coded by the &lt;code&gt;LogLineNumFields&lt;/code&gt; constant which is 3000.&lt;br&gt;
+100 extra fields can be stored at runtime in a &lt;code&gt;LogLine&lt;/code&gt; (also hardcoded with &lt;code&gt;NumFieldsBaker&lt;/code&gt;),
+these extra fields are a fast way to exchange data between filters and/or outputs but they are
+neither handled during Parsing (i.e &lt;code&gt;LogLine.Parse&lt;/code&gt;) nor serialization (&lt;code&gt;LogLine.ToText&lt;/code&gt;).&lt;/p&gt;
+&lt;h3 id=&#34;custom-logline&#34;&gt;Custom LogLine&lt;/h3&gt;
+&lt;p&gt;If the hardcoded values for &lt;code&gt;LogLineNumFields&lt;/code&gt; and &lt;code&gt;NumFieldsBaker&lt;/code&gt; do not suit your needs,
+it&amp;rsquo;s advised that you copy &lt;code&gt;LogLine.go&lt;/code&gt; in your project and modify the constants declared at
+the top of the file. Your specialized &lt;code&gt;LogLine&lt;/code&gt; will still implement &lt;code&gt;baker.Record&lt;/code&gt; and thus
+can be used in lieu of &lt;code&gt;baker.LogLine&lt;/code&gt;. To do so, you need to provide a &lt;code&gt;CreateRecord&lt;/code&gt;
+function to &lt;code&gt;baker.Components&lt;/code&gt; when calling &lt;code&gt;baker.NewConfigFromToml&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;For example (&lt;code&gt;my.LogLine&lt;/code&gt; is your custom implementation):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{}
+
+comp.CreateRecord = &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() baker.Record {
+  &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;my.LogLine{ FieldSeparator: &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;,&amp;#39;&lt;/span&gt; }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;how-to-use-a-custom-version-of-the-record&#34;&gt;How to use a custom version of the Record&lt;/h2&gt;
+&lt;p&gt;Once a customized version of a Record has been implemented, you want to use it in your code.
+In order to do so, some functions may be implemented while instantiating &lt;code&gt;baker.Components&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Components &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
+	Validate      ValidationFunc
+    CreateRecord  &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() Record
+    FieldByName &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) (FieldIndex, &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;)
+    FieldName   &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(FieldIndex) &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;
+    &lt;span style=&#34;color:#6272a4&#34;&gt;//... other functions
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;validate&#34;&gt;Validate&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Validate&lt;/code&gt; is the function used to validate a record. It is called for each processed record
+unless not set or when the &lt;code&gt;[general] dont_validate_fields = true&lt;/code&gt; configuration is set in
+the TOML file.&lt;/p&gt;
+&lt;p&gt;Regardless of the TOML configuration, the function is passed to all components that can use
+it at their will.&lt;/p&gt;
+&lt;h3 id=&#34;createrecord&#34;&gt;CreateRecord&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;CreateRecord&lt;/code&gt; is the function that creates a new record. If not set, a default function is
+used that creates a &lt;code&gt;LogLine&lt;/code&gt; with &lt;code&gt;,&lt;/code&gt; as field separator.&lt;/p&gt;
+&lt;p&gt;The function is used internally by Baker to create new records every time a new one comes from
+the input.&lt;/p&gt;
+&lt;p&gt;The function is also passed to components that can use it to create new records while processing.&lt;/p&gt;
+&lt;h3 id=&#34;fieldbyname&#34;&gt;FieldByName&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;FieldByName&lt;/code&gt; gets a field index by its name. The function is mainly used by the components
+(that receive it during setup) to retrieve the index of a field they need for filtering or
+processing, but it is also used internally by Baker when sending fields to the output
+(when at least one field is selected in the output TOML configuration).&lt;/p&gt;
+&lt;h3 id=&#34;fieldindex&#34;&gt;FieldIndex&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;FieldName&lt;/code&gt; gets a field name by its index. The function is passed to components that can use
+it for their internal logic.&lt;/p&gt;
+&lt;h2 id=&#34;recordconformancetest&#34;&gt;RecordConformanceTest&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;test_helper.go&lt;/code&gt; provides a &lt;code&gt;RecordConformanceTest&lt;/code&gt; test helper whose goal is to give the
+user a structured test for new implementations of the Record.&lt;/p&gt;
+&lt;p&gt;The helper receives the implementation of &lt;code&gt;CreateRecord&lt;/code&gt; and creates new records testing
+them against a set of requirements.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Warning&lt;/h4&gt;
+The conformance test provides a way to verify that a record implementation respects the
+invariant that Baker requires for a Record implementation and thus it should always
+be executed against all custom implementations of the Record.
+&lt;/div&gt;
+
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Tuning concurrency</title>
+      <link>https://getbaker.io/docs/core-concepts/concurrency/</link>
+      <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/core-concepts/concurrency/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Baker allows to tune concurrency at various levels of a pipeline:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;input: Baker configuration doesn&amp;rsquo;t expose knobs to tune input concurrency as it highly depends
+on the input source and how the input is implemented&lt;/li&gt;
+&lt;li&gt;filters: Baker runs N concurrent filter chains&lt;/li&gt;
+&lt;li&gt;output: Baker runs M concurrent outputs&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;By default then, Baker processes records concurrently, without any guaranteed order.&lt;br&gt;
+However, if you need to maintain the order of the records through the whole pipeline, it is still
+possible by disabling concurrency (&lt;a href=&#34;#guarantee-records-order&#34;&gt;see below for details&lt;/a&gt;).&lt;/p&gt;
+&lt;h3 id=&#34;filter-chain-concurrency&#34;&gt;Filter chain concurrency&lt;/h3&gt;
+&lt;p&gt;The filter chain is a synchronous list of filters that are applied in the order in which they are
+listed in the topology &lt;a href=&#34;https://getbaker.io/docs/core-concepts/toml/&#34;&gt;TOML configuration file&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;By default, though, Baker executes multiple concurrent filter chains (the default value is 16)&lt;/p&gt;
+&lt;p&gt;Filterchain concurrency can be set defining the &lt;code&gt;procs&lt;/code&gt; key in the &lt;code&gt;[filterchain]&lt;/code&gt; section:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[filterchain]
+procs=&lt;span style=&#34;color:#bd93f9&#34;&gt;16&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Setting the value to &lt;strong&gt;procs=1&lt;/strong&gt; disables the filter chain concurrency.&lt;/p&gt;
+&lt;h3 id=&#34;concurrent-output&#34;&gt;Concurrent output&lt;/h3&gt;
+&lt;p&gt;The output concurrency can be set defining the &lt;code&gt;procs&lt;/code&gt; key in the &lt;code&gt;[output]&lt;/code&gt; section:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[output]
+procs=&lt;span style=&#34;color:#bd93f9&#34;&gt;32&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The default value is &lt;strong&gt;32&lt;/strong&gt;.&lt;br&gt;
+To disable concurrency, set &lt;strong&gt;procs=1&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id=&#34;output-concurrency-support&#34;&gt;Output concurrency support&lt;/h4&gt;
+&lt;p&gt;For outputs that don&amp;rsquo;t support concurrency, &lt;code&gt;procs=1&lt;/code&gt; must be used to avoid corrupted output or
+lost data.&lt;/p&gt;
+&lt;p&gt;Refer to the output documentation to know if it supports concurrent processing.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+
+We&amp;rsquo;ll soon add a new function to the output to declare whether it supports concurrency,
+and Baker will return an error if &lt;code&gt;procs&amp;gt;1&lt;/code&gt; is used with an output that doesn&amp;rsquo;t support it.
+&lt;/div&gt;
+
+&lt;h3 id=&#34;guarantee-records-order&#34;&gt;Guarantee Records order&lt;/h3&gt;
+&lt;p&gt;Although it&amp;rsquo;s not the primary goal of Baker, it is still possible to disable concurrency and thus
+guarantee records ordering from input to output.&lt;/p&gt;
+&lt;p&gt;To do so, add both &lt;code&gt;procs=1&lt;/code&gt; for output and filterchain, disabling concurrent processing for
+those components.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Metrics</title>
+      <link>https://getbaker.io/docs/core-concepts/metrics/</link>
+      <pubDate>Tue, 03 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/core-concepts/metrics/</guid>
+      <description>
+        
+        
+        &lt;h3 id=&#34;metrics&#34;&gt;Metrics&lt;/h3&gt;
+&lt;p&gt;During execution, Baker collects different kind of performance data points:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;general pipeline metrics such as the total number of records processed and records per seconds.&lt;/li&gt;
+&lt;li&gt;component-specific metrics: files written per second, discarded records (by a filter), errors, etc.&lt;/li&gt;
+&lt;li&gt;Go runtime metrics: mallocs, frees, garbage collections and so on.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If enabled, Baker collects all these metrics and forwards them to a metrics client.&lt;/p&gt;
+&lt;p&gt;Metrics export is set up in Baker topology TOML files.&lt;/p&gt;
+&lt;h4 id=&#34;how-to-export-metrics&#34;&gt;How to export metrics?&lt;/h4&gt;
+&lt;p&gt;During its execution, a Baker pipeline exports metrics about the Go runtime as
+well as general metrics giving an high-level overview of the ongoing job.&lt;/p&gt;
+&lt;p&gt;More specific metrics are also exported on a per-component basis. To that effect,
+&lt;code&gt;baker.Input&lt;/code&gt;, &lt;code&gt;baker.Filter&lt;/code&gt;, &lt;code&gt;baker.Output&lt;/code&gt; and &lt;code&gt;baker.Upload&lt;/code&gt; all have a &lt;code&gt;Stats&lt;/code&gt;
+method. &lt;code&gt;Stats&lt;/code&gt; is called every second and the component is expected to return both
+a predefined set of metrics and a &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag&#34;&gt;&lt;code&gt;baker.MetricsBag&lt;/code&gt;&lt;/a&gt;
+containing metrics of arbitrary name and types.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s illustrate this with metrics exported by a filter via
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FilterStats&#34;&gt;&lt;code&gt;baker.FilterStats&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; FilterStats &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
+	NumProcessedLines &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
+	NumFilteredLines  &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
+	Metrics           MetricsBag
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In this case &lt;code&gt;NumProcessedLines&lt;/code&gt; must represent the &lt;strong&gt;total&lt;/strong&gt; number of processed
+lines since Baker started, and &lt;code&gt;NumFilteredLines&lt;/code&gt; is the number of discarded
+(or filtered) records. Due to historical reasons these fields have the word
+&lt;em&gt;lines&lt;/em&gt; in them but they do mean the number of records.&lt;/p&gt;
+&lt;p&gt;An important point is that &lt;code&gt;Stats&lt;/code&gt; can be called from any goroutine so it must be
+safe for concurrent use by multiple goroutines.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (i &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;myFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() baker.FilterStats {
+    bag &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;make&lt;/span&gt;(baker.MetricsBag)
+    bag.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddGauge&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;current_speed&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;float64&lt;/span&gt;(atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.speed)))
+
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; baker.FilterStats{
+        NumProcessedLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.totalLines),
+        NumFilteredLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.filteredLines),
+        &lt;span style=&#34;color:#6272a4&#34;&gt;// Metrics could be let to its default value, nil, if not needed.
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;        Metrics: bag,
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;configuring-metrics-in-toml&#34;&gt;Configuring metrics in TOML&lt;/h4&gt;
+&lt;p&gt;Baker configuration TOML files may have a &lt;code&gt;[metrics]&lt;/code&gt; section dedicated to the
+configuration of a metrics client.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;[metrics.name]&lt;/code&gt; specifies the metrics client to use, from the list of all registered &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;.
+&lt;code&gt;[metrics.config]&lt;/code&gt; specifies some configuration settings which are specific to the client you&amp;rsquo;re using.&lt;/p&gt;
+&lt;p&gt;For example, this is what the &lt;code&gt;[metrics]&lt;/code&gt; section would look like with the &lt;em&gt;Datadog&lt;/em&gt; metrics client:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[metrics]
+name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;datadog&amp;#34;&lt;/span&gt;
+
+    [metrics.config]
+    host=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;localhost:8125&amp;#34;&lt;/span&gt;                  &lt;span style=&#34;color:#6272a4&#34;&gt;# address of the dogstatsd client to which send metrics to&lt;/span&gt;
+    prefix=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;myapp.baker.&amp;#34;&lt;/span&gt;                  &lt;span style=&#34;color:#6272a4&#34;&gt;# prefix for all exported metric names&lt;/span&gt;
+    send_logs=&lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;                         &lt;span style=&#34;color:#6272a4&#34;&gt;# whether we should log messages (as Dogstatd events) or not &lt;/span&gt;
+    tags=[&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;env:prod&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;region:eu-west-1&amp;#34;&lt;/span&gt;]  &lt;span style=&#34;color:#6272a4&#34;&gt;# extra tags to associate to all exported metrics &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;disaling-metrics-export&#34;&gt;Disaling metrics export&lt;/h4&gt;
+&lt;p&gt;To not export any metrics, it&amp;rsquo;s enough to not provide the &lt;code&gt;[metrics]&lt;/code&gt; section in
+Baker configuration file.&lt;/p&gt;
+&lt;h4 id=&#34;implementing-a-new-metrics-client&#34;&gt;Implementing a new metrics client&lt;/h4&gt;
+&lt;p&gt;The &lt;a href=&#34;https://github.com/AdRoll/baker/tree/main/examples/metrics&#34;&gt;metrics
+example&lt;/a&gt; shows an
+example implementation of
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
+and how to register it within Baker so that it can be selected in the
+&lt;code&gt;[metrics.name]&lt;/code&gt; TOML section.&lt;/p&gt;
+&lt;p&gt;In order to be selected from TOML, you must first register a
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsDesc&#34;&gt;&lt;code&gt;baker.MetricsDesc&lt;/code&gt;&lt;/a&gt;
+instance within &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; fooBarDesc = baker.MetricsDesc{
+	Name:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyMetrics&amp;#34;&lt;/span&gt;,
+	Config: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myyMetricsConfig{},
+	New:    newMyMetrics,
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;where &lt;code&gt;newMyMetrics&lt;/code&gt; is a constructor-like function receiving an &lt;code&gt;interface{}&lt;/code&gt;,
+which is guaranteed to be of the type of the &lt;code&gt;Config&lt;/code&gt; field value. This function
+should either return a ready to use
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
+or an error saying why it can&amp;rsquo;t.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;newMyMetrics&lt;/span&gt;(icfg &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt;{}) (baker.MetricsClient, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;metricsclient-interface&#34;&gt;Metrics.Client interface&lt;/h4&gt;
+&lt;p&gt;Once a &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
+instance has been successfully created, it&amp;rsquo;s made available to and used by
+a Baker pipeline to report metrics. During construction, components receive the
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;MetricsClient&lt;/code&gt;&lt;/a&gt; instance.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
+supports the most common type of metric types: &lt;em&gt;gauges&lt;/em&gt;, &lt;em&gt;counters&lt;/em&gt; and &lt;em&gt;histograms&lt;/em&gt;.&lt;/p&gt;
 
       </description>
     </item>

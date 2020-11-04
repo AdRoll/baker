@@ -7,7 +7,6 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://getbaker.io/docs/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -21,16 +20,30 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Documentation | Baker</title><meta property="og:title" content="Documentation" />
-<meta property="og:description" content="A high performance, composable and extendable data-processing pipeline for the big data era" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://getbaker.io/docs/" />
-<meta property="og:updated_time" content="2020-11-03T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Documentation">
-<meta itemprop="description" content="A high performance, composable and extendable data-processing pipeline for the big data era">
+<title>Tuning concurrency | Baker</title><meta property="og:title" content="Tuning concurrency" />
+<meta property="og:description" content="Baker allows to tune concurrency at various levels of a pipeline:
+ input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends on the input source and how the input is implemented filters: Baker runs N concurrent filter chains output: Baker runs M concurrent outputs  By default then, Baker processes records concurrently, without any guaranteed order.
+However, if you need to maintain the order of the records through the whole pipeline, it is still possible by disabling concurrency (see below for details)." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://getbaker.io/docs/core-concepts/concurrency/" />
+<meta property="article:published_time" content="2020-11-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-11-02T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Tuning concurrency">
+<meta itemprop="description" content="Baker allows to tune concurrency at various levels of a pipeline:
+ input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends on the input source and how the input is implemented filters: Baker runs N concurrent filter chains output: Baker runs M concurrent outputs  By default then, Baker processes records concurrently, without any guaranteed order.
+However, if you need to maintain the order of the records through the whole pipeline, it is still possible by disabling concurrency (see below for details).">
+<meta itemprop="datePublished" content="2020-11-02T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-11-02T00:00:00+00:00" />
+<meta itemprop="wordCount" content="288">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Documentation"/>
-<meta name="twitter:description" content="A high performance, composable and extendable data-processing pipeline for the big data era"/>
+<meta name="twitter:title" content="Tuning concurrency"/>
+<meta name="twitter:description" content="Baker allows to tune concurrency at various levels of a pipeline:
+ input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends on the input source and how the input is implemented filters: Baker runs N concurrent filter chains output: Baker runs M concurrent outputs  By default then, Baker processes records concurrently, without any guaranteed order.
+However, if you need to maintain the order of the records through the whole pipeline, it is still possible by disabling concurrency (see below for details)."/>
 
 
 
@@ -49,7 +62,7 @@
 
 
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -108,7 +121,7 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Documentation</a>
+    <a  href="/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Documentation</a>
   </li>
   <ul>
     <li class="collapse show" id="docs">
@@ -125,10 +138,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/getting-started/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Getting Started</a>
+    <a  href="/docs/getting-started/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Getting Started</a>
   </li>
   <ul>
-    <li class="collapse show" id="docsgetting-started">
+    <li class="collapse " id="docsgetting-started">
       
       
       
@@ -148,7 +161,7 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/core-concepts/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Core concepts</a>
+    <a  href="/docs/core-concepts/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Core concepts</a>
   </li>
   <ul>
     <li class="collapse show" id="docscore-concepts">
@@ -170,7 +183,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsconcurrency" href="/docs/core-concepts/concurrency/">Tuning concurrency</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscore-conceptsconcurrency" href="/docs/core-concepts/concurrency/">Tuning concurrency</a>
       
       
       
@@ -210,8 +223,8 @@
 
 
 
-<a href="https://github.com/adroll/baker/edit/master/content/en/docs/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Documentation" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/master/content/en/docs/Core%20concepts/concurrency.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Tuning%20concurrency" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -219,6 +232,18 @@
 
 
 
+
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#filter-chain-concurrency">Filter chain concurrency</a></li>
+        <li><a href="#concurrent-output">Concurrent output</a></li>
+        <li><a href="#guarantee-records-order">Guarantee Records order</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
 
 
@@ -234,8 +259,28 @@
 
 
 
-<li class="breadcrumb-item active" aria-current="page">
+
+
+
+
+
+
+<li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/">Documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://getbaker.io/docs/core-concepts/">Core concepts</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://getbaker.io/docs/core-concepts/concurrency/">Tuning concurrency</a>
 </li>
 
 	</ol>
@@ -243,60 +288,57 @@
 
             
 <div class="td-content">
-	<h1>Documentation</h1>
-        
-	
-	
+	<h1>Tuning concurrency</h1>
+    
+	       
+	<p>Baker allows to tune concurrency at various levels of a pipeline:</p>
+<ul>
+<li>input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends
+on the input source and how the input is implemented</li>
+<li>filters: Baker runs N concurrent filter chains</li>
+<li>output: Baker runs M concurrent outputs</li>
+</ul>
+<p>By default then, Baker processes records concurrently, without any guaranteed order.<br>
+However, if you need to maintain the order of the records through the whole pipeline, it is still
+possible by disabling concurrency (<a href="#guarantee-records-order">see below for details</a>).</p>
+<h3 id="filter-chain-concurrency">Filter chain concurrency</h3>
+<p>The filter chain is a synchronous list of filters that are applied in the order in which they are
+listed in the topology <a href="/docs/core-concepts/toml/">TOML configuration file</a>.</p>
+<p>By default, though, Baker executes multiple concurrent filter chains (the default value is 16)</p>
+<p>Filterchain concurrency can be set defining the <code>procs</code> key in the <code>[filterchain]</code> section:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[filterchain]
+procs=<span style="color:#bd93f9">16</span>
+</code></pre></div><p>Setting the value to <strong>procs=1</strong> disables the filter chain concurrency.</p>
+<h3 id="concurrent-output">Concurrent output</h3>
+<p>The output concurrency can be set defining the <code>procs</code> key in the <code>[output]</code> section:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[output]
+procs=<span style="color:#bd93f9">32</span>
+</code></pre></div><p>The default value is <strong>32</strong>.<br>
+To disable concurrency, set <strong>procs=1</strong>.</p>
+<h4 id="output-concurrency-support">Output concurrency support</h4>
+<p>For outputs that don&rsquo;t support concurrency, <code>procs=1</code> must be used to avoid corrupted output or
+lost data.</p>
+<p>Refer to the output documentation to know if it supports concurrent processing.</p>
 
-<div class="pageinfo pageinfo-primary">
-<p>This page is only a draft, please check out the <a href="https://github.com/AdRoll/baker/blob/main/README.md">README file in the repository</a></p>
 
+<div class="alert alert-info" role="alert">
+
+We&rsquo;ll soon add a new function to the output to declare whether it supports concurrency,
+and Baker will return an error if <code>procs&gt;1</code> is used with an output that doesn&rsquo;t support it.
 </div>
 
-
-        <div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/getting-started/">Getting started</a>
-                    </h5>
-                    <p>How to start with Baker.</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/core-concepts/">Core concepts</a>
-                    </h5>
-                    <p>Baker core concepts</p>
-                </div>
-            
-        
-            
-        
-    
-</div>
+<h3 id="guarantee-records-order">Guarantee Records order</h3>
+<p>Although it&rsquo;s not the primary goal of Baker, it is still possible to disable concurrency and thus
+guarantee records ordering from input to output.</p>
+<p>To do so, add both <code>procs=1</code> for output and filterchain, disabling concurrent processing for
+those components.</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 3, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified November 2, 2020
 </div>
 </div>
+
 
           </main>
         </div>

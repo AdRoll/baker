@@ -7,7 +7,6 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://getbaker.io/docs/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -21,16 +20,27 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Documentation | Baker</title><meta property="og:title" content="Documentation" />
-<meta property="og:description" content="A high performance, composable and extendable data-processing pipeline for the big data era" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://getbaker.io/docs/" />
-<meta property="og:updated_time" content="2020-11-03T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Documentation">
-<meta itemprop="description" content="A high performance, composable and extendable data-processing pipeline for the big data era">
+<title>Record implementation | Baker</title><meta property="og:title" content="Record implementation" />
+<meta property="og:description" content="Record is the interface representing the entries processed by Baker. This page explains how to implement a custom record.
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://getbaker.io/docs/core-concepts/record_implementation/" />
+<meta property="article:published_time" content="2020-10-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-10-29T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Record implementation">
+<meta itemprop="description" content="Record is the interface representing the entries processed by Baker. This page explains how to implement a custom record.
+">
+<meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="wordCount" content="934">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Documentation"/>
-<meta name="twitter:description" content="A high performance, composable and extendable data-processing pipeline for the big data era"/>
+<meta name="twitter:title" content="Record implementation"/>
+<meta name="twitter:description" content="Record is the interface representing the entries processed by Baker. This page explains how to implement a custom record.
+"/>
 
 
 
@@ -49,7 +59,7 @@
 
 
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -108,7 +118,7 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Documentation</a>
+    <a  href="/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Documentation</a>
   </li>
   <ul>
     <li class="collapse show" id="docs">
@@ -125,10 +135,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/getting-started/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Getting Started</a>
+    <a  href="/docs/getting-started/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Getting Started</a>
   </li>
   <ul>
-    <li class="collapse show" id="docsgetting-started">
+    <li class="collapse " id="docsgetting-started">
       
       
       
@@ -148,7 +158,7 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/core-concepts/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Core concepts</a>
+    <a  href="/docs/core-concepts/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Core concepts</a>
   </li>
   <ul>
     <li class="collapse show" id="docscore-concepts">
@@ -164,7 +174,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsrecord_implementation" href="/docs/core-concepts/record_implementation/">Record implementation</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscore-conceptsrecord_implementation" href="/docs/core-concepts/record_implementation/">Record implementation</a>
       
       
       
@@ -210,8 +220,8 @@
 
 
 
-<a href="https://github.com/adroll/baker/edit/master/content/en/docs/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Documentation" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/master/content/en/docs/Core%20concepts/record_implementation.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Record%20implementation" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -219,6 +229,37 @@
 
 
 
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#record-interface">Record interface</a>
+      <ul>
+        <li><a href="#parsebyte-metadata-error">Parse([]byte, Metadata) error</a></li>
+        <li><a href="#totextbuf-byte-byte">ToText(buf []byte) []byte</a></li>
+        <li><a href="#copy-record">Copy() Record</a></li>
+        <li><a href="#clear">Clear()</a></li>
+        <li><a href="#getfieldindex-byte">Get(FieldIndex) []byte</a></li>
+        <li><a href="#setfieldindex-byte">Set(FieldIndex, []byte)</a></li>
+        <li><a href="#metakey-string-v-interface-ok-bool">Meta(key string) (v interface{}, ok bool)</a></li>
+        <li><a href="#cache-cache">Cache() *Cache</a></li>
+      </ul>
+    </li>
+    <li><a href="#logline">LogLine</a>
+      <ul>
+        <li><a href="#custom-logline">Custom LogLine</a></li>
+      </ul>
+    </li>
+    <li><a href="#how-to-use-a-custom-version-of-the-record">How to use a custom version of the Record</a>
+      <ul>
+        <li><a href="#validate">Validate</a></li>
+        <li><a href="#createrecord">CreateRecord</a></li>
+        <li><a href="#fieldbyname">FieldByName</a></li>
+        <li><a href="#fieldindex">FieldIndex</a></li>
+      </ul>
+    </li>
+    <li><a href="#recordconformancetest">RecordConformanceTest</a></li>
+  </ul>
+</nav>
 
 
 
@@ -234,8 +275,28 @@
 
 
 
-<li class="breadcrumb-item active" aria-current="page">
+
+
+
+
+
+
+<li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/">Documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://getbaker.io/docs/core-concepts/">Core concepts</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://getbaker.io/docs/core-concepts/record_implementation/">Record implementation</a>
 </li>
 
 	</ol>
@@ -243,60 +304,150 @@
 
             
 <div class="td-content">
-	<h1>Documentation</h1>
-        
-	
-	
+	<h1>Record implementation</h1>
+    <div class="lead">Record is the interface representing the entries processed by Baker. This page explains how to implement a custom record.</div>
+	       
+	<p>Baker processes objects in form of &ldquo;records&rdquo;. A Record, in Baker, is an interface that
+provides an abstraction over a record of flattened data, where columns of fields are
+indexed through integers.</p>
+<p>Baker currently provides a single implementation of Record, called
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine"><code>LogLine</code></a>.<br>
+If <code>LogLine</code> doesn&rsquo;t fit your needs, you can easily implement the Record interface with your
+logic.</p>
+<h2 id="record-interface">Record interface</h2>
+<p>This is the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Record">Record interface</a> as
+declared in <code>record.go</code>. Each method is explained below:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> FieldIndex <span style="color:#8be9fd">int</span>
+<span style="color:#8be9fd;font-style:italic">type</span> Metadata <span style="color:#8be9fd;font-style:italic">map</span>[<span style="color:#8be9fd">string</span>]<span style="color:#8be9fd;font-style:italic">interface</span>{}
 
-<div class="pageinfo pageinfo-primary">
-<p>This page is only a draft, please check out the <a href="https://github.com/AdRoll/baker/blob/main/README.md">README file in the repository</a></p>
+<span style="color:#8be9fd;font-style:italic">type</span> Record <span style="color:#8be9fd;font-style:italic">interface</span> {
+	<span style="color:#50fa7b">Parse</span>([]<span style="color:#8be9fd">byte</span>, Metadata) <span style="color:#8be9fd">error</span>
+	<span style="color:#50fa7b">ToText</span>(buf []<span style="color:#8be9fd">byte</span>) []<span style="color:#8be9fd">byte</span>
+	<span style="color:#50fa7b">Copy</span>() Record
+	<span style="color:#50fa7b">Clear</span>()
+	<span style="color:#50fa7b">Get</span>(FieldIndex) []<span style="color:#8be9fd">byte</span>
+	<span style="color:#50fa7b">Set</span>(FieldIndex, []<span style="color:#8be9fd">byte</span>)
+	<span style="color:#50fa7b">Meta</span>(key <span style="color:#8be9fd">string</span>) (v <span style="color:#8be9fd;font-style:italic">interface</span>{}, ok <span style="color:#8be9fd">bool</span>)
+	<span style="color:#50fa7b">Cache</span>() <span style="color:#ff79c6">*</span>Cache
+}
+</code></pre></div><h3 id="parsebyte-metadata-error">Parse([]byte, Metadata) error</h3>
+<p>The <code>Parse</code> creates a Record instance by deserializing a slice of byte.</p>
+<p>It also receives a, possibly nil, <code>Metadata</code> map that the input can fill in (like record retrieval
+timestamp or any other useful info). The function must be able to accept a <code>nil</code> Metadata value.</p>
+<h3 id="totextbuf-byte-byte">ToText(buf []byte) []byte</h3>
+<p><code>ToText</code> serializes the Record into a slice of bytes.</p>
+<p>In case the passed <code>buf</code> is not <code>nil</code> (and if big enough), it is used to serialize the record.</p>
+<h3 id="copy-record">Copy() Record</h3>
+<p><code>Copy</code> creates and returns a deep-copy of the record.</p>
+<p>There is a &ldquo;simple&rdquo; way to create a copy of a record:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> dst Record
+dst.<span style="color:#50fa7b">Parse</span>(src.<span style="color:#50fa7b">ToText</span>(), <span style="color:#ff79c6">nil</span>)
+</code></pre></div><p>but the <code>Copy</code> function should provide a more efficient way, optimized for the
+custom record implementation.</p>
+<h3 id="clear">Clear()</h3>
+<p><code>Clear</code> clears the record internal state, making it empty and re-usable as an empty record.</p>
+<h3 id="getfieldindex-byte">Get(FieldIndex) []byte</h3>
+<p><code>Get</code> returns the value of a field at the given index.</p>
+<h3 id="setfieldindex-byte">Set(FieldIndex, []byte)</h3>
+<p>Set the value of a field at the give index.</p>
+<h3 id="metakey-string-v-interface-ok-bool">Meta(key string) (v interface{}, ok bool)</h3>
+<p><code>Meta</code> returns the value of the attached metadata for the given key, if any.</p>
+<p>The simplest implementation could be:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> MyRecord <span style="color:#8be9fd;font-style:italic">struct</span> {
+    meta baker.Metadata
+}
 
+<span style="color:#8be9fd;font-style:italic">func</span> (r <span style="color:#ff79c6">*</span>MyRecord) <span style="color:#50fa7b">Meta</span>(key <span style="color:#8be9fd">string</span>) (<span style="color:#8be9fd;font-style:italic">interface</span>{}, <span style="color:#8be9fd">bool</span>) {
+    <span style="color:#ff79c6">return</span> l.meta.<span style="color:#50fa7b">get</span>(key)
+}
+</code></pre></div><h3 id="cache-cache">Cache() *Cache</h3>
+<p><code>Cache</code> holds a cache which is local to the record.<br>
+It may be used to speed up parsing of specific fields by caching the result.<br>
+When accessing a field and parsing its value, we want to try caching as much as
+possible the parsing we do, to avoid redoing it later when the same record
+is processed by different code.</p>
+<p>Since cached values are interfaces, it&rsquo;s up to who fetches a value to know the underlying
+type of the cached value and perform a type assertion.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> ll Record
+val, ok <span style="color:#ff79c6">:=</span> ll.Cache.<span style="color:#50fa7b">Get</span>(<span style="color:#f1fa8c">&#34;mykey&#34;</span>)
+<span style="color:#ff79c6">if</span> !ok {
+    <span style="color:#6272a4">// long computation/parsing...
+</span><span style="color:#6272a4"></span>    val = <span style="color:#f1fa8c">&#34;14/07/1789&#34;</span>
+    ll.Cache.<span style="color:#50fa7b">Set</span>(<span style="color:#f1fa8c">&#34;mykey&#34;</span>, val)
+}
+
+<span style="color:#6272a4">// do something with the result
+</span><span style="color:#6272a4"></span>result <span style="color:#ff79c6">:=</span> val.(<span style="color:#8be9fd">string</span>)
+</code></pre></div><h2 id="logline">LogLine</h2>
+<p>A <code>LogLine</code> is a highly optimized CSV. It supports any single-byte field separator and doesn&rsquo;t
+handle quotes (neither single nor double).<br>
+The maximum number of fields is hard-coded by the <code>LogLineNumFields</code> constant which is 3000.<br>
+100 extra fields can be stored at runtime in a <code>LogLine</code> (also hardcoded with <code>NumFieldsBaker</code>),
+these extra fields are a fast way to exchange data between filters and/or outputs but they are
+neither handled during Parsing (i.e <code>LogLine.Parse</code>) nor serialization (<code>LogLine.ToText</code>).</p>
+<h3 id="custom-logline">Custom LogLine</h3>
+<p>If the hardcoded values for <code>LogLineNumFields</code> and <code>NumFieldsBaker</code> do not suit your needs,
+it&rsquo;s advised that you copy <code>LogLine.go</code> in your project and modify the constants declared at
+the top of the file. Your specialized <code>LogLine</code> will still implement <code>baker.Record</code> and thus
+can be used in lieu of <code>baker.LogLine</code>. To do so, you need to provide a <code>CreateRecord</code>
+function to <code>baker.Components</code> when calling <code>baker.NewConfigFromToml</code>.</p>
+<p>For example (<code>my.LogLine</code> is your custom implementation):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">comp <span style="color:#ff79c6">:=</span> baker.Components{}
+
+comp.CreateRecord = <span style="color:#8be9fd;font-style:italic">func</span>() baker.Record {
+  <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">&amp;</span>my.LogLine{ FieldSeparator: <span style="color:#f1fa8c">&#39;,&#39;</span> }
+}
+</code></pre></div><h2 id="how-to-use-a-custom-version-of-the-record">How to use a custom version of the Record</h2>
+<p>Once a customized version of a Record has been implemented, you want to use it in your code.
+In order to do so, some functions may be implemented while instantiating <code>baker.Components</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> Components <span style="color:#8be9fd;font-style:italic">struct</span> {
+	Validate      ValidationFunc
+    CreateRecord  <span style="color:#8be9fd;font-style:italic">func</span>() Record
+    FieldByName <span style="color:#8be9fd;font-style:italic">func</span>(<span style="color:#8be9fd">string</span>) (FieldIndex, <span style="color:#8be9fd">bool</span>)
+    FieldName   <span style="color:#8be9fd;font-style:italic">func</span>(FieldIndex) <span style="color:#8be9fd">string</span>
+    <span style="color:#6272a4">//... other functions
+</span><span style="color:#6272a4"></span>}
+</code></pre></div><h3 id="validate">Validate</h3>
+<p><code>Validate</code> is the function used to validate a record. It is called for each processed record
+unless not set or when the <code>[general] dont_validate_fields = true</code> configuration is set in
+the TOML file.</p>
+<p>Regardless of the TOML configuration, the function is passed to all components that can use
+it at their will.</p>
+<h3 id="createrecord">CreateRecord</h3>
+<p><code>CreateRecord</code> is the function that creates a new record. If not set, a default function is
+used that creates a <code>LogLine</code> with <code>,</code> as field separator.</p>
+<p>The function is used internally by Baker to create new records every time a new one comes from
+the input.</p>
+<p>The function is also passed to components that can use it to create new records while processing.</p>
+<h3 id="fieldbyname">FieldByName</h3>
+<p><code>FieldByName</code> gets a field index by its name. The function is mainly used by the components
+(that receive it during setup) to retrieve the index of a field they need for filtering or
+processing, but it is also used internally by Baker when sending fields to the output
+(when at least one field is selected in the output TOML configuration).</p>
+<h3 id="fieldindex">FieldIndex</h3>
+<p><code>FieldName</code> gets a field name by its index. The function is passed to components that can use
+it for their internal logic.</p>
+<h2 id="recordconformancetest">RecordConformanceTest</h2>
+<p>The <code>test_helper.go</code> provides a <code>RecordConformanceTest</code> test helper whose goal is to give the
+user a structured test for new implementations of the Record.</p>
+<p>The helper receives the implementation of <code>CreateRecord</code> and creates new records testing
+them against a set of requirements.</p>
+
+
+<div class="alert alert-warning" role="alert">
+<h4 class="alert-heading">Warning</h4>
+The conformance test provides a way to verify that a record implementation respects the
+invariant that Baker requires for a Record implementation and thus it should always
+be executed against all custom implementations of the Record.
 </div>
 
 
-        <div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/getting-started/">Getting started</a>
-                    </h5>
-                    <p>How to start with Baker.</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/core-concepts/">Core concepts</a>
-                    </h5>
-                    <p>Baker core concepts</p>
-                </div>
-            
-        
-            
-        
-    
+	
+	
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 29, 2020
+</div>
 </div>
 
-	
-	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 3, 2020
-</div>
-</div>
 
           </main>
         </div>
