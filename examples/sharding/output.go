@@ -32,6 +32,10 @@ func (s *Shardable) CanShard() bool {
 	return true
 }
 
+func (s *Shardable) SupportConcurrency() bool {
+	return true
+}
+
 func (s *Shardable) Run(input <-chan baker.OutputRecord, _ chan<- string) error {
 	// Do something with `input` record.
 	// s.idx identifies the output process index and should

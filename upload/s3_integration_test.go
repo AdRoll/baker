@@ -32,6 +32,7 @@ func nthFile(n int) string { return fmt.Sprintf("file.%02d", n) }
 
 func (o *customOutput) Stats() baker.OutputStats { return baker.OutputStats{} }
 func (o *customOutput) CanShard() bool           { return false }
+func (o *customOutput) SupportConcurrency() bool { return false }
 
 func (o *customOutput) Run(in <-chan baker.OutputRecord, upch chan<- string) error {
 	// Simulate a new file for each received record
@@ -56,14 +57,14 @@ func testIntegrationS3(callStop bool) func(t *testing.T) {
 		toml := `
 		[input]
 		name="records"
-	
+
 		[output]
 		name="custom"
 		procs=1
-	
+
 		[upload]
 		name="s3"
-	
+
 			[upload.config]
 			sourcebasepath=%q
 			stagingpath=%q

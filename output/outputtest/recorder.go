@@ -44,4 +44,5 @@ func (r *Recorder) Run(input <-chan baker.OutputRecord, _ chan<- string) error {
 func (r *Recorder) Stats() baker.OutputStats { return baker.OutputStats{} }
 
 // CanShard implements baker.Output interface.
-func (r *Recorder) CanShard() bool { return true }
+func (r *Recorder) CanShard() bool           { return true }
+func (r *Recorder) SupportConcurrency() bool { return true }

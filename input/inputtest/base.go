@@ -2,6 +2,18 @@ package inputtest
 
 import "github.com/AdRoll/baker"
 
+var BaseDesc = baker.InputDesc{
+	Name:   "Base",
+	New:    NewBase,
+	Config: &BaseConfig{},
+}
+
+type BaseConfig struct{}
+
+func NewBase(_ baker.InputParams) (baker.Input, error) {
+	return &Base{}, nil
+}
+
 // Base is a nop implementation of baker.Input useful to be embedded in tests
 // and to redeclare one or more methods.
 type Base struct{}

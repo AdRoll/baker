@@ -78,3 +78,7 @@ func (w *WebSocketWriter) Stats() baker.OutputStats {
 func (b *WebSocketWriter) CanShard() bool {
 	return false
 }
+
+func (b *WebSocketWriter) SupportConcurrency() bool {
+	return true
+}

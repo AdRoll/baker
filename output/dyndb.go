@@ -412,3 +412,7 @@ func (b *DynamoWriter) Stats() baker.OutputStats {
 func (b *DynamoWriter) CanShard() bool {
 	return false
 }
+
+func (b *DynamoWriter) SupportConcurrency() bool {
+	return true
+}

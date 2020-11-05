@@ -24,7 +24,7 @@ type Record interface {
 	//
 	// The copied record could have been obtained by:
 	//  var dst Record
-	//  src.Parse(dst.ToText(), nil)
+	//  dst.Parse(src.ToText(), nil)
 	//
 	// but Record implementations should provide a more efficient way.
 	Copy() Record

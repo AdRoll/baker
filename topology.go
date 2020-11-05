@@ -142,6 +142,10 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 		if err != nil {
 			return nil, fmt.Errorf("error creating output: %v", err)
 		}
+		if cfg.Output.Procs > 1 && !out.SupportConcurrency() {
+			return nil, fmt.Errorf("procs>1 used with output unable to support concurrency")
+		}
+
 		tp.Output = append(tp.Output, out)
 	}
 

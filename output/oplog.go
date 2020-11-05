@@ -60,3 +60,7 @@ func (w *OpLog) Stats() baker.OutputStats {
 func (b *OpLog) CanShard() bool {
 	return false
 }
+
+func (b *OpLog) SupportConcurrency() bool {
+	return true
+}

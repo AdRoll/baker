@@ -119,6 +119,10 @@ type Output interface {
 
 	// CanShards returns true if this output supports sharding.
 	CanShard() bool
+
+	// SupportConcurrency retrurn true if the output is able to manage
+	// multiple instances to run concurrently (procs>1)
+	SupportConcurrency() bool
 }
 
 // OutputRecord is the data structure sent to baker output components.

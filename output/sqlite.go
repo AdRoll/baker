@@ -408,5 +408,15 @@ func (c *SQLiteWriter) Stats() baker.OutputStats {
 }
 
 func (c *SQLiteWriter) CanShard() bool {
-	return true
+	// github.com/mattn/go-sqlite3 supports concurrency only for reading,
+	// so the output isn't concurrent-safe and it supports sharding
+	// only with different file names
+	return strings.Contains(c.cfg.PathString, "{{.ShardId}}")
+}
+
+func (c *SQLiteWriter) SupportConcurrency() bool {
+	// github.com/mattn/go-sqlite3 supports concurrency only for reading,
+	// so the output isn't concurrent-safe and it supports "concurrency"
+	// only with different file names
+	return strings.Contains(c.cfg.PathString, "{{.ShardId}}")
 }

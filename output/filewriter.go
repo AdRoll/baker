@@ -42,7 +42,7 @@ var FileWriterDesc = baker.OutputDesc{
 }
 
 type FileWriterConfig struct {
-	PathString           string        `help:"Template to describe location of the output directory: supports .Year, .Month, .Day and .Rotation. Also .Field0 if a field name has been specified in the output's fields list."`
+	PathString           string        `help:"Template to describe location of the output directory: supports .Year, .Month, .Day, .Hour, .Minute, .Second, .UUID, .Index and .Rotation. Also .Field0 if a field name has been specified in the output's fields list."`
 	RotateInterval       time.Duration `help:"Time after which data will be rotated. If -1, it will not rotate until the end." default:"60s"`
 	ZstdCompressionLevel int           `help:"zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
 	ZstdWindowLog        int           `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
@@ -125,6 +125,12 @@ func (w *FileWriter) Stats() baker.OutputStats {
 
 func (w *FileWriter) CanShard() bool {
 	return false
+}
+
+func (w *FileWriter) SupportConcurrency() bool {
+	// .Index and .UUID are unique to the output process, so if the file path
+	// includes them, we know that there won't be name clashes
+	return strings.Contains(w.Cfg.PathString, "{{.Index}}") || strings.Contains(w.Cfg.PathString, "{{.UUID}}")
 }
 
 func (cfg *FileWriterConfig) fillDefaults() {

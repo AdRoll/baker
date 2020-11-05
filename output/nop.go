@@ -21,7 +21,8 @@ func NewNopWriter(cfg baker.OutputParams) (baker.Output, error) {
 	return &NopWriter{}, nil
 }
 
-func (b *NopWriter) CanShard() bool { return true }
+func (b *NopWriter) CanShard() bool           { return true }
+func (b *NopWriter) SupportConcurrency() bool { return true }
 
 func (nop *NopWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) error {
 	for range input {

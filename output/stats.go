@@ -347,4 +347,5 @@ func (s *Stats) Stats() baker.OutputStats {
 }
 
 // CanShard implements baker.Output
-func (s *Stats) CanShard() bool { return true }
+func (s *Stats) CanShard() bool           { return false }
+func (s *Stats) SupportConcurrency() bool { return false }
