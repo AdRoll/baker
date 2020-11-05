@@ -1,7 +1,7 @@
 ---
 title: "Sharding"
 date: 2020-10-29
-weight: 410
+weight: 600
 description: >
   Sharding how-to
 ---

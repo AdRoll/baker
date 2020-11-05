@@ -1,31 +1,10 @@
 ---
 title: "Pipeline configuration"
 date: 2020-10-29
-weight: 1
+weight: 100
 description: >
   How to configure Baker using TOML files
 ---
-
-### Pipelines
-
-A pipeline is the configured set of operations that Baker performs during its execution.
-
-It is defined by:
-
-* One input component, defining where to fetch records from
-* Zero or more filters, applied sequentially, which together define the **filter chain**. A filter is
-a function that processes record (modifying fields, discarding or creating records).
-* One output component, defining where to send the filtered records to (and which fields)
-* One optional upload component, defining where to send files produced by the output component
-
-Notice that there are two main usage scenarios for Baker, batch or daemon processing, that depend on
-the input component behaviour:
-
-* **Batch processing**: In this case, Baker goes through all the records that are fed
-by the input component, processes them as quickly as possible, and exits when the input component
-ends its job.
-* **Daemon**: in this case, the input component never exits and thus also Baker, that keeps waiting
-for incoming records from the input (e.g.: Kinesis), processes them and sends them to the output.
 
 ### Configuration file
 
