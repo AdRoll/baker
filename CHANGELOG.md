@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - output: add SQLite output [#56](https://github.com/AdRoll/baker/pull/56)
 - README: document KCL input [#59](https://github.com/AdRoll/baker/pull/59)
 - Document how to specialize baker.LogLine [#63](https://github.com/AdRoll/baker/pull/63)
+- Add `baker.MainCLI` [#73](https://github.com/AdRoll/baker/pull/73)
 
 ### Changed
 
