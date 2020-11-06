@@ -60,4 +60,13 @@ Metrics export is set up in Baker topology TOML files, [see how to configure it]
 
 ## Sharding
 
-TODO
+Baker supports partitioning the records it processes into smaller subsets each
+of which is forwarded to an output shard: _divide and conquer_.
+
+When sharding is enabled, the shards, which are just multiple instances of the
+same output component, run concurrently. Each of them only gets to process a 
+specific subset of records, based on a the value a specific field has. This
+horizontal partioning allows to get the most of the resources at your disposal,
+since you can perform more work at the same time.
+
+[Read more about sharding and how to configure it](/docs/how-to/sharding/)
