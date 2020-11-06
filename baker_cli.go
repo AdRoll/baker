@@ -30,12 +30,12 @@ var BuildVersion = "-- unknown --"
 // the available Components.
 //
 // The function includes many utilities that can be configured by command line arguments:
-// -help: Prints available options and components
-// -version: print build version (build with `-ldflags="-X 'github.com/AdRoll/baker.BuildVersion=someversion'"` to set the value)
-// -v: verbose logging (not compatible with -q)
-// -q: quiet logging (not compatible with -v)
-// -pretty: logs in textual format instead of JSON format
-// -pprof: run a pprof server on the provided host:port address
+//  -help: Prints available options and components
+//  -version: print build version (build with `-ldflags="-X 'github.com/AdRoll/baker.BuildVersion=someversion'"` to set the value)
+//  -v: verbose logging (not compatible with -q)
+//  -q: quiet logging (not compatible with -v)
+//  -pretty: logs in textual format instead of JSON format
+//  -pprof: run a pprof server on the provided host:port address
 func MainCLI(components Components) error {
 	log.SetFormatter(&log.JSONFormatter{})
 	log.SetOutput(os.Stderr)
