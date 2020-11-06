@@ -21,7 +21,7 @@ a function that processes record (modifying fields, discarding or creating recor
 * One optional upload component, defining where to send files produced by the output component
 
 Notice that there are two main usage scenarios for Baker, batch or daemon processing, that depend on
-the input component behaviour:
+the input component behavior:
 
 * **Batch processing**: In this case, Baker goes through all the records that are fed
 by the input component, processes them as quickly as possible, and exits when the input component
@@ -33,14 +33,13 @@ Also read [Pipeline configuration](/docs/how-to/pipeline_configuration/)
 
 ## Record and LogLine
 
-Baker processes objects in form of "records". A Record, in Baker, is an interface that
-provides an abstraction over a record of flattened data, where columns of fields are
-indexed through integers.
+Baker processes "records". A `Record` is an interface that provides an abstraction over a record
+of flattened data, where columns of fields are indexed through integers.
 
 Baker currently provides a single implementation of Record, called `LogLine` (
 [API reference](https://pkg.go.dev/github.com/AdRoll/baker#LogLine)).
 
-If `LogLine` doesn't fit your needs, you can [customize the LogLine](/docs/how-to/record_and_logline/)
+If `LogLine` doesn't fit your needs, you can [customize it](/docs/how-to/record_and_logline/)
 or [implement your version of the Record](/docs/how-to/custom_record/).
 
 ## Components
