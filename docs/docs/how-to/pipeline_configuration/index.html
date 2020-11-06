@@ -7,7 +7,6 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://getbaker.io/docs/how-to/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -21,18 +20,26 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>How-to | Baker</title><meta property="og:title" content="How-to" />
-<meta property="og:description" content="How to start with Baker as a library.
+<title>Pipeline configuration | Baker</title><meta property="og:title" content="Pipeline configuration" />
+<meta property="og:description" content="How to configure Baker using TOML files
 " />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://getbaker.io/docs/how-to/" />
-<meta property="og:updated_time" content="2020-11-03T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="How-to">
-<meta itemprop="description" content="How to start with Baker as a library.
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://getbaker.io/docs/how-to/pipeline_configuration/" />
+<meta property="article:published_time" content="2020-10-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-10-29T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Pipeline configuration">
+<meta itemprop="description" content="How to configure Baker using TOML files
 ">
+<meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="wordCount" content="743">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="How-to"/>
-<meta name="twitter:description" content="How to start with Baker as a library.
+<meta name="twitter:title" content="Pipeline configuration"/>
+<meta name="twitter:description" content="How to configure Baker using TOML files
 "/>
 
 
@@ -52,7 +59,7 @@
 
 
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -184,7 +191,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-topipeline_configuration" href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-topipeline_configuration" href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a>
       
       
       
@@ -254,8 +261,8 @@
 
 
 
-<a href="https://github.com/adroll/baker/edit/master/content/en/docs/How%20To/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=How-to" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/master/content/en/docs/How%20To/pipeline_configuration.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Pipeline%20configuration" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -263,6 +270,17 @@
 
 
 
+
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#configuration-file">Configuration file</a></li>
+        <li><a href="#environment-variables-replacement">Environment variables replacement</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
 
 
@@ -281,6 +299,9 @@
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/">Documentation</a>
 </li>
@@ -288,8 +309,15 @@
 
 
 
-<li class="breadcrumb-item active" aria-current="page">
+<li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/how-to/">How-to</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://getbaker.io/docs/how-to/pipeline_configuration/">Pipeline configuration</a>
 </li>
 
 	</ol>
@@ -297,107 +325,187 @@
 
             
 <div class="td-content">
-	<h1>How-to</h1>
-        <div class="lead">How to start with Baker as a library.</div>
-	
-	<p>To configure and run a Baker topology, 4 steps are required:</p>
-<ol>
-<li>use a <a href="/docs/core-concepts/toml/">TOML configuration file</a></li>
-<li>define a <a href="/docs/how-to/baker_components/">baker.Components object</a></li>
-<li>obtain a Baker configuration object calling
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#NewConfigFromToml"><code>baker.NewConfigFromToml</code></a></li>
-<li>run <a href="https://pkg.go.dev/github.com/AdRoll/baker#Main"><code>baker.Main</code></a></li>
-</ol>
-<p>The <a href="https://github.com/AdRoll/baker/tree/main/examples">example folder</a> in the Baker
-repositories contains many examples of implementing a Baker pipeline.</p>
-<p>Start with the <a href="https://github.com/AdRoll/baker/blob/main/examples/basic/main.go">basic example</a>.</p>
+	<h1>Pipeline configuration</h1>
+    <div class="lead">How to configure Baker using TOML files</div>
+	       
+	<h3 id="configuration-file">Configuration file</h3>
+<p>Baker is configured using a <a href="https://toml.io/en/">TOML file</a>, whose content is processed by the
+<a href="https://pkg.go.dev/github.com/AdRoll/Baker#NewConfigFromToml"><code>NewConfigFromToml</code></a> function.</p>
+<p>The file has several sections, described below:</p>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Required</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[general]</code></td>
+<td>false</td>
+<td>General configuration</td>
+</tr>
+<tr>
+<td><code>[metrics]</code></td>
+<td>false</td>
+<td>Metrics service configuration</td>
+</tr>
+<tr>
+<td><code>[[user]]</code></td>
+<td>false</td>
+<td>Array of user-defined configurations</td>
+</tr>
+<tr>
+<td><code>[input]</code></td>
+<td>true</td>
+<td>Input component configuration</td>
+</tr>
+<tr>
+<td><code>[[filter]]</code></td>
+<td>false</td>
+<td>Array of filters configuration</td>
+</tr>
+<tr>
+<td><code>[output]</code></td>
+<td>true</td>
+<td>Output component configuration</td>
+</tr>
+<tr>
+<td><code>[upload]</code></td>
+<td>false</td>
+<td>Upload component configuration</td>
+</tr>
+</tbody>
+</table>
+<h4 id="general-configuration">General configuration</h4>
+<p>The <code>[general]</code> section is used to configure the general behaviour of Baker.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dont_validate_fields</td>
+<td>bool</td>
+<td>Reports whether records validation is skipped (by not calling Components.Validate)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="components-configuration">Components configuration</h4>
+<p>Components sections are <code>[input]</code>, <code>[[filter]]</code>, <code>[output]</code> and <code>[upload]</code> and contain a
+<code>name = &quot;&lt;component name&gt;&quot;</code> line and an optional <code>config</code> subsection (like <code>[input.config]</code>)
+to set specific configuration values to the selected component.</p>
+<p>Components' specific configuration can be marked as required (within the component code). If a
+required config is missing, Baker won&rsquo;t start.</p>
+<p>This is a minimalist Baker configuration TOML, reading records from files (<code>List</code>), applying the
+<code>TimestampRange</code> filter and writing the output to <code>DynamoDB</code>, with some specific options:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[input]
+name=<span style="color:#f1fa8c">&#34;List&#34;</span>
 
-        <div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a>
-                    </h5>
-                    <p>How to configure Baker using TOML files</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/record_and_logline/">Record and LogLine</a>
-                    </h5>
-                    <p>Baker deals with &ldquo;record&rdquo; objects, an abstraction of flattened data with indexed fields.</p>
-                </div>
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/custom_record/">Create a custom Record</a>
-                    </h5>
-                    <p>Record is the interface provided by Baker to represent an &ldquo;object&rdquo; of data</p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/metrics/">Export metrics</a>
-                    </h5>
-                    <p>How to export metrics from Baker</p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/baker_components/">Create baker.Components</a>
-                    </h5>
-                    <p>baker.Components is the main object used to create a Baker topology</p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/sharding/">Sharding</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/concurrency/">Tuning concurrency</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-    
-</div>
+    [input.config]
+    files=[<span style="color:#f1fa8c">&#34;records.csv.gz&#34;</span>]
+
+[[filter]]
+name=<span style="color:#f1fa8c">&#34;TimestampRange&#34;</span>
+
+    [filter.config]
+    StartDatetime = <span style="color:#f1fa8c">&#34;2020-10-30 15:00:00&#34;</span>
+	EndDatetime = <span style="color:#f1fa8c">&#34;2020-11-01 00:00:00&#34;</span>
+	Field = <span style="color:#f1fa8c">&#34;timestamp&#34;</span>
+
+[output]
+name=<span style="color:#f1fa8c">&#34;DynamoDB&#34;</span>
+fields=[<span style="color:#f1fa8c">&#34;source&#34;</span>,<span style="color:#f1fa8c">&#34;timestamp&#34;</span>,<span style="color:#f1fa8c">&#34;user&#34;</span>]
+
+    [output.config]
+    regions=[<span style="color:#f1fa8c">&#34;us-west-2&#34;</span>,<span style="color:#f1fa8c">&#34;us-east-1&#34;</span>]
+    table=<span style="color:#f1fa8c">&#34;MyTable&#34;</span>
+    columns=[<span style="color:#f1fa8c">&#34;s:Source&#34;</span>, <span style="color:#f1fa8c">&#34;n:Timestamp&#34;</span>, <span style="color:#f1fa8c">&#34;s:User&#34;</span>]
+</code></pre></div><p><code>[input]</code> selects the input component, or where to read the records from.<br>
+In this case, the List component is selected, which is a component that fetches files from
+a list of local or remote paths/URLs. <code>[input.config]</code> is where component-specific configuration
+can be specified, and in this case we simply provide the files option to List.<br>
+Notice that List would accept http:// or even s3:// URLs there in addition to local paths,<br>
+and some more (run ./Baker-bin -help List in the help example for more details).</p>
+<p><code>[[filter]]</code> In TOML syntax, the double brackets indicates an array of sections.<br>
+This is where you declare the list of filters (i.e filter chain) to sequentially apply to your
+records. As other components, each filter may be followed by a <code>[filter.config]</code> section.</p>
+<p><code>[output]</code> selects the output component; the output is where records that made it to the end of
+the filter chain without being discarded end up. In this case, the <code>DynamoDB</code> output is selected,
+and its configuration is specified in <code>[output.config]</code>.</p>
+<p>The <code>fields</code> option in the <code>[output]</code> section selects which fields of the record are sent
+to the output.<br>
+In fact, most pipelines don&rsquo;t want to send the full records to the output, but they select
+a few important fields out of the many available fields.<br>
+Notice that this is just a selection: it is up to the output component to decide how to
+physically serialize those fields. For instance, the <code>DynamoDB</code> component requires the user
+to specify an option called columns that specifies the name and the type of the column where
+the fields are written.</p>
+<h4 id="metrics-configuration">Metrics configuration</h4>
+<p>The <code>[metrics]</code> section allows to configure the metrics backend to use. Currently, only <code>datadog</code> is
+supported.</p>
+<p>See the dedicated page to learn how to configure DataDog metrics with Baker. (TODO: add link)</p>
+<h4 id="user-defined-configurations">User defined configurations</h4>
+<p>The <code>baker.NewConfigFromToml</code> function, used by Baker to parse the TOML configuration file, can be
+also used to add custom configurations to the TOML file (useful as Baker can be used as library in
+a more complex project).</p>
+<p>This is an example of a TOML file defining also some of those user defined configurations (along
+with the input and output configurations):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[input]
+name=<span style="color:#f1fa8c">&#34;random&#34;</span>
+
+[output]
+name=<span style="color:#f1fa8c">&#34;recorder&#34;</span>
+
+[[user]]
+name=<span style="color:#f1fa8c">&#34;MyConfiG&#34;</span>
+
+	[user.config]
+	field1 = <span style="color:#bd93f9">1</span>
+	field2 = <span style="color:#f1fa8c">&#34;hello!&#34;</span>
+</code></pre></div><p>Using <code>NewConfigFromToml</code> is then possible to retrieve those configurations:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">cfg <span style="color:#ff79c6">:=</span> strings.<span style="color:#50fa7b">NewReader</span>(toml) <span style="color:#6272a4">// toml is the content of the toml file
+</span><span style="color:#6272a4"></span>
+<span style="color:#6272a4">// myConfig contains the user-defined configurations we expect from the toml file
+</span><span style="color:#6272a4"></span><span style="color:#8be9fd;font-style:italic">type</span> myConfig <span style="color:#8be9fd;font-style:italic">struct</span> {
+    Field1 <span style="color:#8be9fd">int</span>
+    Field2 <span style="color:#8be9fd">string</span>
+}
+mycfg <span style="color:#ff79c6">:=</span> myConfig{}
+
+<span style="color:#6272a4">// comp is the baker components configuration.
+</span><span style="color:#6272a4">// Here we use Inputs and Outputs in addition to User because
+</span><span style="color:#6272a4">// they are required configurations
+</span><span style="color:#6272a4"></span>comp <span style="color:#ff79c6">:=</span> baker.Components{
+    Inputs:  []baker.InputDesc{inputtest.RandomDesc},
+    Outputs: []baker.OutputDesc{outputtest.RecorderDesc},
+    User:    []baker.UserDesc{{Name: <span style="color:#f1fa8c">&#34;myconfig&#34;</span>, Config: <span style="color:#ff79c6">&amp;</span>mycfg}},
+}
+
+<span style="color:#6272a4">// Use baker to parse and ingest the configuration file
+</span><span style="color:#6272a4"></span>baker.<span style="color:#50fa7b">NewConfigFromToml</span>(cfg, comp)
+
+<span style="color:#6272a4">// Now mycfg has been populated with the user defined configurations:
+</span><span style="color:#6272a4">// myConfig{Field1: 1, Field2: &#34;hello!&#34;}
+</span><span style="color:#6272a4">// and can be used anywhere in the program
+</span></code></pre></div><p>More examples can be found in the
+<a href="https://github.com/AdRoll/baker/blob/main/user_config_test.go">dedicated test file</a>.</p>
+<h3 id="environment-variables-replacement">Environment variables replacement</h3>
+<p>Baker supports environment variables replacement in the configuration file.</p>
+<p>Use <code>${ENV_VAR_NAME}</code> or <code>$ENV_VAR_NAME</code> and the value in the file is replaced at runtime.<br>
+Note that if the variable doesn&rsquo;t exist, then an empty string is used for replacement.</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 3, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 29, 2020
 </div>
 </div>
+
 
           </main>
         </div>

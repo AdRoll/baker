@@ -7,7 +7,6 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://getbaker.io/docs/how-to/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -21,19 +20,27 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>How-to | Baker</title><meta property="og:title" content="How-to" />
-<meta property="og:description" content="How to start with Baker as a library.
-" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://getbaker.io/docs/how-to/" />
-<meta property="og:updated_time" content="2020-11-03T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="How-to">
-<meta itemprop="description" content="How to start with Baker as a library.
-">
+<title>Sharding | Baker</title><meta property="og:title" content="Sharding" />
+<meta property="og:description" content="How to enable sharding in a topology? Sharding is enabled in the [output] section of the topology TOML configuration file, by indicating the name of the field used to partition the records space.
+In the following topology extract, we&rsquo;re using a sharded Filewriter output and set the number of instances to 4 (i.e 4 shards). In our case, Baker is going to extract and hash the name field of each Record to determine which of the 4 Filewriter instances a Record is sent to:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://getbaker.io/docs/how-to/sharding/" />
+<meta property="article:published_time" content="2020-10-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-10-29T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Sharding">
+<meta itemprop="description" content="How to enable sharding in a topology? Sharding is enabled in the [output] section of the topology TOML configuration file, by indicating the name of the field used to partition the records space.
+In the following topology extract, we&rsquo;re using a sharded Filewriter output and set the number of instances to 4 (i.e 4 shards). In our case, Baker is going to extract and hash the name field of each Record to determine which of the 4 Filewriter instances a Record is sent to:">
+<meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="wordCount" content="699">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="How-to"/>
-<meta name="twitter:description" content="How to start with Baker as a library.
-"/>
+<meta name="twitter:title" content="Sharding"/>
+<meta name="twitter:description" content="How to enable sharding in a topology? Sharding is enabled in the [output] section of the topology TOML configuration file, by indicating the name of the field used to partition the records space.
+In the following topology extract, we&rsquo;re using a sharded Filewriter output and set the number of instances to 4 (i.e 4 shards). In our case, Baker is going to extract and hash the name field of each Record to determine which of the 4 Filewriter instances a Record is sent to:"/>
 
 
 
@@ -52,7 +59,7 @@
 
 
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -214,7 +221,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosharding" href="/docs/how-to/sharding/">Sharding</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-tosharding" href="/docs/how-to/sharding/">Sharding</a>
       
       
       
@@ -254,8 +261,8 @@
 
 
 
-<a href="https://github.com/adroll/baker/edit/master/content/en/docs/How%20To/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=How-to" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/master/content/en/docs/How%20To/sharding.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Sharding" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -263,6 +270,16 @@
 
 
 
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#how-to-enable-sharding-in-a-topology">How to enable sharding in a topology?</a></li>
+    <li><a href="#limitations">Limitations</a></li>
+    <li><a href="#hash-functions">Hash functions</a></li>
+    <li><a href="#register-sharding-functions">Register sharding functions</a></li>
+    <li><a href="#putting-it-all-together">Putting it all together</a></li>
+  </ul>
+</nav>
 
 
 
@@ -281,6 +298,9 @@
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/">Documentation</a>
 </li>
@@ -288,8 +308,15 @@
 
 
 
-<li class="breadcrumb-item active" aria-current="page">
+<li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/how-to/">How-to</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://getbaker.io/docs/how-to/sharding/">Sharding</a>
 </li>
 
 	</ol>
@@ -297,107 +324,113 @@
 
             
 <div class="td-content">
-	<h1>How-to</h1>
-        <div class="lead">How to start with Baker as a library.</div>
-	
-	<p>To configure and run a Baker topology, 4 steps are required:</p>
-<ol>
-<li>use a <a href="/docs/core-concepts/toml/">TOML configuration file</a></li>
-<li>define a <a href="/docs/how-to/baker_components/">baker.Components object</a></li>
-<li>obtain a Baker configuration object calling
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#NewConfigFromToml"><code>baker.NewConfigFromToml</code></a></li>
-<li>run <a href="https://pkg.go.dev/github.com/AdRoll/baker#Main"><code>baker.Main</code></a></li>
-</ol>
-<p>The <a href="https://github.com/AdRoll/baker/tree/main/examples">example folder</a> in the Baker
-repositories contains many examples of implementing a Baker pipeline.</p>
-<p>Start with the <a href="https://github.com/AdRoll/baker/blob/main/examples/basic/main.go">basic example</a>.</p>
+	<h1>Sharding</h1>
+    
+	       
+	<h2 id="how-to-enable-sharding-in-a-topology">How to enable sharding in a topology?</h2>
+<p>Sharding is enabled in the <code>[output]</code> section of the topology TOML
+configuration file, by indicating the name of the field used to partition
+the records space.</p>
+<p>In the following topology extract, we&rsquo;re using a sharded <code>Filewriter</code> output
+and set the number of instances to 4 (i.e 4 shards). In our case, Baker is
+going to extract and hash the <code>name</code> field of each <code>Record</code> to determine which
+of the 4 <code>Filewriter</code> instances a <code>Record</code> is sent to:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[input]
+...
 
-        <div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a>
-                    </h5>
-                    <p>How to configure Baker using TOML files</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/record_and_logline/">Record and LogLine</a>
-                    </h5>
-                    <p>Baker deals with &ldquo;record&rdquo; objects, an abstraction of flattened data with indexed fields.</p>
-                </div>
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/custom_record/">Create a custom Record</a>
-                    </h5>
-                    <p>Record is the interface provided by Baker to represent an &ldquo;object&rdquo; of data</p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/metrics/">Export metrics</a>
-                    </h5>
-                    <p>How to export metrics from Baker</p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/baker_components/">Create baker.Components</a>
-                    </h5>
-                    <p>baker.Components is the main object used to create a Baker topology</p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/sharding/">Sharding</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/how-to/concurrency/">Tuning concurrency</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-    
-</div>
+[[filter]]
+...
+
+[output]
+name=<span style="color:#f1fa8c">&#34;Filewriter&#34;</span>
+sharding=<span style="color:#f1fa8c">&#34;name&#34;</span>
+procs=<span style="color:#bd93f9">4</span>
+
+    [output.config]
+    ...
+</code></pre></div><h2 id="limitations">Limitations</h2>
+<p>Baker only supports sharding at the output level. Baker implements other
+strategies so that other types of components (input, filters and uploads)
+maximize the pipeline performance.</p>
+<p>Also, keep in mind that not all tasks can be parallelized, so not all outputs
+support sharding. So sharding is an intrinsic property that is only present on
+some Output components, but not all of them.</p>
+<p>Only a single field can be used for sharding.</p>
+<h2 id="hash-functions">Hash functions</h2>
+<p>The field selected for sharding must be &ldquo;shardable&rdquo;: in other words, a sharding function (or
+hash function) must be associated to that field.</p>
+<p>Since the aim of sharding is to uniformly distribute the load of incoming
+records between multiple instances of an output component, a good hash function
+should be <strong>uniform</strong>; in other words it should map as evenly as possible from
+the range of possible input values to the range of output values.</p>
+<p>The range of output values is known, it is  <code>[0, MaxUint64]</code> since in Baker
+hashes are <code>uint64</code> values).</p>
+<p>However the range of possible input values depends on the domain. That&rsquo;s where
+having knowledge of that particular domain will help in designing a hash
+function, that both guarantees the uniformity of output values with respect to
+input values, and in terms of performance.</p>
+<p>For example, if you know the sharded field is only made of integers from 0 to
+1000, the hash function would be implemented differently than if the values for that
+field are arbitraty long strings.</p>
+<p>It&rsquo;s however possible to use a non-optimal but best effort general hash function.
+(we&rsquo;re planning to add this to Baker soon).</p>
+<p>A hash function should of course be deterministic (i.e the same input should
+always give the same output).</p>
+<h2 id="register-sharding-functions">Register sharding functions</h2>
+<p>The <code>baker.Components</code> structure links elements that may appear in the
+configuration, to the code eventually running when these elements are used
+inside a topology.</p>
+<p>Sharding functions that may be used in topologies are stored inside of
+the <code>ShardingFuncs</code> field of <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>baker.Components</code></a>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">ShardingFuncs <span style="color:#8be9fd;font-style:italic">map</span>[baker.FieldIndex]ShardingFunc
+</code></pre></div><p>And a <a href="https://pkg.go.dev/github.com/AdRoll/baker#ShardingFunc"><code>ShardingFunc</code></a>
+is a hash function that returns an <code>uint64</code> <code>for baker.Record</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> ShardingFunc <span style="color:#8be9fd;font-style:italic">func</span>(Record) <span style="color:#8be9fd">uint64</span>
+</code></pre></div><p>Finally, filling <code>ShardingFuncs</code> is a matter of associating a shardable field to
+the sharding function that implements the hashing of that field.</p>
+<h2 id="putting-it-all-together">Putting it all together</h2>
+<p>The following is an example of an hypothetical record schema with 3 fields
+named <code>timestamp</code>, <code>city</code> and <code>country</code>. Let&rsquo;s say that we&rsquo;d like to use
+<code>timestamp</code> and <code>country</code> for sharding but not <code>city</code>. We&rsquo;re going to enable
+sharding on these two fields, but note that only one of them can be chosen
+for a given topology.</p>
+<p>This is how implementing sharding for such a schema would look probably like:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">const</span> (
+    FieldTimestamp baker.FieldIndex = <span style="color:#bd93f9">0</span> <span style="color:#6272a4">// timestamp is unix epoch timestamp
+</span><span style="color:#6272a4"></span>    FieldCity baker.FieldIndex      = <span style="color:#bd93f9">1</span> <span style="color:#6272a4">// city name
+</span><span style="color:#6272a4"></span>    FieldCountry baker.FieldIndex   = <span style="color:#bd93f9">2</span> <span style="color:#6272a4">// 2 chars country code
+</span><span style="color:#6272a4"></span>)
+</code></pre></div><p>This is an hypothetical function to hash records based on the <code>timestamp</code> field
+which only contains integers:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hashTimestamp</span>(r baker.Record) <span style="color:#8be9fd">uint64</span> {
+    <span style="color:#6272a4">// We know the timestamp is an integer, so we use that 
+</span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// to efficiently compute a hash from it.
+</span><span style="color:#6272a4"></span>    buf <span style="color:#ff79c6">:=</span> r.<span style="color:#50fa7b">Get</span>(FieldTimestamp)
+    ts, _ <span style="color:#ff79c6">:=</span> strconv.<span style="color:#50fa7b">Atoi</span>(<span style="color:#8be9fd;font-style:italic">string</span>(buf))
+
+    <span style="color:#6272a4">// Call super efficient integer hash function
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">return</span> <span style="color:#50fa7b">hashInt</span>(ts)
+}
+</code></pre></div><p>And this is how hashing records based on a 2-char <code>country</code> code field would
+look like:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hashCountry</span>(r baker.Record) <span style="color:#8be9fd">uint64</span> {
+    <span style="color:#6272a4">// We know the country is made of 2 characters, so we use that 
+</span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// fact to efficiently compute a hash from it.
+</span><span style="color:#6272a4"></span>    buf <span style="color:#ff79c6">:=</span> r.<span style="color:#50fa7b">Get</span>(FieldCountry)
+    country <span style="color:#ff79c6">:=</span> buf[:<span style="color:#bd93f9">2</span>]
+
+    <span style="color:#6272a4">// Call our super fast function that hashes 2 bytes.
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">return</span> <span style="color:#50fa7b">hash2bytes</span>(country)
+}
+</code></pre></div><p>You can find <a href="https://github.com/AdRoll/baker/tree/main/examples/sharding">here</a>
+a full working example illustrating sharding in Baker.</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 3, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 29, 2020
 </div>
 </div>
+
 
           </main>
         </div>

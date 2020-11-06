@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.78.0" />
+<meta name="generator" content="Hugo 0.77.0" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
@@ -158,36 +158,6 @@
       
       
       
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptstoml" href="/docs/core-concepts/toml/">Pipeline configuration</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsrecord_implementation" href="/docs/core-concepts/record_implementation/">Record and LogLine</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsconcurrency" href="/docs/core-concepts/concurrency/">Tuning concurrency</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsmetrics" href="/docs/core-concepts/metrics/">Metrics</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptssharding" href="/docs/core-concepts/sharding/">Sharding</a>
-      
-      
     </li>
   </ul>
 </ul>
@@ -204,7 +174,7 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Using Baker library</a>
+    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">How-to</a>
   </li>
   <ul>
     <li class="collapse " id="docshow-to">
@@ -214,13 +184,43 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tobaker_components" href="/docs/how-to/baker_components/">baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-topipeline_configuration" href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-torecord_and_logline" href="/docs/how-to/record_and_logline/">Record and LogLine</a>
       
       
       
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocustom_record" href="/docs/how-to/custom_record/">Create a custom Record</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tometrics" href="/docs/how-to/metrics/">Export metrics</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tobaker_components" href="/docs/how-to/baker_components/">Create baker.Components</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosharding" href="/docs/how-to/sharding/">Sharding</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toconcurrency" href="/docs/how-to/concurrency/">Tuning concurrency</a>
       
       
     </li>
@@ -264,6 +264,16 @@
 
 
 
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#pipeline">Pipeline</a></li>
+    <li><a href="#record-and-logline">Record and LogLine</a></li>
+    <li><a href="#components">Components</a></li>
+    <li><a href="#metrics">Metrics</a></li>
+    <li><a href="#sharding">Sharding</a></li>
+  </ul>
+</nav>
+
 
 
           </div>
@@ -300,7 +310,54 @@
 	<h1>Core concepts</h1>
         <div class="lead">Baker core concepts</div>
 	
-	<p>This section explains the core concepts of Baker.</p>
+	<h2 id="pipeline">Pipeline</h2>
+<p>A pipeline (a.k.a. Topology) is the configured set of operations that Baker performs during
+its execution.</p>
+<p>It is defined by:</p>
+<ul>
+<li>One input component, defining where to fetch records from</li>
+<li>Zero or more filters, applied sequentially, which together define the <strong>filter chain</strong>. A filter is
+a function that processes record (modifying fields, discarding or creating records).</li>
+<li>One output component, defining where to send the filtered records to (and which fields)</li>
+<li>One optional upload component, defining where to send files produced by the output component</li>
+</ul>
+<p>Notice that there are two main usage scenarios for Baker, batch or daemon processing, that depend on
+the input component behavior:</p>
+<ul>
+<li><strong>Batch processing</strong>: In this case, Baker goes through all the records that are fed
+by the input component, processes them as quickly as possible, and exits when the input component
+ends its job.</li>
+<li><strong>Daemon</strong>: in this case, the input component never exits and thus also Baker, that keeps waiting
+for incoming records from the input (e.g.: Kinesis), processes them and sends them to the output.</li>
+</ul>
+<p>Also read <a href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a></p>
+<h2 id="record-and-logline">Record and LogLine</h2>
+<p>Baker processes &ldquo;records&rdquo;. A <code>Record</code> is an interface that provides an abstraction over a record
+of flattened data, where columns of fields are indexed through integers.</p>
+<p>Baker currently provides a single implementation of Record, called <code>LogLine</code> (
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine">API reference</a>).</p>
+<p>If <code>LogLine</code> doesn&rsquo;t fit your needs, you can <a href="/docs/how-to/record_and_logline/">customize it</a>
+or <a href="/docs/how-to/custom_record/">implement your version of the Record</a>.</p>
+<h2 id="components">Components</h2>
+<p>TODO</p>
+<h2 id="metrics">Metrics</h2>
+<p>During execution, Baker collects different kind of performance data points:</p>
+<ul>
+<li>general pipeline metrics such as the total number of records processed and records per seconds.</li>
+<li>component-specific metrics: files written per second, discarded records (by a filter), errors, etc.</li>
+<li>Go runtime metrics: mallocs, frees, garbage collections and so on.</li>
+</ul>
+<p>If enabled, Baker collects all these metrics and forwards them to a metrics client.</p>
+<p>Metrics export is set up in Baker topology TOML files, <a href="/docs/how-to/metrics/">see how to configure it</a>.</p>
+<h2 id="sharding">Sharding</h2>
+<p>Baker supports partitioning the records it processes into smaller subsets each
+of which is forwarded to an output shard: <em>divide and conquer</em>.</p>
+<p>When sharding is enabled, the shards, which are just multiple instances of the
+same output component, run concurrently. Each of them only gets to process a
+specific subset of records, based on a the value a specific field has. This
+horizontal partioning allows to get the most of the resources at your disposal,
+since you can perform more work at the same time.</p>
+<p><a href="/docs/how-to/sharding/">Read more about sharding and how to configure it</a></p>
 
         <div class="section-index">
     
@@ -310,39 +367,9 @@
     <hr class="panel-line">
         
             
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/core-concepts/toml/">Pipeline configuration</a>
-                    </h5>
-                    <p>How to configure Baker using TOML files</p>
-                </div>
-            
         
             
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/core-concepts/record_implementation/">Record and LogLine</a>
-                    </h5>
-                    <p>Baker deals with &ldquo;record&rdquo; objects, an abstraction of flattened data with indexed fields.</p>
-                </div>
-            
         
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/core-concepts/concurrency/">Tuning concurrency</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/core-concepts/metrics/">Metrics</a>
-                    </h5>
-                    <p>How to export metrics from Baker</p>
-                </div>
             
         
             
@@ -358,12 +385,7 @@
             
         
             
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/core-concepts/sharding/">Sharding</a>
-                    </h5>
-                    <p></p>
-                </div>
+        
             
         
     

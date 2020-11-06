@@ -17,33 +17,14 @@
     
     <item>
       <title>Docs: Pipeline configuration</title>
-      <link>https://getbaker.io/docs/core-concepts/toml/</link>
+      <link>https://getbaker.io/docs/how-to/pipeline_configuration/</link>
       <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/core-concepts/toml/</guid>
+      <guid>https://getbaker.io/docs/how-to/pipeline_configuration/</guid>
       <description>
         
         
-        &lt;h3 id=&#34;pipelines&#34;&gt;Pipelines&lt;/h3&gt;
-&lt;p&gt;A pipeline is the configured set of operations that Baker performs during its execution.&lt;/p&gt;
-&lt;p&gt;It is defined by:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;One input component, defining where to fetch records from&lt;/li&gt;
-&lt;li&gt;Zero or more filters, applied sequentially, which together define the &lt;strong&gt;filter chain&lt;/strong&gt;. A filter is
-a function that processes record (modifying fields, discarding or creating records).&lt;/li&gt;
-&lt;li&gt;One output component, defining where to send the filtered records to (and which fields)&lt;/li&gt;
-&lt;li&gt;One optional upload component, defining where to send files produced by the output component&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Notice that there are two main usage scenarios for Baker, batch or daemon processing, that depend on
-the input component behaviour:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Batch processing&lt;/strong&gt;: In this case, Baker goes through all the records that are fed
-by the input component, processes them as quickly as possible, and exits when the input component
-ends its job.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Daemon&lt;/strong&gt;: in this case, the input component never exits and thus also Baker, that keeps waiting
-for incoming records from the input (e.g.: Kinesis), processes them and sends them to the output.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;configuration-file&#34;&gt;Configuration file&lt;/h3&gt;
+        &lt;h3 id=&#34;configuration-file&#34;&gt;Configuration file&lt;/h3&gt;
 &lt;p&gt;Baker is configured using a &lt;a href=&#34;https://toml.io/en/&#34;&gt;TOML file&lt;/a&gt;, whose content is processed by the
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/Baker#NewConfigFromToml&#34;&gt;&lt;code&gt;NewConfigFromToml&lt;/code&gt;&lt;/a&gt; function.&lt;/p&gt;
 &lt;p&gt;The file has several sections, described below:&lt;/p&gt;
@@ -220,10 +201,10 @@ Note that if the variable doesn&amp;rsquo;t exist, then an empty string is used 
     
     <item>
       <title>Docs: Record and LogLine</title>
-      <link>https://getbaker.io/docs/core-concepts/record_implementation/</link>
+      <link>https://getbaker.io/docs/how-to/record_and_logline/</link>
       <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/core-concepts/record_implementation/</guid>
+      <guid>https://getbaker.io/docs/how-to/record_and_logline/</guid>
       <description>
         
         
@@ -256,79 +237,80 @@ instance of your custom LogLine instead of the default one.&lt;/p&gt;
     </item>
     
     <item>
-      <title>Docs: Tuning concurrency</title>
-      <link>https://getbaker.io/docs/core-concepts/concurrency/</link>
-      <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
+      <title>Docs: Create a custom Record</title>
+      <link>https://getbaker.io/docs/how-to/custom_record/</link>
+      <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/core-concepts/concurrency/</guid>
+      <guid>https://getbaker.io/docs/how-to/custom_record/</guid>
       <description>
         
         
-        &lt;p&gt;Baker allows to tune concurrency at various levels of a pipeline:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;input: Baker configuration doesn&amp;rsquo;t expose knobs to tune input concurrency as it highly depends
-on the input source and how the input is implemented&lt;/li&gt;
-&lt;li&gt;filters: Baker runs N concurrent filter chains&lt;/li&gt;
-&lt;li&gt;output: Baker runs M concurrent outputs&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;By default then, Baker processes records concurrently, without any guaranteed order.&lt;br&gt;
-However, if you need to maintain the order of the records through the whole pipeline, it is still
-possible by disabling concurrency (&lt;a href=&#34;#guarantee-records-order&#34;&gt;see below for details&lt;/a&gt;).&lt;/p&gt;
-&lt;h3 id=&#34;filter-chain-concurrency&#34;&gt;Filter chain concurrency&lt;/h3&gt;
-&lt;p&gt;The filter chain is a synchronous list of filters that are applied in the order in which they are
-listed in the topology &lt;a href=&#34;https://getbaker.io/docs/core-concepts/toml/&#34;&gt;TOML configuration file&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;By default, though, Baker executes multiple concurrent filter chains (the default value is 16)&lt;/p&gt;
-&lt;p&gt;Filterchain concurrency can be set defining the &lt;code&gt;procs&lt;/code&gt; key in the &lt;code&gt;[filterchain]&lt;/code&gt; section:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[filterchain]
-procs=&lt;span style=&#34;color:#bd93f9&#34;&gt;16&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Setting the value to &lt;strong&gt;procs=1&lt;/strong&gt; disables the filter chain concurrency.&lt;/p&gt;
-&lt;h3 id=&#34;concurrent-output&#34;&gt;Concurrent output&lt;/h3&gt;
-&lt;p&gt;The output concurrency can be set defining the &lt;code&gt;procs&lt;/code&gt; key in the &lt;code&gt;[output]&lt;/code&gt; section:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[output]
-procs=&lt;span style=&#34;color:#bd93f9&#34;&gt;32&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The default value is &lt;strong&gt;32&lt;/strong&gt;.&lt;br&gt;
-To disable concurrency, set &lt;strong&gt;procs=1&lt;/strong&gt;.&lt;/p&gt;
-&lt;h4 id=&#34;output-concurrency-support&#34;&gt;Output concurrency support&lt;/h4&gt;
-&lt;p&gt;For outputs that don&amp;rsquo;t support concurrency, &lt;code&gt;procs=1&lt;/code&gt; must be used to avoid corrupted output or
-lost data.&lt;/p&gt;
-&lt;p&gt;Refer to the output documentation to know if it supports concurrent processing.&lt;/p&gt;
+        &lt;p&gt;As you can read in the &lt;a href=&#34;https://getbaker.io/docs/core-concepts/record_implementation/&#34;&gt;Record and LogLine page&lt;/a&gt;,
+Baker processes objects in form of “records”.&lt;/p&gt;
+&lt;p&gt;A &lt;code&gt;Record&lt;/code&gt;, in Baker, is an interface that provides an abstraction over a record of flattened data,
+where columns of fields are indexed through integers.&lt;/p&gt;
+&lt;p&gt;If the Record implementations provided by Baker doesn&amp;rsquo;t fit your needs, you can create your own
+version of the Record, implementing the
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Record&#34;&gt;&lt;code&gt;Record&lt;/code&gt; inteface&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;how-to-use-a-custom-version-of-the-record&#34;&gt;How to use a custom version of the Record&lt;/h2&gt;
+&lt;p&gt;Once your Record version is ready, you need to use it in your code.&lt;/p&gt;
+&lt;p&gt;In order to do so, some functions may be implemented while instantiating
+&lt;a href=&#34;https://getbaker.io/docs/how-to/baker_components/&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Components &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
+	Validate      ValidationFunc
+    CreateRecord  &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() Record
+    FieldByName &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) (FieldIndex, &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;)
+    FieldName   &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(FieldIndex) &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;
+    &lt;span style=&#34;color:#6272a4&#34;&gt;//... other functions
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;validate&#34;&gt;Validate&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Validate&lt;/code&gt; is the function used to validate a record. It is called for each processed record
+unless not set or when the &lt;code&gt;[general] dont_validate_fields = true&lt;/code&gt; configuration is set in
+the TOML file.&lt;/p&gt;
+&lt;p&gt;Regardless of the TOML configuration, the function is passed to all components that can use
+it at their will.&lt;/p&gt;
+&lt;h3 id=&#34;createrecord&#34;&gt;CreateRecord&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;CreateRecord&lt;/code&gt; is the function that creates a new record. If not set, a default function is
+used that creates a &lt;code&gt;LogLine&lt;/code&gt; with &lt;code&gt;,&lt;/code&gt; as field separator.&lt;/p&gt;
+&lt;p&gt;The function is used internally by Baker to create new records every time a new one comes from
+the input.&lt;/p&gt;
+&lt;p&gt;The function is also passed to components that can use it to create new records while processing.&lt;/p&gt;
+&lt;h3 id=&#34;fieldbyname&#34;&gt;FieldByName&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;FieldByName&lt;/code&gt; gets a field index by its name. The function is mainly used by the components
+(that receive it during setup) to retrieve the index of a field they need for filtering or
+processing, but it is also used internally by Baker when sending fields to the output
+(when at least one field is selected in the output TOML configuration).&lt;/p&gt;
+&lt;h3 id=&#34;fieldindex&#34;&gt;FieldIndex&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;FieldName&lt;/code&gt; gets a field name by its index. The function is passed to components that can use
+it for their internal logic.&lt;/p&gt;
+&lt;h2 id=&#34;recordconformancetest&#34;&gt;RecordConformanceTest&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;test_helper.go&lt;/code&gt; provides a &lt;code&gt;RecordConformanceTest&lt;/code&gt; test helper whose goal is to give the
+user a structured test for new implementations of the Record.&lt;/p&gt;
+&lt;p&gt;The helper receives the implementation of &lt;code&gt;CreateRecord&lt;/code&gt; and creates new records testing
+them against a set of requirements.&lt;/p&gt;
 
 
-&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
-
-We&amp;rsquo;ll soon add a new function to the output to declare whether it supports concurrency,
-and Baker will return an error if &lt;code&gt;procs&amp;gt;1&lt;/code&gt; is used with an output that doesn&amp;rsquo;t support it.
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Warning&lt;/h4&gt;
+The conformance test provides a way to verify that a record implementation respects the
+invariant that Baker requires for a Record implementation and thus it should always
+be executed against all custom implementations of the Record.
 &lt;/div&gt;
 
-&lt;h3 id=&#34;guarantee-records-order&#34;&gt;Guarantee Records order&lt;/h3&gt;
-&lt;p&gt;Although it&amp;rsquo;s not the primary goal of Baker, it is still possible to disable concurrency and thus
-guarantee records ordering from input to output.&lt;/p&gt;
-&lt;p&gt;To do so, add both &lt;code&gt;procs=1&lt;/code&gt; for output and filterchain, disabling concurrent processing for
-those components.&lt;/p&gt;
 
       </description>
     </item>
     
     <item>
-      <title>Docs: Metrics</title>
-      <link>https://getbaker.io/docs/core-concepts/metrics/</link>
+      <title>Docs: Export metrics</title>
+      <link>https://getbaker.io/docs/how-to/metrics/</link>
       <pubDate>Tue, 03 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/core-concepts/metrics/</guid>
+      <guid>https://getbaker.io/docs/how-to/metrics/</guid>
       <description>
         
         
-        &lt;h3 id=&#34;metrics&#34;&gt;Metrics&lt;/h3&gt;
-&lt;p&gt;During execution, Baker collects different kind of performance data points:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;general pipeline metrics such as the total number of records processed and records per seconds.&lt;/li&gt;
-&lt;li&gt;component-specific metrics: files written per second, discarded records (by a filter), errors, etc.&lt;/li&gt;
-&lt;li&gt;Go runtime metrics: mallocs, frees, garbage collections and so on.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;If enabled, Baker collects all these metrics and forwards them to a metrics client.&lt;/p&gt;
-&lt;p&gt;Metrics export is set up in Baker topology TOML files.&lt;/p&gt;
-&lt;h4 id=&#34;how-to-export-metrics&#34;&gt;How to export metrics?&lt;/h4&gt;
-&lt;p&gt;During its execution, a Baker pipeline exports metrics about the Go runtime as
+        &lt;p&gt;During its execution, a Baker pipeline exports metrics about the Go runtime as
 well as general metrics giving an high-level overview of the ongoing job.&lt;/p&gt;
 &lt;p&gt;More specific metrics are also exported on a per-component basis. To that effect,
 &lt;code&gt;baker.Input&lt;/code&gt;, &lt;code&gt;baker.Filter&lt;/code&gt;, &lt;code&gt;baker.Output&lt;/code&gt; and &lt;code&gt;baker.Upload&lt;/code&gt; all have a &lt;code&gt;Stats&lt;/code&gt;
@@ -409,7 +391,7 @@ supports the most common type of metric types: &lt;em&gt;gauges&lt;/em&gt;, &lt;
     </item>
     
     <item>
-      <title>Docs: baker.Components</title>
+      <title>Docs: Create baker.Components</title>
       <link>https://getbaker.io/docs/how-to/baker_components/</link>
       <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
       
@@ -488,96 +470,165 @@ TOML configuration).&lt;/p&gt;
     </item>
     
     <item>
-      <title>Docs: Create a custom Record</title>
-      <link>https://getbaker.io/docs/how-to/custom_record/</link>
+      <title>Docs: Sharding</title>
+      <link>https://getbaker.io/docs/how-to/sharding/</link>
       <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/how-to/custom_record/</guid>
+      <guid>https://getbaker.io/docs/how-to/sharding/</guid>
       <description>
         
         
-        &lt;p&gt;As you can read in the &lt;a href=&#34;https://getbaker.io/docs/core-concepts/record_implementation/&#34;&gt;Record and LogLine page&lt;/a&gt;,
-Baker processes objects in form of “records”.&lt;/p&gt;
-&lt;p&gt;A &lt;code&gt;Record&lt;/code&gt;, in Baker, is an interface that provides an abstraction over a record of flattened data,
-where columns of fields are indexed through integers.&lt;/p&gt;
-&lt;p&gt;If the Record implementations provided by Baker doesn&amp;rsquo;t fit your needs, you can create your own
-version of the Record, implementing the
-&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Record&#34;&gt;&lt;code&gt;Record&lt;/code&gt; inteface&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;how-to-use-a-custom-version-of-the-record&#34;&gt;How to use a custom version of the Record&lt;/h2&gt;
-&lt;p&gt;Once your Record version is ready, you need to use it in your code.&lt;/p&gt;
-&lt;p&gt;In order to do so, some functions may be implemented while instantiating
-&lt;a href=&#34;https://getbaker.io/docs/how-to/baker_components/&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Components &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
-	Validate      ValidationFunc
-    CreateRecord  &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() Record
-    FieldByName &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) (FieldIndex, &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;)
-    FieldName   &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(FieldIndex) &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;
-    &lt;span style=&#34;color:#6272a4&#34;&gt;//... other functions
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;validate&#34;&gt;Validate&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;Validate&lt;/code&gt; is the function used to validate a record. It is called for each processed record
-unless not set or when the &lt;code&gt;[general] dont_validate_fields = true&lt;/code&gt; configuration is set in
-the TOML file.&lt;/p&gt;
-&lt;p&gt;Regardless of the TOML configuration, the function is passed to all components that can use
-it at their will.&lt;/p&gt;
-&lt;h3 id=&#34;createrecord&#34;&gt;CreateRecord&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;CreateRecord&lt;/code&gt; is the function that creates a new record. If not set, a default function is
-used that creates a &lt;code&gt;LogLine&lt;/code&gt; with &lt;code&gt;,&lt;/code&gt; as field separator.&lt;/p&gt;
-&lt;p&gt;The function is used internally by Baker to create new records every time a new one comes from
-the input.&lt;/p&gt;
-&lt;p&gt;The function is also passed to components that can use it to create new records while processing.&lt;/p&gt;
-&lt;h3 id=&#34;fieldbyname&#34;&gt;FieldByName&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;FieldByName&lt;/code&gt; gets a field index by its name. The function is mainly used by the components
-(that receive it during setup) to retrieve the index of a field they need for filtering or
-processing, but it is also used internally by Baker when sending fields to the output
-(when at least one field is selected in the output TOML configuration).&lt;/p&gt;
-&lt;h3 id=&#34;fieldindex&#34;&gt;FieldIndex&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;FieldName&lt;/code&gt; gets a field name by its index. The function is passed to components that can use
-it for their internal logic.&lt;/p&gt;
-&lt;h2 id=&#34;recordconformancetest&#34;&gt;RecordConformanceTest&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;test_helper.go&lt;/code&gt; provides a &lt;code&gt;RecordConformanceTest&lt;/code&gt; test helper whose goal is to give the
-user a structured test for new implementations of the Record.&lt;/p&gt;
-&lt;p&gt;The helper receives the implementation of &lt;code&gt;CreateRecord&lt;/code&gt; and creates new records testing
-them against a set of requirements.&lt;/p&gt;
+        &lt;h2 id=&#34;how-to-enable-sharding-in-a-topology&#34;&gt;How to enable sharding in a topology?&lt;/h2&gt;
+&lt;p&gt;Sharding is enabled in the &lt;code&gt;[output]&lt;/code&gt; section of the topology TOML
+configuration file, by indicating the name of the field used to partition
+the records space.&lt;/p&gt;
+&lt;p&gt;In the following topology extract, we&amp;rsquo;re using a sharded &lt;code&gt;Filewriter&lt;/code&gt; output
+and set the number of instances to 4 (i.e 4 shards). In our case, Baker is
+going to extract and hash the &lt;code&gt;name&lt;/code&gt; field of each &lt;code&gt;Record&lt;/code&gt; to determine which
+of the 4 &lt;code&gt;Filewriter&lt;/code&gt; instances a &lt;code&gt;Record&lt;/code&gt; is sent to:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[input]
+...
 
+[[filter]]
+...
 
-&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
-&lt;h4 class=&#34;alert-heading&#34;&gt;Warning&lt;/h4&gt;
-The conformance test provides a way to verify that a record implementation respects the
-invariant that Baker requires for a Record implementation and thus it should always
-be executed against all custom implementations of the Record.
-&lt;/div&gt;
+[output]
+name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;Filewriter&amp;#34;&lt;/span&gt;
+sharding=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;
+procs=&lt;span style=&#34;color:#bd93f9&#34;&gt;4&lt;/span&gt;
 
+    [output.config]
+    ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;limitations&#34;&gt;Limitations&lt;/h2&gt;
+&lt;p&gt;Baker only supports sharding at the output level. Baker implements other
+strategies so that other types of components (input, filters and uploads)
+maximize the pipeline performance.&lt;/p&gt;
+&lt;p&gt;Also, keep in mind that not all tasks can be parallelized, so not all outputs
+support sharding. So sharding is an intrinsic property that is only present on
+some Output components, but not all of them.&lt;/p&gt;
+&lt;p&gt;Only a single field can be used for sharding.&lt;/p&gt;
+&lt;h2 id=&#34;hash-functions&#34;&gt;Hash functions&lt;/h2&gt;
+&lt;p&gt;The field selected for sharding must be &amp;ldquo;shardable&amp;rdquo;: in other words, a sharding function (or
+hash function) must be associated to that field.&lt;/p&gt;
+&lt;p&gt;Since the aim of sharding is to uniformly distribute the load of incoming
+records between multiple instances of an output component, a good hash function
+should be &lt;strong&gt;uniform&lt;/strong&gt;; in other words it should map as evenly as possible from
+the range of possible input values to the range of output values.&lt;/p&gt;
+&lt;p&gt;The range of output values is known, it is  &lt;code&gt;[0, MaxUint64]&lt;/code&gt; since in Baker
+hashes are &lt;code&gt;uint64&lt;/code&gt; values).&lt;/p&gt;
+&lt;p&gt;However the range of possible input values depends on the domain. That&amp;rsquo;s where
+having knowledge of that particular domain will help in designing a hash
+function, that both guarantees the uniformity of output values with respect to
+input values, and in terms of performance.&lt;/p&gt;
+&lt;p&gt;For example, if you know the sharded field is only made of integers from 0 to
+1000, the hash function would be implemented differently than if the values for that
+field are arbitraty long strings.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s however possible to use a non-optimal but best effort general hash function.
+(we&amp;rsquo;re planning to add this to Baker soon).&lt;/p&gt;
+&lt;p&gt;A hash function should of course be deterministic (i.e the same input should
+always give the same output).&lt;/p&gt;
+&lt;h2 id=&#34;register-sharding-functions&#34;&gt;Register sharding functions&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;baker.Components&lt;/code&gt; structure links elements that may appear in the
+configuration, to the code eventually running when these elements are used
+inside a topology.&lt;/p&gt;
+&lt;p&gt;Sharding functions that may be used in topologies are stored inside of
+the &lt;code&gt;ShardingFuncs&lt;/code&gt; field of &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;ShardingFuncs &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;map&lt;/span&gt;[baker.FieldIndex]ShardingFunc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And a &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#ShardingFunc&#34;&gt;&lt;code&gt;ShardingFunc&lt;/code&gt;&lt;/a&gt;
+is a hash function that returns an &lt;code&gt;uint64&lt;/code&gt; &lt;code&gt;for baker.Record&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; ShardingFunc &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Finally, filling &lt;code&gt;ShardingFuncs&lt;/code&gt; is a matter of associating a shardable field to
+the sharding function that implements the hashing of that field.&lt;/p&gt;
+&lt;h2 id=&#34;putting-it-all-together&#34;&gt;Putting it all together&lt;/h2&gt;
+&lt;p&gt;The following is an example of an hypothetical record schema with 3 fields
+named &lt;code&gt;timestamp&lt;/code&gt;, &lt;code&gt;city&lt;/code&gt; and &lt;code&gt;country&lt;/code&gt;. Let&amp;rsquo;s say that we&amp;rsquo;d like to use
+&lt;code&gt;timestamp&lt;/code&gt; and &lt;code&gt;country&lt;/code&gt; for sharding but not &lt;code&gt;city&lt;/code&gt;. We&amp;rsquo;re going to enable
+sharding on these two fields, but note that only one of them can be chosen
+for a given topology.&lt;/p&gt;
+&lt;p&gt;This is how implementing sharding for such a schema would look probably like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;const&lt;/span&gt; (
+    FieldTimestamp baker.FieldIndex = &lt;span style=&#34;color:#bd93f9&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// timestamp is unix epoch timestamp
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    FieldCity baker.FieldIndex      = &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// city name
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    FieldCountry baker.FieldIndex   = &lt;span style=&#34;color:#bd93f9&#34;&gt;2&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// 2 chars country code
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This is an hypothetical function to hash records based on the &lt;code&gt;timestamp&lt;/code&gt; field
+which only contains integers:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashTimestamp&lt;/span&gt;(r baker.Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt; {
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// We know the timestamp is an integer, so we use that 
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#6272a4&#34;&gt;// to efficiently compute a hash from it.
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    buf &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; r.&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(FieldTimestamp)
+    ts, _ &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; strconv.&lt;span style=&#34;color:#50fa7b&#34;&gt;Atoi&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;string&lt;/span&gt;(buf))
+
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// Call super efficient integer hash function
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashInt&lt;/span&gt;(ts)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And this is how hashing records based on a 2-char &lt;code&gt;country&lt;/code&gt; code field would
+look like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashCountry&lt;/span&gt;(r baker.Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt; {
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// We know the country is made of 2 characters, so we use that 
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#6272a4&#34;&gt;// fact to efficiently compute a hash from it.
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    buf &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; r.&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(FieldCountry)
+    country &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; buf[:&lt;span style=&#34;color:#bd93f9&#34;&gt;2&lt;/span&gt;]
+
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// Call our super fast function that hashes 2 bytes.
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hash2bytes&lt;/span&gt;(country)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can find &lt;a href=&#34;https://github.com/AdRoll/baker/tree/main/examples/sharding&#34;&gt;here&lt;/a&gt;
+a full working example illustrating sharding in Baker.&lt;/p&gt;
 
       </description>
     </item>
     
     <item>
-      <title>Docs: Sharding</title>
-      <link>https://getbaker.io/docs/core-concepts/sharding/</link>
+      <title>Docs: Tuning concurrency</title>
+      <link>https://getbaker.io/docs/how-to/concurrency/</link>
       <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/core-concepts/sharding/</guid>
+      <guid>https://getbaker.io/docs/how-to/concurrency/</guid>
       <description>
         
         
-        &lt;h1 id=&#34;tbd---these-are-just-notes&#34;&gt;TBD - these are just notes&lt;/h1&gt;
-&lt;p&gt;The &lt;code&gt;[output.sharding]&lt;/code&gt; configuration in the TOML file tells which field of the records must be
-used to calculate the sharding.&lt;/p&gt;
-&lt;p&gt;The field name, transformed to &lt;code&gt;FieldIndex&lt;/code&gt; thanks to the &lt;code&gt;FieldByName&lt;/code&gt; function (see
-&lt;a href=&#34;#fieldbyname&#34;&gt;below&lt;/a&gt;), is the index of the map that corresponds to a sharding function.&lt;/p&gt;
-&lt;p&gt;The sharding function receives a Record and returns a sharding value (&lt;code&gt;uint64&lt;/code&gt;) that Baker
-uses to send the Record to an output process.&lt;/p&gt;
+        &lt;p&gt;Baker allows to tune concurrency at various levels of a pipeline:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;input: Baker configuration doesn&amp;rsquo;t expose knobs to tune input concurrency as it highly depends
+on the input source and how the input is implemented&lt;/li&gt;
+&lt;li&gt;filters: Baker runs N concurrent filter chains&lt;/li&gt;
+&lt;li&gt;output: Baker runs M concurrent outputs&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;By default then, Baker processes records concurrently, without any guaranteed order.&lt;br&gt;
+However, if you need to maintain the order of the records through the whole pipeline, it is still
+possible by disabling concurrency (&lt;a href=&#34;#guarantee-records-order&#34;&gt;see below for details&lt;/a&gt;).&lt;/p&gt;
+&lt;h3 id=&#34;filter-chain-concurrency&#34;&gt;Filter chain concurrency&lt;/h3&gt;
+&lt;p&gt;The filter chain is a synchronous list of filters that are applied in the order in which they are
+listed in the topology &lt;a href=&#34;https://getbaker.io/docs/core-concepts/toml/&#34;&gt;TOML configuration file&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;By default, though, Baker executes multiple concurrent filter chains (the default value is 16)&lt;/p&gt;
+&lt;p&gt;Filterchain concurrency can be set defining the &lt;code&gt;procs&lt;/code&gt; key in the &lt;code&gt;[filterchain]&lt;/code&gt; section:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[filterchain]
+procs=&lt;span style=&#34;color:#bd93f9&#34;&gt;16&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Setting the value to &lt;strong&gt;procs=1&lt;/strong&gt; disables the filter chain concurrency.&lt;/p&gt;
+&lt;h3 id=&#34;concurrent-output&#34;&gt;Concurrent output&lt;/h3&gt;
+&lt;p&gt;The output concurrency can be set defining the &lt;code&gt;procs&lt;/code&gt; key in the &lt;code&gt;[output]&lt;/code&gt; section:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[output]
+procs=&lt;span style=&#34;color:#bd93f9&#34;&gt;32&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The default value is &lt;strong&gt;32&lt;/strong&gt;.&lt;br&gt;
+To disable concurrency, set &lt;strong&gt;procs=1&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id=&#34;output-concurrency-support&#34;&gt;Output concurrency support&lt;/h4&gt;
+&lt;p&gt;For outputs that don&amp;rsquo;t support concurrency, &lt;code&gt;procs=1&lt;/code&gt; must be used to avoid corrupted output or
+lost data.&lt;/p&gt;
+&lt;p&gt;Refer to the output documentation to know if it supports concurrent processing.&lt;/p&gt;
 
 
 &lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
 
-How the sharding value is calculated is up to the function, but it should try to have a linear
-distribution of records (to evenly distribute the load among the output concurrent processes)
-and, although not required, it should also use value of the field that has been configured in
-&lt;code&gt;[output.sharding]&lt;/code&gt;.
+We&amp;rsquo;ll soon add a new function to the output to declare whether it supports concurrency,
+and Baker will return an error if &lt;code&gt;procs&amp;gt;1&lt;/code&gt; is used with an output that doesn&amp;rsquo;t support it.
 &lt;/div&gt;
 
+&lt;h3 id=&#34;guarantee-records-order&#34;&gt;Guarantee Records order&lt;/h3&gt;
+&lt;p&gt;Although it&amp;rsquo;s not the primary goal of Baker, it is still possible to disable concurrency and thus
+guarantee records ordering from input to output.&lt;/p&gt;
+&lt;p&gt;To do so, add both &lt;code&gt;procs=1&lt;/code&gt; for output and filterchain, disabling concurrent processing for
+those components.&lt;/p&gt;
 
       </description>
     </item>
