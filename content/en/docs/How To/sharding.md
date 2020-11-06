@@ -11,14 +11,11 @@ Sharding is enabled in a topology by specifying a `sharding` field in the TOML
 sharding function must be associated to that field. Let's see how that works.
 
 
-#### The baker.Components structure
+#### Register sharding functions
 
 The `baker.Components` structure links elements that may appear in the 
-configuration to the code eventually running when these elements are used
+configuration, to the code eventually running when these elements are used
 inside a topology.
-
-
-#### Register sharding functions
 
 Sharding functions that may be used in topologies are stored inside of 
 the `ShardingFuncs` field of [`baker.Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components).
@@ -35,15 +32,18 @@ type ShardingFunc func(Record) uint64
 ```
 
 Finally, filling `ShardingFuncs` is a matter of associating a shardable field to
-the sharding function that implement the hashing of that field.
+the sharding function that implements the hashing of that field.
 
 
 #### Putting it all together
 
 The following is an example of an hypothetical record schema with 3 fields 
 named `timestamp`, `city` and `country`. Let's say that we'd like to use 
-`timestamp` and `country` for sharding but not `city`. This is how implementing
-sharding for such a schema would look probably like:
+`timestamp` and `country` for sharding but not `city`. We're going to enable
+sharding on these two fields, but note that only one of them can be chosen
+for a given topology.
+
+This is how implementing sharding for such a schema would look probably like:
 
 ```go
 const (

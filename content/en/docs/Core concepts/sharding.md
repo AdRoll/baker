@@ -9,13 +9,14 @@ description: >
 ### Overview
 
 Baker supports partitioning the records it processes into smaller subsets each
-of which is forwarded to an output shard: _divide and rule_.
+of which is forwarded to an output shard: _divide and conquer_.
 
 When sharding is enabled, the shards, which are just multiple instances of the
-same output component, run concurrently. Each of them only get to process a 
-specific subset of of records, based on a the value a specific field has. This
+same output component, run concurrently. Each of them only gets to process a 
+specific subset of records, based on a the value a specific field has. This
 horizontal partioning allows to get the most of the resources at your disposal,
 since you can perform more work at the same time.
+
 
 #### Limitations
 
@@ -26,6 +27,8 @@ maximize the pipeline performance.
 Also, keep in mind that not all tasks can be parallelized, so not all outputs
 support sharding. So sharding is an intrinsic property that is only present on
 some Output components, but not all of them.
+
+Only a single field can be used for sharding.
 
 
 #### How to enable sharding in a topology?
@@ -64,7 +67,7 @@ should be **uniform**; in other words it should map as evenly as possible from
 the range of possible input values to the range of output values.
 
 The range of output values is known, it is  `[0, MaxUint64]` since in Baker 
-hashes are  `uint64` values).
+hashes are `uint64` values).
 
 However the range of possible input values depends on the domain. That's where
 having knowledge of that particular domain will help in designing a hash 
@@ -76,6 +79,7 @@ For example, if you know the sharded field is only made of integers from 0 to
 field are arbitraty long strings. 
 
 It's however possible to use a non-optimal but best effort general hash function.
-(TODO: we should add this to Baker).
+(we're planning to add this to Baker soon).
 
-A hash function should of course be deterministic.
+A hash function should of course be deterministic (i.e the same input should 
+always give the same output).
