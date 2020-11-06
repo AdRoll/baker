@@ -1,24 +1,10 @@
 ---
-title: "Metrics"
+title: "Export metrics"
 date: 2020-11-03
-weight: 4
+weight: 400
 description: >
   How to export metrics from Baker
 ---
-
-### Metrics
-
- During execution, Baker collects different kind of performance data points:
-
- * general pipeline metrics such as the total number of records processed and records per seconds.
- * component-specific metrics: files written per second, discarded records (by a filter), errors, etc.
- * Go runtime metrics: mallocs, frees, garbage collections and so on.
-
-If enabled, Baker collects all these metrics and forwards them to a metrics client.
-
-Metrics export is set up in Baker topology TOML files.
-
-#### How to export metrics?
 
 During its execution, a Baker pipeline exports metrics about the Go runtime as
 well as general metrics giving an high-level overview of the ongoing job.

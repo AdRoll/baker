@@ -1,7 +1,7 @@
 ---
 title: "Create a custom Record"
 date: 2020-10-29
-weight: 320
+weight: 300
 description: >
   Record is the interface provided by Baker to represent an "object" of data
 ---

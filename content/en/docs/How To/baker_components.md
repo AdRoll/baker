@@ -1,7 +1,7 @@
 ---
-title: "baker.Components"
+title: "Create baker.Components"
 date: 2020-10-29
-weight: 320
+weight: 500
 description: >
   baker.Components is the main object used to create a Baker topology
 ---

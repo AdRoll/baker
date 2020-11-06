@@ -1,7 +1,7 @@
 ---
 title: "Record and LogLine"
 date: 2020-10-29
-weight: 2
+weight: 200
 description: >
   Baker deals with "record" objects, an abstraction of flattened data with indexed fields.
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Using Baker library"
+title: "How-to"
 weight: 300
 description: >
   How to start with Baker as a library.
