@@ -26,8 +26,8 @@ var (
 // Use `-ldflags="-X 'github.com/AdRoll/baker.BuildVersion=someversion'"` when building Baker to set this value
 var BuildVersion = "-- unknown --"
 
-// MainCLI provides a handy way to quickly create a Baker program only providing
-// the available Components.
+// MainCLI starts provides a handy way to quickly create a command-line interface to Baker 
+// by providing the list of components available to build and run a topology.
 //
 // The function includes many utilities that can be configured by command line arguments:
 //  -help: Prints available options and components
