@@ -17,6 +17,11 @@ func TestGenerateMarkdownHelp(t *testing.T) {
 			desc:    nil,
 			wantErr: true,
 		},
+		{
+			name:    "unsupported type",
+			desc:    23,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
