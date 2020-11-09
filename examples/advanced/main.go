@@ -18,12 +18,6 @@ func main() {
 	}
 }
 
-func simpleHash(r baker.Record, idx baker.FieldIndex) uint64 {
-	f := fnv.New64()
-	f.Write(r.Get(idx))
-	return f.Sum64()
-}
-
 // Some example fields
 const (
 	Timestamp baker.FieldIndex = 0
@@ -64,6 +58,12 @@ func sourceToInt(r baker.Record) uint64 {
 
 func targetToInt(r baker.Record) uint64 {
 	return simpleHash(r, Target)
+}
+
+func simpleHash(r baker.Record, idx baker.FieldIndex) uint64 {
+	f := fnv.New64()
+	f.Write(r.Get(idx))
+	return f.Sum64()
 }
 
 func validateLogLine(baker.Record) (bool, baker.FieldIndex) {
