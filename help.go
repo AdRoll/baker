@@ -4,10 +4,22 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"os"
 	"reflect"
 	"strings"
 	"unicode"
+
+	"github.com/charmbracelet/glamour"
+)
+
+// HelpFormat represents the possible formats for baker help.
+type HelpFormat int
+
+const (
+	// HelpFormatRaw is for raw-formatted help.
+	HelpFormatRaw HelpFormat = iota
+
+	// HelpFormatMarkdown is for markdown formatted help.
+	HelpFormatMarkdown
 )
 
 // PrintHelp prints the help message for the given component, identified by its name.
@@ -41,92 +53,89 @@ import (
 //     ----------------------------------------------------------------------------------------------------
 //     Listener           | string             |                            | Host:Port to bind to
 //     ----------------------------------------------------------------------------------------------------
-func PrintHelp(w io.Writer, name string, comp Components) {
+func PrintHelp(w io.Writer, name string, comp Components, format HelpFormat) error {
 	dumpall := name == "*"
+
+	ww := w // wraps w
+
+	generateHelp := GenerateTextHelp
+	if format == HelpFormatMarkdown {
+		generateHelp = GenerateMarkdownHelp
+
+		buf := &bytes.Buffer{}
+		ww = buf
+		defer func() {
+
+			// TODO(arl) this is temporary
+			r, _ := glamour.NewTermRenderer(
+				// detect background color and pick either the default dark or light theme
+				glamour.WithAutoStyle(),
+				// wrap output at specific width
+				glamour.WithWordWrap(180),
+			)
+
+			out, err := r.Render(buf.String())
+			if err != nil {
+				panic(err)
+			}
+			// Should copy to w (original writer) and not to os.Stdout
+			fmt.Print(out)
+		}()
+	}
 
 	for _, inp := range comp.Inputs {
 		if strings.EqualFold(inp.Name, name) || dumpall {
-			fmt.Fprintf(w, "=============================================\n")
-			fmt.Fprintf(w, "Input: %s\n", inp.Name)
-			fmt.Fprintf(w, "=============================================\n")
-			fmt.Fprintf(w, inp.Help)
-			if hasConfig(inp.Config) {
-				fmt.Fprintf(w, "\nKeys available in the [input.config] section:\n\n")
-				dumpConfigHelp(w, inp.Config)
-			} else {
-				fmt.Fprintf(w, "\n(no configuration available)\n\n")
+			if err := generateHelp(ww, inp); err != nil {
+				return fmt.Errorf("can't print help for %q input: %v", inp.Name, err)
 			}
-			fmt.Fprintln(w)
-			fmt.Fprintln(w)
 			if !dumpall {
-				return
+				return nil
 			}
 		}
 	}
 
 	for _, fil := range comp.Filters {
 		if strings.EqualFold(fil.Name, name) || dumpall {
-			fmt.Fprintf(w, "=============================================\n")
-			fmt.Fprintf(w, "Filter: %s\n", fil.Name)
-			fmt.Fprintf(w, "=============================================\n")
-			fmt.Fprintf(w, fil.Help)
-			if hasConfig(fil.Config) {
-				fmt.Fprintf(w, "\nKeys available in the [filter.config] section:\n\n")
-				dumpConfigHelp(w, fil.Config)
-			} else {
-				fmt.Fprintf(w, "\n(no configuration available)\n\n")
+			if err := generateHelp(ww, fil); err != nil {
+				return fmt.Errorf("can't print help for %q filter: %v", fil.Name, err)
 			}
-			fmt.Fprintln(w)
-			fmt.Fprintln(w)
 			if !dumpall {
-				return
+				return nil
 			}
 		}
 	}
 
 	for _, out := range comp.Outputs {
 		if strings.EqualFold(out.Name, name) || dumpall {
-			fmt.Fprintf(w, "=============================================\n")
-			fmt.Fprintf(w, "Output: %s\n", out.Name)
-			fmt.Fprintf(w, "=============================================\n")
-			fmt.Fprintf(w, out.Help)
-			if hasConfig(out.Config) {
-				fmt.Fprintf(w, "\nKeys available in the [output.config] section:\n\n")
-				dumpConfigHelp(w, out.Config)
-			} else {
-				fmt.Fprintf(w, "\n(no configuration available)\n\n")
-			}
-			fmt.Fprintln(w)
-			fmt.Fprintln(w)
-			if !dumpall {
-				return
+			if strings.EqualFold(out.Name, name) || dumpall {
+				if err := generateHelp(ww, out); err != nil {
+					return fmt.Errorf("can't print help for %q output: %v", out.Name, err)
+				}
+				if !dumpall {
+					return nil
+				}
 			}
 		}
 	}
 
 	for _, upl := range comp.Uploads {
 		if strings.EqualFold(upl.Name, name) || dumpall {
-			fmt.Fprintf(w, "=============================================\n")
-			fmt.Fprintf(w, "Upload: %s\n", upl.Name)
-			fmt.Fprintf(w, "=============================================\n")
-			fmt.Fprintf(w, upl.Help)
-			if hasConfig(upl.Config) {
-				fmt.Fprintf(w, "\nKeys available in the [upload.config] section:\n\n")
-				dumpConfigHelp(w, upl.Config)
-			} else {
-				fmt.Fprintf(w, "\n(no configuration available)\n\n")
-			}
-			fmt.Fprintln(w)
-			fmt.Fprintln(w)
-			if !dumpall {
-				return
+			if strings.EqualFold(upl.Name, name) || dumpall {
+				if err := generateHelp(ww, upl); err != nil {
+					return fmt.Errorf("can't print help for %q upload: %v", upl.Name, err)
+				}
+				if !dumpall {
+					return nil
+				}
 			}
 		}
 	}
 
 	if !dumpall {
-		fmt.Fprintf(os.Stderr, "Component not found: %s\n", name)
+		return fmt.Errorf("component not found: %s", name)
 	}
+
+	return nil
 }
 
 type baseDoc struct {
@@ -142,6 +151,11 @@ type uploadDoc struct{ baseDoc }
 type outputDoc struct {
 	baseDoc
 	raw bool // raw output?
+}
+
+type metricsDoc struct {
+	name string          // component name
+	keys []helpConfigKey // configuration keys
 }
 
 func newInputDoc(desc InputDesc) (inputDoc, error) {
@@ -217,6 +231,21 @@ func newUploadDoc(desc UploadDesc) (uploadDoc, error) {
 	return doc, nil
 }
 
+func newMetricsDoc(desc MetricsDesc) (metricsDoc, error) {
+	doc := metricsDoc{
+		name: desc.Name,
+	}
+
+	var err error
+
+	doc.keys, err = configKeysFromStruct(desc.Config)
+	if err != nil {
+		return doc, fmt.Errorf("metrics %q: %v", desc.Name, err)
+	}
+
+	return doc, nil
+}
+
 type helpConfigKey struct {
 	name     string // config key name
 	typ      string // config key type
@@ -255,19 +284,12 @@ func newHelpConfigKeyFromField(f reflect.StructField) (helpConfigKey, error) {
 		required: f.Tag.Get("required") == "true",
 	}
 
-	if err := h.fillType(f); err != nil {
-		return h, err
-	}
-
-	return h, nil
-}
-
-func (h helpConfigKey) fillType(f reflect.StructField) error {
 	switch f.Type.Kind() {
 	case reflect.Int:
 		h.typ = "int"
 	case reflect.String:
 		h.typ = "string"
+		h.def = `"` + h.def + `"`
 	case reflect.Slice:
 		switch f.Type.Elem().Kind() {
 		case reflect.String:
@@ -275,7 +297,7 @@ func (h helpConfigKey) fillType(f reflect.StructField) error {
 		case reflect.Int:
 			h.typ = "array of ints"
 		default:
-			return fmt.Errorf("config key %q: unsupported type array of %s", f.Type.Name(), f.Type.Elem())
+			return h, fmt.Errorf("config key %q: unsupported type array of %s", f.Type.Name(), f.Type.Elem())
 		}
 	case reflect.Int64:
 		if f.Type.Name() == "Duration" {
@@ -286,13 +308,14 @@ func (h helpConfigKey) fillType(f reflect.StructField) error {
 	case reflect.Bool:
 		h.typ = "bool"
 	default:
-		return fmt.Errorf("config key %q: unsupported type", f.Type.Name())
+		return h, fmt.Errorf("config key %q: unsupported type", f.Type.Name())
 	}
 
-	return nil
+	return h, nil
 }
+
 func dumpConfigHelp(w io.Writer, cfg interface{}) {
-	const sfmt = "%-18s | %-18s | %-18s | %-8s | "
+	const sfmt = "%-18s | %-18s | %-18s | %-8s | |"
 	const sep = "----------------------------------------------------------------------------------------------------"
 
 	hpad := fmt.Sprintf(sfmt, "", "", "", "")
@@ -358,6 +381,76 @@ func dumpConfigHelp(w io.Writer, cfg interface{}) {
 
 	fmt.Fprint(w, sep, "\n")
 }
+
+/*
+func dumpConfigHelp(w io.Writer, cfg interface{}) {
+	const sfmt = "%-18s | %-18s | %-18s | %-8s | |"
+	const sep = "----------------------------------------------------------------------------------------------------"
+
+	hpad := fmt.Sprintf(sfmt, "", "", "", "")
+	fmt.Fprintf(w, sfmt, "Name", "Type", "Default", "Required")
+	fmt.Fprintf(w, "Help\n%s\n", sep)
+
+	tf := reflect.TypeOf(cfg).Elem()
+	for i := 0; i < tf.NumField(); i++ {
+		field := tf.Field(i)
+
+		// skip unexported fields
+		if field.PkgPath != "" && !field.Anonymous {
+			continue
+		}
+
+		var typ string
+		switch field.Type.Kind() {
+		case reflect.Int:
+			typ = "int"
+		case reflect.String:
+			typ = "string"
+		case reflect.Slice:
+			switch field.Type.Elem().Kind() {
+			case reflect.String:
+				typ = "array of strings"
+			case reflect.Int:
+				typ = "array of ints"
+			default:
+				panic(field.Type.Elem())
+			}
+		case reflect.Int64:
+			if field.Type.Name() == "Duration" {
+				typ = "duration"
+			} else {
+				typ = "int"
+			}
+		case reflect.Bool:
+			typ = "bool"
+		default:
+			panic(field.Type.Name())
+		}
+
+		help := field.Tag.Get("help")
+		def := field.Tag.Get("default")
+		req := field.Tag.Get("required")
+		if req == "true" {
+			req = "yes"
+		} else {
+			req = "no"
+		}
+
+		fmt.Fprintf(w, sfmt, field.Name, typ, def, req)
+		helpLines := strings.Split(wrapString(help, 60), "\n")
+		if len(helpLines) > 0 {
+			fmt.Fprint(w, helpLines[0], "\n")
+			for _, h := range helpLines[1:] {
+				fmt.Fprint(w, hpad, "  ", h, "\n")
+			}
+		} else {
+			fmt.Fprint(w, "\n")
+		}
+	}
+
+	fmt.Fprint(w, sep, "\n")
+}
+*/
 
 // wrapString wraps the given string within lim width in characters.
 //
