@@ -23,6 +23,9 @@ import (
 //  -q: quiet logging (not compatible with -v)
 //  -pretty: logs in textual format instead of JSON format
 //  -pprof: run a pprof server on the provided host:port address
+//
+// The function also expects the first non-positional argument to represent the path to
+// the Baker Topology file
 func MainCLI(components Components) error {
 	log.SetFormatter(&log.JSONFormatter{})
 	log.SetOutput(os.Stderr)

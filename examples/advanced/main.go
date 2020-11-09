@@ -1,4 +1,4 @@
-// advanced example shows a complex setup of baker.Components
+// advanced example shows an advanced setup of baker.Components
 package main
 
 import (
