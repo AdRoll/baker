@@ -84,6 +84,7 @@ type ClauseFilter struct {
 	numProcessedLines int64
 	numFilteredLines  int64
 	fieldByName       func(string) (baker.FieldIndex, bool)
+	aaa               baker.FilterParams
 }
 
 type clauseType int
@@ -107,6 +108,7 @@ func NewClauseFilter(cfg baker.FilterParams) (baker.Filter, error) {
 	}
 
 	cf := &ClauseFilter{
+		aaa:         cfg,
 		cfg:         dcfg,
 		fieldByName: cfg.FieldByName,
 	}
