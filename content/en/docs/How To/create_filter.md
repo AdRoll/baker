@@ -31,16 +31,16 @@ that a filter must implement. The interface is quite simple and contains only tw
 A very simple example of filter doing nothing is:
 
 ```go
-type NopFilter struct{
+type MyFilter struct{
     numProcessedLines int64
 }
 
-func (f *NopFilter) Process(r Record, next func(Record)) {
+func (f *MyFilter) Process(r Record, next func(Record)) {
     atomic.AddInt64(&f.numProcessedLines, 1)
     next(r)
 }
 
-func (f *NopFilter) Stats() FilterStats { 
+func (f *MyFilter) Stats() FilterStats { 
     return baker.FilterStats{
 		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
     }
@@ -53,10 +53,10 @@ To be included in the Baker filters, a filter must be described by a
 [`FilterDesc` object](https://pkg.go.dev/github.com/AdRoll/baker#FilterDesc):
 
 ```go
-var NopFilterDesc = baker.FilterDesc{
-	Name:   "NopFilter",
-	New:    NewNopFilter,
-	Config: &NopFilterConfig{},
+var MyFilterDesc = baker.FilterDesc{
+	Name:   "MyFilter",
+	New:    NewMyFilter,
+	Config: &MyFilterConfig{},
 	Help:   "This filter does nothing, but in a great way!",
 }
 ```
@@ -70,7 +70,7 @@ In this case the filter can be used with this configuration in the
 
 ```toml
 [[filter]]
-name = "NopFilter"
+name = "MyFilter"
 ```
 
 ### Filter constructor
@@ -80,8 +80,8 @@ Each filter must have a constructor function that receives a
 [Filter interface](https://pkg.go.dev/github.com/AdRoll/baker#Filter) implemented by the filter:
 
 ```go
-func NewNopFilter(cfg baker.FilterParams) (baker.Filter, error) {
-	return &NopFilter{}, nil
+func MyFilter(cfg baker.FilterParams) (baker.Filter, error) {
+	return &MyFilter{}, nil
 }
 ```
 
@@ -105,7 +105,7 @@ type ClauseFilterConfig struct {
 A filter can change the value of the record fields before calling `next()`:
 
 ```go
-func (f *NopFilter) Process(r Record, next func(Record)) {
+func (f *MyFilter) Process(r Record, next func(Record)) {
     var src FieldIndex = 10
     var dst FieldIndex = 10
     v := r.Get(src)
@@ -115,45 +115,47 @@ func (f *NopFilter) Process(r Record, next func(Record)) {
 }
 ```
 
-## Discard records
+## Processing records
 
-The filterchain, or the ordered list of filters applied to a Record before it reaches the
-output, works thanks to the `next()` function.  
-This function is what each filter uses to decide whether a record must continue its journey in the
-filter chain (calling `next()`) or if the record should be discarded (simply not calling `next()`).
+Filters do their work in the `Process(r Record, next func(Record)` method, where `r` is the
+Record to process and `next` is a closure assigned to the next element in thefilter chain.
+
+Filters call `next(r)` once they're done with the record and desire to forward it, or simply
+do not call `next()` if they want to discard the record.
 
 When a filter discards a record it should also report it in the stats:
 
 ```go
-type NopFilter struct{
+type MyFilter struct{
     numProcessedLines int64
-	numFilteredLines  int64
+    numFilteredLines  int64
 }
 
-func (f *NopFilter) Process(r Record, next func(Record)) {
+func (f *MyFilter) Process(r Record, next func(Record)) {
     atomic.AddInt64(&f.numProcessedLines, 1)
-    
+
     // shouldBeDiscarded is part of the filter logic
     if shouldBeDiscarded(r) {
         atomic.AddInt64(&f.numFilteredLines, 1)
         // return here so next() isn't called
         return
     }
-    // pass the record to the next filter in the filter chain
+    // forward the record to the next element of the filter chain
     next(r)
 }
 
-func (f *NopFilter) Stats() FilterStats { 
+func (f *MyFilter) Stats() FilterStats { 
     return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-		NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
+        NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
+        NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
     }
 }
 ```
 
 ## Create records
 
-A filter can call `next()` multiple times sending new or copied records to multiple filter chains.
+A filter can decide to call `next()` multiple times to send new or duplicated records to the
+next element of the filter chain.
 
 Note that the new or copied records don't start the filter chain from the first filter in the list
 but only the remaining filters are applied to the records.
@@ -166,10 +168,11 @@ Always use `Copy()` or `CreateRecord()` before calling `next()` more than once.
 
 ### Copy()
 
-The record entering the `Process()` function can be copied calling `record.Copy()`.
+Filters can duplicate incoming records (with `record.Copy()`), and thus have more records
+come out than records that came in.
 
 ```go
-func (f *NopFilter) Process(r Record, next func(Record)) {
+func (f *MyFilter) Process(r Record, next func(Record)) {
     // Call next the 1st time
     next(r)
 
@@ -187,20 +190,20 @@ A new, empty, record is created calling the `CreateRecord` function.
 The `CreateRecord` function is available as part of the
 [FilterParams](https://pkg.go.dev/github.com/AdRoll/baker#FilterParams) argument of the
 [filter constructor](#filter-constructor). If you plan to use it in the `Process` function
-than store it to the filter object in the constructor as shown in this example:
+then store it to the filter object in the constructor as shown in this example:
 
 ```go
-type NopFilter struct{
+type MyFilter struct{
     cfg baker.FilterParams
 }
 
-func NewNopFilter(cfg baker.FilterParams) (baker.Filter, error) {
-	return &NopFilter{
+func NewMyFilter(cfg baker.FilterParams) (baker.Filter, error) {
+	return &MyFilter{
         cfg: cfg, // you can also store only CreateRecord
     }, nil
 }
 
-func (f *NopFilter) Process(r Record, next func(Record)) {
+func (f *MyFilter) Process(r Record, next func(Record)) {
     newRecord := f.cfg.CreateRecord()
     //... do something with the record
     next(newRecord)
