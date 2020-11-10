@@ -1,7 +1,7 @@
 ---
 title: "Tuning concurrency"
 date: 2020-11-02
-weight: 700
+weight: 800
 ---
 
 Baker allows to tune concurrency at various levels of a pipeline:
