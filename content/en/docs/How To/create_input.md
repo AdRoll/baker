@@ -3,7 +3,7 @@ title: "Create a custom input component"
 date: 2020-11-02
 weight: 650
 ---
-The input component goal is to retrieve Records in form of bytes and send them to the filterchain.
+The job of a Baker input is to fetch blob of data containing one or multiple serialized records and send them to Baker.
 
 The input isn't in charge of splitting/parsing the input data into Records (that is done by Baker),
 but only retrieving them as fast as possible in raw format adding, if any, metadata to them.
