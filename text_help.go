@@ -164,7 +164,7 @@ func genConfigKeysText(w io.Writer, keys []helpConfigKey) {
 	fmt.Fprintf(w, "Help\n%s\n", helpTextSep)
 
 	for _, k := range keys {
-		fmt.Fprintf(w, helpTextHdrSfmt, k.name, k.typ, k.def, k.required)
+		fmt.Fprintf(w, helpTextHdrSfmt, k.name, k.typ, k.def, fmt.Sprintf("%t", k.required))
 		helpLines := strings.Split(wrapString(k.desc, 60), "\n")
 		if len(helpLines) > 0 {
 			fmt.Fprint(w, helpLines[0], "\n")
