@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+	"strings"
 )
 
 // GenerateMarkdownHelp generates markdown-formatted textual help for a Baker
@@ -56,11 +57,21 @@ func GenerateMarkdownHelp(w io.Writer, desc interface{}) error {
 	return nil
 }
 
+func breakAfterDots(s string) string {
+	r := strings.NewReplacer(
+		".", ".\n",
+		"!", "!\n",
+		"?", "?\n",
+		":", ":\n",
+	)
+	return r.Replace(s)
+}
+
 func genInputMarkdown(w io.Writer, doc inputDoc) {
 	fmt.Fprintf(w, "## Input *%s*\n", doc.name)
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "### Overview")
-	fmt.Fprintln(w, doc.help)
+	fmt.Fprintln(w, breakAfterDots(doc.help))
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "### Configuration")
 	if len(doc.keys) == 0 {
@@ -75,7 +86,7 @@ func genFilterMarkdown(w io.Writer, doc filterDoc) {
 	fmt.Fprintf(w, "## Filter *%s*\n", doc.name)
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "### Overview")
-	fmt.Fprintln(w, doc.help)
+	fmt.Fprintln(w, breakAfterDots(doc.help))
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "### Configuration")
 	if len(doc.keys) == 0 {
@@ -102,7 +113,7 @@ func genOutputMarkdown(w io.Writer, doc outputDoc) {
 	}
 	fmt.Fprintln(w)
 	fmt.Fprintln(w)
-	fmt.Fprintln(w, doc.help)
+	fmt.Fprintln(w, breakAfterDots(doc.help))
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "### Configuration")
 	if len(doc.keys) == 0 {
@@ -117,7 +128,7 @@ func genUploadMarkdown(w io.Writer, doc uploadDoc) {
 	fmt.Fprintf(w, "## Upload *%s*\n", doc.name)
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "### Overview")
-	fmt.Fprintln(w, doc.help)
+	fmt.Fprintln(w, breakAfterDots(doc.help))
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "### Configuration")
 	if len(doc.keys) == 0 {
