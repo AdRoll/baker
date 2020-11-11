@@ -14,7 +14,8 @@ filter chain. The channel size is customizable with `[input] chansize=<value>` (
 To create an input and make it available to Baker, one must:
 
 * Implement the [Input](https://pkg.go.dev/github.com/AdRoll/baker#Input) interface
-* Add an [`InputDesc`](https://pkg.go.dev/github.com/AdRoll/baker#InputDesc) for the input to
+* Fill an [`InputDesc`](https://pkg.go.dev/github.com/AdRoll/baker#InputDesc) structure and register it
+within Baker via [`Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components).
 the available inputs in [`Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components)
 
 ## Daemon vs Batch
