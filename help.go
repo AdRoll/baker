@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+	"runtime"
 	"strings"
+	"syscall"
 	"unicode"
+	"unsafe"
 
 	"github.com/charmbracelet/glamour"
 )
@@ -56,36 +59,32 @@ const (
 func PrintHelp(w io.Writer, name string, comp Components, format HelpFormat) error {
 	dumpall := name == "*"
 
-	ww := w // wraps w
-
 	generateHelp := GenerateTextHelp
 	if format == HelpFormatMarkdown {
 		generateHelp = GenerateMarkdownHelp
 
-		buf := &bytes.Buffer{}
-		ww = buf
+		r, _ := glamour.NewTermRenderer(
+			// detect background color and pick either the default dark or light theme
+			glamour.WithAutoStyle(),
+			// wrap output at specific width
+			glamour.WithWordWrap(int(terminalWidth())),
+		)
+		wprev := w
+		w = r
+
 		defer func() {
-
-			// TODO(arl) this is temporary
-			r, _ := glamour.NewTermRenderer(
-				// detect background color and pick either the default dark or light theme
-				glamour.WithAutoStyle(),
-				// wrap output at specific width
-				glamour.WithWordWrap(180),
-			)
-
-			out, err := r.Render(buf.String())
-			if err != nil {
+			if err := r.Close(); err != nil {
 				panic(err)
 			}
-			// Should copy to w (original writer) and not to os.Stdout
-			fmt.Print(out)
+			if _, err := io.Copy(wprev, r); err != nil {
+				panic(err)
+			}
 		}()
 	}
 
 	for _, inp := range comp.Inputs {
 		if strings.EqualFold(inp.Name, name) || dumpall {
-			if err := generateHelp(ww, inp); err != nil {
+			if err := generateHelp(w, inp); err != nil {
 				return fmt.Errorf("can't print help for %q input: %v", inp.Name, err)
 			}
 			if !dumpall {
@@ -96,7 +95,7 @@ func PrintHelp(w io.Writer, name string, comp Components, format HelpFormat) err
 
 	for _, fil := range comp.Filters {
 		if strings.EqualFold(fil.Name, name) || dumpall {
-			if err := generateHelp(ww, fil); err != nil {
+			if err := generateHelp(w, fil); err != nil {
 				return fmt.Errorf("can't print help for %q filter: %v", fil.Name, err)
 			}
 			if !dumpall {
@@ -108,7 +107,7 @@ func PrintHelp(w io.Writer, name string, comp Components, format HelpFormat) err
 	for _, out := range comp.Outputs {
 		if strings.EqualFold(out.Name, name) || dumpall {
 			if strings.EqualFold(out.Name, name) || dumpall {
-				if err := generateHelp(ww, out); err != nil {
+				if err := generateHelp(w, out); err != nil {
 					return fmt.Errorf("can't print help for %q output: %v", out.Name, err)
 				}
 				if !dumpall {
@@ -121,7 +120,7 @@ func PrintHelp(w io.Writer, name string, comp Components, format HelpFormat) err
 	for _, upl := range comp.Uploads {
 		if strings.EqualFold(upl.Name, name) || dumpall {
 			if strings.EqualFold(upl.Name, name) || dumpall {
-				if err := generateHelp(ww, upl); err != nil {
+				if err := generateHelp(w, upl); err != nil {
 					return fmt.Errorf("can't print help for %q upload: %v", upl.Name, err)
 				}
 				if !dumpall {
@@ -136,6 +135,44 @@ func PrintHelp(w io.Writer, name string, comp Components, format HelpFormat) err
 	}
 
 	return nil
+}
+
+func terminalWidth() uint {
+	const (
+		maxWidth     = 140 // don't go over 140 chars anyway
+		defaultWidth = 110 // in case we can't get the terminal width
+	)
+
+	var w uint
+
+	defer func() {
+		if err := recover(); err != nil {
+			w = defaultWidth
+		}
+	}()
+
+	if runtime.GOOS == "windows" {
+		// On windows assume 120 character wide terminal since the subsequent
+		// method only works on nix systems.
+		return 120
+	}
+
+	ws := &struct{ Row, Col, Xpixel, Ypixel uint16 }{}
+	retCode, _, errno := syscall.Syscall(syscall.SYS_IOCTL,
+		uintptr(syscall.Stdout),
+		uintptr(syscall.TIOCGWINSZ),
+		uintptr(unsafe.Pointer(ws)))
+
+	if int(retCode) == -1 {
+		panic(errno)
+	}
+
+	if ws.Col > maxWidth {
+		return maxWidth
+	}
+
+	w = uint(ws.Col)
+	return w
 }
 
 type baseDoc struct {
