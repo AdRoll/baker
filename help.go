@@ -62,24 +62,6 @@ func PrintHelp(w io.Writer, name string, comp Components, format HelpFormat) err
 	generateHelp := GenerateTextHelp
 	if format == HelpFormatMarkdown {
 		generateHelp = GenerateMarkdownHelp
-
-		r, _ := glamour.NewTermRenderer(
-			// detect background color and pick either the default dark or light theme
-			glamour.WithAutoStyle(),
-			// wrap output at specific width
-			glamour.WithWordWrap(int(terminalWidth())),
-		)
-		wprev := w
-		w = r
-
-		defer func() {
-			if err := r.Close(); err != nil {
-				panic(err)
-			}
-			if _, err := io.Copy(wprev, r); err != nil {
-				panic(err)
-			}
-		}()
 	}
 
 	for _, inp := range comp.Inputs {
@@ -135,6 +117,25 @@ func PrintHelp(w io.Writer, name string, comp Components, format HelpFormat) err
 	}
 
 	return nil
+}
+
+// RenderHelpMarkdown calls PrintHelp withy format markdown but render the
+// markdown for terminal consulation.
+func RenderHelpMarkdown(w io.Writer, name string, comp Components) error {
+	r, _ := glamour.NewTermRenderer(
+		// detect background color and pick either the default dark or light theme
+		glamour.WithAutoStyle(),
+		// wrap output at specific width
+		glamour.WithWordWrap(int(terminalWidth())),
+	)
+
+	if err := PrintHelp(r, name, comp, HelpFormatMarkdown); err != nil {
+		return err
+	}
+
+	r.Close()
+	_, err := io.Copy(w, r)
+	return err
 }
 
 func terminalWidth() uint {
