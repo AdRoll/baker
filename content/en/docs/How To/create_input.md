@@ -22,7 +22,7 @@ the available inputs in [`Components`](https://pkg.go.dev/github.com/AdRoll/bake
 
 The input component determines the Baker behavior between a batch processor or a long-living daemon.
 
-If the input exits when its data processing has completed, then Baker waits the topology to end
+If the input exits when its data processing has completed, then Baker waits for the topology to end
 and then exits.
 
 If the input never exits, then Baker acts as a daemon.
