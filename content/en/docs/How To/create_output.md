@@ -43,7 +43,7 @@ var MyOutputDesc = baker.OutputDesc{
 	New:    NewMyOutput,
     Config: &MyOutputConfig{},
     Raw:    true,
-	Help:   "Help message for the output",
+	Help:   "High-level description of MyOutput",
 }
 ```
 
