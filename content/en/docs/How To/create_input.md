@@ -54,12 +54,9 @@ creating a new input component.
 The `Run` function implements the component logic and receives a channel where it sends the
 [raw data](https://pkg.go.dev/github.com/AdRoll/baker#Data) it processes.
 
-`FreeMem` is the function called by Baker when a chunk of data has been completely processed and
-its memory can be used again. It's up to the input to choose whether to recycle it or not.  
-An often used pattern is to manage the objects with [`sync.Pool`](https://golang.org/pkg/sync/#Pool),
-see the [TCP](https://github.com/AdRoll/baker/blob/main/input/tcp.go),
-[List](https://github.com/AdRoll/baker/blob/main/input/list.go) or
-[SQS](https://github.com/AdRoll/baker/blob/main/input/sqs.go) inputs for inspiration.
+`FreeMem(data *Data)` is called by Baker when `data` is no longer needed. This is an occasion
+for the input to recycle memory, for example if the input uses a `sync.Pool` to create new 
+instances of `baker.Data`. 
 
 ## InputDesc
 
