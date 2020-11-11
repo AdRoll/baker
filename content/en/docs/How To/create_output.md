@@ -48,14 +48,14 @@ var MyOutputDesc = baker.OutputDesc{
 ```
 
 This object has a `Name`, that is used in the Baker configuration file to identify the output,
-a costructor function (`New`), a config object (used to parse the output configuration in the
+a constructor-like function (`New`), a config object (used to parse the output configuration in the
 TOML file) and a help text that must help the users to use the component and its configuration
 parameters. The `Raw` field tells whether the output expects to receive raw records in addition
 to single fields (see below for details).
 
-### Output constructor
+### Output constructor-like function
 
-The `New` key in the `OutputDesc` object represents the constructor function.
+The `New` key in the `OutputDesc` object represents the constructor-like function.
 
 The function receives an [OutputParams](https://pkg.go.dev/github.com/AdRoll/baker#OutputParams)
 object and returns an instance of [Output](https://pkg.go.dev/github.com/AdRoll/baker#Output).
@@ -103,7 +103,7 @@ send to the output configuring the
 in the `[output]` section of the TOML topology file.
 
 The fields positions correspond to the `FieldIndex` received in `OutputParams.Fields` by the
-component constructor.
+component constructor-like function.
 
 In case of a raw output, `OutputRecord.Record` contains the full record as a byte slice.  
 The presence of raw data doesn't change the fields field value, that depend on the output
