@@ -33,13 +33,9 @@ The [`Data`](https://pkg.go.dev/github.com/AdRoll/baker#Data) object that the in
 with read data has two fields: `Bytes` that must contain the raw read bytes (possible contains
 more records) and `Meta`.
 
-[`Metadata`](https://pkg.go.dev/github.com/AdRoll/baker#Metadata) can contain any information
-that the input wants to share with the other components of the pipeline about the chunk of bytes
-produced.  
-Typical information could be the timestamp of the read, details about the source, etc. 
-
-Those metadata will be associated to each record extracted from `Bytes` and will be available
-to the whole pipeline.
+[`Metadata`](https://pkg.go.dev/github.com/AdRoll/baker#Metadata) can contain additional 
+information Baker will associate with each of the serialized Record contained in `Data`.  
+Typical information could be the time of retrieval, the filename (in case `Records` come from a file), etc.
 
 ## The Input interface
 
