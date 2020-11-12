@@ -10,8 +10,8 @@ component.
 To create an output and make it available to Baker, one must:
 
 * Implement the [Output](https://pkg.go.dev/github.com/AdRoll/baker#Output) interface
-* Add an [`OutputDesc`](https://pkg.go.dev/github.com/AdRoll/baker#OutputDesc) for the output to
-the available outputs in [`Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components)
+* Fill-up an [`OutputDesc`](https://pkg.go.dev/github.com/AdRoll/baker#OutputDesc) struct and register
+it within Baker via [`Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components)
 
 ## The Output interface
 
