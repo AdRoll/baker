@@ -2,6 +2,7 @@
 title: "Getting started"
 linkTitle: "Getting Started"
 weight: 100
+description: Quick Baker setup instructions
 ---
 
 Baker is a Go library and it must be included into your Go program.

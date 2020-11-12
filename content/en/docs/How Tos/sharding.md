@@ -1,7 +1,7 @@
 ---
-title: "Sharding"
+title: "Enable sharding in a topology"
 date: 2020-10-29
-weight: 600
+weight: 780
 ---
 
 ## How to enable sharding in a topology?

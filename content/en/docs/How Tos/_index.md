@@ -1,5 +1,5 @@
 ---
-title: "How-to"
+title: "How-Tos"
 weight: 300
 description: >
   How to start with Baker as a library.

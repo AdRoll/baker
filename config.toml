@@ -93,6 +93,7 @@ url_latest_version = "https://github.com/adroll/baker"
 
 # Repository configuration (URLs for in-page links to opening issues and suggesting changes)
 github_repo = "https://github.com/adroll/baker"
+github_branch = "gh-pages"
 # An optional link to a related project repo. For example, the sibling repository where your product code lives.
 # github_project_repo = "https://github.com/google/docsy"
 
