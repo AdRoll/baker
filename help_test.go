@@ -7,6 +7,7 @@ import (
 	"github.com/AdRoll/baker/filter"
 	"github.com/AdRoll/baker/input"
 	"github.com/AdRoll/baker/output"
+	"github.com/AdRoll/baker/upload"
 )
 
 func assertValidConfigHelp(t *testing.T, name string, cfg interface{}) {
@@ -30,24 +31,27 @@ func assertValidConfigHelp(t *testing.T, name string, cfg interface{}) {
 	}
 }
 
-func TestAllInputsHasConfigHelp(t *testing.T) {
+func TestAllInputsHaveConfigHelp(t *testing.T) {
 	for _, input := range input.All {
 		assertValidConfigHelp(t, input.Name, input.Config)
 	}
 }
 
-func TestAllFiltersHasConfigHelp(t *testing.T) {
+func TestAllFiltersHaveConfigHelp(t *testing.T) {
 	for _, filter := range filter.All {
 		assertValidConfigHelp(t, filter.Name, filter.Config)
 	}
 }
 
-func TestAllOutputsHasConfigHelp(t *testing.T) {
+func TestAllOutputsHaveConfigHelp(t *testing.T) {
 	for _, output := range output.All {
 		assertValidConfigHelp(t, output.Name, output.Config)
 	}
 }
 
-func TestAllUploadsHasConfigHelp(t *testing.T) {
-	// nothing to do: baker.Upload don't have any config at the moment
+func TestAllUploadsHaveConfigHelp(t *testing.T) {
+	for _, upload := range upload.All {
+		assertValidConfigHelp(t, upload.Name, upload.Config)
+	}
+}
 }
