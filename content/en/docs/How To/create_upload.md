@@ -4,7 +4,7 @@ date: 2020-11-11
 weight: 750
 ---
 The last (optional) component of a Baker pipeline is the Upload, whose job is to, precisely,
-upload somewhere what the output component produces.
+upload local files produced by the output component.
 
 To create an upload component and make it available to Baker, one must:
 
@@ -51,7 +51,7 @@ configuration parameters.
 
 The `New` key in the `UploadDesc` object should be set to a function returning an Upload.
 
-The function receives a [UploadParams](https://pkg.go.dev/github.com/AdRoll/baker#UploadParams)
+The function receives an [UploadParams](https://pkg.go.dev/github.com/AdRoll/baker#UploadParams)
 object and returns an instance of [Upload](https://pkg.go.dev/github.com/AdRoll/baker#Upload).
 
 It should verify the configuration, accessed via `UploadParams.DecodedConfig` and initialize
@@ -62,24 +62,17 @@ the component accordingly.
 The upload configuration object (`MyUploadConfig` in the previous example) must export all
 configuration parameters that the user can set in the TOML topology file.
 
-Each key in the struct must include a `help` string tag and a `required` boolean tag, both are
-mandatory.
+Each field in the struct must include a `help` string tag (mandatory) and a `required` boolean tag
+(default to `false`).
 
-The former helps the user to understand the possible values of the field, the latter tells Baker
-whether to refuse a missing configuration param.
+All these parameters appear in the generated help. `help` should describe the parameter role and/or
+its possible values, `required` informs Baker it should refuse configurations in which that field
+is not defined.
 
-## The shared channel
+## The files to upload
 
-What the upload component receives in the string channel is, indeed, a string and, at the moment,
-the only upload implementation (S3) expects to find there the path to local files.
+Through the channel, the upload receives from the output paths to local files that it must uploads.
 
-The S3 upload removes those files once uploaded, but there isn't a golden rule for what to do with
-them. This is up to the upload component and should be chosen wisely and documented extensively.
-
-At the same time, it is not an obligation for the string sent into the channel to represent
-a local file path and thus it is also possible that an upload component is not compatible with an
-output component (depending on what is sent to the channel and what is expected).
-
-Again, as there is not a golden rule about what is sent to the channel, the best thing to do for
-both the output and upload components is to create good documentation to inform the users of their
-behaviors.
+The only upload existing at the moment, S3, removes those files once uploaded, but there isn't a
+golden rule for what to do with them. This is up to the upload component and should be chosen
+wisely and documented extensively.
