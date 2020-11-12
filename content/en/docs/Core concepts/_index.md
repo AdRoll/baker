@@ -51,8 +51,8 @@ To process records, Baker uses up to 4 component types, each one with a differen
 the filter chain, an ordered list of **Filter** components that can modify, drop or create Records
 * At the end of the filter chain, the records are sent to the **Output** component, whose job is
 to save them somewhere.
-* An optional **Upload** component can receive the files produced by the Output and upload them to
-their final destination
+* An optional **Upload** component receives the files produced by the Output and upload them to
+their final destination.
 
 Read our How-to guides to know how to:
 
