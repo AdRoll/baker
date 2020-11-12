@@ -57,7 +57,7 @@ object and returns an instance of [Upload](https://pkg.go.dev/github.com/AdRoll/
 It should verify the configuration, accessed via `UploadParams.DecodedConfig` and initialize
 the component accordingly.
 
-### The upload configuration and help
+### Upload configuration and help
 
 The upload configuration object (`MyUploadConfig` in the previous example) must export all
 configuration parameters that the user can set in the TOML topology file.
