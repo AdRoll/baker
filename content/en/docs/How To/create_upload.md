@@ -73,6 +73,6 @@ is not defined.
 
 Through the channel, the upload receives from the output paths to local files that it must upload.
 
-The only upload existing at the moment, S3, removes those files once uploaded, but there isn't a
+The only Upload component implemented at the moment, S3, removes those files once uploaded, but there isn't a
 golden rule for what to do with them. This is up to the upload component and should be chosen
 wisely and documented extensively.
