@@ -101,8 +101,7 @@ send to the output configuring the
 [`fields` key](http://localhost:1313/docs/how-to/pipeline_configuration/#components-configuration)
 in the `[output]` section of the TOML topology file.
 
-The fields positions correspond to the `FieldIndex` received in `OutputParams.Fields` by the
-component constructor-like function.
+Fields are ordered in the same way than the slice of `FieldIndex` received in `OutputParams.Fields`.
 
 In case of a raw output, `OutputRecord.Record` contains the full record as a byte slice.  
 The presence of raw data doesn't change the fields field value, that depend on the output
