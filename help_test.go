@@ -54,4 +54,3 @@ func TestAllUploadsHaveConfigHelp(t *testing.T) {
 		assertValidConfigHelp(t, upload.Name, upload.Config)
 	}
 }
-}
