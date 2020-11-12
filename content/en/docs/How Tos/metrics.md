@@ -1,7 +1,7 @@
 ---
 title: "Export metrics"
 date: 2020-11-03
-weight: 400
+weight: 770
 description: >
   How to export metrics from Baker
 ---

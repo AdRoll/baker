@@ -44,7 +44,22 @@ or [implement your version of the Record](/docs/how-to/custom_record/).
 
 ## Components
 
-TODO
+To process records, Baker uses up to 4 component types, each one with a different job:
+
+* **Input** reads the input records (as raw data) and sends them to Baker
+* Baker parses the records from the raw bytes received by the input and sends them through
+the filter chain, an ordered list of **Filter** components that can modify, drop or create Records
+* At the end of the filter chain, the records are sent to the **Output** component, whose job is
+to save them somewhere.
+* An optional **Upload** component receives the files produced by the Output and upload them to
+their final destination.
+
+Read our How-to guides to know how to:
+
+* [create an Input component](/docs/how-tos/create_input/)
+* [create a Filter component](/docs/how-tos/create_filter/)
+* [create an Output component](/docs/how-tos/create_output/)
+* [create an Upload component](/docs/how-tos/create_upload/)
 
 ## Metrics
 
