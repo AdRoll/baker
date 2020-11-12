@@ -54,7 +54,7 @@ The `New` key in the `UploadDesc` object should be set to a function returning a
 The function receives a [UploadParams](https://pkg.go.dev/github.com/AdRoll/baker#UploadParams)
 object and returns an instance of [Upload](https://pkg.go.dev/github.com/AdRoll/baker#Upload).
 
-The function should verify the configuration params into `UploadParams.DecodedConfig` and initialize
+It should verify the configuration, accessed via `UploadParams.DecodedConfig` and initialize
 the component accordingly.
 
 ### The upload configuration and help
