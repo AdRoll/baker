@@ -2,6 +2,7 @@ package baker
 
 import (
 	"bytes"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -14,6 +15,58 @@ type dummyConfig struct {
 	BoolField           bool          `help:"bool field" required:"true" default:"true"`
 	SliceOfStringsField []string      `help:"strings field" required:"true" default:"[\"a\", \"b\", \"c\"]"`
 	SliceOfIntsField    []int         `help:"ints field" required:"true" default:"[0, 1, 2, 3]"`
+}
+
+var dummyKeys = []helpConfigKey{
+	{
+		name:     "IntField",
+		typ:      "int",
+		def:      "0",
+		required: true,
+		desc:     "int field",
+	},
+	{
+		name:     "Int64Field",
+		typ:      "int",
+		def:      "1",
+		required: false,
+		desc:     "int64 field",
+	},
+	{
+		name:     "DurationField",
+		typ:      "duration",
+		def:      "2s",
+		required: true,
+		desc:     "duration field",
+	},
+	{
+		name:     "StringField",
+		typ:      "string",
+		def:      `"4"`,
+		required: true,
+		desc:     "string field",
+	},
+	{
+		name:     "BoolField",
+		typ:      "bool",
+		def:      "true",
+		required: true,
+		desc:     "bool field",
+	},
+	{
+		name:     "SliceOfStringsField",
+		typ:      "array of strings",
+		def:      `["a", "b", "c"]`,
+		required: true,
+		desc:     "strings field",
+	},
+	{
+		name:     "SliceOfIntsField",
+		typ:      "array of ints",
+		def:      `[0, 1, 2, 3]`,
+		required: true,
+		desc:     "ints field",
+	},
 }
 
 func TestGenerateHelp(t *testing.T) {
@@ -66,5 +119,148 @@ func TestGenerateHelp(t *testing.T) {
 				t.Errorf(`GenerateMarkdownHelp() = "", shouldn't be empty`)
 			}
 		})
+	}
+}
+
+func Test_newInputDoc(t *testing.T) {
+	const (
+		name = "dummy"
+		help = "This is the high-level doc of the dummy input."
+	)
+
+	desc := InputDesc{
+		Name:   name,
+		Config: &dummyConfig{},
+		Help:   help,
+	}
+	want := inputDoc{
+		baseDoc: baseDoc{
+			name: name,
+			help: help,
+			keys: dummyKeys,
+		},
+	}
+
+	got, err := newInputDoc(desc)
+	if err != nil {
+		t.Errorf("newInputDoc() error = %v", err)
+		return
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("newInputDoc():\ngot:\n%+v\nwant:\n%+v", got, want)
+	}
+}
+
+func Test_newFilterDoc(t *testing.T) {
+	const (
+		name = "dummy"
+		help = "This is the high-level doc of the dummy filter."
+	)
+
+	desc := FilterDesc{
+		Name:   name,
+		Config: &dummyConfig{},
+		Help:   help,
+	}
+	want := filterDoc{
+		baseDoc: baseDoc{
+			name: name,
+			help: help,
+			keys: dummyKeys,
+		},
+	}
+
+	got, err := newFilterDoc(desc)
+	if err != nil {
+		t.Errorf("newFilterDoc() error = %v", err)
+		return
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("newFilterDoc():\ngot:\n%+v\nwant:\n%+v", got, want)
+	}
+}
+
+func Test_newOuputDoc(t *testing.T) {
+	const (
+		name = "dummy"
+		help = "This is the high-level doc of the dummy output."
+	)
+
+	desc := OutputDesc{
+		Name:   name,
+		Config: &dummyConfig{},
+		Help:   help,
+		Raw:    true,
+	}
+	want := outputDoc{
+		raw: true,
+		baseDoc: baseDoc{
+			name: name,
+			help: help,
+			keys: dummyKeys,
+		},
+	}
+
+	got, err := newOutputDoc(desc)
+	if err != nil {
+		t.Errorf("newOutputDoc() error = %v", err)
+		return
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("newOutputDoc():\ngot:\n%+v\nwant:\n%+v", got, want)
+	}
+}
+
+func Test_newUploadDoc(t *testing.T) {
+	const (
+		name = "dummy"
+		help = "This is the high-level doc of the dummy upload."
+	)
+
+	desc := UploadDesc{
+		Name:   name,
+		Config: &dummyConfig{},
+		Help:   help,
+	}
+	want := uploadDoc{
+		baseDoc: baseDoc{
+			name: name,
+			help: help,
+			keys: dummyKeys,
+		},
+	}
+
+	got, err := newUploadDoc(desc)
+	if err != nil {
+		t.Errorf("newUploadDoc() error = %v", err)
+		return
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("newUploadDoc():\ngot:\n%+v\nwant:\n%+v", got, want)
+	}
+}
+
+func Test_newMetricsDoc(t *testing.T) {
+	const (
+		name = "dummy"
+		help = "This is the high-level doc of the dummy metrics."
+	)
+
+	desc := MetricsDesc{
+		Name:   name,
+		Config: &dummyConfig{},
+	}
+	want := metricsDoc{
+		name: name,
+		keys: dummyKeys,
+	}
+
+	got, err := newMetricsDoc(desc)
+	if err != nil {
+		t.Errorf("newMetricsDoc() error = %v", err)
+		return
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("newMetricsDoc():\ngot:\n%+v\nwant:\n%+v", got, want)
 	}
 }
