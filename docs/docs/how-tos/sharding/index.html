@@ -20,36 +20,27 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Create a custom filter component | Baker</title><meta property="og:title" content="Create a custom filter component" />
-<meta property="og:description" content="Creating a custom filter is probably the most common action a Baker user will perform.
-In fact, filters are the components that apply the business logic to a Baker pipeline, creating or discarding records or modifying fields.
-A working example of a custom filter can be found in the filtering example
-To create a filter and make it available to Baker, one must:
- Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface The Filter interface determines the functions that a filter must implement." />
+<title>Enable sharding in a topology | Baker</title><meta property="og:title" content="Enable sharding in a topology" />
+<meta property="og:description" content="How to enable sharding in a topology? Sharding is enabled in the [output] section of the topology TOML configuration file, by indicating the name of the field used to partition the records space.
+In the following topology extract, we&rsquo;re using a sharded Filewriter output and set the number of instances to 4 (i.e 4 shards). In our case, Baker is going to extract and hash the name field of each Record to determine which of the 4 Filewriter instances a Record is sent to:" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://getbaker.io/docs/how-to/create_filter/" />
-<meta property="article:published_time" content="2020-11-02T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-11-02T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Create a custom filter component">
-<meta itemprop="description" content="Creating a custom filter is probably the most common action a Baker user will perform.
-In fact, filters are the components that apply the business logic to a Baker pipeline, creating or discarding records or modifying fields.
-A working example of a custom filter can be found in the filtering example
-To create a filter and make it available to Baker, one must:
- Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface The Filter interface determines the functions that a filter must implement.">
-<meta itemprop="datePublished" content="2020-11-02T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-11-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="801">
+<meta property="og:url" content="https://getbaker.io/docs/how-tos/sharding/" />
+<meta property="article:published_time" content="2020-10-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-10-29T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Enable sharding in a topology">
+<meta itemprop="description" content="How to enable sharding in a topology? Sharding is enabled in the [output] section of the topology TOML configuration file, by indicating the name of the field used to partition the records space.
+In the following topology extract, we&rsquo;re using a sharded Filewriter output and set the number of instances to 4 (i.e 4 shards). In our case, Baker is going to extract and hash the name field of each Record to determine which of the 4 Filewriter instances a Record is sent to:">
+<meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="wordCount" content="699">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Create a custom filter component"/>
-<meta name="twitter:description" content="Creating a custom filter is probably the most common action a Baker user will perform.
-In fact, filters are the components that apply the business logic to a Baker pipeline, creating or discarding records or modifying fields.
-A working example of a custom filter can be found in the filtering example
-To create a filter and make it available to Baker, one must:
- Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface The Filter interface determines the functions that a filter must implement."/>
+<meta name="twitter:title" content="Enable sharding in a topology"/>
+<meta name="twitter:description" content="How to enable sharding in a topology? Sharding is enabled in the [output] section of the topology TOML configuration file, by indicating the name of the field used to partition the records space.
+In the following topology extract, we&rsquo;re using a sharded Filewriter output and set the number of instances to 4 (i.e 4 shards). In our case, Baker is going to extract and hash the name field of each Record to determine which of the 4 Filewriter instances a Record is sent to:"/>
 
 
 
@@ -190,77 +181,77 @@ To create a filter and make it available to Baker, one must:
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-to</a>
+    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-Tos</a>
   </li>
   <ul>
-    <li class="collapse show" id="docshow-to">
+    <li class="collapse show" id="docshow-tos">
       
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-topipeline_configuration" href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tospipeline_configuration" href="/docs/how-tos/pipeline_configuration/">Pipeline configuration</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-torecord_and_logline" href="/docs/how-to/record_and_logline/">Record and LogLine</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosrecord_and_logline" href="/docs/how-tos/record_and_logline/">Record and LogLine</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocustom_record" href="/docs/how-to/custom_record/">Create a custom Record</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscustom_record" href="/docs/how-tos/custom_record/">Create a custom Record</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tometrics" href="/docs/how-to/metrics/">Export metrics</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tobaker_components" href="/docs/how-to/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_input" href="/docs/how-tos/create_input/">Create a custom input component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosharding" href="/docs/how-to/sharding/">Sharding</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_filter" href="/docs/how-tos/create_filter/">Create a custom filter component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_input" href="/docs/how-to/create_input/">Create a custom input component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_output" href="/docs/how-tos/create_output/">Create a custom output component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-tocreate_filter" href="/docs/how-to/create_filter/">Create a custom filter component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_upload" href="/docs/how-tos/create_upload/">Create a custom upload component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_output" href="/docs/how-to/create_output/">Create a custom output component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosmetrics" href="/docs/how-tos/metrics/">Export metrics</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_upload" href="/docs/how-to/create_upload/">Create a custom upload component</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toconcurrency" href="/docs/how-to/concurrency/">Tuning concurrency</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosconcurrency" href="/docs/how-tos/concurrency/">Tuning concurrency</a>
       
       
     </li>
@@ -294,8 +285,8 @@ To create a filter and make it available to Baker, one must:
 
 
 
-<a href="https://github.com/adroll/baker/edit/master/content/en/docs/How%20To/create_filter.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Create%20a%20custom%20filter%20component" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/How%20Tos/sharding.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Enable%20sharding%20in%20a%20topology" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -306,21 +297,11 @@ To create a filter and make it available to Baker, one must:
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#the-filter-interface">The Filter interface</a></li>
-    <li><a href="#filterdesc">FilterDesc</a>
-      <ul>
-        <li><a href="#filter-constructor">Filter constructor</a></li>
-        <li><a href="#the-filter-configuration-and-help">The filter configuration and help</a></li>
-      </ul>
-    </li>
-    <li><a href="#modify-record-fields">Modify record fields</a></li>
-    <li><a href="#processing-records">Processing records</a></li>
-    <li><a href="#create-records">Create records</a>
-      <ul>
-        <li><a href="#copy">Copy()</a></li>
-        <li><a href="#createrecord">CreateRecord()</a></li>
-      </ul>
-    </li>
+    <li><a href="#how-to-enable-sharding-in-a-topology">How to enable sharding in a topology?</a></li>
+    <li><a href="#limitations">Limitations</a></li>
+    <li><a href="#hash-functions">Hash functions</a></li>
+    <li><a href="#register-sharding-functions">Register sharding functions</a></li>
+    <li><a href="#putting-it-all-together">Putting it all together</a></li>
   </ul>
 </nav>
 
@@ -352,14 +333,14 @@ To create a filter and make it available to Baker, one must:
 
 
 <li class="breadcrumb-item" >
-	<a href="https://getbaker.io/docs/how-to/">How-to</a>
+	<a href="https://getbaker.io/docs/how-tos/">How-Tos</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/how-to/create_filter/">Create a custom filter component</a>
+	<a href="https://getbaker.io/docs/how-tos/sharding/">Enable sharding in a topology</a>
 </li>
 
 	</ol>
@@ -367,167 +348,110 @@ To create a filter and make it available to Baker, one must:
 
             
 <div class="td-content">
-	<h1>Create a custom filter component</h1>
+	<h1>Enable sharding in a topology</h1>
     
 	       
-	<p>Creating a custom filter is probably the most common action a Baker user will perform.</p>
-<p>In fact, filters are the components that apply the business logic to a Baker pipeline,
-<strong>creating or discarding records or modifying fields.</strong></p>
-<p>A working example of a custom filter can be found in the
-<a href="https://github.com/AdRoll/baker/tree/main/examples/filtering">filtering example</a></p>
-<p>To create a filter and make it available to Baker, one must:</p>
-<ul>
-<li>Implement the Filter interface</li>
-<li>Add a <a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterDesc"><code>FilterDesc</code></a> for the filter to
-the available filters in <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>Components</code></a></li>
-</ul>
-<h2 id="the-filter-interface">The Filter interface</h2>
-<p>The <a href="https://pkg.go.dev/github.com/AdRoll/baker#Filter">Filter interface</a> determines the functions
-that a filter must implement. The interface is quite simple and contains only two functions:
-<code>Process(l Record, next func(Record))</code> and <code>Stats() FilterStats</code>:</p>
-<ul>
-<li><code>Process</code> is the function the actually filters the records</li>
-<li><code>Stats</code> return statistics (<a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterStats">FilterStats</a>) about the filtering process</li>
-</ul>
-<p>A very simple example of filter doing nothing is:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> MyFilter <span style="color:#8be9fd;font-style:italic">struct</span>{
-    numProcessedLines <span style="color:#8be9fd">int64</span>
-}
+	<h2 id="how-to-enable-sharding-in-a-topology">How to enable sharding in a topology?</h2>
+<p>Sharding is enabled in the <code>[output]</code> section of the topology TOML
+configuration file, by indicating the name of the field used to partition
+the records space.</p>
+<p>In the following topology extract, we&rsquo;re using a sharded <code>Filewriter</code> output
+and set the number of instances to 4 (i.e 4 shards). In our case, Baker is
+going to extract and hash the <code>name</code> field of each <code>Record</code> to determine which
+of the 4 <code>Filewriter</code> instances a <code>Record</code> is sent to:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[input]
+...
 
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numProcessedLines, <span style="color:#bd93f9">1</span>)
-    <span style="color:#50fa7b">next</span>(r)
-}
+[[filter]]
+...
 
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Stats</span>() FilterStats { 
-    <span style="color:#ff79c6">return</span> baker.FilterStats{
-		NumProcessedLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numProcessedLines),
-    }
-}
-</code></pre></div><h2 id="filterdesc">FilterDesc</h2>
-<p>To be included in the Baker filters, a filter must be described by a
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterDesc"><code>FilterDesc</code> object</a>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> MyFilterDesc = baker.FilterDesc{
-	Name:   <span style="color:#f1fa8c">&#34;MyFilter&#34;</span>,
-	New:    NewMyFilter,
-	Config: <span style="color:#ff79c6">&amp;</span>MyFilterConfig{},
-	Help:   <span style="color:#f1fa8c">&#34;This filter does nothing, but in a great way!&#34;</span>,
-}
-</code></pre></div><p>This object has a <code>Name</code>, that is used in the Baker configuration file to identify the filter,
-a costructor function (<code>New</code>), a config object (used to parse the filter configuration in the
-TOML file) and a help text.</p>
-<p>In this case the filter can be used with this configuration in the
-<a href="/docs/how-to/pipeline_configuration/">TOML file</a>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[[filter]]
-name = <span style="color:#f1fa8c">&#34;MyFilter&#34;</span>
-</code></pre></div><h3 id="filter-constructor">Filter constructor</h3>
-<p>Each filter must have a constructor function that receives a
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterParams">FilterParams</a> and returns the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#Filter">Filter interface</a> implemented by the filter:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">MyFilter</span>(cfg baker.FilterParams) (baker.Filter, <span style="color:#8be9fd">error</span>) {
-	<span style="color:#ff79c6">return</span> <span style="color:#ff79c6">&amp;</span>MyFilter{}, <span style="color:#ff79c6">nil</span>
-}
-</code></pre></div><p>The <a href="https://github.com/AdRoll/baker/blob/main/examples/filtering/filter.go">filtering example</a>
-shows a more complex constructor that also uses the <code>FilterParams</code> argument.</p>
-<h3 id="the-filter-configuration-and-help">The filter configuration and help</h3>
-<p>A filter requiring some configurations also has a config object, including as many keys as it
-needs and tagging each one with an <code>help</code> tag, a string that contains what a user needs to know
-which values set for it:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> ClauseFilterConfig <span style="color:#8be9fd;font-style:italic">struct</span> {
-	Clause <span style="color:#8be9fd">string</span> <span style="color:#f1fa8c">`help:&#34;Boolean formula describing which events to let through. If empty, let everything through.&#34;`</span>
-}
-</code></pre></div><h2 id="modify-record-fields">Modify record fields</h2>
-<p>A filter can change the value of the record fields before calling <code>next()</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    <span style="color:#8be9fd;font-style:italic">var</span> src FieldIndex = <span style="color:#bd93f9">10</span>
-    <span style="color:#8be9fd;font-style:italic">var</span> dst FieldIndex = <span style="color:#bd93f9">10</span>
-    v <span style="color:#ff79c6">:=</span> r.<span style="color:#50fa7b">Get</span>(src)
-    <span style="color:#6272a4">//.. modify v as required
-</span><span style="color:#6272a4"></span>    r.<span style="color:#50fa7b">Set</span>(dst, v)
-    <span style="color:#50fa7b">next</span>(r)
-}
-</code></pre></div><h2 id="processing-records">Processing records</h2>
-<p>Filters do their work in the <code>Process(r Record, next func(Record)</code> method, where <code>r</code> is the
-Record to process and <code>next</code> is a closure assigned to the next element in thefilter chain.</p>
-<p>Filters call <code>next(r)</code> once they&rsquo;re done with the record and desire to forward it, or simply
-do not call <code>next()</code> if they want to discard the record.</p>
-<p>When a filter discards a record it should also report it in the stats:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> MyFilter <span style="color:#8be9fd;font-style:italic">struct</span>{
-    numProcessedLines <span style="color:#8be9fd">int64</span>
-    numFilteredLines  <span style="color:#8be9fd">int64</span>
-}
+[output]
+name=<span style="color:#f1fa8c">&#34;Filewriter&#34;</span>
+sharding=<span style="color:#f1fa8c">&#34;name&#34;</span>
+procs=<span style="color:#bd93f9">4</span>
 
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numProcessedLines, <span style="color:#bd93f9">1</span>)
+    [output.config]
+    ...
+</code></pre></div><h2 id="limitations">Limitations</h2>
+<p>Baker only supports sharding at the output level. Baker implements other
+strategies so that other types of components (input, filters and uploads)
+maximize the pipeline performance.</p>
+<p>Also, keep in mind that not all tasks can be parallelized, so not all outputs
+support sharding. So sharding is an intrinsic property that is only present on
+some Output components, but not all of them.</p>
+<p>Only a single field can be used for sharding.</p>
+<h2 id="hash-functions">Hash functions</h2>
+<p>The field selected for sharding must be &ldquo;shardable&rdquo;: in other words, a sharding function (or
+hash function) must be associated to that field.</p>
+<p>Since the aim of sharding is to uniformly distribute the load of incoming
+records between multiple instances of an output component, a good hash function
+should be <strong>uniform</strong>; in other words it should map as evenly as possible from
+the range of possible input values to the range of output values.</p>
+<p>The range of output values is known, it is  <code>[0, MaxUint64]</code> since in Baker
+hashes are <code>uint64</code> values).</p>
+<p>However the range of possible input values depends on the domain. That&rsquo;s where
+having knowledge of that particular domain will help in designing a hash
+function, that both guarantees the uniformity of output values with respect to
+input values, and in terms of performance.</p>
+<p>For example, if you know the sharded field is only made of integers from 0 to
+1000, the hash function would be implemented differently than if the values for that
+field are arbitraty long strings.</p>
+<p>It&rsquo;s however possible to use a non-optimal but best effort general hash function.
+(we&rsquo;re planning to add this to Baker soon).</p>
+<p>A hash function should of course be deterministic (i.e the same input should
+always give the same output).</p>
+<h2 id="register-sharding-functions">Register sharding functions</h2>
+<p>The <code>baker.Components</code> structure links elements that may appear in the
+configuration, to the code eventually running when these elements are used
+inside a topology.</p>
+<p>Sharding functions that may be used in topologies are stored inside of
+the <code>ShardingFuncs</code> field of <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>baker.Components</code></a>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">ShardingFuncs <span style="color:#8be9fd;font-style:italic">map</span>[baker.FieldIndex]ShardingFunc
+</code></pre></div><p>And a <a href="https://pkg.go.dev/github.com/AdRoll/baker#ShardingFunc"><code>ShardingFunc</code></a>
+is a hash function that returns an <code>uint64</code> <code>for baker.Record</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> ShardingFunc <span style="color:#8be9fd;font-style:italic">func</span>(Record) <span style="color:#8be9fd">uint64</span>
+</code></pre></div><p>Finally, filling <code>ShardingFuncs</code> is a matter of associating a shardable field to
+the sharding function that implements the hashing of that field.</p>
+<h2 id="putting-it-all-together">Putting it all together</h2>
+<p>The following is an example of an hypothetical record schema with 3 fields
+named <code>timestamp</code>, <code>city</code> and <code>country</code>. Let&rsquo;s say that we&rsquo;d like to use
+<code>timestamp</code> and <code>country</code> for sharding but not <code>city</code>. We&rsquo;re going to enable
+sharding on these two fields, but note that only one of them can be chosen
+for a given topology.</p>
+<p>This is how implementing sharding for such a schema would look probably like:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">const</span> (
+    FieldTimestamp baker.FieldIndex = <span style="color:#bd93f9">0</span> <span style="color:#6272a4">// timestamp is unix epoch timestamp
+</span><span style="color:#6272a4"></span>    FieldCity baker.FieldIndex      = <span style="color:#bd93f9">1</span> <span style="color:#6272a4">// city name
+</span><span style="color:#6272a4"></span>    FieldCountry baker.FieldIndex   = <span style="color:#bd93f9">2</span> <span style="color:#6272a4">// 2 chars country code
+</span><span style="color:#6272a4"></span>)
+</code></pre></div><p>This is an hypothetical function to hash records based on the <code>timestamp</code> field
+which only contains integers:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hashTimestamp</span>(r baker.Record) <span style="color:#8be9fd">uint64</span> {
+    <span style="color:#6272a4">// We know the timestamp is an integer, so we use that 
+</span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// to efficiently compute a hash from it.
+</span><span style="color:#6272a4"></span>    buf <span style="color:#ff79c6">:=</span> r.<span style="color:#50fa7b">Get</span>(FieldTimestamp)
+    ts, _ <span style="color:#ff79c6">:=</span> strconv.<span style="color:#50fa7b">Atoi</span>(<span style="color:#8be9fd;font-style:italic">string</span>(buf))
 
-    <span style="color:#6272a4">// shouldBeDiscarded is part of the filter logic
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> <span style="color:#50fa7b">shouldBeDiscarded</span>(r) {
-        atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numFilteredLines, <span style="color:#bd93f9">1</span>)
-        <span style="color:#6272a4">// return here so next() isn&#39;t called
-</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">return</span>
-    }
-    <span style="color:#6272a4">// forward the record to the next element of the filter chain
-</span><span style="color:#6272a4"></span>    <span style="color:#50fa7b">next</span>(r)
+    <span style="color:#6272a4">// Call super efficient integer hash function
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">return</span> <span style="color:#50fa7b">hashInt</span>(ts)
 }
+</code></pre></div><p>And this is how hashing records based on a 2-char <code>country</code> code field would
+look like:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hashCountry</span>(r baker.Record) <span style="color:#8be9fd">uint64</span> {
+    <span style="color:#6272a4">// We know the country is made of 2 characters, so we use that 
+</span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// fact to efficiently compute a hash from it.
+</span><span style="color:#6272a4"></span>    buf <span style="color:#ff79c6">:=</span> r.<span style="color:#50fa7b">Get</span>(FieldCountry)
+    country <span style="color:#ff79c6">:=</span> buf[:<span style="color:#bd93f9">2</span>]
 
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Stats</span>() FilterStats { 
-    <span style="color:#ff79c6">return</span> baker.FilterStats{
-        NumProcessedLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numProcessedLines),
-        NumFilteredLines:  atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numFilteredLines),
-    }
+    <span style="color:#6272a4">// Call our super fast function that hashes 2 bytes.
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">return</span> <span style="color:#50fa7b">hash2bytes</span>(country)
 }
-</code></pre></div><h2 id="create-records">Create records</h2>
-<p>A filter can decide to call <code>next()</code> multiple times to send new or duplicated records to the
-next element of the filter chain.</p>
-<p>Note that the new or copied records don&rsquo;t start the filter chain from the first filter in the list
-but only the remaining filters are applied to the records.</p>
+</code></pre></div><p>You can find <a href="https://github.com/AdRoll/baker/tree/main/examples/sharding">here</a>
+a full working example illustrating sharding in Baker.</p>
 
-
-<div class="alert alert-warning" role="alert">
-
-Remember not to pass the same record to multiple <code>next()</code> functions or later changes to one of
-the records could also impact the others.<br>
-Always use <code>Copy()</code> or <code>CreateRecord()</code> before calling <code>next()</code> more than once.
-</div>
-
-<h3 id="copy">Copy()</h3>
-<p>Filters can duplicate incoming records (with <code>record.Copy()</code>), and thus have more records
-come out than records that came in.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    <span style="color:#6272a4">// Call next the 1st time
-</span><span style="color:#6272a4"></span>    <span style="color:#50fa7b">next</span>(r)
-
-    <span style="color:#6272a4">// WRONG, it is the same record as above
-</span><span style="color:#6272a4"></span>    <span style="color:#50fa7b">next</span>(r)
-
-    <span style="color:#6272a4">// CORRECT, this is a copy of the record
-</span><span style="color:#6272a4"></span>    <span style="color:#50fa7b">next</span>(r.<span style="color:#50fa7b">Copy</span>())
-}
-</code></pre></div><h3 id="createrecord">CreateRecord()</h3>
-<p>A new, empty, record is created calling the <code>CreateRecord</code> function.
-The <code>CreateRecord</code> function is available as part of the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterParams">FilterParams</a> argument of the
-<a href="#filter-constructor">filter constructor</a>. If you plan to use it in the <code>Process</code> function
-then store it to the filter object in the constructor as shown in this example:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> MyFilter <span style="color:#8be9fd;font-style:italic">struct</span>{
-    cfg baker.FilterParams
-}
-
-<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">NewMyFilter</span>(cfg baker.FilterParams) (baker.Filter, <span style="color:#8be9fd">error</span>) {
-	<span style="color:#ff79c6">return</span> <span style="color:#ff79c6">&amp;</span>MyFilter{
-        cfg: cfg, <span style="color:#6272a4">// you can also store only CreateRecord
-</span><span style="color:#6272a4"></span>    }, <span style="color:#ff79c6">nil</span>
-}
-
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    newRecord <span style="color:#ff79c6">:=</span> f.cfg.<span style="color:#50fa7b">CreateRecord</span>()
-    <span style="color:#6272a4">//... do something with the record
-</span><span style="color:#6272a4"></span>    <span style="color:#50fa7b">next</span>(newRecord)
-}
-</code></pre></div>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 2, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 29, 2020
 </div>
 </div>
 
