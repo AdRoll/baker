@@ -43,7 +43,7 @@ var MyUploadDesc = baker.UploadDesc{
 ```
 
 This object has a `Name`, that is used in the Baker configuration file to identify the upload,
-a costructor-like function (`New`), a config object (where the parsed upload configuration from the
+a constructor-like function (`New`), a config object (where the parsed upload configuration from the
 TOML file is stored) and a help text that must help the users to use the component and its
 configuration parameters.
 
