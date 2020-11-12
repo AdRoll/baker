@@ -49,7 +49,7 @@ configuration parameters.
 
 ### Upload constructor-like function
 
-The `New` key in the `UploadDesc` object represents the constructor-like function.
+The `New` key in the `UploadDesc` object should be set to a function returning an Upload.
 
 The function receives a [UploadParams](https://pkg.go.dev/github.com/AdRoll/baker#UploadParams)
 object and returns an instance of [Upload](https://pkg.go.dev/github.com/AdRoll/baker#Upload).
