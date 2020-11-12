@@ -94,7 +94,7 @@ The [OutputRecord](https://pkg.go.dev/github.com/AdRoll/baker#OutputRecord) chan
 the output component is closed by Baker when all the records have been processed (in case of a batch
 execution) or when an interruption starts (in case of a SIGINT signal from the user).
 
-Until that moment, the output component must continuosly read new records, processing them.
+Until that moment, the output component must continuously read new records, processing them.
 
 The `OutputRecord.Fields` slice contains the string values of the fields that the user choose to
 send to the output configuring the
