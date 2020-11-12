@@ -7,7 +7,6 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://getbaker.io/docs/getting-started/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -21,16 +20,27 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Getting started | Baker</title><meta property="og:title" content="Getting started" />
-<meta property="og:description" content="A high performance, composable and extendable data-processing pipeline for the big data era" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://getbaker.io/docs/getting-started/" />
-<meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Getting started">
-<meta itemprop="description" content="A high performance, composable and extendable data-processing pipeline for the big data era">
+<title>Create a custom input component | Baker</title><meta property="og:title" content="Create a custom input component" />
+<meta property="og:description" content="The job of a Baker input is to fetch blob of data containing one or multiple serialized records and send them to Baker.
+The input isn&rsquo;t in charge of splitting/parsing the input data into Records (that is done by Baker), but only retrieving them as fast as possible in raw format adding, if any, metadata to them and then sending those values to Baker through a *Data channel. The channel size is customizable in the topology TOML with [input] chansize=&lt;value&gt; (default to 1024)." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://getbaker.io/docs/how-to/create_input/" />
+<meta property="article:published_time" content="2020-11-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-11-02T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Create a custom input component">
+<meta itemprop="description" content="The job of a Baker input is to fetch blob of data containing one or multiple serialized records and send them to Baker.
+The input isn&rsquo;t in charge of splitting/parsing the input data into Records (that is done by Baker), but only retrieving them as fast as possible in raw format adding, if any, metadata to them and then sending those values to Baker through a *Data channel. The channel size is customizable in the topology TOML with [input] chansize=&lt;value&gt; (default to 1024).">
+<meta itemprop="datePublished" content="2020-11-02T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-11-02T00:00:00+00:00" />
+<meta itemprop="wordCount" content="501">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Getting started"/>
-<meta name="twitter:description" content="A high performance, composable and extendable data-processing pipeline for the big data era"/>
+<meta name="twitter:title" content="Create a custom input component"/>
+<meta name="twitter:description" content="The job of a Baker input is to fetch blob of data containing one or multiple serialized records and send them to Baker.
+The input isn&rsquo;t in charge of splitting/parsing the input data into Records (that is done by Baker), but only retrieving them as fast as possible in raw format adding, if any, metadata to them and then sending those values to Baker through a *Data channel. The channel size is customizable in the topology TOML with [input] chansize=&lt;value&gt; (default to 1024)."/>
 
 
 
@@ -49,7 +59,7 @@
 
 
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -125,10 +135,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/getting-started/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Getting Started</a>
+    <a  href="/docs/getting-started/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Getting Started</a>
   </li>
   <ul>
-    <li class="collapse show" id="docsgetting-started">
+    <li class="collapse " id="docsgetting-started">
       
       
       
@@ -171,10 +181,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">How-to</a>
+    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-to</a>
   </li>
   <ul>
-    <li class="collapse " id="docshow-to">
+    <li class="collapse show" id="docshow-to">
       
       
       
@@ -217,7 +227,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_input" href="/docs/how-to/create_input/">Create a custom input component</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-tocreate_input" href="/docs/how-to/create_input/">Create a custom input component</a>
       
       
       
@@ -275,8 +285,8 @@
 
 
 
-<a href="https://github.com/adroll/baker/edit/master/content/en/docs/Getting%20started/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Getting%20started" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/master/content/en/docs/How%20To/create_input.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Create%20a%20custom%20input%20component" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -284,6 +294,20 @@
 
 
 
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#daemon-vs-batch">Daemon vs Batch</a></li>
+    <li><a href="#data">Data</a></li>
+    <li><a href="#the-input-interface">The Input interface</a></li>
+    <li><a href="#inputdesc">InputDesc</a>
+      <ul>
+        <li><a href="#input-constructor-like-function">Input constructor-like function</a></li>
+        <li><a href="#the-input-configuration-and-help">The input configuration and help</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
 
 
@@ -302,6 +326,9 @@
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/">Documentation</a>
 </li>
@@ -309,8 +336,15 @@
 
 
 
+<li class="breadcrumb-item" >
+	<a href="https://getbaker.io/docs/how-to/">How-to</a>
+</li>
+
+
+
+
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/getting-started/">Getting Started</a>
+	<a href="https://getbaker.io/docs/how-to/create_input/">Create a custom input component</a>
 </li>
 
 	</ol>
@@ -318,66 +352,80 @@
 
             
 <div class="td-content">
-	<h1>Getting started</h1>
-        
-	
-	<p>Baker is a Go library and it must be included into your Go program.</p>
-<p>To create a new Go project using Go modules and adding Baker:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mkdir myProject
-<span style="color:#8be9fd;font-style:italic">cd</span> myProject
-go mod init github.com/myUser/myProject
-go get github.com/adroll/baker
-</code></pre></div><p>If you are adding Baker to a project already configured to use Go modules, just type:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#8be9fd;font-style:italic">cd</span> myProject
-go get github.com/adroll/baker
-</code></pre></div><p>Read <a href="/docs/core-concepts/">Baker Core concepts</a> to know how Baker works or go to the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker">API reference</a> to learn how to use it in your code.</p>
+	<h1>Create a custom input component</h1>
+    
+	       
+	<p>The job of a Baker input is to fetch blob of data containing one or multiple serialized records
+and send them to Baker.</p>
+<p>The input isn&rsquo;t in charge of splitting/parsing the input data into Records (that is done by Baker),
+but only retrieving them as fast as possible in raw format adding, if any, metadata to them and
+then sending those values to Baker through a
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#Data"><code>*Data</code></a> channel. The channel size is
+customizable in the topology TOML with <code>[input] chansize=&lt;value&gt;</code> (default to 1024).</p>
+<p>To create an input and make it available to Baker, one must:</p>
+<ul>
+<li>Implement the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Input">Input</a> interface</li>
+<li>Fill an <a href="https://pkg.go.dev/github.com/AdRoll/baker#InputDesc"><code>InputDesc</code></a> structure and register it
+within Baker via <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>Components</code></a>.</li>
+</ul>
+<h2 id="daemon-vs-batch">Daemon vs Batch</h2>
+<p>The input component determines the Baker behavior between a batch processor or a long-living daemon.</p>
+<p>If the input exits when its data processing has completed, then Baker waits for the topology to end
+and then exits.</p>
+<p>If the input never exits, then Baker acts as a daemon.</p>
+<h2 id="data">Data</h2>
+<p>The <a href="https://pkg.go.dev/github.com/AdRoll/baker#Data"><code>Data</code></a> object that the input must fill in
+with read data has two fields: <code>Bytes</code>, that must contain the raw read bytes (possibly containing
+more records separated by <code>\n</code>), and <code>Meta</code>.</p>
+<p><a href="https://pkg.go.dev/github.com/AdRoll/baker#Metadata"><code>Metadata</code></a> can contain additional
+information Baker will associate with each of the serialized Record contained in <code>Data</code>.<br>
+Typical information could be the time of retrieval, the filename (in case <code>Records</code> come from a file), etc.</p>
+<h2 id="the-input-interface">The Input interface</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> Input <span style="color:#8be9fd;font-style:italic">interface</span> {
+	<span style="color:#50fa7b">Run</span>(output <span style="color:#8be9fd;font-style:italic">chan</span><span style="color:#ff79c6">&lt;-</span> <span style="color:#ff79c6">*</span>Data) <span style="color:#8be9fd">error</span>
+	<span style="color:#50fa7b">Stop</span>()
+	<span style="color:#50fa7b">Stats</span>() InputStats
+	<span style="color:#50fa7b">FreeMem</span>(data <span style="color:#ff79c6">*</span>Data)
+}
+</code></pre></div><p>The <a href="https://pkg.go.dev/github.com/AdRoll/baker#Input">Input interface</a> must be implemented when
+creating a new input component.</p>
+<p>The <code>Run</code> function implements the component logic and receives a channel where it sends the
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#Data">raw data</a> it processes.</p>
+<p><code>FreeMem(data *Data)</code> is called by Baker when <code>data</code> is no longer needed. This is an occasion
+for the input to recycle memory, for example if the input uses a <code>sync.Pool</code> to create new
+instances of <code>baker.Data</code>.</p>
+<h2 id="inputdesc">InputDesc</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> MyInputDesc = baker.InputDesc{
+	Name:   <span style="color:#f1fa8c">&#34;MyInput&#34;</span>,
+	New:    NewMyInput,
+	Config: <span style="color:#ff79c6">&amp;</span>MyInputConfig{},
+	Help:   <span style="color:#f1fa8c">&#34;High-level description of MyInput&#34;</span>,
+}
+</code></pre></div><p>This object has a <code>Name</code>, that is used in the Baker configuration file to identify the input,
+a costructor-like function (<code>New</code>), a config object (where the parsed input configuration from the
+TOML file is stored) and a help text that must help the users to use the component and its
+configuration parameters.</p>
+<h3 id="input-constructor-like-function">Input constructor-like function</h3>
+<p>The <code>New</code> key in the <code>InputDesc</code> object represents the constructor-like function.</p>
+<p>The function receives a <a href="https://pkg.go.dev/github.com/AdRoll/baker#InputParams">InputParams</a>
+object and returns an instance of <a href="https://pkg.go.dev/github.com/AdRoll/baker#Input">Input</a>.</p>
+<p>The function should verify the configuration params into <code>InputParams.DecodedConfig</code> and initialize
+the component.</p>
+<h3 id="the-input-configuration-and-help">The input configuration and help</h3>
+<p>The input configuration object (<code>MyInputConfig</code> in the previous example) must export all
+configuration parameters that the user can set in the TOML topology file.</p>
+<p>Each field in the struct must include a <code>help</code> string tag (mandatory) and a <code>required</code> boolean tag
+(default to <code>false</code>).</p>
+<p>All these parameters appear in the generated help. <code>help</code> should describe the parameter role and/or
+its possible values, <code>required</code> informs Baker it should refuse configurations in which that field
+is not defined.</p>
 
-        <div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-    
+	
+	
+	<div class="text-muted mt-5 pt-3 border-top">Last modified November 2, 2020
+</div>
 </div>
 
-	
-	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified January 1, 0001
-</div>
-</div>
 
           </main>
         </div>

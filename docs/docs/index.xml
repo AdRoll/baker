@@ -5,7 +5,7 @@
     <description>Recent content in Documentation on Baker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 03 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 11 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -580,6 +580,83 @@ a full working example illustrating sharding in Baker.&lt;/p&gt;
     </item>
     
     <item>
+      <title>Docs: Create a custom input component</title>
+      <link>https://getbaker.io/docs/how-to/create_input/</link>
+      <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/how-to/create_input/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The job of a Baker input is to fetch blob of data containing one or multiple serialized records
+and send them to Baker.&lt;/p&gt;
+&lt;p&gt;The input isn&amp;rsquo;t in charge of splitting/parsing the input data into Records (that is done by Baker),
+but only retrieving them as fast as possible in raw format adding, if any, metadata to them and
+then sending those values to Baker through a
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Data&#34;&gt;&lt;code&gt;*Data&lt;/code&gt;&lt;/a&gt; channel. The channel size is
+customizable in the topology TOML with &lt;code&gt;[input] chansize=&amp;lt;value&amp;gt;&lt;/code&gt; (default to 1024).&lt;/p&gt;
+&lt;p&gt;To create an input and make it available to Baker, one must:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Implement the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Input&#34;&gt;Input&lt;/a&gt; interface&lt;/li&gt;
+&lt;li&gt;Fill an &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#InputDesc&#34;&gt;&lt;code&gt;InputDesc&lt;/code&gt;&lt;/a&gt; structure and register it
+within Baker via &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;Components&lt;/code&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;daemon-vs-batch&#34;&gt;Daemon vs Batch&lt;/h2&gt;
+&lt;p&gt;The input component determines the Baker behavior between a batch processor or a long-living daemon.&lt;/p&gt;
+&lt;p&gt;If the input exits when its data processing has completed, then Baker waits for the topology to end
+and then exits.&lt;/p&gt;
+&lt;p&gt;If the input never exits, then Baker acts as a daemon.&lt;/p&gt;
+&lt;h2 id=&#34;data&#34;&gt;Data&lt;/h2&gt;
+&lt;p&gt;The &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Data&#34;&gt;&lt;code&gt;Data&lt;/code&gt;&lt;/a&gt; object that the input must fill in
+with read data has two fields: &lt;code&gt;Bytes&lt;/code&gt;, that must contain the raw read bytes (possibly containing
+more records separated by &lt;code&gt;\n&lt;/code&gt;), and &lt;code&gt;Meta&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Metadata&#34;&gt;&lt;code&gt;Metadata&lt;/code&gt;&lt;/a&gt; can contain additional
+information Baker will associate with each of the serialized Record contained in &lt;code&gt;Data&lt;/code&gt;.&lt;br&gt;
+Typical information could be the time of retrieval, the filename (in case &lt;code&gt;Records&lt;/code&gt; come from a file), etc.&lt;/p&gt;
+&lt;h2 id=&#34;the-input-interface&#34;&gt;The Input interface&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Input &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Run&lt;/span&gt;(output &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;chan&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;Data) &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Stop&lt;/span&gt;()
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() InputStats
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;FreeMem&lt;/span&gt;(data &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;Data)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Input&#34;&gt;Input interface&lt;/a&gt; must be implemented when
+creating a new input component.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;Run&lt;/code&gt; function implements the component logic and receives a channel where it sends the
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Data&#34;&gt;raw data&lt;/a&gt; it processes.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;FreeMem(data *Data)&lt;/code&gt; is called by Baker when &lt;code&gt;data&lt;/code&gt; is no longer needed. This is an occasion
+for the input to recycle memory, for example if the input uses a &lt;code&gt;sync.Pool&lt;/code&gt; to create new
+instances of &lt;code&gt;baker.Data&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;inputdesc&#34;&gt;InputDesc&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; MyInputDesc = baker.InputDesc{
+	Name:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyInput&amp;#34;&lt;/span&gt;,
+	New:    NewMyInput,
+	Config: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;MyInputConfig{},
+	Help:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;High-level description of MyInput&amp;#34;&lt;/span&gt;,
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This object has a &lt;code&gt;Name&lt;/code&gt;, that is used in the Baker configuration file to identify the input,
+a costructor-like function (&lt;code&gt;New&lt;/code&gt;), a config object (where the parsed input configuration from the
+TOML file is stored) and a help text that must help the users to use the component and its
+configuration parameters.&lt;/p&gt;
+&lt;h3 id=&#34;input-constructor-like-function&#34;&gt;Input constructor-like function&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;New&lt;/code&gt; key in the &lt;code&gt;InputDesc&lt;/code&gt; object represents the constructor-like function.&lt;/p&gt;
+&lt;p&gt;The function receives a &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#InputParams&#34;&gt;InputParams&lt;/a&gt;
+object and returns an instance of &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Input&#34;&gt;Input&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The function should verify the configuration params into &lt;code&gt;InputParams.DecodedConfig&lt;/code&gt; and initialize
+the component.&lt;/p&gt;
+&lt;h3 id=&#34;the-input-configuration-and-help&#34;&gt;The input configuration and help&lt;/h3&gt;
+&lt;p&gt;The input configuration object (&lt;code&gt;MyInputConfig&lt;/code&gt; in the previous example) must export all
+configuration parameters that the user can set in the TOML topology file.&lt;/p&gt;
+&lt;p&gt;Each field in the struct must include a &lt;code&gt;help&lt;/code&gt; string tag (mandatory) and a &lt;code&gt;required&lt;/code&gt; boolean tag
+(default to &lt;code&gt;false&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;All these parameters appear in the generated help. &lt;code&gt;help&lt;/code&gt; should describe the parameter role and/or
+its possible values, &lt;code&gt;required&lt;/code&gt; informs Baker it should refuse configurations in which that field
+is not defined.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: Create a custom filter component</title>
       <link>https://getbaker.io/docs/how-to/create_filter/</link>
       <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
@@ -743,6 +820,166 @@ then store it to the filter object in the constructor as shown in this example:&
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#50fa7b&#34;&gt;next&lt;/span&gt;(newRecord)
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Create a custom output component</title>
+      <link>https://getbaker.io/docs/how-to/create_output/</link>
+      <pubDate>Tue, 10 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/how-to/create_output/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Output components in Baker receive records at the end of the filter chain and are in charge of
+storing them, eventually sending the result (like a temporary file in the disk) to an Upload
+component.&lt;/p&gt;
+&lt;p&gt;To create an output and make it available to Baker, one must:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Implement the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Output&#34;&gt;Output&lt;/a&gt; interface&lt;/li&gt;
+&lt;li&gt;Fill-up an &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#OutputDesc&#34;&gt;&lt;code&gt;OutputDesc&lt;/code&gt;&lt;/a&gt; struct and register
+it within Baker via &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;Components&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;the-output-interface&#34;&gt;The Output interface&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Output &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Run&lt;/span&gt;(in &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;-&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;chan&lt;/span&gt; OutputRecord, upch &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;chan&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() OutputStats
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;CanShard&lt;/span&gt;() &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Output&#34;&gt;Output interface&lt;/a&gt; must be implemented when
+creating a new output component.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;Run&lt;/code&gt; function implements the component logic and gets a channel where it receives
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#OutputRecord&#34;&gt;OutputRecord&lt;/a&gt; objects and a channel to
+communicate to the Upload components what to upload.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;CanShard&lt;/code&gt; is the function telling whether the output is able to manage sharding. Read the page
+&lt;a href=&#34;https://getbaker.io/docs/how-to/sharding/&#34;&gt;dedicated to the sharding&lt;/a&gt; to go deeper in the topic.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Stats&lt;/code&gt; is used to report metrics, see the &lt;a href=&#34;https://getbaker.io/docs/how-to/metrics/&#34;&gt;dedicated page&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;outputdesc&#34;&gt;OutputDesc&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; MyOutputDesc = baker.OutputDesc{
+	Name:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyOutput&amp;#34;&lt;/span&gt;,
+	New:    NewMyOutput,
+    Config: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;MyOutputConfig{},
+    Raw:    &lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;,
+	Help:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;High-level description of MyOutput&amp;#34;&lt;/span&gt;,
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This object has a &lt;code&gt;Name&lt;/code&gt;, that is used in the Baker configuration file to identify the output,
+a constructor-like function (&lt;code&gt;New&lt;/code&gt;), a config object (used to parse the output configuration in the
+TOML file) and a help text that must help the users to use the component and its configuration
+parameters. The &lt;code&gt;Raw&lt;/code&gt; field instructs Baker whether it should send raw records in addition
+to single fields (see below for details).&lt;/p&gt;
+&lt;h3 id=&#34;output-constructor-like-function&#34;&gt;Output constructor-like function&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;New&lt;/code&gt; field in the &lt;code&gt;OutputDesc&lt;/code&gt; object represents the constructor-like function.&lt;/p&gt;
+&lt;p&gt;The function receives an &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#OutputParams&#34;&gt;OutputParams&lt;/a&gt;
+object and returns an instance of &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Output&#34;&gt;Output&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Through &lt;code&gt;OutputParams&lt;/code&gt;, an Output receives its index (in case there&amp;rsquo;s multiple output processes)
+and a list of field indexes, in addition to the fields inherited from &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#ComponentParams&#34;&gt;ComponentParams&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;OutputParams.Index&lt;/code&gt; indicates a unique index of the output process among the concurrent output
+processes generated by Baker. The &lt;code&gt;procs&lt;/code&gt; configuration can be used to tune the total number of
+concurrent processes, see &lt;a href=&#34;https://getbaker.io/docs/how-to/pipeline_configuration/&#34;&gt;Pipeline configuration&lt;/a&gt; for details.&lt;br&gt;
+Note that the output should extensively document in &lt;code&gt;OutputDesc.Help&lt;/code&gt; if it is able to manage
+concurrent processing or if the user should set it with a single process (&lt;code&gt;procs=1&lt;/code&gt;).
+Read &lt;a href=&#34;https://getbaker.io/docs/how-to/concurrency/&#34;&gt;Tuning concurrency&lt;/a&gt; for an in-depth guide to the subject.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;OutputParams.Fields&lt;/code&gt; is a list of &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FieldIndex&#34;&gt;FieldIndex&lt;/a&gt;
+that the output will receive, ordered as they are in the TOML. They&amp;rsquo;re also in the same order as
+the fields in &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#OutputRecord&#34;&gt;OutputRecord.Fields&lt;/a&gt;, see
+below for details.&lt;br&gt;
+If, for any reason, the output needs to retrieve the fields name (like the SQLite output does to
+get the columns names), then &lt;code&gt;OutputParams.FieldName&lt;/code&gt; can be used.&lt;/p&gt;
+&lt;h3 id=&#34;the-output-configuration-and-help&#34;&gt;The output configuration and help&lt;/h3&gt;
+&lt;p&gt;The output configuration object (&lt;code&gt;MyOutputConfig&lt;/code&gt; in the previous example) must export all
+configuration parameters that the user can set in the TOML topology file.&lt;/p&gt;
+&lt;p&gt;Each field in the struct must include a &lt;code&gt;help&lt;/code&gt; string tag (mandatory) and a &lt;code&gt;required&lt;/code&gt; boolean tag
+(default to &lt;code&gt;false&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;All these parameters appear in the generated help. &lt;code&gt;help&lt;/code&gt; should describe the parameter role and/or
+its possible values, &lt;code&gt;required&lt;/code&gt; informs Baker it should refuse configurations in which that field
+is not defined.&lt;/p&gt;
+&lt;h2 id=&#34;outputrecord&#34;&gt;OutputRecord&lt;/h2&gt;
+&lt;p&gt;The &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#OutputRecord&#34;&gt;OutputRecord&lt;/a&gt; channel received by
+the output component can be closed by Baker at any time and the output should return from the &lt;code&gt;Run&lt;/code&gt;
+function as soon as possible when this happens.&lt;/p&gt;
+&lt;p&gt;Until that moment, the output component must continuously read new records, processing them.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;OutputRecord.Fields&lt;/code&gt; slice contains the string values of the fields that the user choose to
+send to the output configuring the
+&lt;a href=&#34;http://localhost:1313/docs/how-to/pipeline_configuration/#components-configuration&#34;&gt;&lt;code&gt;fields&lt;/code&gt; key&lt;/a&gt;
+in the &lt;code&gt;[output]&lt;/code&gt; section of the TOML topology file.&lt;/p&gt;
+&lt;p&gt;Fields are ordered in the same way than the slice of &lt;code&gt;FieldIndex&lt;/code&gt; received in &lt;code&gt;OutputParams.Fields&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In case of a raw output, &lt;code&gt;OutputRecord.Record&lt;/code&gt; contains both the serialized record as a byte slice
+and the field values.&lt;/p&gt;
+&lt;h2 id=&#34;prepare-data-for-uploading&#34;&gt;Prepare data for uploading&lt;/h2&gt;
+&lt;p&gt;If the output component produces files on the local filesystem, then it should send their paths to
+the upload component (using the shared string channel), regardless of the real presence of a
+configured upload (that is unknown to the output). If the upload is absent, then Baker will ignore
+those messages.&lt;/p&gt;
+&lt;p&gt;The output can send a single message at the end of its job (think to a sqlite database that should
+only be uploaded before Baker exits) or can upload files periodically, like the
+&lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/output/filewriter.go&#34;&gt;FileWriter&lt;/a&gt; component does
+when it rotates (i.e. it stops writing to a file, send its path to the upload, and then creates
+a new file).&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Create a custom upload component</title>
+      <link>https://getbaker.io/docs/how-to/create_upload/</link>
+      <pubDate>Wed, 11 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/how-to/create_upload/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The last (optional) component of a Baker pipeline is the Upload, whose job is to, precisely,
+upload local files produced by the output component.&lt;/p&gt;
+&lt;p&gt;To create an upload component and make it available to Baker, one must:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Implement the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Upload&#34;&gt;Upload&lt;/a&gt; interface&lt;/li&gt;
+&lt;li&gt;Fill an &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#UploadDesc&#34;&gt;&lt;code&gt;UploadDesc&lt;/code&gt;&lt;/a&gt; structure and
+register it within Baker via &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;Components&lt;/code&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;the-upload-interface&#34;&gt;The Upload interface&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Upload &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Run&lt;/span&gt;(upch &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;-&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;chan&lt;/span&gt; &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Stop&lt;/span&gt;()
+	&lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() UploadStats
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Upload&#34;&gt;Upload interface&lt;/a&gt; must be implemented when
+creating a new Upload component.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;Run&lt;/code&gt; function implements the component logic and receives a channel where the output sends what
+it produces (most probably file paths).&lt;/p&gt;
+&lt;p&gt;Currently, only the &lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/upload/s3.go&#34;&gt;S3&lt;/a&gt; component exists
+and it expects to receive in the channel the path to the files produced by an output.&lt;/p&gt;
+&lt;h2 id=&#34;uploaddesc&#34;&gt;UploadDesc&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; MyUploadDesc = baker.UploadDesc{
+	Name:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyUpload&amp;#34;&lt;/span&gt;,
+	New:    NewMyUpload,
+	Config: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;MyUploadConfig{},
+	Help:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;High-level description of MyUpload&amp;#34;&lt;/span&gt;,
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This object has a &lt;code&gt;Name&lt;/code&gt;, that is used in the Baker configuration file to identify the upload,
+a constructor-like function (&lt;code&gt;New&lt;/code&gt;), a config object (where the parsed upload configuration from the
+TOML file is stored) and a help text that must help the users to use the component and its
+configuration parameters.&lt;/p&gt;
+&lt;h3 id=&#34;upload-constructor-like-function&#34;&gt;Upload constructor-like function&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;New&lt;/code&gt; key in the &lt;code&gt;UploadDesc&lt;/code&gt; object should be set to a function returning an Upload.&lt;/p&gt;
+&lt;p&gt;The function receives an &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#UploadParams&#34;&gt;UploadParams&lt;/a&gt;
+object and returns an instance of &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Upload&#34;&gt;Upload&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;It should verify the configuration, accessed via &lt;code&gt;UploadParams.DecodedConfig&lt;/code&gt; and initialize
+the component accordingly.&lt;/p&gt;
+&lt;h3 id=&#34;upload-configuration-and-help&#34;&gt;Upload configuration and help&lt;/h3&gt;
+&lt;p&gt;The upload configuration object (&lt;code&gt;MyUploadConfig&lt;/code&gt; in the previous example) must export all
+configuration parameters that the user can set in the TOML topology file.&lt;/p&gt;
+&lt;p&gt;Each field in the struct must include a &lt;code&gt;help&lt;/code&gt; string tag (mandatory) and a &lt;code&gt;required&lt;/code&gt; boolean tag
+(default to &lt;code&gt;false&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;All these parameters appear in the generated help. &lt;code&gt;help&lt;/code&gt; should describe the parameter role and/or
+its possible values, &lt;code&gt;required&lt;/code&gt; informs Baker it should refuse configurations in which that field
+is not defined.&lt;/p&gt;
+&lt;h2 id=&#34;the-files-to-upload&#34;&gt;The files to upload&lt;/h2&gt;
+&lt;p&gt;Through the channel, the upload receives from the output paths to local files that it must upload.&lt;/p&gt;
+&lt;p&gt;The only Upload component implemented at the moment, S3, removes those files once uploaded, but there isn&amp;rsquo;t a
+golden rule for what to do with them. This is up to the upload component and should be chosen
+wisely and documented extensively.&lt;/p&gt;
+
       </description>
     </item>
     

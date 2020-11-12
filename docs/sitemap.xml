@@ -4,7 +4,7 @@
   
   <url>
     <loc>https://getbaker.io/docs/</loc>
-    <lastmod>2020-11-03T00:00:00+00:00</lastmod>
+    <lastmod>2020-11-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -28,7 +28,7 @@
   
   <url>
     <loc>https://getbaker.io/docs/how-to/</loc>
-    <lastmod>2020-11-03T00:00:00+00:00</lastmod>
+    <lastmod>2020-11-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -52,8 +52,23 @@
   </url>
   
   <url>
+    <loc>https://getbaker.io/docs/how-to/create_input/</loc>
+    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://getbaker.io/docs/how-to/create_filter/</loc>
     <lastmod>2020-11-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://getbaker.io/docs/how-to/create_output/</loc>
+    <lastmod>2020-11-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://getbaker.io/docs/how-to/create_upload/</loc>
+    <lastmod>2020-11-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -63,7 +78,7 @@
   
   <url>
     <loc>https://getbaker.io/</loc>
-    <lastmod>2020-11-03T00:00:00+00:00</lastmod>
+    <lastmod>2020-11-11T00:00:00+00:00</lastmod>
   </url>
   
 </urlset>
