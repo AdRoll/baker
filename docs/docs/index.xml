@@ -17,10 +17,10 @@
     
     <item>
       <title>Docs: Pipeline configuration</title>
-      <link>https://getbaker.io/docs/how-to/pipeline_configuration/</link>
+      <link>https://getbaker.io/docs/how-tos/pipeline_configuration/</link>
       <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/how-to/pipeline_configuration/</guid>
+      <guid>https://getbaker.io/docs/how-tos/pipeline_configuration/</guid>
       <description>
         
         
@@ -201,10 +201,10 @@ Note that if the variable doesn&amp;rsquo;t exist, then an empty string is used 
     
     <item>
       <title>Docs: Record and LogLine</title>
-      <link>https://getbaker.io/docs/how-to/record_and_logline/</link>
+      <link>https://getbaker.io/docs/how-tos/record_and_logline/</link>
       <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/how-to/record_and_logline/</guid>
+      <guid>https://getbaker.io/docs/how-tos/record_and_logline/</guid>
       <description>
         
         
@@ -238,10 +238,10 @@ instance of your custom LogLine instead of the default one.&lt;/p&gt;
     
     <item>
       <title>Docs: Create a custom Record</title>
-      <link>https://getbaker.io/docs/how-to/custom_record/</link>
+      <link>https://getbaker.io/docs/how-tos/custom_record/</link>
       <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/how-to/custom_record/</guid>
+      <guid>https://getbaker.io/docs/how-tos/custom_record/</guid>
       <description>
         
         
@@ -302,100 +302,11 @@ be executed against all custom implementations of the Record.
     </item>
     
     <item>
-      <title>Docs: Export metrics</title>
-      <link>https://getbaker.io/docs/how-to/metrics/</link>
-      <pubDate>Tue, 03 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://getbaker.io/docs/how-to/metrics/</guid>
-      <description>
-        
-        
-        &lt;p&gt;During its execution, a Baker pipeline exports metrics about the Go runtime as
-well as general metrics giving an high-level overview of the ongoing job.&lt;/p&gt;
-&lt;p&gt;More specific metrics are also exported on a per-component basis. To that effect,
-&lt;code&gt;baker.Input&lt;/code&gt;, &lt;code&gt;baker.Filter&lt;/code&gt;, &lt;code&gt;baker.Output&lt;/code&gt; and &lt;code&gt;baker.Upload&lt;/code&gt; all have a &lt;code&gt;Stats&lt;/code&gt;
-method. &lt;code&gt;Stats&lt;/code&gt; is called every second and the component is expected to return both
-a predefined set of metrics and a &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag&#34;&gt;&lt;code&gt;baker.MetricsBag&lt;/code&gt;&lt;/a&gt;
-containing metrics of arbitrary name and types.&lt;/p&gt;
-&lt;p&gt;Let&amp;rsquo;s illustrate this with metrics exported by a filter via
-&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FilterStats&#34;&gt;&lt;code&gt;baker.FilterStats&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; FilterStats &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
-	NumProcessedLines &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
-	NumFilteredLines  &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
-	Metrics           MetricsBag
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In this case &lt;code&gt;NumProcessedLines&lt;/code&gt; must represent the &lt;strong&gt;total&lt;/strong&gt; number of processed
-lines since Baker started, and &lt;code&gt;NumFilteredLines&lt;/code&gt; is the number of discarded
-(or filtered) records. Due to historical reasons these fields have the word
-&lt;em&gt;lines&lt;/em&gt; in them but they do mean the number of records.&lt;/p&gt;
-&lt;p&gt;An important point is that &lt;code&gt;Stats&lt;/code&gt; can be called from any goroutine so it must be
-safe for concurrent use by multiple goroutines.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (i &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;myFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() baker.FilterStats {
-    bag &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;make&lt;/span&gt;(baker.MetricsBag)
-    bag.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddGauge&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;current_speed&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;float64&lt;/span&gt;(atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.speed)))
-
-    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; baker.FilterStats{
-        NumProcessedLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.totalLines),
-        NumFilteredLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.filteredLines),
-        &lt;span style=&#34;color:#6272a4&#34;&gt;// Metrics could be let to its default value, nil, if not needed.
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;        Metrics: bag,
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;configuring-metrics-in-toml&#34;&gt;Configuring metrics in TOML&lt;/h4&gt;
-&lt;p&gt;Baker configuration TOML files may have a &lt;code&gt;[metrics]&lt;/code&gt; section dedicated to the
-configuration of a metrics client.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;[metrics.name]&lt;/code&gt; specifies the metrics client to use, from the list of all registered &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;.
-&lt;code&gt;[metrics.config]&lt;/code&gt; specifies some configuration settings which are specific to the client you&amp;rsquo;re using.&lt;/p&gt;
-&lt;p&gt;For example, this is what the &lt;code&gt;[metrics]&lt;/code&gt; section would look like with the &lt;em&gt;Datadog&lt;/em&gt; metrics client:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[metrics]
-name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;datadog&amp;#34;&lt;/span&gt;
-
-    [metrics.config]
-    host=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;localhost:8125&amp;#34;&lt;/span&gt;                  &lt;span style=&#34;color:#6272a4&#34;&gt;# address of the dogstatsd client to which send metrics to&lt;/span&gt;
-    prefix=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;myapp.baker.&amp;#34;&lt;/span&gt;                  &lt;span style=&#34;color:#6272a4&#34;&gt;# prefix for all exported metric names&lt;/span&gt;
-    send_logs=&lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;                         &lt;span style=&#34;color:#6272a4&#34;&gt;# whether we should log messages (as Dogstatd events) or not &lt;/span&gt;
-    tags=[&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;env:prod&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;region:eu-west-1&amp;#34;&lt;/span&gt;]  &lt;span style=&#34;color:#6272a4&#34;&gt;# extra tags to associate to all exported metrics &lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;disaling-metrics-export&#34;&gt;Disaling metrics export&lt;/h4&gt;
-&lt;p&gt;To not export any metrics, it&amp;rsquo;s enough to not provide the &lt;code&gt;[metrics]&lt;/code&gt; section in
-Baker configuration file.&lt;/p&gt;
-&lt;h4 id=&#34;implementing-a-new-metrics-client&#34;&gt;Implementing a new metrics client&lt;/h4&gt;
-&lt;p&gt;The &lt;a href=&#34;https://github.com/AdRoll/baker/tree/main/examples/metrics&#34;&gt;metrics
-example&lt;/a&gt; shows an
-example implementation of
-&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
-and how to register it within Baker so that it can be selected in the
-&lt;code&gt;[metrics.name]&lt;/code&gt; TOML section.&lt;/p&gt;
-&lt;p&gt;In order to be selected from TOML, you must first register a
-&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsDesc&#34;&gt;&lt;code&gt;baker.MetricsDesc&lt;/code&gt;&lt;/a&gt;
-instance within &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; fooBarDesc = baker.MetricsDesc{
-	Name:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyMetrics&amp;#34;&lt;/span&gt;,
-	Config: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myyMetricsConfig{},
-	New:    newMyMetrics,
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;where &lt;code&gt;newMyMetrics&lt;/code&gt; is a constructor-like function receiving an &lt;code&gt;interface{}&lt;/code&gt;,
-which is guaranteed to be of the type of the &lt;code&gt;Config&lt;/code&gt; field value. This function
-should either return a ready to use
-&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
-or an error saying why it can&amp;rsquo;t.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;newMyMetrics&lt;/span&gt;(icfg &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt;{}) (baker.MetricsClient, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;metricsclient-interface&#34;&gt;Metrics.Client interface&lt;/h4&gt;
-&lt;p&gt;Once a &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
-instance has been successfully created, it&amp;rsquo;s made available to and used by
-a Baker pipeline to report metrics. During construction, components receive the
-&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;MetricsClient&lt;/code&gt;&lt;/a&gt; instance.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
-supports the most common type of metric types: &lt;em&gt;gauges&lt;/em&gt;, &lt;em&gt;counters&lt;/em&gt; and &lt;em&gt;histograms&lt;/em&gt;.&lt;/p&gt;
-
-      </description>
-    </item>
-    
-    <item>
       <title>Docs: Create baker.Components</title>
-      <link>https://getbaker.io/docs/how-to/baker_components/</link>
+      <link>https://getbaker.io/docs/how-tos/baker_components/</link>
       <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/how-to/baker_components/</guid>
+      <guid>https://getbaker.io/docs/how-tos/baker_components/</guid>
       <description>
         
         
@@ -470,121 +381,11 @@ TOML configuration).&lt;/p&gt;
     </item>
     
     <item>
-      <title>Docs: Sharding</title>
-      <link>https://getbaker.io/docs/how-to/sharding/</link>
-      <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://getbaker.io/docs/how-to/sharding/</guid>
-      <description>
-        
-        
-        &lt;h2 id=&#34;how-to-enable-sharding-in-a-topology&#34;&gt;How to enable sharding in a topology?&lt;/h2&gt;
-&lt;p&gt;Sharding is enabled in the &lt;code&gt;[output]&lt;/code&gt; section of the topology TOML
-configuration file, by indicating the name of the field used to partition
-the records space.&lt;/p&gt;
-&lt;p&gt;In the following topology extract, we&amp;rsquo;re using a sharded &lt;code&gt;Filewriter&lt;/code&gt; output
-and set the number of instances to 4 (i.e 4 shards). In our case, Baker is
-going to extract and hash the &lt;code&gt;name&lt;/code&gt; field of each &lt;code&gt;Record&lt;/code&gt; to determine which
-of the 4 &lt;code&gt;Filewriter&lt;/code&gt; instances a &lt;code&gt;Record&lt;/code&gt; is sent to:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[input]
-...
-
-[[filter]]
-...
-
-[output]
-name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;Filewriter&amp;#34;&lt;/span&gt;
-sharding=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;
-procs=&lt;span style=&#34;color:#bd93f9&#34;&gt;4&lt;/span&gt;
-
-    [output.config]
-    ...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;limitations&#34;&gt;Limitations&lt;/h2&gt;
-&lt;p&gt;Baker only supports sharding at the output level. Baker implements other
-strategies so that other types of components (input, filters and uploads)
-maximize the pipeline performance.&lt;/p&gt;
-&lt;p&gt;Also, keep in mind that not all tasks can be parallelized, so not all outputs
-support sharding. So sharding is an intrinsic property that is only present on
-some Output components, but not all of them.&lt;/p&gt;
-&lt;p&gt;Only a single field can be used for sharding.&lt;/p&gt;
-&lt;h2 id=&#34;hash-functions&#34;&gt;Hash functions&lt;/h2&gt;
-&lt;p&gt;The field selected for sharding must be &amp;ldquo;shardable&amp;rdquo;: in other words, a sharding function (or
-hash function) must be associated to that field.&lt;/p&gt;
-&lt;p&gt;Since the aim of sharding is to uniformly distribute the load of incoming
-records between multiple instances of an output component, a good hash function
-should be &lt;strong&gt;uniform&lt;/strong&gt;; in other words it should map as evenly as possible from
-the range of possible input values to the range of output values.&lt;/p&gt;
-&lt;p&gt;The range of output values is known, it is  &lt;code&gt;[0, MaxUint64]&lt;/code&gt; since in Baker
-hashes are &lt;code&gt;uint64&lt;/code&gt; values).&lt;/p&gt;
-&lt;p&gt;However the range of possible input values depends on the domain. That&amp;rsquo;s where
-having knowledge of that particular domain will help in designing a hash
-function, that both guarantees the uniformity of output values with respect to
-input values, and in terms of performance.&lt;/p&gt;
-&lt;p&gt;For example, if you know the sharded field is only made of integers from 0 to
-1000, the hash function would be implemented differently than if the values for that
-field are arbitraty long strings.&lt;/p&gt;
-&lt;p&gt;It&amp;rsquo;s however possible to use a non-optimal but best effort general hash function.
-(we&amp;rsquo;re planning to add this to Baker soon).&lt;/p&gt;
-&lt;p&gt;A hash function should of course be deterministic (i.e the same input should
-always give the same output).&lt;/p&gt;
-&lt;h2 id=&#34;register-sharding-functions&#34;&gt;Register sharding functions&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;baker.Components&lt;/code&gt; structure links elements that may appear in the
-configuration, to the code eventually running when these elements are used
-inside a topology.&lt;/p&gt;
-&lt;p&gt;Sharding functions that may be used in topologies are stored inside of
-the &lt;code&gt;ShardingFuncs&lt;/code&gt; field of &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;ShardingFuncs &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;map&lt;/span&gt;[baker.FieldIndex]ShardingFunc
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And a &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#ShardingFunc&#34;&gt;&lt;code&gt;ShardingFunc&lt;/code&gt;&lt;/a&gt;
-is a hash function that returns an &lt;code&gt;uint64&lt;/code&gt; &lt;code&gt;for baker.Record&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; ShardingFunc &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Finally, filling &lt;code&gt;ShardingFuncs&lt;/code&gt; is a matter of associating a shardable field to
-the sharding function that implements the hashing of that field.&lt;/p&gt;
-&lt;h2 id=&#34;putting-it-all-together&#34;&gt;Putting it all together&lt;/h2&gt;
-&lt;p&gt;The following is an example of an hypothetical record schema with 3 fields
-named &lt;code&gt;timestamp&lt;/code&gt;, &lt;code&gt;city&lt;/code&gt; and &lt;code&gt;country&lt;/code&gt;. Let&amp;rsquo;s say that we&amp;rsquo;d like to use
-&lt;code&gt;timestamp&lt;/code&gt; and &lt;code&gt;country&lt;/code&gt; for sharding but not &lt;code&gt;city&lt;/code&gt;. We&amp;rsquo;re going to enable
-sharding on these two fields, but note that only one of them can be chosen
-for a given topology.&lt;/p&gt;
-&lt;p&gt;This is how implementing sharding for such a schema would look probably like:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;const&lt;/span&gt; (
-    FieldTimestamp baker.FieldIndex = &lt;span style=&#34;color:#bd93f9&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// timestamp is unix epoch timestamp
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    FieldCity baker.FieldIndex      = &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// city name
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    FieldCountry baker.FieldIndex   = &lt;span style=&#34;color:#bd93f9&#34;&gt;2&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// 2 chars country code
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This is an hypothetical function to hash records based on the &lt;code&gt;timestamp&lt;/code&gt; field
-which only contains integers:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashTimestamp&lt;/span&gt;(r baker.Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt; {
-    &lt;span style=&#34;color:#6272a4&#34;&gt;// We know the timestamp is an integer, so we use that 
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#6272a4&#34;&gt;// to efficiently compute a hash from it.
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    buf &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; r.&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(FieldTimestamp)
-    ts, _ &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; strconv.&lt;span style=&#34;color:#50fa7b&#34;&gt;Atoi&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;string&lt;/span&gt;(buf))
-
-    &lt;span style=&#34;color:#6272a4&#34;&gt;// Call super efficient integer hash function
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashInt&lt;/span&gt;(ts)
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And this is how hashing records based on a 2-char &lt;code&gt;country&lt;/code&gt; code field would
-look like:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashCountry&lt;/span&gt;(r baker.Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt; {
-    &lt;span style=&#34;color:#6272a4&#34;&gt;// We know the country is made of 2 characters, so we use that 
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#6272a4&#34;&gt;// fact to efficiently compute a hash from it.
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    buf &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; r.&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(FieldCountry)
-    country &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; buf[:&lt;span style=&#34;color:#bd93f9&#34;&gt;2&lt;/span&gt;]
-
-    &lt;span style=&#34;color:#6272a4&#34;&gt;// Call our super fast function that hashes 2 bytes.
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hash2bytes&lt;/span&gt;(country)
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can find &lt;a href=&#34;https://github.com/AdRoll/baker/tree/main/examples/sharding&#34;&gt;here&lt;/a&gt;
-a full working example illustrating sharding in Baker.&lt;/p&gt;
-
-      </description>
-    </item>
-    
-    <item>
       <title>Docs: Create a custom input component</title>
-      <link>https://getbaker.io/docs/how-to/create_input/</link>
+      <link>https://getbaker.io/docs/how-tos/create_input/</link>
       <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/how-to/create_input/</guid>
+      <guid>https://getbaker.io/docs/how-tos/create_input/</guid>
       <description>
         
         
@@ -658,10 +459,10 @@ is not defined.&lt;/p&gt;
     
     <item>
       <title>Docs: Create a custom filter component</title>
-      <link>https://getbaker.io/docs/how-to/create_filter/</link>
+      <link>https://getbaker.io/docs/how-tos/create_filter/</link>
       <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/how-to/create_filter/</guid>
+      <guid>https://getbaker.io/docs/how-tos/create_filter/</guid>
       <description>
         
         
@@ -825,10 +626,10 @@ then store it to the filter object in the constructor as shown in this example:&
     
     <item>
       <title>Docs: Create a custom output component</title>
-      <link>https://getbaker.io/docs/how-to/create_output/</link>
+      <link>https://getbaker.io/docs/how-tos/create_output/</link>
       <pubDate>Tue, 10 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/how-to/create_output/</guid>
+      <guid>https://getbaker.io/docs/how-tos/create_output/</guid>
       <description>
         
         
@@ -922,10 +723,10 @@ a new file).&lt;/p&gt;
     
     <item>
       <title>Docs: Create a custom upload component</title>
-      <link>https://getbaker.io/docs/how-to/create_upload/</link>
+      <link>https://getbaker.io/docs/how-tos/create_upload/</link>
       <pubDate>Wed, 11 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/how-to/create_upload/</guid>
+      <guid>https://getbaker.io/docs/how-tos/create_upload/</guid>
       <description>
         
         
@@ -984,11 +785,210 @@ wisely and documented extensively.&lt;/p&gt;
     </item>
     
     <item>
+      <title>Docs: Export metrics</title>
+      <link>https://getbaker.io/docs/how-tos/metrics/</link>
+      <pubDate>Tue, 03 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/how-tos/metrics/</guid>
+      <description>
+        
+        
+        &lt;p&gt;During its execution, a Baker pipeline exports metrics about the Go runtime as
+well as general metrics giving an high-level overview of the ongoing job.&lt;/p&gt;
+&lt;p&gt;More specific metrics are also exported on a per-component basis. To that effect,
+&lt;code&gt;baker.Input&lt;/code&gt;, &lt;code&gt;baker.Filter&lt;/code&gt;, &lt;code&gt;baker.Output&lt;/code&gt; and &lt;code&gt;baker.Upload&lt;/code&gt; all have a &lt;code&gt;Stats&lt;/code&gt;
+method. &lt;code&gt;Stats&lt;/code&gt; is called every second and the component is expected to return both
+a predefined set of metrics and a &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag&#34;&gt;&lt;code&gt;baker.MetricsBag&lt;/code&gt;&lt;/a&gt;
+containing metrics of arbitrary name and types.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s illustrate this with metrics exported by a filter via
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FilterStats&#34;&gt;&lt;code&gt;baker.FilterStats&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; FilterStats &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
+	NumProcessedLines &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
+	NumFilteredLines  &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
+	Metrics           MetricsBag
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In this case &lt;code&gt;NumProcessedLines&lt;/code&gt; must represent the &lt;strong&gt;total&lt;/strong&gt; number of processed
+lines since Baker started, and &lt;code&gt;NumFilteredLines&lt;/code&gt; is the number of discarded
+(or filtered) records. Due to historical reasons these fields have the word
+&lt;em&gt;lines&lt;/em&gt; in them but they do mean the number of records.&lt;/p&gt;
+&lt;p&gt;An important point is that &lt;code&gt;Stats&lt;/code&gt; can be called from any goroutine so it must be
+safe for concurrent use by multiple goroutines.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (i &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;myFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() baker.FilterStats {
+    bag &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;make&lt;/span&gt;(baker.MetricsBag)
+    bag.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddGauge&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;current_speed&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;float64&lt;/span&gt;(atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.speed)))
+
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; baker.FilterStats{
+        NumProcessedLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.totalLines),
+        NumFilteredLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.filteredLines),
+        &lt;span style=&#34;color:#6272a4&#34;&gt;// Metrics could be let to its default value, nil, if not needed.
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;        Metrics: bag,
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;configuring-metrics-in-toml&#34;&gt;Configuring metrics in TOML&lt;/h4&gt;
+&lt;p&gt;Baker configuration TOML files may have a &lt;code&gt;[metrics]&lt;/code&gt; section dedicated to the
+configuration of a metrics client.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;[metrics.name]&lt;/code&gt; specifies the metrics client to use, from the list of all registered &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;.
+&lt;code&gt;[metrics.config]&lt;/code&gt; specifies some configuration settings which are specific to the client you&amp;rsquo;re using.&lt;/p&gt;
+&lt;p&gt;For example, this is what the &lt;code&gt;[metrics]&lt;/code&gt; section would look like with the &lt;em&gt;Datadog&lt;/em&gt; metrics client:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[metrics]
+name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;datadog&amp;#34;&lt;/span&gt;
+
+    [metrics.config]
+    host=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;localhost:8125&amp;#34;&lt;/span&gt;                  &lt;span style=&#34;color:#6272a4&#34;&gt;# address of the dogstatsd client to which send metrics to&lt;/span&gt;
+    prefix=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;myapp.baker.&amp;#34;&lt;/span&gt;                  &lt;span style=&#34;color:#6272a4&#34;&gt;# prefix for all exported metric names&lt;/span&gt;
+    send_logs=&lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;                         &lt;span style=&#34;color:#6272a4&#34;&gt;# whether we should log messages (as Dogstatd events) or not &lt;/span&gt;
+    tags=[&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;env:prod&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;region:eu-west-1&amp;#34;&lt;/span&gt;]  &lt;span style=&#34;color:#6272a4&#34;&gt;# extra tags to associate to all exported metrics &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;disaling-metrics-export&#34;&gt;Disaling metrics export&lt;/h4&gt;
+&lt;p&gt;To not export any metrics, it&amp;rsquo;s enough to not provide the &lt;code&gt;[metrics]&lt;/code&gt; section in
+Baker configuration file.&lt;/p&gt;
+&lt;h4 id=&#34;implementing-a-new-metrics-client&#34;&gt;Implementing a new metrics client&lt;/h4&gt;
+&lt;p&gt;The &lt;a href=&#34;https://github.com/AdRoll/baker/tree/main/examples/metrics&#34;&gt;metrics
+example&lt;/a&gt; shows an
+example implementation of
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
+and how to register it within Baker so that it can be selected in the
+&lt;code&gt;[metrics.name]&lt;/code&gt; TOML section.&lt;/p&gt;
+&lt;p&gt;In order to be selected from TOML, you must first register a
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsDesc&#34;&gt;&lt;code&gt;baker.MetricsDesc&lt;/code&gt;&lt;/a&gt;
+instance within &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; fooBarDesc = baker.MetricsDesc{
+	Name:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyMetrics&amp;#34;&lt;/span&gt;,
+	Config: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myyMetricsConfig{},
+	New:    newMyMetrics,
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;where &lt;code&gt;newMyMetrics&lt;/code&gt; is a constructor-like function receiving an &lt;code&gt;interface{}&lt;/code&gt;,
+which is guaranteed to be of the type of the &lt;code&gt;Config&lt;/code&gt; field value. This function
+should either return a ready to use
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
+or an error saying why it can&amp;rsquo;t.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;newMyMetrics&lt;/span&gt;(icfg &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt;{}) (baker.MetricsClient, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;metricsclient-interface&#34;&gt;Metrics.Client interface&lt;/h4&gt;
+&lt;p&gt;Once a &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
+instance has been successfully created, it&amp;rsquo;s made available to and used by
+a Baker pipeline to report metrics. During construction, components receive the
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;MetricsClient&lt;/code&gt;&lt;/a&gt; instance.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
+supports the most common type of metric types: &lt;em&gt;gauges&lt;/em&gt;, &lt;em&gt;counters&lt;/em&gt; and &lt;em&gt;histograms&lt;/em&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Enable sharding in a topology</title>
+      <link>https://getbaker.io/docs/how-tos/sharding/</link>
+      <pubDate>Thu, 29 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/how-tos/sharding/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;how-to-enable-sharding-in-a-topology&#34;&gt;How to enable sharding in a topology?&lt;/h2&gt;
+&lt;p&gt;Sharding is enabled in the &lt;code&gt;[output]&lt;/code&gt; section of the topology TOML
+configuration file, by indicating the name of the field used to partition
+the records space.&lt;/p&gt;
+&lt;p&gt;In the following topology extract, we&amp;rsquo;re using a sharded &lt;code&gt;Filewriter&lt;/code&gt; output
+and set the number of instances to 4 (i.e 4 shards). In our case, Baker is
+going to extract and hash the &lt;code&gt;name&lt;/code&gt; field of each &lt;code&gt;Record&lt;/code&gt; to determine which
+of the 4 &lt;code&gt;Filewriter&lt;/code&gt; instances a &lt;code&gt;Record&lt;/code&gt; is sent to:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[input]
+...
+
+[[filter]]
+...
+
+[output]
+name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;Filewriter&amp;#34;&lt;/span&gt;
+sharding=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;
+procs=&lt;span style=&#34;color:#bd93f9&#34;&gt;4&lt;/span&gt;
+
+    [output.config]
+    ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;limitations&#34;&gt;Limitations&lt;/h2&gt;
+&lt;p&gt;Baker only supports sharding at the output level. Baker implements other
+strategies so that other types of components (input, filters and uploads)
+maximize the pipeline performance.&lt;/p&gt;
+&lt;p&gt;Also, keep in mind that not all tasks can be parallelized, so not all outputs
+support sharding. So sharding is an intrinsic property that is only present on
+some Output components, but not all of them.&lt;/p&gt;
+&lt;p&gt;Only a single field can be used for sharding.&lt;/p&gt;
+&lt;h2 id=&#34;hash-functions&#34;&gt;Hash functions&lt;/h2&gt;
+&lt;p&gt;The field selected for sharding must be &amp;ldquo;shardable&amp;rdquo;: in other words, a sharding function (or
+hash function) must be associated to that field.&lt;/p&gt;
+&lt;p&gt;Since the aim of sharding is to uniformly distribute the load of incoming
+records between multiple instances of an output component, a good hash function
+should be &lt;strong&gt;uniform&lt;/strong&gt;; in other words it should map as evenly as possible from
+the range of possible input values to the range of output values.&lt;/p&gt;
+&lt;p&gt;The range of output values is known, it is  &lt;code&gt;[0, MaxUint64]&lt;/code&gt; since in Baker
+hashes are &lt;code&gt;uint64&lt;/code&gt; values).&lt;/p&gt;
+&lt;p&gt;However the range of possible input values depends on the domain. That&amp;rsquo;s where
+having knowledge of that particular domain will help in designing a hash
+function, that both guarantees the uniformity of output values with respect to
+input values, and in terms of performance.&lt;/p&gt;
+&lt;p&gt;For example, if you know the sharded field is only made of integers from 0 to
+1000, the hash function would be implemented differently than if the values for that
+field are arbitraty long strings.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s however possible to use a non-optimal but best effort general hash function.
+(we&amp;rsquo;re planning to add this to Baker soon).&lt;/p&gt;
+&lt;p&gt;A hash function should of course be deterministic (i.e the same input should
+always give the same output).&lt;/p&gt;
+&lt;h2 id=&#34;register-sharding-functions&#34;&gt;Register sharding functions&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;baker.Components&lt;/code&gt; structure links elements that may appear in the
+configuration, to the code eventually running when these elements are used
+inside a topology.&lt;/p&gt;
+&lt;p&gt;Sharding functions that may be used in topologies are stored inside of
+the &lt;code&gt;ShardingFuncs&lt;/code&gt; field of &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;ShardingFuncs &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;map&lt;/span&gt;[baker.FieldIndex]ShardingFunc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And a &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#ShardingFunc&#34;&gt;&lt;code&gt;ShardingFunc&lt;/code&gt;&lt;/a&gt;
+is a hash function that returns an &lt;code&gt;uint64&lt;/code&gt; &lt;code&gt;for baker.Record&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; ShardingFunc &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Finally, filling &lt;code&gt;ShardingFuncs&lt;/code&gt; is a matter of associating a shardable field to
+the sharding function that implements the hashing of that field.&lt;/p&gt;
+&lt;h2 id=&#34;putting-it-all-together&#34;&gt;Putting it all together&lt;/h2&gt;
+&lt;p&gt;The following is an example of an hypothetical record schema with 3 fields
+named &lt;code&gt;timestamp&lt;/code&gt;, &lt;code&gt;city&lt;/code&gt; and &lt;code&gt;country&lt;/code&gt;. Let&amp;rsquo;s say that we&amp;rsquo;d like to use
+&lt;code&gt;timestamp&lt;/code&gt; and &lt;code&gt;country&lt;/code&gt; for sharding but not &lt;code&gt;city&lt;/code&gt;. We&amp;rsquo;re going to enable
+sharding on these two fields, but note that only one of them can be chosen
+for a given topology.&lt;/p&gt;
+&lt;p&gt;This is how implementing sharding for such a schema would look probably like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;const&lt;/span&gt; (
+    FieldTimestamp baker.FieldIndex = &lt;span style=&#34;color:#bd93f9&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// timestamp is unix epoch timestamp
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    FieldCity baker.FieldIndex      = &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// city name
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    FieldCountry baker.FieldIndex   = &lt;span style=&#34;color:#bd93f9&#34;&gt;2&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// 2 chars country code
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This is an hypothetical function to hash records based on the &lt;code&gt;timestamp&lt;/code&gt; field
+which only contains integers:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashTimestamp&lt;/span&gt;(r baker.Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt; {
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// We know the timestamp is an integer, so we use that 
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#6272a4&#34;&gt;// to efficiently compute a hash from it.
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    buf &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; r.&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(FieldTimestamp)
+    ts, _ &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; strconv.&lt;span style=&#34;color:#50fa7b&#34;&gt;Atoi&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;string&lt;/span&gt;(buf))
+
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// Call super efficient integer hash function
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashInt&lt;/span&gt;(ts)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And this is how hashing records based on a 2-char &lt;code&gt;country&lt;/code&gt; code field would
+look like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashCountry&lt;/span&gt;(r baker.Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt; {
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// We know the country is made of 2 characters, so we use that 
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#6272a4&#34;&gt;// fact to efficiently compute a hash from it.
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    buf &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; r.&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(FieldCountry)
+    country &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; buf[:&lt;span style=&#34;color:#bd93f9&#34;&gt;2&lt;/span&gt;]
+
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// Call our super fast function that hashes 2 bytes.
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hash2bytes&lt;/span&gt;(country)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can find &lt;a href=&#34;https://github.com/AdRoll/baker/tree/main/examples/sharding&#34;&gt;here&lt;/a&gt;
+a full working example illustrating sharding in Baker.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: Tuning concurrency</title>
-      <link>https://getbaker.io/docs/how-to/concurrency/</link>
+      <link>https://getbaker.io/docs/how-tos/concurrency/</link>
       <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://getbaker.io/docs/how-to/concurrency/</guid>
+      <guid>https://getbaker.io/docs/how-tos/concurrency/</guid>
       <description>
         
         
