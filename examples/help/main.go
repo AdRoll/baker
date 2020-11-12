@@ -8,9 +8,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"html/template"
 	"os"
 	"strings"
+	"text/template"
 
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/filter"
@@ -26,7 +26,7 @@ func main() {
 	flag.Parse()
 
 	if *flagHelpConfig != "" {
-		baker.PrintHelp(os.Stderr, *flagHelpConfig, components)
+		baker.RenderHelpMarkdown(os.Stderr, *flagHelpConfig, components)
 		return
 	}
 

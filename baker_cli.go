@@ -47,8 +47,7 @@ func MainCLI(components Components) error {
 	flag.Parse()
 
 	if *flagHelpConfig != "" {
-		PrintHelp(os.Stderr, *flagHelpConfig, components)
-		return nil
+		return PrintHelp(os.Stderr, *flagHelpConfig, components, HelpFormatMarkdown)
 	}
 
 	if *flagPProf != "" {
