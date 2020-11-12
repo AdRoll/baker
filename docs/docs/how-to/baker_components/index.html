@@ -7,7 +7,6 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://getbaker.io/docs/getting-started/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -21,16 +20,27 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Getting started | Baker</title><meta property="og:title" content="Getting started" />
-<meta property="og:description" content="A high performance, composable and extendable data-processing pipeline for the big data era" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://getbaker.io/docs/getting-started/" />
-<meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Getting started">
-<meta itemprop="description" content="A high performance, composable and extendable data-processing pipeline for the big data era">
+<title>Create baker.Components | Baker</title><meta property="og:title" content="Create baker.Components" />
+<meta property="og:description" content="baker.Components is the main object used to create a Baker topology
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://getbaker.io/docs/how-to/baker_components/" />
+<meta property="article:published_time" content="2020-10-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-10-29T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Create baker.Components">
+<meta itemprop="description" content="baker.Components is the main object used to create a Baker topology
+">
+<meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="wordCount" content="459">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Getting started"/>
-<meta name="twitter:description" content="A high performance, composable and extendable data-processing pipeline for the big data era"/>
+<meta name="twitter:title" content="Create baker.Components"/>
+<meta name="twitter:description" content="baker.Components is the main object used to create a Baker topology
+"/>
 
 
 
@@ -49,7 +59,7 @@
 
 
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -125,10 +135,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/getting-started/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Getting Started</a>
+    <a  href="/docs/getting-started/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Getting Started</a>
   </li>
   <ul>
-    <li class="collapse show" id="docsgetting-started">
+    <li class="collapse " id="docsgetting-started">
       
       
       
@@ -171,10 +181,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">How-to</a>
+    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-to</a>
   </li>
   <ul>
-    <li class="collapse " id="docshow-to">
+    <li class="collapse show" id="docshow-to">
       
       
       
@@ -205,7 +215,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tobaker_components" href="/docs/how-to/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-tobaker_components" href="/docs/how-to/baker_components/">Create baker.Components</a>
       
       
       
@@ -275,8 +285,8 @@
 
 
 
-<a href="https://github.com/adroll/baker/edit/master/content/en/docs/Getting%20started/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Getting%20started" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/master/content/en/docs/How%20To/baker_components.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Create%20baker.Components" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -284,6 +294,22 @@
 
 
 
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#inputs-filters-outputs-and-uploads">Inputs, Filters, Outputs and Uploads</a></li>
+    <li><a href="#metrics">Metrics</a></li>
+    <li><a href="#user">User</a></li>
+    <li><a href="#shardingfuncs">ShardingFuncs</a>
+      <ul>
+        <li><a href="#validate">Validate</a></li>
+        <li><a href="#createrecord">CreateRecord</a></li>
+        <li><a href="#fieldbyname">FieldByName</a></li>
+        <li><a href="#fieldname">FieldName</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
 
 
@@ -302,6 +328,9 @@
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/">Documentation</a>
 </li>
@@ -309,8 +338,15 @@
 
 
 
+<li class="breadcrumb-item" >
+	<a href="https://getbaker.io/docs/how-to/">How-to</a>
+</li>
+
+
+
+
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/getting-started/">Getting Started</a>
+	<a href="https://getbaker.io/docs/how-to/baker_components/">Create baker.Components</a>
 </li>
 
 	</ol>
@@ -318,66 +354,82 @@
 
             
 <div class="td-content">
-	<h1>Getting started</h1>
-        
-	
-	<p>Baker is a Go library and it must be included into your Go program.</p>
-<p>To create a new Go project using Go modules and adding Baker:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mkdir myProject
-<span style="color:#8be9fd;font-style:italic">cd</span> myProject
-go mod init github.com/myUser/myProject
-go get github.com/adroll/baker
-</code></pre></div><p>If you are adding Baker to a project already configured to use Go modules, just type:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#8be9fd;font-style:italic">cd</span> myProject
-go get github.com/adroll/baker
-</code></pre></div><p>Read <a href="/docs/core-concepts/">Baker Core concepts</a> to know how Baker works or go to the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker">API reference</a> to learn how to use it in your code.</p>
+	<h1>Create baker.Components</h1>
+    <div class="lead">baker.Components is the main object used to create a Baker topology</div>
+	       
+	<p>To create a Topology, Baker requires 2 elements:</p>
+<ul>
+<li><code>baker.Components</code> describes the list of components Baker can use in topologies</li>
+<li>a TOML configuration that specifically describes a single topology, using components from 1)</li>
+</ul>
+<p>The next paragraphs gives you a high level overview of each section of <code>baker.Components</code>.</p>
+<p>To get a deeper understanding, read the
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#Components">full API reference for <code>baker.Components</code></a>.</p>
+<h2 id="inputs-filters-outputs-and-uploads">Inputs, Filters, Outputs and Uploads</h2>
+<p>These fields contain the list of components that are available to the topology.</p>
+<p>The <a href="/docs/core-concepts/toml/">TOML configuration file</a> must specify components that are
+present in these lists.</p>
+<p>All components already available to Baker or custom components can be set here.</p>
+<p>The following is an example of <code>baker.Components</code> configuration where:</p>
+<ul>
+<li><strong>inputs</strong> and <strong>uploads</strong> are those already included into Baker</li>
+<li>only a custom <strong>filter</strong> is set</li>
+<li>a custom <strong>output</strong> is added to the outputs included into Baker</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#ff79c6">import</span> (
+	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
+	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/input&#34;</span>
+	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/output&#34;</span>
+	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/upload&#34;</span>
+)
 
-        <div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-    
-</div>
+comp <span style="color:#ff79c6">:=</span> baker.Components{
+    Inputs:        input.All,
+    Filters:       []baker.FilterDesc{MyCustomFilterDesc},
+	Outputs:       <span style="color:#8be9fd;font-style:italic">append</span>(output.All, MyCustomOutputDesc<span style="color:#ff79c6">...</span>),
+	Uploads:       upload.All,
+}
+</code></pre></div><h2 id="metrics">Metrics</h2>
+<p>The list of available metrics backends.</p>
+<p>This list can contain a metric backend already included into Baker or a custom implementation
+of the <code>baker.MetricsClient</code> interface.</p>
+<p>For details about metrics, <a href="/docs/core-concepts/metrics">see the dedicated page</a>.</p>
+<h2 id="user">User</h2>
+<p>This field contains a list of user-defined configurations structures that are not strictly
+useful to Baker but that users can add to Baker TOML file and use for other purposes.</p>
+<p>To learn more about this topic, read the
+<a href="/docs/core-concepts/toml/#user-defined-configurations">dedicated section</a> in the Pipeline
+configuration page.</p>
+<h2 id="shardingfuncs">ShardingFuncs</h2>
+<p>This field holds a dictionary associating field indices to hash functions. When sharding
+is enabled, these hash functions are used to determine which shard a record is sent to.</p>
+<h3 id="validate">Validate</h3>
+<p><code>Validate</code> is the function used to validate a record. It is called for each processed record
+unless <code>null</code> or when <code>[general.dont_validate_fields]</code> configuration is set to <code>true</code>.</p>
+<p>Regardless of the TOML configuration, the function is passed to all components that can use
+it at their will.</p>
+<h3 id="createrecord">CreateRecord</h3>
+<p><code>CreateRecord</code> is the function that creates a new record. If not set, a default function is
+used that creates a <code>LogLine</code> with the <strong>comma</strong> field separator.</p>
+<p>The function is used internally by Baker to create new records every time a new byte buffer enters
+the filter chain.</p>
+<p>The function is also passed to components that can use it to create new records while processing.</p>
+<h3 id="fieldbyname">FieldByName</h3>
+<p><code>FieldByName</code> returns a field index from its name.</p>
+<p>The function is mainly used by the components (that receive it during setup) to retrieve the
+index of a field they need for filtering or processing, but it is also used internally by
+Baker when sending fields to the output (when at least one field is selected in the output
+TOML configuration).</p>
+<h3 id="fieldname">FieldName</h3>
+<p><code>FieldName</code> returns a field name from its index.</p>
+<p>The function is passed to components that can use it internally.</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified January 1, 0001
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 29, 2020
 </div>
 </div>
+
 
           </main>
         </div>

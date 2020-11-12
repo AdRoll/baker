@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.77.0" />
+<meta name="generator" content="Hugo 0.78.0" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
@@ -20,30 +20,30 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Create a custom output component | Baker</title><meta property="og:title" content="Create a custom output component" />
-<meta property="og:description" content="Output components in Baker receive records at the end of the filter chain and are in charge of storing them, eventually sending the result (like a temporary file in the disk) to an Upload component.
-To create an output and make it available to Baker, one must:
- Implement the Output interface Fill-up an OutputDesc struct and register it within Baker via Components  The Output interface type Output interface { Run(in &lt;-chan OutputRecord, upch chan&lt;- string) error Stats() OutputStats CanShard() bool } The Output interface must be implemented when creating a new output component." />
+<title>Sharding | Baker</title><meta property="og:title" content="Sharding" />
+<meta property="og:description" content="TBD - these are just notes The [output.sharding] configuration in the TOML file tells which field of the records must be used to calculate the sharding.
+The field name, transformed to FieldIndex thanks to the FieldByName function (see below), is the index of the map that corresponds to a sharding function.
+The sharding function receives a Record and returns a sharding value (uint64) that Baker uses to send the Record to an output process." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://getbaker.io/docs/how-tos/create_output/" />
-<meta property="article:published_time" content="2020-11-10T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-11-10T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Create a custom output component">
-<meta itemprop="description" content="Output components in Baker receive records at the end of the filter chain and are in charge of storing them, eventually sending the result (like a temporary file in the disk) to an Upload component.
-To create an output and make it available to Baker, one must:
- Implement the Output interface Fill-up an OutputDesc struct and register it within Baker via Components  The Output interface type Output interface { Run(in &lt;-chan OutputRecord, upch chan&lt;- string) error Stats() OutputStats CanShard() bool } The Output interface must be implemented when creating a new output component.">
-<meta itemprop="datePublished" content="2020-11-10T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-11-10T00:00:00+00:00" />
-<meta itemprop="wordCount" content="742">
+<meta property="og:url" content="https://getbaker.io/docs/core-concepts/sharding/" />
+<meta property="article:published_time" content="2020-11-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-11-02T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Sharding">
+<meta itemprop="description" content="TBD - these are just notes The [output.sharding] configuration in the TOML file tells which field of the records must be used to calculate the sharding.
+The field name, transformed to FieldIndex thanks to the FieldByName function (see below), is the index of the map that corresponds to a sharding function.
+The sharding function receives a Record and returns a sharding value (uint64) that Baker uses to send the Record to an output process.">
+<meta itemprop="datePublished" content="2020-11-02T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-11-02T00:00:00+00:00" />
+<meta itemprop="wordCount" content="124">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Create a custom output component"/>
-<meta name="twitter:description" content="Output components in Baker receive records at the end of the filter chain and are in charge of storing them, eventually sending the result (like a temporary file in the disk) to an Upload component.
-To create an output and make it available to Baker, one must:
- Implement the Output interface Fill-up an OutputDesc struct and register it within Baker via Components  The Output interface type Output interface { Run(in &lt;-chan OutputRecord, upch chan&lt;- string) error Stats() OutputStats CanShard() bool } The Output interface must be implemented when creating a new output component."/>
+<meta name="twitter:title" content="Sharding"/>
+<meta name="twitter:description" content="TBD - these are just notes The [output.sharding] configuration in the TOML file tells which field of the records must be used to calculate the sharding.
+The field name, transformed to FieldIndex thanks to the FieldByName function (see below), is the index of the map that corresponds to a sharding function.
+The sharding function receives a Record and returns a sharding value (uint64) that Baker uses to send the Record to an output process."/>
 
 
 
@@ -161,11 +161,41 @@ To create an output and make it available to Baker, one must:
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/core-concepts/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Core concepts</a>
+    <a  href="/docs/core-concepts/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Core concepts</a>
   </li>
   <ul>
-    <li class="collapse " id="docscore-concepts">
+    <li class="collapse show" id="docscore-concepts">
       
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptstoml" href="/docs/core-concepts/toml/">Pipeline configuration</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsrecord_implementation" href="/docs/core-concepts/record_implementation/">Record and LogLine</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsconcurrency" href="/docs/core-concepts/concurrency/">Tuning concurrency</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsmetrics" href="/docs/core-concepts/metrics/">Metrics</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscore-conceptssharding" href="/docs/core-concepts/sharding/">Sharding</a>
       
       
     </li>
@@ -184,77 +214,23 @@ To create an output and make it available to Baker, one must:
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-Tos</a>
+    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Using Baker library</a>
   </li>
   <ul>
-    <li class="collapse show" id="docshow-tos">
+    <li class="collapse " id="docshow-to">
       
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tospipeline_configuration" href="/docs/how-tos/pipeline_configuration/">Pipeline configuration</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tobaker_components" href="/docs/how-to/baker_components/">baker.Components</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosrecord_and_logline" href="/docs/how-tos/record_and_logline/">Record and LogLine</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscustom_record" href="/docs/how-tos/custom_record/">Create a custom Record</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_input" href="/docs/how-tos/create_input/">Create a custom input component</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_filter" href="/docs/how-tos/create_filter/">Create a custom filter component</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-toscreate_output" href="/docs/how-tos/create_output/">Create a custom output component</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_upload" href="/docs/how-tos/create_upload/">Create a custom upload component</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosmetrics" href="/docs/how-tos/metrics/">Export metrics</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosconcurrency" href="/docs/how-tos/concurrency/">Tuning concurrency</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocustom_record" href="/docs/how-to/custom_record/">Create a custom Record</a>
       
       
     </li>
@@ -288,8 +264,8 @@ To create an output and make it available to Baker, one must:
 
 
 
-<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/How%20Tos/create_output.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Create%20a%20custom%20output%20component" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/master/content/en/docs/Core%20concepts/sharding.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Sharding" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -297,20 +273,6 @@ To create an output and make it available to Baker, one must:
 
 
 
-
-<nav id="TableOfContents">
-  <ul>
-    <li><a href="#the-output-interface">The Output interface</a></li>
-    <li><a href="#outputdesc">OutputDesc</a>
-      <ul>
-        <li><a href="#output-constructor-like-function">Output constructor-like function</a></li>
-        <li><a href="#the-output-configuration-and-help">The output configuration and help</a></li>
-      </ul>
-    </li>
-    <li><a href="#outputrecord">OutputRecord</a></li>
-    <li><a href="#prepare-data-for-uploading">Prepare data for uploading</a></li>
-  </ul>
-</nav>
 
 
 
@@ -340,14 +302,14 @@ To create an output and make it available to Baker, one must:
 
 
 <li class="breadcrumb-item" >
-	<a href="https://getbaker.io/docs/how-tos/">How-Tos</a>
+	<a href="https://getbaker.io/docs/core-concepts/">Core concepts</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/how-tos/create_output/">Create a custom output component</a>
+	<a href="https://getbaker.io/docs/core-concepts/sharding/">Sharding</a>
 </li>
 
 	</ol>
@@ -355,97 +317,30 @@ To create an output and make it available to Baker, one must:
 
             
 <div class="td-content">
-	<h1>Create a custom output component</h1>
+	<h1>Sharding</h1>
     
 	       
-	<p>Output components in Baker receive records at the end of the filter chain and are in charge of
-storing them, eventually sending the result (like a temporary file in the disk) to an Upload
-component.</p>
-<p>To create an output and make it available to Baker, one must:</p>
-<ul>
-<li>Implement the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Output">Output</a> interface</li>
-<li>Fill-up an <a href="https://pkg.go.dev/github.com/AdRoll/baker#OutputDesc"><code>OutputDesc</code></a> struct and register
-it within Baker via <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>Components</code></a></li>
-</ul>
-<h2 id="the-output-interface">The Output interface</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> Output <span style="color:#8be9fd;font-style:italic">interface</span> {
-	<span style="color:#50fa7b">Run</span>(in <span style="color:#ff79c6">&lt;-</span><span style="color:#8be9fd;font-style:italic">chan</span> OutputRecord, upch <span style="color:#8be9fd;font-style:italic">chan</span><span style="color:#ff79c6">&lt;-</span> <span style="color:#8be9fd">string</span>) <span style="color:#8be9fd">error</span>
-	<span style="color:#50fa7b">Stats</span>() OutputStats
-	<span style="color:#50fa7b">CanShard</span>() <span style="color:#8be9fd">bool</span>
-}
-</code></pre></div><p>The <a href="https://pkg.go.dev/github.com/AdRoll/baker#Output">Output interface</a> must be implemented when
-creating a new output component.</p>
-<p>The <code>Run</code> function implements the component logic and gets a channel where it receives
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#OutputRecord">OutputRecord</a> objects and a channel to
-communicate to the Upload components what to upload.</p>
-<p><code>CanShard</code> is the function telling whether the output is able to manage sharding. Read the page
-<a href="/docs/how-to/sharding/">dedicated to the sharding</a> to go deeper in the topic.</p>
-<p><code>Stats</code> is used to report metrics, see the <a href="/docs/how-to/metrics/">dedicated page</a>.</p>
-<h2 id="outputdesc">OutputDesc</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> MyOutputDesc = baker.OutputDesc{
-	Name:   <span style="color:#f1fa8c">&#34;MyOutput&#34;</span>,
-	New:    NewMyOutput,
-    Config: <span style="color:#ff79c6">&amp;</span>MyOutputConfig{},
-    Raw:    <span style="color:#ff79c6">true</span>,
-	Help:   <span style="color:#f1fa8c">&#34;High-level description of MyOutput&#34;</span>,
-}
-</code></pre></div><p>This object has a <code>Name</code>, that is used in the Baker configuration file to identify the output,
-a constructor-like function (<code>New</code>), a config object (used to parse the output configuration in the
-TOML file) and a help text that must help the users to use the component and its configuration
-parameters. The <code>Raw</code> field instructs Baker whether it should send raw records in addition
-to single fields (see below for details).</p>
-<h3 id="output-constructor-like-function">Output constructor-like function</h3>
-<p>The <code>New</code> field in the <code>OutputDesc</code> object represents the constructor-like function.</p>
-<p>The function receives an <a href="https://pkg.go.dev/github.com/AdRoll/baker#OutputParams">OutputParams</a>
-object and returns an instance of <a href="https://pkg.go.dev/github.com/AdRoll/baker#Output">Output</a>.</p>
-<p>Through <code>OutputParams</code>, an Output receives its index (in case there&rsquo;s multiple output processes)
-and a list of field indexes, in addition to the fields inherited from <a href="https://pkg.go.dev/github.com/AdRoll/baker#ComponentParams">ComponentParams</a>.</p>
-<p><code>OutputParams.Index</code> indicates a unique index of the output process among the concurrent output
-processes generated by Baker. The <code>procs</code> configuration can be used to tune the total number of
-concurrent processes, see <a href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a> for details.<br>
-Note that the output should extensively document in <code>OutputDesc.Help</code> if it is able to manage
-concurrent processing or if the user should set it with a single process (<code>procs=1</code>).
-Read <a href="/docs/how-to/concurrency/">Tuning concurrency</a> for an in-depth guide to the subject.</p>
-<p><code>OutputParams.Fields</code> is a list of <a href="https://pkg.go.dev/github.com/AdRoll/baker#FieldIndex">FieldIndex</a>
-that the output will receive, ordered as they are in the TOML. They&rsquo;re also in the same order as
-the fields in <a href="https://pkg.go.dev/github.com/AdRoll/baker#OutputRecord">OutputRecord.Fields</a>, see
-below for details.<br>
-If, for any reason, the output needs to retrieve the fields name (like the SQLite output does to
-get the columns names), then <code>OutputParams.FieldName</code> can be used.</p>
-<h3 id="the-output-configuration-and-help">The output configuration and help</h3>
-<p>The output configuration object (<code>MyOutputConfig</code> in the previous example) must export all
-configuration parameters that the user can set in the TOML topology file.</p>
-<p>Each field in the struct must include a <code>help</code> string tag (mandatory) and a <code>required</code> boolean tag
-(default to <code>false</code>).</p>
-<p>All these parameters appear in the generated help. <code>help</code> should describe the parameter role and/or
-its possible values, <code>required</code> informs Baker it should refuse configurations in which that field
-is not defined.</p>
-<h2 id="outputrecord">OutputRecord</h2>
-<p>The <a href="https://pkg.go.dev/github.com/AdRoll/baker#OutputRecord">OutputRecord</a> channel received by
-the output component can be closed by Baker at any time and the output should return from the <code>Run</code>
-function as soon as possible when this happens.</p>
-<p>Until that moment, the output component must continuously read new records, processing them.</p>
-<p>The <code>OutputRecord.Fields</code> slice contains the string values of the fields that the user choose to
-send to the output configuring the
-<a href="http://localhost:1313/docs/how-to/pipeline_configuration/#components-configuration"><code>fields</code> key</a>
-in the <code>[output]</code> section of the TOML topology file.</p>
-<p>Fields are ordered in the same way than the slice of <code>FieldIndex</code> received in <code>OutputParams.Fields</code>.</p>
-<p>In case of a raw output, <code>OutputRecord.Record</code> contains both the serialized record as a byte slice
-and the field values.</p>
-<h2 id="prepare-data-for-uploading">Prepare data for uploading</h2>
-<p>If the output component produces files on the local filesystem, then it should send their paths to
-the upload component (using the shared string channel), regardless of the real presence of a
-configured upload (that is unknown to the output). If the upload is absent, then Baker will ignore
-those messages.</p>
-<p>The output can send a single message at the end of its job (think to a sqlite database that should
-only be uploaded before Baker exits) or can upload files periodically, like the
-<a href="https://github.com/AdRoll/baker/blob/main/output/filewriter.go">FileWriter</a> component does
-when it rotates (i.e. it stops writing to a file, send its path to the upload, and then creates
-a new file).</p>
+	<h1 id="tbd---these-are-just-notes">TBD - these are just notes</h1>
+<p>The <code>[output.sharding]</code> configuration in the TOML file tells which field of the records must be
+used to calculate the sharding.</p>
+<p>The field name, transformed to <code>FieldIndex</code> thanks to the <code>FieldByName</code> function (see
+<a href="#fieldbyname">below</a>), is the index of the map that corresponds to a sharding function.</p>
+<p>The sharding function receives a Record and returns a sharding value (<code>uint64</code>) that Baker
+uses to send the Record to an output process.</p>
+
+
+<div class="alert alert-info" role="alert">
+
+How the sharding value is calculated is up to the function, but it should try to have a linear
+distribution of records (to evenly distribute the load among the output concurrent processes)
+and, although not required, it should also use value of the field that has been configured in
+<code>[output.sharding]</code>.
+</div>
+
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 10, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified November 2, 2020
 </div>
 </div>
 

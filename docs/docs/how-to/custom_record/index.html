@@ -20,30 +20,27 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Tuning concurrency | Baker</title><meta property="og:title" content="Tuning concurrency" />
-<meta property="og:description" content="Baker allows to tune concurrency at various levels of a pipeline:
- input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends on the input source and how the input is implemented filters: Baker runs N concurrent filter chains output: Baker runs M concurrent outputs  By default then, Baker processes records concurrently, without any guaranteed order.
-However, if you need to maintain the order of the records through the whole pipeline, it is still possible by disabling concurrency (see below for details)." />
+<title>Create a custom Record | Baker</title><meta property="og:title" content="Create a custom Record" />
+<meta property="og:description" content="Record is the interface provided by Baker to represent an &#34;object&#34; of data
+" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://getbaker.io/docs/how-tos/concurrency/" />
-<meta property="article:published_time" content="2020-11-02T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-11-02T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Tuning concurrency">
-<meta itemprop="description" content="Baker allows to tune concurrency at various levels of a pipeline:
- input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends on the input source and how the input is implemented filters: Baker runs N concurrent filter chains output: Baker runs M concurrent outputs  By default then, Baker processes records concurrently, without any guaranteed order.
-However, if you need to maintain the order of the records through the whole pipeline, it is still possible by disabling concurrency (see below for details).">
-<meta itemprop="datePublished" content="2020-11-02T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-11-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="288">
+<meta property="og:url" content="https://getbaker.io/docs/how-to/custom_record/" />
+<meta property="article:published_time" content="2020-10-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-10-29T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Create a custom Record">
+<meta itemprop="description" content="Record is the interface provided by Baker to represent an &#34;object&#34; of data
+">
+<meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="wordCount" content="402">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Tuning concurrency"/>
-<meta name="twitter:description" content="Baker allows to tune concurrency at various levels of a pipeline:
- input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends on the input source and how the input is implemented filters: Baker runs N concurrent filter chains output: Baker runs M concurrent outputs  By default then, Baker processes records concurrently, without any guaranteed order.
-However, if you need to maintain the order of the records through the whole pipeline, it is still possible by disabling concurrency (see below for details)."/>
+<meta name="twitter:title" content="Create a custom Record"/>
+<meta name="twitter:description" content="Record is the interface provided by Baker to represent an &#34;object&#34; of data
+"/>
 
 
 
@@ -184,77 +181,77 @@ However, if you need to maintain the order of the records through the whole pipe
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-Tos</a>
+    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-to</a>
   </li>
   <ul>
-    <li class="collapse show" id="docshow-tos">
+    <li class="collapse show" id="docshow-to">
       
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tospipeline_configuration" href="/docs/how-tos/pipeline_configuration/">Pipeline configuration</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-topipeline_configuration" href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosrecord_and_logline" href="/docs/how-tos/record_and_logline/">Record and LogLine</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-torecord_and_logline" href="/docs/how-to/record_and_logline/">Record and LogLine</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscustom_record" href="/docs/how-tos/custom_record/">Create a custom Record</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-tocustom_record" href="/docs/how-to/custom_record/">Create a custom Record</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tometrics" href="/docs/how-to/metrics/">Export metrics</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_input" href="/docs/how-tos/create_input/">Create a custom input component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tobaker_components" href="/docs/how-to/baker_components/">Create baker.Components</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_filter" href="/docs/how-tos/create_filter/">Create a custom filter component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosharding" href="/docs/how-to/sharding/">Sharding</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_output" href="/docs/how-tos/create_output/">Create a custom output component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_input" href="/docs/how-to/create_input/">Create a custom input component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_upload" href="/docs/how-tos/create_upload/">Create a custom upload component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_filter" href="/docs/how-to/create_filter/">Create a custom filter component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosmetrics" href="/docs/how-tos/metrics/">Export metrics</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_output" href="/docs/how-to/create_output/">Create a custom output component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_upload" href="/docs/how-to/create_upload/">Create a custom upload component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-tosconcurrency" href="/docs/how-tos/concurrency/">Tuning concurrency</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toconcurrency" href="/docs/how-to/concurrency/">Tuning concurrency</a>
       
       
     </li>
@@ -288,8 +285,8 @@ However, if you need to maintain the order of the records through the whole pipe
 
 
 
-<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/How%20Tos/concurrency.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Tuning%20concurrency" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/master/content/en/docs/How%20To/custom_record.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Create%20a%20custom%20Record" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -300,13 +297,15 @@ However, if you need to maintain the order of the records through the whole pipe
 
 <nav id="TableOfContents">
   <ul>
-    <li>
+    <li><a href="#how-to-use-a-custom-version-of-the-record">How to use a custom version of the Record</a>
       <ul>
-        <li><a href="#filter-chain-concurrency">Filter chain concurrency</a></li>
-        <li><a href="#concurrent-output">Concurrent output</a></li>
-        <li><a href="#guarantee-records-order">Guarantee Records order</a></li>
+        <li><a href="#validate">Validate</a></li>
+        <li><a href="#createrecord">CreateRecord</a></li>
+        <li><a href="#fieldbyname">FieldByName</a></li>
+        <li><a href="#fieldindex">FieldIndex</a></li>
       </ul>
     </li>
+    <li><a href="#recordconformancetest">RecordConformanceTest</a></li>
   </ul>
 </nav>
 
@@ -338,14 +337,14 @@ However, if you need to maintain the order of the records through the whole pipe
 
 
 <li class="breadcrumb-item" >
-	<a href="https://getbaker.io/docs/how-tos/">How-Tos</a>
+	<a href="https://getbaker.io/docs/how-to/">How-to</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/how-tos/concurrency/">Tuning concurrency</a>
+	<a href="https://getbaker.io/docs/how-to/custom_record/">Create a custom Record</a>
 </li>
 
 	</ol>
@@ -353,54 +352,65 @@ However, if you need to maintain the order of the records through the whole pipe
 
             
 <div class="td-content">
-	<h1>Tuning concurrency</h1>
-    
+	<h1>Create a custom Record</h1>
+    <div class="lead">Record is the interface provided by Baker to represent an &ldquo;object&rdquo; of data</div>
 	       
-	<p>Baker allows to tune concurrency at various levels of a pipeline:</p>
-<ul>
-<li>input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends
-on the input source and how the input is implemented</li>
-<li>filters: Baker runs N concurrent filter chains</li>
-<li>output: Baker runs M concurrent outputs</li>
-</ul>
-<p>By default then, Baker processes records concurrently, without any guaranteed order.<br>
-However, if you need to maintain the order of the records through the whole pipeline, it is still
-possible by disabling concurrency (<a href="#guarantee-records-order">see below for details</a>).</p>
-<h3 id="filter-chain-concurrency">Filter chain concurrency</h3>
-<p>The filter chain is a synchronous list of filters that are applied in the order in which they are
-listed in the topology <a href="/docs/core-concepts/toml/">TOML configuration file</a>.</p>
-<p>By default, though, Baker executes multiple concurrent filter chains (the default value is 16)</p>
-<p>Filterchain concurrency can be set defining the <code>procs</code> key in the <code>[filterchain]</code> section:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[filterchain]
-procs=<span style="color:#bd93f9">16</span>
-</code></pre></div><p>Setting the value to <strong>procs=1</strong> disables the filter chain concurrency.</p>
-<h3 id="concurrent-output">Concurrent output</h3>
-<p>The output concurrency can be set defining the <code>procs</code> key in the <code>[output]</code> section:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[output]
-procs=<span style="color:#bd93f9">32</span>
-</code></pre></div><p>The default value is <strong>32</strong>.<br>
-To disable concurrency, set <strong>procs=1</strong>.</p>
-<h4 id="output-concurrency-support">Output concurrency support</h4>
-<p>For outputs that don&rsquo;t support concurrency, <code>procs=1</code> must be used to avoid corrupted output or
-lost data.</p>
-<p>Refer to the output documentation to know if it supports concurrent processing.</p>
+	<p>As you can read in the <a href="/docs/core-concepts/record_implementation/">Record and LogLine page</a>,
+Baker processes objects in form of “records”.</p>
+<p>A <code>Record</code>, in Baker, is an interface that provides an abstraction over a record of flattened data,
+where columns of fields are indexed through integers.</p>
+<p>If the Record implementations provided by Baker doesn&rsquo;t fit your needs, you can create your own
+version of the Record, implementing the
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#Record"><code>Record</code> inteface</a>.</p>
+<h2 id="how-to-use-a-custom-version-of-the-record">How to use a custom version of the Record</h2>
+<p>Once your Record version is ready, you need to use it in your code.</p>
+<p>In order to do so, some functions may be implemented while instantiating
+<a href="/docs/how-to/baker_components/"><code>baker.Components</code></a>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> Components <span style="color:#8be9fd;font-style:italic">struct</span> {
+	Validate      ValidationFunc
+    CreateRecord  <span style="color:#8be9fd;font-style:italic">func</span>() Record
+    FieldByName <span style="color:#8be9fd;font-style:italic">func</span>(<span style="color:#8be9fd">string</span>) (FieldIndex, <span style="color:#8be9fd">bool</span>)
+    FieldName   <span style="color:#8be9fd;font-style:italic">func</span>(FieldIndex) <span style="color:#8be9fd">string</span>
+    <span style="color:#6272a4">//... other functions
+</span><span style="color:#6272a4"></span>}
+</code></pre></div><h3 id="validate">Validate</h3>
+<p><code>Validate</code> is the function used to validate a record. It is called for each processed record
+unless not set or when the <code>[general] dont_validate_fields = true</code> configuration is set in
+the TOML file.</p>
+<p>Regardless of the TOML configuration, the function is passed to all components that can use
+it at their will.</p>
+<h3 id="createrecord">CreateRecord</h3>
+<p><code>CreateRecord</code> is the function that creates a new record. If not set, a default function is
+used that creates a <code>LogLine</code> with <code>,</code> as field separator.</p>
+<p>The function is used internally by Baker to create new records every time a new one comes from
+the input.</p>
+<p>The function is also passed to components that can use it to create new records while processing.</p>
+<h3 id="fieldbyname">FieldByName</h3>
+<p><code>FieldByName</code> gets a field index by its name. The function is mainly used by the components
+(that receive it during setup) to retrieve the index of a field they need for filtering or
+processing, but it is also used internally by Baker when sending fields to the output
+(when at least one field is selected in the output TOML configuration).</p>
+<h3 id="fieldindex">FieldIndex</h3>
+<p><code>FieldName</code> gets a field name by its index. The function is passed to components that can use
+it for their internal logic.</p>
+<h2 id="recordconformancetest">RecordConformanceTest</h2>
+<p>The <code>test_helper.go</code> provides a <code>RecordConformanceTest</code> test helper whose goal is to give the
+user a structured test for new implementations of the Record.</p>
+<p>The helper receives the implementation of <code>CreateRecord</code> and creates new records testing
+them against a set of requirements.</p>
 
 
-<div class="alert alert-info" role="alert">
-
-We&rsquo;ll soon add a new function to the output to declare whether it supports concurrency,
-and Baker will return an error if <code>procs&gt;1</code> is used with an output that doesn&rsquo;t support it.
+<div class="alert alert-warning" role="alert">
+<h4 class="alert-heading">Warning</h4>
+The conformance test provides a way to verify that a record implementation respects the
+invariant that Baker requires for a Record implementation and thus it should always
+be executed against all custom implementations of the Record.
 </div>
 
-<h3 id="guarantee-records-order">Guarantee Records order</h3>
-<p>Although it&rsquo;s not the primary goal of Baker, it is still possible to disable concurrency and thus
-guarantee records ordering from input to output.</p>
-<p>To do so, add both <code>procs=1</code> for output and filterchain, disabling concurrent processing for
-those components.</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 2, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 29, 2020
 </div>
 </div>
 

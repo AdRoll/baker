@@ -3,11 +3,10 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.77.0" />
+<meta name="generator" content="Hugo 0.78.0" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://getbaker.io/docs/getting-started/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -21,16 +20,27 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Getting started | Baker</title><meta property="og:title" content="Getting started" />
-<meta property="og:description" content="A high performance, composable and extendable data-processing pipeline for the big data era" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://getbaker.io/docs/getting-started/" />
-<meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Getting started">
-<meta itemprop="description" content="A high performance, composable and extendable data-processing pipeline for the big data era">
+<title>Metrics | Baker</title><meta property="og:title" content="Metrics" />
+<meta property="og:description" content="How to export metrics from Baker
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://getbaker.io/docs/core-concepts/metrics/" />
+<meta property="article:published_time" content="2020-11-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-11-03T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Metrics">
+<meta itemprop="description" content="How to export metrics from Baker
+">
+<meta itemprop="datePublished" content="2020-11-03T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-11-03T00:00:00+00:00" />
+<meta itemprop="wordCount" content="553">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Getting started"/>
-<meta name="twitter:description" content="A high performance, composable and extendable data-processing pipeline for the big data era"/>
+<meta name="twitter:title" content="Metrics"/>
+<meta name="twitter:description" content="How to export metrics from Baker
+"/>
 
 
 
@@ -49,7 +59,7 @@
 
 
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -125,10 +135,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/getting-started/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Getting Started</a>
+    <a  href="/docs/getting-started/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Getting Started</a>
   </li>
   <ul>
-    <li class="collapse show" id="docsgetting-started">
+    <li class="collapse " id="docsgetting-started">
       
       
       
@@ -148,11 +158,41 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/core-concepts/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Core concepts</a>
+    <a  href="/docs/core-concepts/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Core concepts</a>
   </li>
   <ul>
-    <li class="collapse " id="docscore-concepts">
+    <li class="collapse show" id="docscore-concepts">
       
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptstoml" href="/docs/core-concepts/toml/">Pipeline configuration</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsrecord_implementation" href="/docs/core-concepts/record_implementation/">Record and LogLine</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptsconcurrency" href="/docs/core-concepts/concurrency/">Tuning concurrency</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscore-conceptsmetrics" href="/docs/core-concepts/metrics/">Metrics</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscore-conceptssharding" href="/docs/core-concepts/sharding/">Sharding</a>
       
       
     </li>
@@ -171,7 +211,7 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">How-to</a>
+    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Using Baker library</a>
   </li>
   <ul>
     <li class="collapse " id="docshow-to">
@@ -181,67 +221,13 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-topipeline_configuration" href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-torecord_and_logline" href="/docs/how-to/record_and_logline/">Record and LogLine</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tobaker_components" href="/docs/how-to/baker_components/">baker.Components</a>
       
       
       
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocustom_record" href="/docs/how-to/custom_record/">Create a custom Record</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tometrics" href="/docs/how-to/metrics/">Export metrics</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tobaker_components" href="/docs/how-to/baker_components/">Create baker.Components</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosharding" href="/docs/how-to/sharding/">Sharding</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_input" href="/docs/how-to/create_input/">Create a custom input component</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_filter" href="/docs/how-to/create_filter/">Create a custom filter component</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_output" href="/docs/how-to/create_output/">Create a custom output component</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_upload" href="/docs/how-to/create_upload/">Create a custom upload component</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toconcurrency" href="/docs/how-to/concurrency/">Tuning concurrency</a>
       
       
     </li>
@@ -275,8 +261,8 @@
 
 
 
-<a href="https://github.com/adroll/baker/edit/master/content/en/docs/Getting%20started/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Getting%20started" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/master/content/en/docs/Core%20concepts/metrics.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Metrics" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -302,6 +288,9 @@
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/">Documentation</a>
 </li>
@@ -309,8 +298,15 @@
 
 
 
+<li class="breadcrumb-item" >
+	<a href="https://getbaker.io/docs/core-concepts/">Core concepts</a>
+</li>
+
+
+
+
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/getting-started/">Getting Started</a>
+	<a href="https://getbaker.io/docs/core-concepts/metrics/">Metrics</a>
 </li>
 
 	</ol>
@@ -318,66 +314,102 @@
 
             
 <div class="td-content">
-	<h1>Getting started</h1>
-        
-	
-	<p>Baker is a Go library and it must be included into your Go program.</p>
-<p>To create a new Go project using Go modules and adding Baker:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mkdir myProject
-<span style="color:#8be9fd;font-style:italic">cd</span> myProject
-go mod init github.com/myUser/myProject
-go get github.com/adroll/baker
-</code></pre></div><p>If you are adding Baker to a project already configured to use Go modules, just type:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#8be9fd;font-style:italic">cd</span> myProject
-go get github.com/adroll/baker
-</code></pre></div><p>Read <a href="/docs/core-concepts/">Baker Core concepts</a> to know how Baker works or go to the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker">API reference</a> to learn how to use it in your code.</p>
+	<h1>Metrics</h1>
+    <div class="lead">How to export metrics from Baker</div>
+	       
+	<h3 id="metrics">Metrics</h3>
+<p>During execution, Baker collects different kind of performance data points:</p>
+<ul>
+<li>general pipeline metrics such as the total number of records processed and records per seconds.</li>
+<li>component-specific metrics: files written per second, discarded records (by a filter), errors, etc.</li>
+<li>Go runtime metrics: mallocs, frees, garbage collections and so on.</li>
+</ul>
+<p>If enabled, Baker collects all these metrics and forwards them to a metrics client.</p>
+<p>Metrics export is set up in Baker topology TOML files.</p>
+<h4 id="how-to-export-metrics">How to export metrics?</h4>
+<p>During its execution, a Baker pipeline exports metrics about the Go runtime as
+well as general metrics giving an high-level overview of the ongoing job.</p>
+<p>More specific metrics are also exported on a per-component basis. To that effect,
+<code>baker.Input</code>, <code>baker.Filter</code>, <code>baker.Output</code> and <code>baker.Upload</code> all have a <code>Stats</code>
+method. <code>Stats</code> is called every second and the component is expected to return both
+a predefined set of metrics and a <a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag"><code>baker.MetricsBag</code></a>
+containing metrics of arbitrary name and types.</p>
+<p>Let&rsquo;s illustrate this with metrics exported by a filter via
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterStats"><code>baker.FilterStats</code></a>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> FilterStats <span style="color:#8be9fd;font-style:italic">struct</span> {
+	NumProcessedLines <span style="color:#8be9fd">int64</span>
+	NumFilteredLines  <span style="color:#8be9fd">int64</span>
+	Metrics           MetricsBag
+}
+</code></pre></div><p>In this case <code>NumProcessedLines</code> must represent the <strong>total</strong> number of processed
+lines since Baker started, and <code>NumFilteredLines</code> is the number of discarded
+(or filtered) records. Due to historical reasons these fields have the word
+<em>lines</em> in them but they do mean the number of records.</p>
+<p>An important point is that <code>Stats</code> can be called from any goroutine so it must be
+safe for concurrent use by multiple goroutines.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> (i <span style="color:#ff79c6">*</span>myFilter) <span style="color:#50fa7b">Stats</span>() baker.FilterStats {
+    bag <span style="color:#ff79c6">:=</span> <span style="color:#8be9fd;font-style:italic">make</span>(baker.MetricsBag)
+    bag.<span style="color:#50fa7b">AddGauge</span>(<span style="color:#f1fa8c">&#34;current_speed&#34;</span>, <span style="color:#8be9fd;font-style:italic">float64</span>(atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>myFilter.speed)))
 
-        <div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-    
-</div>
+    <span style="color:#ff79c6">return</span> baker.FilterStats{
+        NumProcessedLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>myFilter.totalLines),
+        NumFilteredLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>myFilter.filteredLines),
+        <span style="color:#6272a4">// Metrics could be let to its default value, nil, if not needed.
+</span><span style="color:#6272a4"></span>        Metrics: bag,
+    }
+}
+</code></pre></div><h4 id="configuring-metrics-in-toml">Configuring metrics in TOML</h4>
+<p>Baker configuration TOML files may have a <code>[metrics]</code> section dedicated to the
+configuration of a metrics client.</p>
+<p><code>[metrics.name]</code> specifies the metrics client to use, from the list of all registered <a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>baker.MetricsClient</code></a>.
+<code>[metrics.config]</code> specifies some configuration settings which are specific to the client you&rsquo;re using.</p>
+<p>For example, this is what the <code>[metrics]</code> section would look like with the <em>Datadog</em> metrics client:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[metrics]
+name=<span style="color:#f1fa8c">&#34;datadog&#34;</span>
+
+    [metrics.config]
+    host=<span style="color:#f1fa8c">&#34;localhost:8125&#34;</span>                  <span style="color:#6272a4"># address of the dogstatsd client to which send metrics to</span>
+    prefix=<span style="color:#f1fa8c">&#34;myapp.baker.&#34;</span>                  <span style="color:#6272a4"># prefix for all exported metric names</span>
+    send_logs=<span style="color:#ff79c6">true</span>                         <span style="color:#6272a4"># whether we should log messages (as Dogstatd events) or not </span>
+    tags=[<span style="color:#f1fa8c">&#34;env:prod&#34;</span>, <span style="color:#f1fa8c">&#34;region:eu-west-1&#34;</span>]  <span style="color:#6272a4"># extra tags to associate to all exported metrics </span>
+</code></pre></div><h4 id="disaling-metrics-export">Disaling metrics export</h4>
+<p>To not export any metrics, it&rsquo;s enough to not provide the <code>[metrics]</code> section in
+Baker configuration file.</p>
+<h4 id="implementing-a-new-metrics-client">Implementing a new metrics client</h4>
+<p>The <a href="https://github.com/AdRoll/baker/tree/main/examples/metrics">metrics
+example</a> shows an
+example implementation of
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>baker.MetricsClient</code></a>
+and how to register it within Baker so that it can be selected in the
+<code>[metrics.name]</code> TOML section.</p>
+<p>In order to be selected from TOML, you must first register a
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsDesc"><code>baker.MetricsDesc</code></a>
+instance within <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>baker.Components</code></a>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> fooBarDesc = baker.MetricsDesc{
+	Name:   <span style="color:#f1fa8c">&#34;MyMetrics&#34;</span>,
+	Config: <span style="color:#ff79c6">&amp;</span>myyMetricsConfig{},
+	New:    newMyMetrics,
+}
+</code></pre></div><p>where <code>newMyMetrics</code> is a constructor-like function receiving an <code>interface{}</code>,
+which is guaranteed to be of the type of the <code>Config</code> field value. This function
+should either return a ready to use
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>baker.MetricsClient</code></a>
+or an error saying why it can&rsquo;t.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">newMyMetrics</span>(icfg <span style="color:#8be9fd;font-style:italic">interface</span>{}) (baker.MetricsClient, <span style="color:#8be9fd">error</span>)
+</code></pre></div><h4 id="metricsclient-interface">Metrics.Client interface</h4>
+<p>Once a <a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>baker.MetricsClient</code></a>
+instance has been successfully created, it&rsquo;s made available to and used by
+a Baker pipeline to report metrics. During construction, components receive the
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>MetricsClient</code></a> instance.</p>
+<p><a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>baker.MetricsClient</code></a>
+supports the most common type of metric types: <em>gauges</em>, <em>counters</em> and <em>histograms</em>.</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified January 1, 0001
+	<div class="text-muted mt-5 pt-3 border-top">Last modified November 3, 2020
 </div>
 </div>
+
 
           </main>
         </div>

@@ -8,7 +8,7 @@
   </url>
   
   <url>
-    <loc>https://getbaker.io/docs/how-tos/pipeline_configuration/</loc>
+    <loc>https://getbaker.io/docs/how-to/pipeline_configuration/</loc>
     <lastmod>2020-10-29T00:00:00+00:00</lastmod>
   </url>
   
@@ -22,57 +22,57 @@
   </url>
   
   <url>
-    <loc>https://getbaker.io/docs/how-tos/record_and_logline/</loc>
+    <loc>https://getbaker.io/docs/how-to/record_and_logline/</loc>
     <lastmod>2020-10-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://getbaker.io/docs/how-tos/</loc>
+    <loc>https://getbaker.io/docs/how-to/</loc>
     <lastmod>2020-11-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://getbaker.io/docs/how-tos/custom_record/</loc>
+    <loc>https://getbaker.io/docs/how-to/custom_record/</loc>
     <lastmod>2020-10-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://getbaker.io/docs/how-tos/baker_components/</loc>
-    <lastmod>2020-10-29T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://getbaker.io/docs/how-tos/create_input/</loc>
-    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://getbaker.io/docs/how-tos/create_filter/</loc>
-    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://getbaker.io/docs/how-tos/create_output/</loc>
-    <lastmod>2020-11-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://getbaker.io/docs/how-tos/create_upload/</loc>
-    <lastmod>2020-11-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://getbaker.io/docs/how-tos/metrics/</loc>
+    <loc>https://getbaker.io/docs/how-to/metrics/</loc>
     <lastmod>2020-11-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://getbaker.io/docs/how-tos/sharding/</loc>
+    <loc>https://getbaker.io/docs/how-to/baker_components/</loc>
     <lastmod>2020-10-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://getbaker.io/docs/how-tos/concurrency/</loc>
+    <loc>https://getbaker.io/docs/how-to/sharding/</loc>
+    <lastmod>2020-10-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://getbaker.io/docs/how-to/create_input/</loc>
+    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://getbaker.io/docs/how-to/create_filter/</loc>
+    <lastmod>2020-11-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://getbaker.io/docs/how-to/create_output/</loc>
+    <lastmod>2020-11-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://getbaker.io/docs/how-to/create_upload/</loc>
+    <lastmod>2020-11-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://getbaker.io/docs/how-to/concurrency/</loc>
     <lastmod>2020-11-02T00:00:00+00:00</lastmod>
   </url>
   

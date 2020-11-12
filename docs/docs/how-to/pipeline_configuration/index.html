@@ -20,27 +20,27 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Create a custom input component | Baker</title><meta property="og:title" content="Create a custom input component" />
-<meta property="og:description" content="The job of a Baker input is to fetch blob of data containing one or multiple serialized records and send them to Baker.
-The input isn&rsquo;t in charge of splitting/parsing the input data into Records (that is done by Baker), but only retrieving them as fast as possible in raw format adding, if any, metadata to them and then sending those values to Baker through a *Data channel. The channel size is customizable in the topology TOML with [input] chansize=&lt;value&gt; (default to 1024)." />
+<title>Pipeline configuration | Baker</title><meta property="og:title" content="Pipeline configuration" />
+<meta property="og:description" content="How to configure Baker using TOML files
+" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://getbaker.io/docs/how-tos/create_input/" />
-<meta property="article:published_time" content="2020-11-02T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-11-02T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Create a custom input component">
-<meta itemprop="description" content="The job of a Baker input is to fetch blob of data containing one or multiple serialized records and send them to Baker.
-The input isn&rsquo;t in charge of splitting/parsing the input data into Records (that is done by Baker), but only retrieving them as fast as possible in raw format adding, if any, metadata to them and then sending those values to Baker through a *Data channel. The channel size is customizable in the topology TOML with [input] chansize=&lt;value&gt; (default to 1024).">
-<meta itemprop="datePublished" content="2020-11-02T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-11-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="501">
+<meta property="og:url" content="https://getbaker.io/docs/how-to/pipeline_configuration/" />
+<meta property="article:published_time" content="2020-10-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-10-29T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Pipeline configuration">
+<meta itemprop="description" content="How to configure Baker using TOML files
+">
+<meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="wordCount" content="743">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Create a custom input component"/>
-<meta name="twitter:description" content="The job of a Baker input is to fetch blob of data containing one or multiple serialized records and send them to Baker.
-The input isn&rsquo;t in charge of splitting/parsing the input data into Records (that is done by Baker), but only retrieving them as fast as possible in raw format adding, if any, metadata to them and then sending those values to Baker through a *Data channel. The channel size is customizable in the topology TOML with [input] chansize=&lt;value&gt; (default to 1024)."/>
+<meta name="twitter:title" content="Pipeline configuration"/>
+<meta name="twitter:description" content="How to configure Baker using TOML files
+"/>
 
 
 
@@ -181,77 +181,77 @@ The input isn&rsquo;t in charge of splitting/parsing the input data into Records
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-Tos</a>
+    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-to</a>
   </li>
   <ul>
-    <li class="collapse show" id="docshow-tos">
+    <li class="collapse show" id="docshow-to">
       
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tospipeline_configuration" href="/docs/how-tos/pipeline_configuration/">Pipeline configuration</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-topipeline_configuration" href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosrecord_and_logline" href="/docs/how-tos/record_and_logline/">Record and LogLine</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-torecord_and_logline" href="/docs/how-to/record_and_logline/">Record and LogLine</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscustom_record" href="/docs/how-tos/custom_record/">Create a custom Record</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocustom_record" href="/docs/how-to/custom_record/">Create a custom Record</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tometrics" href="/docs/how-to/metrics/">Export metrics</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-toscreate_input" href="/docs/how-tos/create_input/">Create a custom input component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tobaker_components" href="/docs/how-to/baker_components/">Create baker.Components</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_filter" href="/docs/how-tos/create_filter/">Create a custom filter component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosharding" href="/docs/how-to/sharding/">Sharding</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_output" href="/docs/how-tos/create_output/">Create a custom output component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_input" href="/docs/how-to/create_input/">Create a custom input component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_upload" href="/docs/how-tos/create_upload/">Create a custom upload component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_filter" href="/docs/how-to/create_filter/">Create a custom filter component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosmetrics" href="/docs/how-tos/metrics/">Export metrics</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_output" href="/docs/how-to/create_output/">Create a custom output component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_upload" href="/docs/how-to/create_upload/">Create a custom upload component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosconcurrency" href="/docs/how-tos/concurrency/">Tuning concurrency</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toconcurrency" href="/docs/how-to/concurrency/">Tuning concurrency</a>
       
       
     </li>
@@ -285,8 +285,8 @@ The input isn&rsquo;t in charge of splitting/parsing the input data into Records
 
 
 
-<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/How%20Tos/create_input.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Create%20a%20custom%20input%20component" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/master/content/en/docs/How%20To/pipeline_configuration.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Pipeline%20configuration" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -297,13 +297,10 @@ The input isn&rsquo;t in charge of splitting/parsing the input data into Records
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#daemon-vs-batch">Daemon vs Batch</a></li>
-    <li><a href="#data">Data</a></li>
-    <li><a href="#the-input-interface">The Input interface</a></li>
-    <li><a href="#inputdesc">InputDesc</a>
+    <li>
       <ul>
-        <li><a href="#input-constructor-like-function">Input constructor-like function</a></li>
-        <li><a href="#the-input-configuration-and-help">The input configuration and help</a></li>
+        <li><a href="#configuration-file">Configuration file</a></li>
+        <li><a href="#environment-variables-replacement">Environment variables replacement</a></li>
       </ul>
     </li>
   </ul>
@@ -337,14 +334,14 @@ The input isn&rsquo;t in charge of splitting/parsing the input data into Records
 
 
 <li class="breadcrumb-item" >
-	<a href="https://getbaker.io/docs/how-tos/">How-Tos</a>
+	<a href="https://getbaker.io/docs/how-to/">How-to</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/how-tos/create_input/">Create a custom input component</a>
+	<a href="https://getbaker.io/docs/how-to/pipeline_configuration/">Pipeline configuration</a>
 </li>
 
 	</ol>
@@ -352,77 +349,184 @@ The input isn&rsquo;t in charge of splitting/parsing the input data into Records
 
             
 <div class="td-content">
-	<h1>Create a custom input component</h1>
-    
+	<h1>Pipeline configuration</h1>
+    <div class="lead">How to configure Baker using TOML files</div>
 	       
-	<p>The job of a Baker input is to fetch blob of data containing one or multiple serialized records
-and send them to Baker.</p>
-<p>The input isn&rsquo;t in charge of splitting/parsing the input data into Records (that is done by Baker),
-but only retrieving them as fast as possible in raw format adding, if any, metadata to them and
-then sending those values to Baker through a
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#Data"><code>*Data</code></a> channel. The channel size is
-customizable in the topology TOML with <code>[input] chansize=&lt;value&gt;</code> (default to 1024).</p>
-<p>To create an input and make it available to Baker, one must:</p>
-<ul>
-<li>Implement the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Input">Input</a> interface</li>
-<li>Fill an <a href="https://pkg.go.dev/github.com/AdRoll/baker#InputDesc"><code>InputDesc</code></a> structure and register it
-within Baker via <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>Components</code></a>.</li>
-</ul>
-<h2 id="daemon-vs-batch">Daemon vs Batch</h2>
-<p>The input component determines the Baker behavior between a batch processor or a long-living daemon.</p>
-<p>If the input exits when its data processing has completed, then Baker waits for the topology to end
-and then exits.</p>
-<p>If the input never exits, then Baker acts as a daemon.</p>
-<h2 id="data">Data</h2>
-<p>The <a href="https://pkg.go.dev/github.com/AdRoll/baker#Data"><code>Data</code></a> object that the input must fill in
-with read data has two fields: <code>Bytes</code>, that must contain the raw read bytes (possibly containing
-more records separated by <code>\n</code>), and <code>Meta</code>.</p>
-<p><a href="https://pkg.go.dev/github.com/AdRoll/baker#Metadata"><code>Metadata</code></a> can contain additional
-information Baker will associate with each of the serialized Record contained in <code>Data</code>.<br>
-Typical information could be the time of retrieval, the filename (in case <code>Records</code> come from a file), etc.</p>
-<h2 id="the-input-interface">The Input interface</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> Input <span style="color:#8be9fd;font-style:italic">interface</span> {
-	<span style="color:#50fa7b">Run</span>(output <span style="color:#8be9fd;font-style:italic">chan</span><span style="color:#ff79c6">&lt;-</span> <span style="color:#ff79c6">*</span>Data) <span style="color:#8be9fd">error</span>
-	<span style="color:#50fa7b">Stop</span>()
-	<span style="color:#50fa7b">Stats</span>() InputStats
-	<span style="color:#50fa7b">FreeMem</span>(data <span style="color:#ff79c6">*</span>Data)
+	<h3 id="configuration-file">Configuration file</h3>
+<p>Baker is configured using a <a href="https://toml.io/en/">TOML file</a>, whose content is processed by the
+<a href="https://pkg.go.dev/github.com/AdRoll/Baker#NewConfigFromToml"><code>NewConfigFromToml</code></a> function.</p>
+<p>The file has several sections, described below:</p>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Required</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[general]</code></td>
+<td>false</td>
+<td>General configuration</td>
+</tr>
+<tr>
+<td><code>[metrics]</code></td>
+<td>false</td>
+<td>Metrics service configuration</td>
+</tr>
+<tr>
+<td><code>[[user]]</code></td>
+<td>false</td>
+<td>Array of user-defined configurations</td>
+</tr>
+<tr>
+<td><code>[input]</code></td>
+<td>true</td>
+<td>Input component configuration</td>
+</tr>
+<tr>
+<td><code>[[filter]]</code></td>
+<td>false</td>
+<td>Array of filters configuration</td>
+</tr>
+<tr>
+<td><code>[output]</code></td>
+<td>true</td>
+<td>Output component configuration</td>
+</tr>
+<tr>
+<td><code>[upload]</code></td>
+<td>false</td>
+<td>Upload component configuration</td>
+</tr>
+</tbody>
+</table>
+<h4 id="general-configuration">General configuration</h4>
+<p>The <code>[general]</code> section is used to configure the general behaviour of Baker.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dont_validate_fields</td>
+<td>bool</td>
+<td>Reports whether records validation is skipped (by not calling Components.Validate)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="components-configuration">Components configuration</h4>
+<p>Components sections are <code>[input]</code>, <code>[[filter]]</code>, <code>[output]</code> and <code>[upload]</code> and contain a
+<code>name = &quot;&lt;component name&gt;&quot;</code> line and an optional <code>config</code> subsection (like <code>[input.config]</code>)
+to set specific configuration values to the selected component.</p>
+<p>Components' specific configuration can be marked as required (within the component code). If a
+required config is missing, Baker won&rsquo;t start.</p>
+<p>This is a minimalist Baker configuration TOML, reading records from files (<code>List</code>), applying the
+<code>TimestampRange</code> filter and writing the output to <code>DynamoDB</code>, with some specific options:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[input]
+name=<span style="color:#f1fa8c">&#34;List&#34;</span>
+
+    [input.config]
+    files=[<span style="color:#f1fa8c">&#34;records.csv.gz&#34;</span>]
+
+[[filter]]
+name=<span style="color:#f1fa8c">&#34;TimestampRange&#34;</span>
+
+    [filter.config]
+    StartDatetime = <span style="color:#f1fa8c">&#34;2020-10-30 15:00:00&#34;</span>
+	EndDatetime = <span style="color:#f1fa8c">&#34;2020-11-01 00:00:00&#34;</span>
+	Field = <span style="color:#f1fa8c">&#34;timestamp&#34;</span>
+
+[output]
+name=<span style="color:#f1fa8c">&#34;DynamoDB&#34;</span>
+fields=[<span style="color:#f1fa8c">&#34;source&#34;</span>,<span style="color:#f1fa8c">&#34;timestamp&#34;</span>,<span style="color:#f1fa8c">&#34;user&#34;</span>]
+
+    [output.config]
+    regions=[<span style="color:#f1fa8c">&#34;us-west-2&#34;</span>,<span style="color:#f1fa8c">&#34;us-east-1&#34;</span>]
+    table=<span style="color:#f1fa8c">&#34;MyTable&#34;</span>
+    columns=[<span style="color:#f1fa8c">&#34;s:Source&#34;</span>, <span style="color:#f1fa8c">&#34;n:Timestamp&#34;</span>, <span style="color:#f1fa8c">&#34;s:User&#34;</span>]
+</code></pre></div><p><code>[input]</code> selects the input component, or where to read the records from.<br>
+In this case, the List component is selected, which is a component that fetches files from
+a list of local or remote paths/URLs. <code>[input.config]</code> is where component-specific configuration
+can be specified, and in this case we simply provide the files option to List.<br>
+Notice that List would accept http:// or even s3:// URLs there in addition to local paths,<br>
+and some more (run ./Baker-bin -help List in the help example for more details).</p>
+<p><code>[[filter]]</code> In TOML syntax, the double brackets indicates an array of sections.<br>
+This is where you declare the list of filters (i.e filter chain) to sequentially apply to your
+records. As other components, each filter may be followed by a <code>[filter.config]</code> section.</p>
+<p><code>[output]</code> selects the output component; the output is where records that made it to the end of
+the filter chain without being discarded end up. In this case, the <code>DynamoDB</code> output is selected,
+and its configuration is specified in <code>[output.config]</code>.</p>
+<p>The <code>fields</code> option in the <code>[output]</code> section selects which fields of the record are sent
+to the output.<br>
+In fact, most pipelines don&rsquo;t want to send the full records to the output, but they select
+a few important fields out of the many available fields.<br>
+Notice that this is just a selection: it is up to the output component to decide how to
+physically serialize those fields. For instance, the <code>DynamoDB</code> component requires the user
+to specify an option called columns that specifies the name and the type of the column where
+the fields are written.</p>
+<h4 id="metrics-configuration">Metrics configuration</h4>
+<p>The <code>[metrics]</code> section allows to configure the metrics backend to use. Currently, only <code>datadog</code> is
+supported.</p>
+<p>See the dedicated page to learn how to configure DataDog metrics with Baker. (TODO: add link)</p>
+<h4 id="user-defined-configurations">User defined configurations</h4>
+<p>The <code>baker.NewConfigFromToml</code> function, used by Baker to parse the TOML configuration file, can be
+also used to add custom configurations to the TOML file (useful as Baker can be used as library in
+a more complex project).</p>
+<p>This is an example of a TOML file defining also some of those user defined configurations (along
+with the input and output configurations):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[input]
+name=<span style="color:#f1fa8c">&#34;random&#34;</span>
+
+[output]
+name=<span style="color:#f1fa8c">&#34;recorder&#34;</span>
+
+[[user]]
+name=<span style="color:#f1fa8c">&#34;MyConfiG&#34;</span>
+
+	[user.config]
+	field1 = <span style="color:#bd93f9">1</span>
+	field2 = <span style="color:#f1fa8c">&#34;hello!&#34;</span>
+</code></pre></div><p>Using <code>NewConfigFromToml</code> is then possible to retrieve those configurations:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">cfg <span style="color:#ff79c6">:=</span> strings.<span style="color:#50fa7b">NewReader</span>(toml) <span style="color:#6272a4">// toml is the content of the toml file
+</span><span style="color:#6272a4"></span>
+<span style="color:#6272a4">// myConfig contains the user-defined configurations we expect from the toml file
+</span><span style="color:#6272a4"></span><span style="color:#8be9fd;font-style:italic">type</span> myConfig <span style="color:#8be9fd;font-style:italic">struct</span> {
+    Field1 <span style="color:#8be9fd">int</span>
+    Field2 <span style="color:#8be9fd">string</span>
 }
-</code></pre></div><p>The <a href="https://pkg.go.dev/github.com/AdRoll/baker#Input">Input interface</a> must be implemented when
-creating a new input component.</p>
-<p>The <code>Run</code> function implements the component logic and receives a channel where it sends the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#Data">raw data</a> it processes.</p>
-<p><code>FreeMem(data *Data)</code> is called by Baker when <code>data</code> is no longer needed. This is an occasion
-for the input to recycle memory, for example if the input uses a <code>sync.Pool</code> to create new
-instances of <code>baker.Data</code>.</p>
-<h2 id="inputdesc">InputDesc</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> MyInputDesc = baker.InputDesc{
-	Name:   <span style="color:#f1fa8c">&#34;MyInput&#34;</span>,
-	New:    NewMyInput,
-	Config: <span style="color:#ff79c6">&amp;</span>MyInputConfig{},
-	Help:   <span style="color:#f1fa8c">&#34;High-level description of MyInput&#34;</span>,
+mycfg <span style="color:#ff79c6">:=</span> myConfig{}
+
+<span style="color:#6272a4">// comp is the baker components configuration.
+</span><span style="color:#6272a4">// Here we use Inputs and Outputs in addition to User because
+</span><span style="color:#6272a4">// they are required configurations
+</span><span style="color:#6272a4"></span>comp <span style="color:#ff79c6">:=</span> baker.Components{
+    Inputs:  []baker.InputDesc{inputtest.RandomDesc},
+    Outputs: []baker.OutputDesc{outputtest.RecorderDesc},
+    User:    []baker.UserDesc{{Name: <span style="color:#f1fa8c">&#34;myconfig&#34;</span>, Config: <span style="color:#ff79c6">&amp;</span>mycfg}},
 }
-</code></pre></div><p>This object has a <code>Name</code>, that is used in the Baker configuration file to identify the input,
-a costructor-like function (<code>New</code>), a config object (where the parsed input configuration from the
-TOML file is stored) and a help text that must help the users to use the component and its
-configuration parameters.</p>
-<h3 id="input-constructor-like-function">Input constructor-like function</h3>
-<p>The <code>New</code> key in the <code>InputDesc</code> object represents the constructor-like function.</p>
-<p>The function receives a <a href="https://pkg.go.dev/github.com/AdRoll/baker#InputParams">InputParams</a>
-object and returns an instance of <a href="https://pkg.go.dev/github.com/AdRoll/baker#Input">Input</a>.</p>
-<p>The function should verify the configuration params into <code>InputParams.DecodedConfig</code> and initialize
-the component.</p>
-<h3 id="the-input-configuration-and-help">The input configuration and help</h3>
-<p>The input configuration object (<code>MyInputConfig</code> in the previous example) must export all
-configuration parameters that the user can set in the TOML topology file.</p>
-<p>Each field in the struct must include a <code>help</code> string tag (mandatory) and a <code>required</code> boolean tag
-(default to <code>false</code>).</p>
-<p>All these parameters appear in the generated help. <code>help</code> should describe the parameter role and/or
-its possible values, <code>required</code> informs Baker it should refuse configurations in which that field
-is not defined.</p>
+
+<span style="color:#6272a4">// Use baker to parse and ingest the configuration file
+</span><span style="color:#6272a4"></span>baker.<span style="color:#50fa7b">NewConfigFromToml</span>(cfg, comp)
+
+<span style="color:#6272a4">// Now mycfg has been populated with the user defined configurations:
+</span><span style="color:#6272a4">// myConfig{Field1: 1, Field2: &#34;hello!&#34;}
+</span><span style="color:#6272a4">// and can be used anywhere in the program
+</span></code></pre></div><p>More examples can be found in the
+<a href="https://github.com/AdRoll/baker/blob/main/user_config_test.go">dedicated test file</a>.</p>
+<h3 id="environment-variables-replacement">Environment variables replacement</h3>
+<p>Baker supports environment variables replacement in the configuration file.</p>
+<p>Use <code>${ENV_VAR_NAME}</code> or <code>$ENV_VAR_NAME</code> and the value in the file is replaced at runtime.<br>
+Note that if the variable doesn&rsquo;t exist, then an empty string is used for replacement.</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 2, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 29, 2020
 </div>
 </div>
 

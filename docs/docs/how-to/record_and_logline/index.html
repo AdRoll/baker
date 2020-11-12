@@ -20,36 +20,27 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Create a custom filter component | Baker</title><meta property="og:title" content="Create a custom filter component" />
-<meta property="og:description" content="Creating a custom filter is probably the most common action a Baker user will perform.
-In fact, filters are the components that apply the business logic to a Baker pipeline, creating or discarding records or modifying fields.
-A working example of a custom filter can be found in the filtering example
-To create a filter and make it available to Baker, one must:
- Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface The Filter interface determines the functions that a filter must implement." />
+<title>Record and LogLine | Baker</title><meta property="og:title" content="Record and LogLine" />
+<meta property="og:description" content="Baker deals with &#34;record&#34; objects, an abstraction of flattened data with indexed fields.
+" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://getbaker.io/docs/how-tos/create_filter/" />
-<meta property="article:published_time" content="2020-11-02T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-11-02T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Create a custom filter component">
-<meta itemprop="description" content="Creating a custom filter is probably the most common action a Baker user will perform.
-In fact, filters are the components that apply the business logic to a Baker pipeline, creating or discarding records or modifying fields.
-A working example of a custom filter can be found in the filtering example
-To create a filter and make it available to Baker, one must:
- Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface The Filter interface determines the functions that a filter must implement.">
-<meta itemprop="datePublished" content="2020-11-02T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-11-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="801">
+<meta property="og:url" content="https://getbaker.io/docs/how-to/record_and_logline/" />
+<meta property="article:published_time" content="2020-10-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-10-29T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Record and LogLine">
+<meta itemprop="description" content="Baker deals with &#34;record&#34; objects, an abstraction of flattened data with indexed fields.
+">
+<meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
+<meta itemprop="wordCount" content="220">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Create a custom filter component"/>
-<meta name="twitter:description" content="Creating a custom filter is probably the most common action a Baker user will perform.
-In fact, filters are the components that apply the business logic to a Baker pipeline, creating or discarding records or modifying fields.
-A working example of a custom filter can be found in the filtering example
-To create a filter and make it available to Baker, one must:
- Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface The Filter interface determines the functions that a filter must implement."/>
+<meta name="twitter:title" content="Record and LogLine"/>
+<meta name="twitter:description" content="Baker deals with &#34;record&#34; objects, an abstraction of flattened data with indexed fields.
+"/>
 
 
 
@@ -190,77 +181,77 @@ To create a filter and make it available to Baker, one must:
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-Tos</a>
+    <a  href="/docs/how-to/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-to</a>
   </li>
   <ul>
-    <li class="collapse show" id="docshow-tos">
+    <li class="collapse show" id="docshow-to">
       
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tospipeline_configuration" href="/docs/how-tos/pipeline_configuration/">Pipeline configuration</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-topipeline_configuration" href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosrecord_and_logline" href="/docs/how-tos/record_and_logline/">Record and LogLine</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-torecord_and_logline" href="/docs/how-to/record_and_logline/">Record and LogLine</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscustom_record" href="/docs/how-tos/custom_record/">Create a custom Record</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocustom_record" href="/docs/how-to/custom_record/">Create a custom Record</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tometrics" href="/docs/how-to/metrics/">Export metrics</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_input" href="/docs/how-tos/create_input/">Create a custom input component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tobaker_components" href="/docs/how-to/baker_components/">Create baker.Components</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-toscreate_filter" href="/docs/how-tos/create_filter/">Create a custom filter component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosharding" href="/docs/how-to/sharding/">Sharding</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_output" href="/docs/how-tos/create_output/">Create a custom output component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_input" href="/docs/how-to/create_input/">Create a custom input component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_upload" href="/docs/how-tos/create_upload/">Create a custom upload component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_filter" href="/docs/how-to/create_filter/">Create a custom filter component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosmetrics" href="/docs/how-tos/metrics/">Export metrics</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_output" href="/docs/how-to/create_output/">Create a custom output component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tocreate_upload" href="/docs/how-to/create_upload/">Create a custom upload component</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosconcurrency" href="/docs/how-tos/concurrency/">Tuning concurrency</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toconcurrency" href="/docs/how-to/concurrency/">Tuning concurrency</a>
       
       
     </li>
@@ -294,8 +285,8 @@ To create a filter and make it available to Baker, one must:
 
 
 
-<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/How%20Tos/create_filter.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Create%20a%20custom%20filter%20component" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/master/content/en/docs/How%20To/record_and_logline.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Record%20and%20LogLine" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -303,26 +294,6 @@ To create a filter and make it available to Baker, one must:
 
 
 
-
-<nav id="TableOfContents">
-  <ul>
-    <li><a href="#the-filter-interface">The Filter interface</a></li>
-    <li><a href="#filterdesc">FilterDesc</a>
-      <ul>
-        <li><a href="#filter-constructor">Filter constructor</a></li>
-        <li><a href="#the-filter-configuration-and-help">The filter configuration and help</a></li>
-      </ul>
-    </li>
-    <li><a href="#modify-record-fields">Modify record fields</a></li>
-    <li><a href="#processing-records">Processing records</a></li>
-    <li><a href="#create-records">Create records</a>
-      <ul>
-        <li><a href="#copy">Copy()</a></li>
-        <li><a href="#createrecord">CreateRecord()</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
 
 
 
@@ -352,14 +323,14 @@ To create a filter and make it available to Baker, one must:
 
 
 <li class="breadcrumb-item" >
-	<a href="https://getbaker.io/docs/how-tos/">How-Tos</a>
+	<a href="https://getbaker.io/docs/how-to/">How-to</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/how-tos/create_filter/">Create a custom filter component</a>
+	<a href="https://getbaker.io/docs/how-to/record_and_logline/">Record and LogLine</a>
 </li>
 
 	</ol>
@@ -367,167 +338,37 @@ To create a filter and make it available to Baker, one must:
 
             
 <div class="td-content">
-	<h1>Create a custom filter component</h1>
-    
+	<h1>Record and LogLine</h1>
+    <div class="lead">Baker deals with &ldquo;record&rdquo; objects, an abstraction of flattened data with indexed fields.</div>
 	       
-	<p>Creating a custom filter is probably the most common action a Baker user will perform.</p>
-<p>In fact, filters are the components that apply the business logic to a Baker pipeline,
-<strong>creating or discarding records or modifying fields.</strong></p>
-<p>A working example of a custom filter can be found in the
-<a href="https://github.com/AdRoll/baker/tree/main/examples/filtering">filtering example</a></p>
-<p>To create a filter and make it available to Baker, one must:</p>
-<ul>
-<li>Implement the Filter interface</li>
-<li>Add a <a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterDesc"><code>FilterDesc</code></a> for the filter to
-the available filters in <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>Components</code></a></li>
-</ul>
-<h2 id="the-filter-interface">The Filter interface</h2>
-<p>The <a href="https://pkg.go.dev/github.com/AdRoll/baker#Filter">Filter interface</a> determines the functions
-that a filter must implement. The interface is quite simple and contains only two functions:
-<code>Process(l Record, next func(Record))</code> and <code>Stats() FilterStats</code>:</p>
-<ul>
-<li><code>Process</code> is the function the actually filters the records</li>
-<li><code>Stats</code> return statistics (<a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterStats">FilterStats</a>) about the filtering process</li>
-</ul>
-<p>A very simple example of filter doing nothing is:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> MyFilter <span style="color:#8be9fd;font-style:italic">struct</span>{
-    numProcessedLines <span style="color:#8be9fd">int64</span>
-}
+	<p>Baker processes objects in form of &ldquo;records&rdquo;. A Record, in Baker, is an interface that
+provides an abstraction over a record of flattened data, where columns of fields are
+indexed through integers.</p>
+<p>Baker currently provides a single implementation of Record, called <code>LogLine</code> (
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine">API reference</a>).</p>
+<p>If <code>LogLine</code> doesn&rsquo;t fit your needs, you can easily implement the Record interface with your
+<a href="#custom-logline">custom logic</a>.</p>
+<h2 id="logline">LogLine</h2>
+<p>A <a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine"><code>LogLine</code></a> is a Record implementation which is highly optimized for fast parsing and serializing of CSV records.</p>
+<p>It supports any single-byte field separator and doesn&rsquo;t handle quotes (neither single nor double).</p>
+<p>The maximum number of fields is hard-coded by the <code>LogLineNumFields</code> constant which is 3000.</p>
+<p>100 extra fields can be stored at runtime in a <code>LogLine</code> (also hardcoded with <code>NumFieldsBaker</code>),
+these extra fields are a fast way to exchange data between filters and/or outputs but they are
+neither handled during Parsing (i.e <code>LogLine.Parse</code>) nor serialization (<code>LogLine.ToText</code>).</p>
+<h3 id="custom-logline">Custom LogLine</h3>
+<p>If the hardcoded values for
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#pkg-constants"><code>LogLineNumFields</code> and <code>NumFieldsBaker</code></a>
+do not suit your needs, it&rsquo;s advised that you copy <code>logline.go</code> in your project and modify the
+constants declared at the top of the file.</p>
+<p>Your specialized <code>LogLine</code> will still implement <code>baker.Record</code> and thus can be used in lieu
+of <code>baker.LogLine</code>.</p>
+<p>The <code>CreateRecord</code> function set into
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>baker.Components</code></a> must return an
+instance of your custom LogLine instead of the default one.</p>
 
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numProcessedLines, <span style="color:#bd93f9">1</span>)
-    <span style="color:#50fa7b">next</span>(r)
-}
-
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Stats</span>() FilterStats { 
-    <span style="color:#ff79c6">return</span> baker.FilterStats{
-		NumProcessedLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numProcessedLines),
-    }
-}
-</code></pre></div><h2 id="filterdesc">FilterDesc</h2>
-<p>To be included in the Baker filters, a filter must be described by a
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterDesc"><code>FilterDesc</code> object</a>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> MyFilterDesc = baker.FilterDesc{
-	Name:   <span style="color:#f1fa8c">&#34;MyFilter&#34;</span>,
-	New:    NewMyFilter,
-	Config: <span style="color:#ff79c6">&amp;</span>MyFilterConfig{},
-	Help:   <span style="color:#f1fa8c">&#34;This filter does nothing, but in a great way!&#34;</span>,
-}
-</code></pre></div><p>This object has a <code>Name</code>, that is used in the Baker configuration file to identify the filter,
-a costructor function (<code>New</code>), a config object (used to parse the filter configuration in the
-TOML file) and a help text.</p>
-<p>In this case the filter can be used with this configuration in the
-<a href="/docs/how-to/pipeline_configuration/">TOML file</a>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[[filter]]
-name = <span style="color:#f1fa8c">&#34;MyFilter&#34;</span>
-</code></pre></div><h3 id="filter-constructor">Filter constructor</h3>
-<p>Each filter must have a constructor function that receives a
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterParams">FilterParams</a> and returns the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#Filter">Filter interface</a> implemented by the filter:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">MyFilter</span>(cfg baker.FilterParams) (baker.Filter, <span style="color:#8be9fd">error</span>) {
-	<span style="color:#ff79c6">return</span> <span style="color:#ff79c6">&amp;</span>MyFilter{}, <span style="color:#ff79c6">nil</span>
-}
-</code></pre></div><p>The <a href="https://github.com/AdRoll/baker/blob/main/examples/filtering/filter.go">filtering example</a>
-shows a more complex constructor that also uses the <code>FilterParams</code> argument.</p>
-<h3 id="the-filter-configuration-and-help">The filter configuration and help</h3>
-<p>A filter requiring some configurations also has a config object, including as many keys as it
-needs and tagging each one with an <code>help</code> tag, a string that contains what a user needs to know
-which values set for it:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> ClauseFilterConfig <span style="color:#8be9fd;font-style:italic">struct</span> {
-	Clause <span style="color:#8be9fd">string</span> <span style="color:#f1fa8c">`help:&#34;Boolean formula describing which events to let through. If empty, let everything through.&#34;`</span>
-}
-</code></pre></div><h2 id="modify-record-fields">Modify record fields</h2>
-<p>A filter can change the value of the record fields before calling <code>next()</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    <span style="color:#8be9fd;font-style:italic">var</span> src FieldIndex = <span style="color:#bd93f9">10</span>
-    <span style="color:#8be9fd;font-style:italic">var</span> dst FieldIndex = <span style="color:#bd93f9">10</span>
-    v <span style="color:#ff79c6">:=</span> r.<span style="color:#50fa7b">Get</span>(src)
-    <span style="color:#6272a4">//.. modify v as required
-</span><span style="color:#6272a4"></span>    r.<span style="color:#50fa7b">Set</span>(dst, v)
-    <span style="color:#50fa7b">next</span>(r)
-}
-</code></pre></div><h2 id="processing-records">Processing records</h2>
-<p>Filters do their work in the <code>Process(r Record, next func(Record)</code> method, where <code>r</code> is the
-Record to process and <code>next</code> is a closure assigned to the next element in thefilter chain.</p>
-<p>Filters call <code>next(r)</code> once they&rsquo;re done with the record and desire to forward it, or simply
-do not call <code>next()</code> if they want to discard the record.</p>
-<p>When a filter discards a record it should also report it in the stats:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> MyFilter <span style="color:#8be9fd;font-style:italic">struct</span>{
-    numProcessedLines <span style="color:#8be9fd">int64</span>
-    numFilteredLines  <span style="color:#8be9fd">int64</span>
-}
-
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numProcessedLines, <span style="color:#bd93f9">1</span>)
-
-    <span style="color:#6272a4">// shouldBeDiscarded is part of the filter logic
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> <span style="color:#50fa7b">shouldBeDiscarded</span>(r) {
-        atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numFilteredLines, <span style="color:#bd93f9">1</span>)
-        <span style="color:#6272a4">// return here so next() isn&#39;t called
-</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">return</span>
-    }
-    <span style="color:#6272a4">// forward the record to the next element of the filter chain
-</span><span style="color:#6272a4"></span>    <span style="color:#50fa7b">next</span>(r)
-}
-
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Stats</span>() FilterStats { 
-    <span style="color:#ff79c6">return</span> baker.FilterStats{
-        NumProcessedLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numProcessedLines),
-        NumFilteredLines:  atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numFilteredLines),
-    }
-}
-</code></pre></div><h2 id="create-records">Create records</h2>
-<p>A filter can decide to call <code>next()</code> multiple times to send new or duplicated records to the
-next element of the filter chain.</p>
-<p>Note that the new or copied records don&rsquo;t start the filter chain from the first filter in the list
-but only the remaining filters are applied to the records.</p>
-
-
-<div class="alert alert-warning" role="alert">
-
-Remember not to pass the same record to multiple <code>next()</code> functions or later changes to one of
-the records could also impact the others.<br>
-Always use <code>Copy()</code> or <code>CreateRecord()</code> before calling <code>next()</code> more than once.
-</div>
-
-<h3 id="copy">Copy()</h3>
-<p>Filters can duplicate incoming records (with <code>record.Copy()</code>), and thus have more records
-come out than records that came in.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    <span style="color:#6272a4">// Call next the 1st time
-</span><span style="color:#6272a4"></span>    <span style="color:#50fa7b">next</span>(r)
-
-    <span style="color:#6272a4">// WRONG, it is the same record as above
-</span><span style="color:#6272a4"></span>    <span style="color:#50fa7b">next</span>(r)
-
-    <span style="color:#6272a4">// CORRECT, this is a copy of the record
-</span><span style="color:#6272a4"></span>    <span style="color:#50fa7b">next</span>(r.<span style="color:#50fa7b">Copy</span>())
-}
-</code></pre></div><h3 id="createrecord">CreateRecord()</h3>
-<p>A new, empty, record is created calling the <code>CreateRecord</code> function.
-The <code>CreateRecord</code> function is available as part of the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterParams">FilterParams</a> argument of the
-<a href="#filter-constructor">filter constructor</a>. If you plan to use it in the <code>Process</code> function
-then store it to the filter object in the constructor as shown in this example:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> MyFilter <span style="color:#8be9fd;font-style:italic">struct</span>{
-    cfg baker.FilterParams
-}
-
-<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">NewMyFilter</span>(cfg baker.FilterParams) (baker.Filter, <span style="color:#8be9fd">error</span>) {
-	<span style="color:#ff79c6">return</span> <span style="color:#ff79c6">&amp;</span>MyFilter{
-        cfg: cfg, <span style="color:#6272a4">// you can also store only CreateRecord
-</span><span style="color:#6272a4"></span>    }, <span style="color:#ff79c6">nil</span>
-}
-
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    newRecord <span style="color:#ff79c6">:=</span> f.cfg.<span style="color:#50fa7b">CreateRecord</span>()
-    <span style="color:#6272a4">//... do something with the record
-</span><span style="color:#6272a4"></span>    <span style="color:#50fa7b">next</span>(newRecord)
-}
-</code></pre></div>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 2, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 29, 2020
 </div>
 </div>
 
