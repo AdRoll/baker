@@ -89,8 +89,9 @@ the component.
 The input configuration object (`MyInputConfig` in the previous example) must export all
 configuration parameters that the user can set in the TOML topology file.
 
-Each key in the struct must include a `help` string tag and a `required` boolean tag, both are
-mandatory.
+Each field in the struct must include a `help` string tag (mandatory) and a `required` boolean tag
+(default to `false`).
 
-The former helps the user to understand the possible values of the field, the latter tells Baker
-whether to refuse a missing configuration param.
+All these parameters appear in the generated help. `help` should describe the parameter role and/or
+its possible values, `required` informs Baker it should refuse configurations in which that field
+is not defined.
