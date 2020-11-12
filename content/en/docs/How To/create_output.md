@@ -50,7 +50,7 @@ var MyOutputDesc = baker.OutputDesc{
 This object has a `Name`, that is used in the Baker configuration file to identify the output,
 a constructor-like function (`New`), a config object (used to parse the output configuration in the
 TOML file) and a help text that must help the users to use the component and its configuration
-parameters. The `Raw` field tells whether the output expects to receive raw records in addition
+parameters. The `Raw` field instructs Baker whether it should send raw records in addition
 to single fields (see below for details).
 
 ### Output constructor-like function
