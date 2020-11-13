@@ -161,6 +161,9 @@ func newHelpConfigKeyFromField(f reflect.StructField) (helpConfigKey, error) {
 		switch f.Type.Elem().Kind() {
 		case reflect.String:
 			h.typ = "array of strings"
+			if h.def == "" {
+				h.def = "[]"
+			}
 		case reflect.Int:
 			h.typ = "array of ints"
 		default:

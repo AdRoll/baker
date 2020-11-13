@@ -122,10 +122,9 @@ func GenerateMarkdownHelp(w io.Writer, desc interface{}) error {
 
 func breakAfterDots(s string) string {
 	r := strings.NewReplacer(
-		".", ".\n",
-		"!", "!\n",
-		"?", "?\n",
-		":", ":\n",
+		".", ".  \n",
+		"!", "!  \n",
+		"?", "?  \n",
 	)
 	return r.Replace(s)
 }
@@ -216,7 +215,7 @@ func genMetricsMarkdown(w io.Writer, doc metricsDoc) {
 
 func genConfigKeysMarkdown(w io.Writer, keys []helpConfigKey) {
 	fmt.Fprintln(w, "|Name|Type|Default|Required|Description|")
-	fmt.Fprintln(w, "|:--:|:--:|:-----:|:------:|:---------:|")
+	fmt.Fprintln(w, "|----|:--:|:-----:|:------:|-----------|")
 	for _, k := range keys {
 		fmt.Fprintf(w, "| %v| %v| %v| %t| %v|\n", k.name, k.typ, k.def, k.required, k.desc)
 	}
