@@ -12,6 +12,9 @@ import (
 func TestRawOutputFields(t *testing.T) {
 
 	toml := `
+[fields]
+names=["field0", "field1", "field2", "field3"]
+	
 [input]
 name="Records"
 
@@ -23,20 +26,6 @@ fields=["field2", "field0", "field1", "field3"]
 	c := baker.Components{
 		Inputs:  []baker.InputDesc{inputtest.RecordsDesc},
 		Outputs: []baker.OutputDesc{outputtest.RecorderDesc},
-		FieldByName: func(name string) (baker.FieldIndex, bool) {
-			switch name {
-			case "field0":
-				return 0, true
-			case "field1":
-				return 1, true
-			case "field2":
-				return 2, true
-			case "field3":
-				return 3, true
-			default:
-				return 0, false
-			}
-		},
 	}
 
 	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), c)
