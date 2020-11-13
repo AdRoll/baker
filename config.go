@@ -111,6 +111,14 @@ type ConfigMetrics struct {
 	desc   *MetricsDesc
 }
 
+// ConfigFields specifies names for records fields. In addition of being a list
+// of names, the position of each name in the slice also indicates the FieldIndex
+// for that name. In other words, if Names[0] = "address", then a FieldIndex of
+// 0 is that field, and "address" is the name of that field.
+type ConfigFields struct {
+	Names []string
+}
+
 // A Config specifies the configuration for a topology.
 type Config struct {
 	Input       ConfigInput
@@ -118,10 +126,12 @@ type Config struct {
 	Filter      []ConfigFilter
 	Output      ConfigOutput
 	Upload      ConfigUpload
-	General     ConfigGeneral
-	Metrics     ConfigMetrics
-	User        []ConfigUser
-	CSV         ConfigCSV
+
+	General ConfigGeneral
+	Fields  ConfigFields
+	Metrics ConfigMetrics
+	CSV     ConfigCSV
+	User    []ConfigUser
 
 	shardingFuncs map[FieldIndex]ShardingFunc
 	validate      ValidationFunc
