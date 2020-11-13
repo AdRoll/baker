@@ -30,19 +30,28 @@ const (
 	Dollar    baker.FieldIndex = 6
 )
 
-var fields = map[string]baker.FieldIndex{
-	"id":         ID,
-	"first_name": FirstName,
-	"last_name":  LastName,
-	"age":        Age,
-	"street":     Street,
-	"city":       City,
-	"dollar":     Dollar,
+var fieldNames = [...]string{
+	"id",
+	"first_name",
+	"last_name",
+	"age",
+	"street",
+	"city",
+	"dollar",
 }
 
-func fieldByName(key string) (baker.FieldIndex, bool) {
-	idx, ok := fields[key]
-	return idx, ok
+func fieldByName(name string) (baker.FieldIndex, bool) {
+	for idx, fname := range fieldNames {
+		if name == fname {
+			return baker.FieldIndex(idx), true
+		}
+	}
+
+	return 0, false
+}
+
+func fieldName(idx baker.FieldIndex) string {
+	return fieldNames[idx]
 }
 
 var components = baker.Components{
@@ -50,6 +59,7 @@ var components = baker.Components{
 	Outputs:       []baker.OutputDesc{ShardableDesc},
 	ShardingFuncs: shardingFuncs,
 	FieldByName:   fieldByName,
+	FieldName:     fieldName,
 }
 
 func main() {
