@@ -54,23 +54,26 @@ func testIntegrationS3(callStop bool) func(t *testing.T) {
 		defer testutil.DisableLogging()()
 
 		toml := `
-		[input]
-		name="records"
-	
-		[output]
-		name="custom"
-		procs=1
-	
-		[upload]
-		name="s3"
-	
-			[upload.config]
-			sourcebasepath=%q
-			stagingpath=%q
-			bucket="my-bucket"
-			interval="10ms"
-			retries=1
-			concurrency=1`
+[fields]
+names=["f0", "f1", "f2", "f3"]
+
+[input]
+name="records"
+
+[output]
+name="custom"
+procs=1
+
+[upload]
+name="s3"
+
+	[upload.config]
+	sourcebasepath=%q
+	stagingpath=%q
+	bucket="my-bucket"
+	interval="10ms"
+	retries=1
+	concurrency=1`
 
 		/* Configure the pipeline */
 
@@ -157,7 +160,7 @@ func TestIntegrationS3(t *testing.T) {
 	// exits).
 	//
 	// The topology should end by itself without any error, we also checks that
-	t.Run("topololy.wait", testIntegrationS3(false))
+	t.Run("topology.wait", testIntegrationS3(false))
 
 	// the expected number of files have been uploaded to their expected bucket/key.
 	// On the second subtest we immeditately stop the topology after starting it,
@@ -166,5 +169,5 @@ func TestIntegrationS3(t *testing.T) {
 	//  - all records have been processed,
 	//  - all files have been written by the output
 	//  - all files have been uplodaed by the S3 upload
-	t.Run("topololy.stop", testIntegrationS3(true))
+	t.Run("topology.stop", testIntegrationS3(true))
 }
