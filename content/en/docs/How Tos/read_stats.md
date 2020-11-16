@@ -25,8 +25,7 @@ because of errors:
 
 * `p:` records discarded for a parsing error
 * `i:` input records discarded. Most of the time, this refers to validation issues.
-* `f:` is the number of records that were discarded by the filters in the pipeline. Each
-   filter can potentially discard records, and if that happens, it will be reported here.
+* `f:` records discarded by filters.
 * `o:` is the number of records that were discarded because of an error in the output
    component. Notice that output components should be resilient to transient network failures,
    and they abort the process in case of permanent configuration errors, so the number
