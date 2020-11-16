@@ -14,6 +14,9 @@ func fillComponentsAndLoadConfig(t *testing.T, toml string, user ...baker.UserDe
 	t.Helper()
 
 	const base = `
+[fields]
+names=["f0", "f1", "f2", "f3"]	
+
 [input]
 name="random"
 

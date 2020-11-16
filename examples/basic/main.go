@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/filter"
 	"github.com/AdRoll/baker/input"
 	"github.com/AdRoll/baker/output"
 )
@@ -37,6 +38,14 @@ name = "List"
 	[input.config]
 	files=["testdata/input.csv.zst"]
 
+[fields]
+names=["timestamp", "source", "target"]
+
+[[filter]]
+name="ReplaceFields"
+	[filter.config]
+	ReplaceFields=["replaced", "timestamp"]
+
 [output]
 name = "FileWriter"
 procs=1
@@ -45,9 +54,9 @@ procs=1
 	PathString="./_out/output.csv.gz"
 `
 	c := baker.Components{
-		Inputs:      input.All,
-		Outputs:     output.All,
-		FieldByName: fieldByName,
+		Inputs:  input.All,
+		Outputs: output.All,
+		Filters: filter.All,
 	}
 	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), c)
 	if err != nil {

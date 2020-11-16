@@ -111,6 +111,14 @@ type ConfigMetrics struct {
 	desc   *MetricsDesc
 }
 
+// ConfigFields specifies names for records fields. In addition of being a list
+// of names, the position of each name in the slice also indicates the FieldIndex
+// for that name. In other words, if Names[0] = "address", then a FieldIndex of
+// 0 is that field, and "address" is the name of that field.
+type ConfigFields struct {
+	Names []string
+}
+
 // A Config specifies the configuration for a topology.
 type Config struct {
 	Input       ConfigInput
@@ -118,10 +126,12 @@ type Config struct {
 	Filter      []ConfigFilter
 	Output      ConfigOutput
 	Upload      ConfigUpload
-	General     ConfigGeneral
-	Metrics     ConfigMetrics
-	User        []ConfigUser
-	CSV         ConfigCSV
+
+	General ConfigGeneral
+	Fields  ConfigFields
+	Metrics ConfigMetrics
+	CSV     ConfigCSV
+	User    []ConfigUser
 
 	shardingFuncs map[FieldIndex]ShardingFunc
 	validate      ValidationFunc
@@ -389,12 +399,14 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		return nil, fmt.Errorf("invalid keys in configuration file: %v", keys)
 	}
 
+	if err := assignFieldMapping(&cfg, comp); err != nil {
+		return nil, err
+	}
+
 	// Copy pluggable functions
 	cfg.shardingFuncs = comp.ShardingFuncs
 	cfg.validate = comp.Validate
 	cfg.createRecord = comp.CreateRecord
-	cfg.fieldByName = comp.FieldByName
-	cfg.fieldName = comp.FieldName
 
 	// Fill-in with missing defaults
 	return &cfg, cfg.fillDefaults()
@@ -404,6 +416,54 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 func hasConfig(cfg interface{}) bool {
 	tf := reflect.TypeOf(cfg).Elem()
 	return tf.NumField() != 0
+}
+
+// assignFieldMapping verifies that field mapping has been set once, but only
+// once (either in cfg or comp). Then if that is the case, assignFieldMapping
+// sets both fieldByName and fieldName in cfg.
+func assignFieldMapping(cfg *Config, comp Components) error {
+	cfgOk := len(cfg.Fields.Names) != 0
+	compOk := comp.FieldByName != nil && comp.FieldName != nil
+
+	if (comp.FieldByName == nil) != (comp.FieldName == nil) {
+		return fmt.Errorf("FieldByName and FieldName must be either both set or both unset")
+	}
+
+	// First, get inconsistent cases out of the way.
+	if !cfgOk && !compOk {
+		return fmt.Errorf("field indexes/names have not been set")
+	}
+
+	if cfgOk && compOk {
+		return fmt.Errorf("field indexes/names can't both be set in TOML and in Components")
+	}
+
+	if compOk {
+		// Ok, mapping has been set from Components.
+		cfg.fieldByName = comp.FieldByName
+		cfg.fieldName = comp.FieldName
+		return nil
+	}
+
+	// Mapping has been set from Config, create both closures and assign them.
+	m := make(map[string]FieldIndex, len(cfg.Fields.Names))
+	for f, s := range cfg.Fields.Names {
+		_, ok := m[s]
+		if ok {
+			return fmt.Errorf("duplicated field name %q", s)
+		}
+		m[s] = FieldIndex(f)
+	}
+
+	cfg.fieldByName = func(name string) (FieldIndex, bool) {
+		f, ok := m[name]
+		return f, ok
+	}
+	cfg.fieldName = func(fidx FieldIndex) string {
+		return cfg.Fields.Names[fidx]
+	}
+
+	return nil
 }
 
 // RequiredFields returns the names of the underlying configuration structure

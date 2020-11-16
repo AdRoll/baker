@@ -67,7 +67,7 @@ func MainCLI(components Components) error {
 	}
 
 	if *flagVerbose && *flagQuiet {
-		return fmt.Errorf("logging can't both be verbose and quiet!")
+		return fmt.Errorf("logging can't both be verbose and quiet")
 	}
 
 	if *flagVerbose {

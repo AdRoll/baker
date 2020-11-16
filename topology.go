@@ -118,11 +118,11 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	}
 
 	for _, fname := range cfg.Output.Fields {
-		if fidx, ok := cfg.fieldByName(fname); !ok {
+		fidx, ok := cfg.fieldByName(fname)
+		if !ok {
 			return nil, fmt.Errorf("error creating output: unknown field: %q", fname)
-		} else {
-			tp.outFields = append(tp.outFields, fidx)
 		}
+		tp.outFields = append(tp.outFields, fidx)
 	}
 
 	for i := 0; i < cfg.Output.Procs; i++ {

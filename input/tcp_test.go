@@ -17,6 +17,9 @@ import (
 // received by the output.
 func TestTCP1by1(t *testing.T) {
 	toml := `
+	[fields]
+	names = ["f0", "f1", "f2"]
+
 	[input]
 	name="TCP"
 
@@ -97,6 +100,9 @@ func TestTCP1by1(t *testing.T) {
 // received by the output.
 func TestTCPChunks(t *testing.T) {
 	toml := `
+	[fields]
+	names = ["f0", "f1", "f2"]
+
 	[input]
 	name="TCP"
 
@@ -187,6 +193,9 @@ func TestTCPChunks(t *testing.T) {
 // correctly).
 func TestTCPStopChunk(t *testing.T) {
 	toml := `
+	[fields]
+	names = ["f0", "f1", "f2"]
+
 	[input]
 	name="TCP"
 
