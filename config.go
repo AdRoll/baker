@@ -422,20 +422,23 @@ func hasConfig(cfg interface{}) bool {
 // once (either in cfg or comp). Then if that is the case, assignFieldMapping
 // sets both fieldByName and fieldName in cfg.
 func assignFieldMapping(cfg *Config, comp Components) error {
-	// First, get inconsistent cases out of the way.
-	if len(cfg.Fields.Names) == 0 && comp.FieldByName == nil && comp.FieldName == nil {
-		return fmt.Errorf("field indexes/names have not been set")
-	}
+	cfgOk := len(cfg.Fields.Names) != 0
+	compOk := comp.FieldByName != nil && comp.FieldName != nil
 
 	if (comp.FieldByName == nil) != (comp.FieldName == nil) {
 		return fmt.Errorf("FieldByName and FieldName must be either both set or both unset")
 	}
 
-	if len(cfg.Fields.Names) != 0 && comp.FieldByName != nil && comp.FieldName != nil {
+	// First, get inconsistent cases out of the way.
+	if !cfgOk && !compOk {
+		return fmt.Errorf("field indexes/names have not been set")
+	}
+
+	if cfgOk && compOk {
 		return fmt.Errorf("field indexes/names can't both be set in TOML and in Components")
 	}
 
-	if comp.FieldByName != nil && comp.FieldName != nil {
+	if compOk {
 		// Ok, mapping has been set from Components.
 		cfg.fieldByName = comp.FieldByName
 		cfg.fieldName = comp.FieldName
