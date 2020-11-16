@@ -194,8 +194,8 @@ Take a look at the [dedicated page](/docs/how-tos/read_stats/) to learn how to r
 
 The resulting files are splitted into multiple folders, one for each country, and then uploaded.
 
-The [`S3`](/docs/components/uploads/s3/) upload removes the files once uploaded, so you'll find
-only the folders skeleton in the output destination folder:
+The [`S3`](/docs/components/uploads/s3/) upload removes the files once uploaded, so you'll
+only find empty directories in the output destination folder:
 
 ```sh
 ~ ls --tree -l /tmp/out
