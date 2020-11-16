@@ -57,7 +57,6 @@ procs=1
 		Inputs:  input.All,
 		Outputs: output.All,
 		Filters: filter.All,
-		// FieldByName: fieldByName,
 	}
 	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), c)
 	if err != nil {
