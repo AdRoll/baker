@@ -8,8 +8,8 @@ description: >
 In this tutorial you'll learn how to create a Baker-based program to process a given dataset
 (in CSV format), filter records based on your needs and save the result to a file.
 
-The dataset we're going to use is an open dataset containing ratings on many
-[Ramens](https://www.kaggle.com/residentmario/ramen-ratings).
+The dataset we're going to use is an open dataset containing ratings on many 
+[Ramens](https://www.kaggle.com/residentmario/ramen-ratings), the famous japanese noodle soup!
 
 Our goal will be to discard all ramens that have never been on a top-ten ranking, split the
 results into multiple folders named after the ramens source countries, and upload the
