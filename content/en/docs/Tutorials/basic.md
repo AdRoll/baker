@@ -6,18 +6,18 @@ description: >
     A step-by-step tutorial to learn how to build a Baker pipeline using the included components
 ---
 In this tutorial you'll learn how to create a Baker-based program to process a given dataset
-(in CSV format), filter records based on your needs and save the result to a file.
+(in CSV format), filter records based on your needs and save the result to S3.
 
 The dataset we're going to use is an open dataset containing ratings on many 
 [Ramens](https://www.kaggle.com/residentmario/ramen-ratings), the famous japanese noodle soup!
 
-Our goal will be to discard all ramens that have never been on a top-ten ranking, split the
+Our goal is to discard all ramens that have never been on a top-ten ranking, split the
 results into multiple folders named after the ramens source countries, and upload the
 resulting lists to S3.
 
 ## The dataset
 
-The dataset file has 9 columns:
+The dataset file has 7 columns:
 
 * **review_num**: the number of the review (higher numbers mean more recent reviews)
 * **brand**: the name of the restaurant
@@ -52,6 +52,9 @@ An essential thing to do is to create a configuration file for Baker, in
 [TOML](https://github.com/toml-lang/toml) format, selecting the aforementioned components:
 
 ```toml
+[fields]
+names = ["review_num", "brand", "variety", "style", "country", "stars", "top_ten"]
+
 [input]
 name = "List"
 
@@ -110,12 +113,10 @@ func main() {
 
 ### Define baker.Components
 
-Our `baker.Components` implementation must:
+The only required fields in `baker.Components` are the components that we need to use (the complete
+guide to `baker.Components` is [here](/docs/how-tos/baker_components/)).
 
-* include the components we need to use
-* define `FieldByName` and `FieldName` to map our dataset
-
-The simplest way to add the components to Baker is just to add all available components:
+The simplest and more generic way to add the components to Baker is to add all of them:
 
 ```go
 components := baker.Components{
@@ -123,56 +124,42 @@ components := baker.Components{
     Filters:     filter.All,
     Outputs:     output.All,
     Uploads:     upload.All,
-    /* ... */
 }
 ```
 
-As for the mapping functions, we need to map from name to `FieldIndex` and vice-versa:
+
+The complete program (that is available in the
+[`tutorials/` folder](https://github.com/AdRoll/baker/blob/main/tutorials/basic/main.go) in
+the Baker repository) is the following:
 
 ```go
-var fields = []string{
-	"review_num",
-	"brand",
-	"variety",
-	"style",
-	"country",
-	"stars",
-	"top_ten",
-}
+package main
 
-var fieldsByName = map[string]baker.FieldIndex{
-	"review_num": 0,
-	"brand":      1,
-	"variety":    2,
-	"style":      3,
-	"country":    4,
-	"stars":      5,
-	"top_ten":    6,
-}
+import (
+	"log"
 
-func fieldByName(name string) (idx baker.FieldIndex, ok bool) {
-	idx, ok = fieldsByName[name]
-	return idx, ok
-}
+    "github.com/AdRoll/baker"
+    "github.com/AdRoll/baker/input"
+    "github.com/AdRoll/baker/filter"
+    "github.com/AdRoll/baker/output"
+    "github.com/AdRoll/baker/upload"
+)
 
-func fieldName(idx baker.FieldIndex) string {
-	return fields[idx]
-}
-
-components := baker.Components{
-    /* ... */
-    FieldByName: fieldByName,
-    FieldName:   fieldName,
+func main() {
+    if err := baker.MainCLI(baker.Components{
+        Inputs:      input.All,
+        Filters:     filter.All,
+        Outputs:     output.All,
+        Uploads:     upload.All,
+    }); err != nil {
+		log.Fatal(err)
+	}
 }
 ```
-
-The complete program is available in the
-[`tutorials/` folder](https://github.com/AdRoll/baker/blob/main/tutorials/basic/main.go) in
-the Baker repository.
 
 ## Run the program
 
-Once the code and the configuration file are ready, we can run the topology:
+Once the code and the configuration files are ready, we can run the topology:
 
 ```sh
 $ go build -o myProgram ./main.go 
@@ -192,28 +179,27 @@ Take a look at the [dedicated page](/docs/how-tos/read_stats/) to learn how to r
 
 ## Verify the result
 
-The resulting files are splitted into multiple folders, one for each country, and then uploaded.
+The resulting files are split into multiple folders, one for each country, and then uploaded.
 
-The [`S3`](/docs/components/uploads/s3/) upload removes the files once uploaded, so you'll
-only find empty directories in the output destination folder:
+The [`S3`](/docs/components/uploads/s3/) upload removes the files from the local disk once uploaded,
+so you'll only find empty directories in the output destination folder:
 
 ```sh
-~ ls --tree -l /tmp/out
-drwxrwxr-x   - username 16 Nov 11:43 /tmp/out
-drwxrwxr-x   - username 16 Nov 11:43 ├── China
-drwxrwxr-x   - username 16 Nov 11:43 ├── Hong Kong
-drwxrwxr-x   - username 16 Nov 11:43 ├── Indonesia
-drwxrwxr-x   - username 16 Nov 11:43 ├── Japan
-drwxrwxr-x   - username 16 Nov 11:43 ├── Malaysia
-drwxrwxr-x   - username 16 Nov 11:43 ├── Myanmar
-drwxrwxr-x   - username 16 Nov 11:43 ├── Singapore
-drwxrwxr-x   - username 16 Nov 11:43 ├── South Korea
-drwxrwxr-x   - username 16 Nov 11:43 ├── Taiwan
-drwxrwxr-x   - username 16 Nov 11:43 ├── Thailand
-drwxrwxr-x   - username 16 Nov 11:43 └── USA
+~ ls -l /tmp/out/
+drwxrwxr-x   - username 16 Nov 11:43 China
+drwxrwxr-x   - username 16 Nov 11:43 Hong Kong
+drwxrwxr-x   - username 16 Nov 11:43 Indonesia
+drwxrwxr-x   - username 16 Nov 11:43 Japan
+drwxrwxr-x   - username 16 Nov 11:43 Malaysia
+drwxrwxr-x   - username 16 Nov 11:43 Myanmar
+drwxrwxr-x   - username 16 Nov 11:43 Singapore
+drwxrwxr-x   - username 16 Nov 11:43 South Korea
+drwxrwxr-x   - username 16 Nov 11:43 Taiwan
+drwxrwxr-x   - username 16 Nov 11:43 Thailand
+drwxrwxr-x   - username 16 Nov 11:43 USA
 ```
 
-The uploaded files have been uploaded to S3:
+The files have been uploaded to S3:
 
 ```sh
 ~ aws s3 ls --recursive s3://myBucket/ramens/
@@ -234,7 +220,8 @@ The uploaded files have been uploaded to S3:
 
 This is it for this basic tutorial. You have learned:
 
-* how to create a simple Baker program to process a CSV dataset with minimal filtering and upload it to S3
+* how to create a simple Baker program to process a CSV dataset with minimal filtering and
+upload the results to S3
 * how to create the Baker TOML configuration file
 * how to execute the program and verify the result
 

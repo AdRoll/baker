@@ -73,7 +73,7 @@ is enabled, these hash functions are used to determine which shard a record is s
 ## Validate
 
 `Validate` is the function used to validate a record. It is called for each processed record
-unless `null` or when `[general.dont_validate_fields]` configuration is set to `true`.
+unless `nil` or when `[general.dont_validate_fields]` configuration is set to `true`.
 
 Regardless of the TOML configuration, the function is passed to all components that can use
 it at their will.
