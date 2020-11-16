@@ -24,8 +24,7 @@ The fourth bracket shows the records that were discarded at some point during th
 because of errors:
 
 * `p:` records discarded for a parsing error
-* `i:` is the number of records that were discarded because an error occurred within
-   the input component. Most of the time, this refers to validation issues.
+* `i:` input records discarded. Most of the time, this refers to validation issues.
 * `f:` is the number of records that were discarded by the filters in the pipeline. Each
    filter can potentially discard records, and if that happens, it will be reported here.
 * `o:` is the number of records that were discarded because of an error in the output
