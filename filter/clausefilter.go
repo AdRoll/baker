@@ -11,21 +11,10 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-// ClauseFilterDesc describes the ClauseFilter filter
-var ClauseFilterDesc = baker.FilterDesc{
-	Name:   "ClauseFilter",
-	New:    NewClauseFilter,
-	Config: &ClauseFilterConfig{},
-	Help:   "This filter lets you set a boolean expression (in s-expression format) that will be matched against all records and dropped if they don't match the expression.\nCheck the filter file for documentation what the format looks like.\n",
-}
+const clauseFilterHelpMsg = `
+This filter lets you set a boolean expression (in s-expression format) that will be matched against all records and dropped if they don't match the expression.
 
-// ClauseFilterConfig describes the ClauseFilter filter config
-type ClauseFilterConfig struct {
-	Clause string `help:"Boolean formula describing which events to let through. If empty, let everything through."`
-}
-
-/*
-ClauseFilter boolean expression format
+### ClauseFilter boolean expression format
 
 This document describes the s-expression format used in ClauseFilter.
 
@@ -77,7 +66,21 @@ Examples:
            (anotherFieldName value3))
       (and (fieldName value2)
            (anotherFieldName value4)))
-*/
+`
+
+// ClauseFilterDesc describes the ClauseFilter filter
+var ClauseFilterDesc = baker.FilterDesc{
+	Name:   "ClauseFilter",
+	New:    NewClauseFilter,
+	Config: &ClauseFilterConfig{},
+	Help:   clauseFilterHelpMsg,
+}
+
+// ClauseFilterConfig describes the ClauseFilter filter config
+type ClauseFilterConfig struct {
+	Clause string `help:"Boolean formula describing which events to let through. If empty, let everything through."`
+}
+
 type ClauseFilter struct {
 	cfg               *ClauseFilterConfig
 	topClause         Clause

@@ -13,7 +13,7 @@ var ClearFieldsDesc = baker.FilterDesc{
 	Name:   "ClearFields",
 	New:    NewClearFields,
 	Config: &ClearFieldsConfig{},
-	Help:   "Clear a set of fields of all records passing through",
+	Help:   "Clear a set of fields (makes them empty) of all records passing through",
 }
 
 // ClearFieldsConfig holds config parameters of the ClearFields filter.
