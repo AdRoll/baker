@@ -73,6 +73,9 @@ If enabled, Baker collects all these metrics and forwards them to a metrics clie
 
 Metrics export is set up in Baker topology TOML files, [see how to configure it](/docs/how-to/metrics/).
 
+Baker also collects statistics and periodically prints them to stdout.
+Learn [how to read them](/docs/how-tos/read_stats/).
+
 ## Sharding
 
 Baker supports partitioning the records it processes into smaller subsets each
