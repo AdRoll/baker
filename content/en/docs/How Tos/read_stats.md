@@ -23,7 +23,7 @@ The third bracket shows the average read/write speed (records per second).
 The fourth bracket shows the records that were discarded at some point during the records
 because of errors:
 
-* `p:` is the number of records that were discarded for a parsing error
+* `p:` records discarded for a parsing error
 * `i:` is the number of records that were discarded because an error occurred within
    the input component. Most of the time, this refers to validation issues.
 * `f:` is the number of records that were discarded by the filters in the pipeline. Each
