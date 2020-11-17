@@ -1,3 +1,6 @@
+[fields]
+names = ["review_num", "brand", "variety", "style", "country", "stars", "top_ten"]
+
 [input]
 name = "List"
 
