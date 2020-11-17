@@ -534,7 +534,8 @@ Stats: 1s[w:29425 r:29638] total[w:411300 r:454498] speed[w:27420 r:30299] error
 
 The first bracket shows the number of records that were read (i.e. entered the pipeline)
 and written (i.e. successfully exited the pipeline) in the last 1-second window. The second
-bracket is total since the process was launched. The third bracket shows the average read/write
+bracket is total since the process was launched (the `u:` key is the number of
+files successfully uploaded). The third bracket shows the average read/write
 speed (records per second).
 
 The fourth bracket shows the records that were discarded at some point during the records

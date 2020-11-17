@@ -1,0 +1,34 @@
+[fields]
+names = ["review_num", "brand", "variety", "style", "country", "stars", "top_ten"]
+
+[input]
+name = "List"
+
+    [input.config]
+    Files = ["/tmp/db.csv.gz"]
+
+[[filter]]
+name = "NotNull"
+
+    [filter.config]
+    Fields = ["top_ten"]
+
+[output]
+name = "FileWriter"
+procs = 1
+fields = ["country"]
+
+    [output.config]
+    PathString = "/tmp/out/{{.Field0}}/ramens.csv.gz"
+
+[upload]
+name = "S3"
+
+    [upload.config]
+    Region = "us-west-2"
+    Bucket = "myBucket"
+    Prefix = "ramens/"
+    StagingPath = "/tmp/staging/"
+    SourceBasePath = "/tmp/out/"
+    Interval = "60s"
+    ExitOnError = true
