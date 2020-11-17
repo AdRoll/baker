@@ -76,3 +76,21 @@ Through the channel, the upload receives from the output paths to local files th
 The only Upload component implemented at the moment, S3, removes those files once uploaded, but there isn't a
 golden rule for what to do with them. This is up to the upload component and should be chosen
 wisely and documented extensively.
+
+## Write tests
+
+Testing an upload component can seem sometimes a bit useless as it probably uses external resources
+and libraries for most of its job.
+
+We thereby provide some suggestions to test those components:
+
+* do not test external libraries when possible, they should be already tested in their packages
+* test the `New()` (constructor-like) function, to check that it is able to correctly
+instantiate the component with valid configurations and intercept wrong ones
+* create small and isolated functions where possible and unit-test them
+* test the whole component at integration level, either mocking the external resources or using a
+  replica testing environment
+
+The `S3` upload component has good examples for both
+[unit tests](https://github.com/AdRoll/baker/blob/main/upload/s3_test.go) and
+[integration tests](https://github.com/AdRoll/baker/blob/main/upload/s3_integration_test.go).
