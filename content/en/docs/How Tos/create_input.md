@@ -95,3 +95,117 @@ Each field in the struct must include a `help` string tag (mandatory) and a `req
 All these parameters appear in the generated help. `help` should describe the parameter role and/or
 its possible values, `required` informs Baker it should refuse configurations in which that field
 is not defined.
+
+## Write tests
+
+To test an input component we suggest two main paths:
+
+* test the component in isolation, calling the `Run` function
+* test the input at high-level, running a complete Baker topology
+
+Regardless of the chosen path, two additional unit tests are always suggested:
+
+* test the `New()` (constructor-like) function, to check that the function is able to correctly
+instantiate the component with valid configurations and intercept wrong ones
+* create small and isolated functions where possible and unit-test them
+
+### Test calling Run()
+
+In case we want to test the component calling the `Run` function, this is an example of test where,
+after some initialization, the `input.Run` function is called and the produced `Data` is checked
+in a goroutine:
+
+```go
+func TestMyInput(t *testing.T) {
+    ch := make(chan *baker.Data)
+    defer close(ch)
+
+    go func() {
+        for data := range ch {
+            // test `data`, that comes from the component,
+            // like checking its content, parse the records, metadata, etc
+            if something_is_wrong(data) {
+                t.Fatalf("error!")
+            }
+        }
+    }()
+
+    // configure the input
+    cfg := ...
+
+    input, err := NewMyInput(cfg) // use the contructor-like New function
+    // check err
+
+    // if the input requires other things, initialize/create them
+
+    // run the input
+    if err := input.Run(ch); err != nil {
+        t.Fatal(err)
+    }
+}
+```
+
+The `List` input [has an example](https://github.com/AdRoll/baker/blob/main/input/list_test.go)
+of this testing strategy.
+
+### Test the component running a topology
+
+If we want to test the component creating and running a topology, we need to create one starting
+from the TOML configuration and then calling `NewConfigFromToml`, `NewTopologyFromConfig` and `Run`.
+
+The `Base`, `Recorder` and `RawRecorder` outputs included in the
+[`outputtest` package](https://github.com/AdRoll/baker/tree/main/output/outputtest) can be
+helpful here to obtain the output and check it:
+
+```go
+func TestMyInput(t *testing.T) {
+    toml := `
+    [input]
+    name = "MyInput"
+
+    [output]
+    name="RawRecorder"
+    procs=1
+    `
+    // Add the input to be tested and a testing output
+    c := baker.Components{
+        Inputs:  []baker.InputDesc{MyInputDesc},
+        Outputs: []baker.OutputDesc{outputtest.RawRecorderDesc},
+    }
+
+    // Create and start the topology
+    cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), c)
+    if err != nil {
+        t.Error(err)
+    }
+    topology, err := baker.NewTopologyFromConfig(cfg)
+    if err != nil {
+        t.Error(err)
+    }
+    topology.Start()
+    
+    // In this goroutine we should provide some inputs to the component
+    // The format and how to send them to the component, depends on
+    // the component itself
+    go func() {
+        defer topology.Stop()
+        sendDataToMyInput() // fake function, you need to implement your logic here
+    }
+
+    topology.Wait() // wait for Baker to quit after `topology.Stop()`
+    if err := topology.Error(); err != nil {
+        t.Fatalf("topology error: %v", err)
+    }
+
+    // retrieve the output and test the records
+    out := topology.Output[0].(*outputtest.Recorder)
+    if len(out.Records) != want {
+        t.Errorf("want %d log lines, got %d", want, len(out.Records))
+    }
+
+    // more testing on out.Records...
+}
+```
+
+The `TCP` input [includes an example](https://github.com/AdRoll/baker/blob/main/input/tcp_test.go)
+of this testing strategy.
