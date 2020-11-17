@@ -12,7 +12,7 @@ import (
 )
 
 const clauseFilterHelpMsg = `
-This filter lets you set a boolean expression (in s-expression format) that will be matched against all records and dropped if they don't match the expression.
+Discard records which do not match a clause given as a boolean S-expression. Check the filter documentation for some examples.
 
 ### ClauseFilter boolean expression format
 
