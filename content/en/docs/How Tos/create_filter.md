@@ -217,8 +217,7 @@ When writing tests for a new filter, particular attention should be given to:
 * the New (constructor-like) function 
 * the `Process()` function
 
-Testing the constructor-like function means testing that it is able to intercept wrong
-configurations, i.e. it doesn't return an error.
+Testing the `New` function means testing that we're able to intercept wrong configurations.
 
 An example, using the `NewMyFilter` function, is:
 
