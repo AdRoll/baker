@@ -236,7 +236,7 @@ if filter, err := NewMyFilter(cfg); err != nil {
 > Obviously, if the filter requires some configuration values (not like this empty demo filter),
 the test should also verify all possible values and corner cases.
 
-With the `filter` instance, is then possible to test the `Process()` function, providing a
+With the `filter` instance, it's then possible to test the `Process()` function, providing a
 manually crafted Record and checking whether the function calls the `next()` function:
 
 ```go
