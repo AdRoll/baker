@@ -212,7 +212,7 @@ func (f *MyFilter) Process(r Record, next func(Record)) {
 
 ## Write tests
 
-When writing a new filter, there are 2 main things that should be tested, at least:
+When writing tests for a new filter, particular attention should be given to:
 
 * the constructor-like function
 * the `Process()` function
