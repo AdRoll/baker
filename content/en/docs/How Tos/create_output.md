@@ -119,3 +119,60 @@ only be uploaded before Baker exits) or can upload files periodically, like the
 [FileWriter](https://github.com/AdRoll/baker/blob/main/output/filewriter.go) component does
 when it rotates (i.e. it stops writing to a file, send its path to the upload, and then creates
 a new file).
+
+## Write tests
+
+Tests for output components often require either mocking external resources/dependencies (think
+to an output writing to DynamoDB) or creating temporary files. How to test the components is
+strictly tied to the component implementation.
+
+For these reasons there isn't a single golden rule for testing outputs, but some common rules
+can be identified:
+
+* test the `New()` (constructor-like) function, to check that the function is able to correctly
+instantiate the component with valid configurations and intercept wrong ones
+* create small and isolated functions where possible and unit-test them
+* test the whole component at integration level
+
+The last point is where we can go a bit deeper. A possible strategy is to create a new output
+instance using the `New` function, passing it the **in** (from Baker to the component) and **out** 
+(from the component to the upload) channels and use those channels to interact with the output.
+
+```go
+func TestMyOutput(t *testing.T) {
+    cfg := ... // define cfg with component configuration
+    output := NewMyOutput(cfg) // use the contructor-like New function
+    
+    outch := make(chan baker.OutputRecord)
+    upch := make(chan string)
+
+    wg := &sync.WaitGroup{}
+    wg.Add(1)
+    go func() {
+        outch <- baker.OutputRecord{Fields: []string{"a", "b", "c"}, Record: []byte("rawrecord")}
+        // add more records to outch
+        close(outch)
+        for upchpath := range upch {
+            // check upchpath and set some vars/objs
+            if upchpath ... { // check the path or open the file or whatever...
+                checkVar = "something"
+            }
+        }
+        wg.Done()
+    }()
+    // run the output, consuming the outch and sending results to upch
+    output.Run(outch, upch)
+    close(upch)
+
+    wg.Wait() // wait for the job to end
+    
+    // now we can check the vars/objs created in the goroutine
+    if checkVar != wantVar {
+        t.Fatalf("error!")
+    }
+}
+```
+
+The `SQLite` component
+[has a good example](https://github.com/AdRoll/baker/blob/main/output/sqlite_test.go) of this
+strategy.
