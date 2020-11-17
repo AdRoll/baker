@@ -70,15 +70,15 @@ configuration page.
 This field holds a dictionary associating field indices to hash functions. When sharding
 is enabled, these hash functions are used to determine which shard a record is sent to.
 
-### Validate
+## Validate
 
 `Validate` is the function used to validate a record. It is called for each processed record
-unless `null` or when `[general.dont_validate_fields]` configuration is set to `true`.
+unless `nil` or when `[general.dont_validate_fields]` configuration is set to `true`.
 
 Regardless of the TOML configuration, the function is passed to all components that can use
 it at their will.
 
-### CreateRecord
+## CreateRecord
 
 `CreateRecord` is the function that creates a new record. If not set, a default function is
 used that creates a `LogLine` with the **comma** field separator.
@@ -88,7 +88,7 @@ the filter chain.
 
 The function is also passed to components that can use it to create new records while processing.
 
-### FieldByName
+## FieldByName
 
 `FieldByName` returns a field index from its name.
 
@@ -97,7 +97,7 @@ index of a field they need for filtering or processing, but it is also used inte
 Baker when sending fields to the output (when at least one field is selected in the output
 TOML configuration).
 
-### FieldName
+## FieldName
 
 `FieldName` returns a field name from its index.
 
