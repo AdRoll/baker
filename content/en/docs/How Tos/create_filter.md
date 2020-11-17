@@ -214,7 +214,7 @@ func (f *MyFilter) Process(r Record, next func(Record)) {
 
 When writing tests for a new filter, particular attention should be given to:
 
-* the New (constructor-like) function 
+* the `New()` (constructor-like) function 
 * the `Process()` function
 
 Testing the `New` function means testing that we're able to intercept wrong configurations.
