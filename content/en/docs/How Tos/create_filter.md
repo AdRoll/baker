@@ -209,3 +209,43 @@ func (f *MyFilter) Process(r Record, next func(Record)) {
     next(newRecord)
 }
 ```
+
+## Write tests
+
+When writing tests for a new filter, particular attention should be given to:
+
+* the `New()` (constructor-like) function 
+* the `Process()` function
+
+Testing the `New` function means testing that we're able to intercept wrong configurations.
+
+An example, using the `NewMyFilter` function, is:
+
+```go
+cfg := baker.FilterParams{
+    ComponentParams: baker.ComponentParams{
+        DecodedConfig: &MyFilterConfig{},
+    },
+}
+
+if filter, err := NewMyFilter(cfg); err != nil {
+    t.Errorf("unexpected error: %v", err)
+}
+```
+
+> Obviously, if the filter requires some configuration values (not like this empty demo filter),
+the test should also verify all possible values and corner cases.
+
+With the `filter` instance, it's then possible to test the `Process()` function, providing a
+manually crafted Record and checking whether the function calls the `next()` function:
+
+```go
+ll := &baker.LogLine{FieldSeparator: ','}
+// Set values to the record, triggering all the filter logic
+// ll.Set(<someIndex>, []byte("somevalue"))
+kept := false
+filter.Process(ll, func(baker.Record) {
+    kept = true
+})
+// check `kept` depending on what is expected for the set values
+```
