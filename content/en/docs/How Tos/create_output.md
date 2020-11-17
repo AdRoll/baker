@@ -148,20 +148,20 @@ func TestMyOutput(t *testing.T) {
 
     wg := &sync.WaitGroup{}
     wg.Add(1)
-	go func() {
+    go func() {
         outch <- baker.OutputRecord{Fields: []string{"a", "b", "c"}, Record: []byte("rawrecord")}
         // add more records to outch
-		close(outch)
-		for upchpath := range upch {
+        close(outch)
+        for upchpath := range upch {
             // check upchpath and set some vars/objs
             if upchpath ... { // check the path or open the file or whatever...
                 checkVar = "something"
             }
-		}
-		wg.Done()
+        }
+        wg.Done()
     }()
     // run the output, consuming the outch and sending results to upch
-	output.Run(outch, upch)
+    output.Run(outch, upch)
     close(upch)
 
     wg.Wait() // wait for the job to end
