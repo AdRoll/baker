@@ -12,13 +12,14 @@ description: >
 A pipeline (a.k.a. Topology) is the configured set of operations that Baker performs during
 its execution.
 
-It is defined by:
+It is configured in a TOML file and is defined by:
 
-* One input component, defining where to fetch records from
-* Zero or more filters, applied sequentially, which together define the **filter chain**. A filter is
-a function that processes record (modifying fields, discarding or creating records).
-* One output component, defining where to send the filtered records to (and which fields)
-* One optional upload component, defining where to send files produced by the output component
+* One input component, determining where to fetch records from
+* Zero or more filters, applied sequentially, which together compose the **filter chain**. A filter is
+a function that processes record, it can modify fields, discard records or create additional ones
+* One output component, specifying where to send the records that made it so far
+* One optional upload component, that can be added if the output creates files that need to be uploaded to
+  a remote destination
 
 Notice that there are two main usage scenarios for Baker, batch or daemon processing, that depend on
 the input component behavior:
