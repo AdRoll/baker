@@ -79,14 +79,16 @@ wisely and documented extensively.
 
 ## Write tests
 
-Since by definition an upload component involves external resources you either have to mock that resource 
-or use it directly. See an example of how to mock an external resource in the [insert s3 mock test link]. 
-However writing a test that uses the actual external resource (a.k.a end-to-end testing) is out of the scope of this how-to.
-and libraries for most of its job.
+Since, by definition, an upload component involves external resources, you either have to mock those
+resources or use them directly.  
+See an example of how to mock an external resource in the
+[S3 upload](https://github.com/AdRoll/baker/blob/main/upload/s3_test.go). 
 
-We thereby provide some suggestions to test those components:
+However writing a test that uses the actual external resource (a.k.a end-to-end testing) is out of
+the scope of this how-to.  
+We thereby provide some general suggestions to test the uploads:
 
-* do not test external libraries when possible, they should be already tested in their packages
+* do not unit-test external libraries when possible, they should be already tested in their packages
 * test the `New()` (constructor-like) function, to check that it is able to correctly
 instantiate the component with valid configurations and intercept wrong ones
 * create small and isolated functions where possible and unit-test them
