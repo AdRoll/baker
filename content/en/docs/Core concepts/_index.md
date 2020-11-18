@@ -73,9 +73,10 @@ During execution, Baker collects different kind of performance data points:
  * Component-specific metrics: files written per second, discarded records (by a filter), errors, etc.
  * Go runtime metrics: mallocs, frees, garbage collections and so on.
 
-If enabled, Baker collects all these metrics and forwards them to a metrics client.
+If enabled, Baker collects all these metrics and publishes them to a monitoring solution, such as Datadog
+or Prometheus.
 
-Metrics export is set up in Baker topology TOML files, [see how to configure it](/docs/how-tos/metrics/).
+Metrics export is configured in Baker topology TOML files, [see how to configure it](/docs/how-tos/metrics/).
 
 Baker also prints general metrics once per second on standard output, in single-line format. Read more 
 about it [here](/docs/how-tos/read_stats/).
