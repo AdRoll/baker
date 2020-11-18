@@ -106,7 +106,7 @@ To test an input component we suggest two main paths:
 Regardless of the chosen path, two additional unit tests are always suggested:
 
 * test the `New()` (constructor-like) function, to check that the function is able to correctly
-instantiate the component with valid configurations and intercept wrong ones
+instantiate the component with valid configurations and intercept incorrect ones (in case that's possible)
 * create small and isolated functions where possible and unit-test them
 
 ### Test calling Run()
