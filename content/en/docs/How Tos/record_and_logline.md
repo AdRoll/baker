@@ -18,7 +18,8 @@ If `LogLine` doesn't fit your needs, you can easily implement the Record interfa
 
 ## LogLine
 
-A [`LogLine`](https://pkg.go.dev/github.com/AdRoll/baker#LogLine) is a Record implementation which is highly optimized for fast parsing and serializing of CSV records.  
+A [`LogLine`](https://pkg.go.dev/github.com/AdRoll/baker#LogLine) is a Record implementation 
+which is highly optimized for fast parsing and serializing of CSV records.  
 
 It supports any single-byte field separator and doesn't handle quotes (neither single nor double).  
 
@@ -32,8 +33,8 @@ neither handled during Parsing (i.e `LogLine.Parse`) nor serialization (`LogLine
 
 If the hardcoded values for
 [`LogLineNumFields` and `NumFieldsBaker`](https://pkg.go.dev/github.com/AdRoll/baker#pkg-constants)
-do not suit your needs, it's advised that you copy `logline.go` in your project and modify the
-constants declared at the top of the file.
+do not suit your needs, it's advised that you copy [`logline.go`](https://github.com/AdRoll/baker/blob/main/logline.go)
+in your project and modify the constants declared at the top of the file.
 
 Your specialized `LogLine` will still implement `baker.Record` and thus can be used in lieu
 of `baker.LogLine`.
