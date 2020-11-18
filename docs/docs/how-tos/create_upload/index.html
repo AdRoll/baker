@@ -34,7 +34,7 @@ To create an upload component and make it available to Baker, one must:
  Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  The Upload interface type Upload interface { Run(upch &lt;-chan string) error Stop() Stats() UploadStats } The Upload interface must be implemented when creating a new Upload component.">
 <meta itemprop="datePublished" content="2020-11-11T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-11-11T00:00:00+00:00" />
-<meta itemprop="wordCount" content="379">
+<meta itemprop="wordCount" content="526">
 
 
 
@@ -578,6 +578,7 @@ To create an upload component and make it available to Baker, one must:
       </ul>
     </li>
     <li><a href="#the-files-to-upload">The files to upload</a></li>
+    <li><a href="#write-tests">Write tests</a></li>
   </ul>
 </nav>
 
@@ -677,6 +678,25 @@ is not defined.</p>
 <p>The only Upload component implemented at the moment, S3, removes those files once uploaded, but there isn&rsquo;t a
 golden rule for what to do with them. This is up to the upload component and should be chosen
 wisely and documented extensively.</p>
+<h2 id="write-tests">Write tests</h2>
+<p>Since, by definition, an upload component involves external resources, you either have to mock those
+resources or use them directly.<br>
+See an example of how to mock an external resource in the
+<a href="https://github.com/AdRoll/baker/blob/main/upload/s3_test.go">S3 upload</a>.</p>
+<p>However writing a test that uses the actual external resource (a.k.a end-to-end testing) is out of
+the scope of this how-to.<br>
+We thereby provide some general suggestions to test the uploads:</p>
+<ul>
+<li>do not unit-test external libraries when possible, they should be already tested in their packages</li>
+<li>test the <code>New()</code> (constructor-like) function, to check that it is able to correctly
+instantiate the component with valid configurations and intercept wrong ones</li>
+<li>create small and isolated functions where possible and unit-test them</li>
+<li>test the whole component at integration level, either mocking the external resources or using a
+replica testing environment</li>
+</ul>
+<p>The <code>S3</code> upload component has good examples for both
+<a href="https://github.com/AdRoll/baker/blob/main/upload/s3_test.go">unit tests</a> and
+<a href="https://github.com/AdRoll/baker/blob/main/upload/s3_integration_test.go">integration tests</a>.</p>
 
 	
 	

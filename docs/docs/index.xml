@@ -1710,6 +1710,105 @@ configuration parameters that the user can set in the TOML topology file.&lt;/p&
 &lt;p&gt;All these parameters appear in the generated help. &lt;code&gt;help&lt;/code&gt; should describe the parameter role and/or
 its possible values, &lt;code&gt;required&lt;/code&gt; informs Baker it should refuse configurations in which that field
 is not defined.&lt;/p&gt;
+&lt;h2 id=&#34;write-tests&#34;&gt;Write tests&lt;/h2&gt;
+&lt;p&gt;To test an input component we suggest two main paths:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;test the component in isolation, calling the &lt;code&gt;Run&lt;/code&gt; function&lt;/li&gt;
+&lt;li&gt;write an higher-level test by running a complete Baker topology&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Regardless of the chosen path, two additional unit tests are always suggested:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;test the &lt;code&gt;New()&lt;/code&gt; (constructor-like) function, to check that the function is able to correctly
+instantiate the component with valid configurations and intercept incorrect ones (in case that&amp;rsquo;s possible)&lt;/li&gt;
+&lt;li&gt;create small and isolated functions where possible and unit-test them&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;test-calling-run&#34;&gt;Test calling Run()&lt;/h3&gt;
+&lt;p&gt;In case we want to test the component calling the &lt;code&gt;Run&lt;/code&gt; function, this is an example of test where,
+after some initialization, the &lt;code&gt;input.Run&lt;/code&gt; function is called and the produced &lt;code&gt;Data&lt;/code&gt; is checked
+in a goroutine:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;TestMyInput&lt;/span&gt;(t &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;testing.T) {
+    ch &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;make&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;chan&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;baker.Data)
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;defer&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;close&lt;/span&gt;(ch)
+
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// start a goroutine that acts as Baker, consuming the baker.Data produced by the input
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;go&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() {
+        &lt;span style=&#34;color:#ff79c6&#34;&gt;for&lt;/span&gt; data &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;range&lt;/span&gt; ch {
+            &lt;span style=&#34;color:#6272a4&#34;&gt;// test `data`, that comes from the component,
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;            &lt;span style=&#34;color:#6272a4&#34;&gt;// like checking its content, parse the records, metadata, etc
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;            &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;something_is_wrong&lt;/span&gt;(data) {
+                t.&lt;span style=&#34;color:#50fa7b&#34;&gt;Fatalf&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;error!&amp;#34;&lt;/span&gt;)
+            }
+        }
+    }()
+
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// Configure the input.
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    cfg &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;...&lt;/span&gt;
+
+    input, err &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;NewMyInput&lt;/span&gt;(cfg) &lt;span style=&#34;color:#6272a4&#34;&gt;// use the contructor-like New function
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#6272a4&#34;&gt;// check err
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// run the input
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; input.&lt;span style=&#34;color:#50fa7b&#34;&gt;Run&lt;/span&gt;(ch); err &lt;span style=&#34;color:#ff79c6&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;nil&lt;/span&gt; {
+        t.&lt;span style=&#34;color:#50fa7b&#34;&gt;Fatal&lt;/span&gt;(err)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;List&lt;/code&gt; input &lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/input/list_test.go#77&#34;&gt;has an example&lt;/a&gt;
+of this testing strategy (look for the &lt;code&gt;TestListBasic&lt;/code&gt; test).&lt;/p&gt;
+&lt;h3 id=&#34;test-the-component-running-a-topology&#34;&gt;Test the component running a topology&lt;/h3&gt;
+&lt;p&gt;If we want to test the component creating and running a topology, we need to create one starting
+from the TOML configuration and then calling &lt;code&gt;NewConfigFromToml&lt;/code&gt;, &lt;code&gt;NewTopologyFromConfig&lt;/code&gt; and &lt;code&gt;Run&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;Base&lt;/code&gt;, &lt;code&gt;Recorder&lt;/code&gt; and &lt;code&gt;RawRecorder&lt;/code&gt; outputs included in the
+&lt;a href=&#34;https://github.com/AdRoll/baker/tree/main/output/outputtest&#34;&gt;&lt;code&gt;outputtest&lt;/code&gt; package&lt;/a&gt; can be
+helpful here to obtain the output and check it:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;TestMyInput&lt;/span&gt;(t &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;testing.T) {
+    toml &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;`
+&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;    [input]
+&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;    name = &amp;#34;MyInput&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;    [output]
+&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;    name=&amp;#34;RawRecorder&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;    procs=1
+&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;    `&lt;/span&gt;
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// Add the input to be tested and a testing output
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    c &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
+        Inputs:  []baker.InputDesc{MyInputDesc},
+        Outputs: []baker.OutputDesc{outputtest.RawRecorderDesc},
+    }
+
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// Create and start the topology
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    cfg, err &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.&lt;span style=&#34;color:#50fa7b&#34;&gt;NewConfigFromToml&lt;/span&gt;(strings.&lt;span style=&#34;color:#50fa7b&#34;&gt;NewReader&lt;/span&gt;(toml), c)
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#ff79c6&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;nil&lt;/span&gt; {
+        t.&lt;span style=&#34;color:#50fa7b&#34;&gt;Error&lt;/span&gt;(err)
+    }
+    topology, err &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.&lt;span style=&#34;color:#50fa7b&#34;&gt;NewTopologyFromConfig&lt;/span&gt;(cfg)
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#ff79c6&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;nil&lt;/span&gt; {
+        t.&lt;span style=&#34;color:#50fa7b&#34;&gt;Error&lt;/span&gt;(err)
+    }
+    topology.&lt;span style=&#34;color:#50fa7b&#34;&gt;Start&lt;/span&gt;()
+    
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// In this goroutine we should provide some inputs to the component
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#6272a4&#34;&gt;// The format and how to send them to the component, depends on
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#6272a4&#34;&gt;// the component itself
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;go&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() {
+        &lt;span style=&#34;color:#ff79c6&#34;&gt;defer&lt;/span&gt; topology.&lt;span style=&#34;color:#50fa7b&#34;&gt;Stop&lt;/span&gt;()
+        &lt;span style=&#34;color:#50fa7b&#34;&gt;sendDataToMyInput&lt;/span&gt;() &lt;span style=&#34;color:#6272a4&#34;&gt;// fake function, you need to implement your logic here
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    }
+
+    topology.&lt;span style=&#34;color:#50fa7b&#34;&gt;Wait&lt;/span&gt;() &lt;span style=&#34;color:#6272a4&#34;&gt;// wait for Baker to quit after `topology.Stop()`
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; topology.&lt;span style=&#34;color:#50fa7b&#34;&gt;Error&lt;/span&gt;(); err &lt;span style=&#34;color:#ff79c6&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;nil&lt;/span&gt; {
+        t.&lt;span style=&#34;color:#50fa7b&#34;&gt;Fatalf&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;topology error: %v&amp;#34;&lt;/span&gt;, err)
+    }
+
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// retrieve the output and test the records
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    out &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; topology.Output[&lt;span style=&#34;color:#bd93f9&#34;&gt;0&lt;/span&gt;].(&lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;outputtest.Recorder)
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;len&lt;/span&gt;(out.Records) &lt;span style=&#34;color:#ff79c6&#34;&gt;!=&lt;/span&gt; want {
+        t.&lt;span style=&#34;color:#50fa7b&#34;&gt;Errorf&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;want %d log lines, got %d&amp;#34;&lt;/span&gt;, want, &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;len&lt;/span&gt;(out.Records))
+    }
+
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// more testing on out.Records...
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;TCP&lt;/code&gt; input &lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/input/tcp_test.go&#34;&gt;includes an example&lt;/a&gt;
+of this testing strategy.&lt;/p&gt;
 
       </description>
     </item>
@@ -2118,6 +2217,25 @@ is not defined.&lt;/p&gt;
 &lt;p&gt;The only Upload component implemented at the moment, S3, removes those files once uploaded, but there isn&amp;rsquo;t a
 golden rule for what to do with them. This is up to the upload component and should be chosen
 wisely and documented extensively.&lt;/p&gt;
+&lt;h2 id=&#34;write-tests&#34;&gt;Write tests&lt;/h2&gt;
+&lt;p&gt;Since, by definition, an upload component involves external resources, you either have to mock those
+resources or use them directly.&lt;br&gt;
+See an example of how to mock an external resource in the
+&lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/upload/s3_test.go&#34;&gt;S3 upload&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;However writing a test that uses the actual external resource (a.k.a end-to-end testing) is out of
+the scope of this how-to.&lt;br&gt;
+We thereby provide some general suggestions to test the uploads:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;do not unit-test external libraries when possible, they should be already tested in their packages&lt;/li&gt;
+&lt;li&gt;test the &lt;code&gt;New()&lt;/code&gt; (constructor-like) function, to check that it is able to correctly
+instantiate the component with valid configurations and intercept wrong ones&lt;/li&gt;
+&lt;li&gt;create small and isolated functions where possible and unit-test them&lt;/li&gt;
+&lt;li&gt;test the whole component at integration level, either mocking the external resources or using a
+replica testing environment&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The &lt;code&gt;S3&lt;/code&gt; upload component has good examples for both
+&lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/upload/s3_test.go&#34;&gt;unit tests&lt;/a&gt; and
+&lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/upload/s3_integration_test.go&#34;&gt;integration tests&lt;/a&gt;.&lt;/p&gt;
 
       </description>
     </item>
