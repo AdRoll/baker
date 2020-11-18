@@ -130,7 +130,7 @@ func TestMyInput(t *testing.T) {
         }
     }()
 
-    // configure the input
+    // Configure the input.
     cfg := ...
 
     input, err := NewMyInput(cfg) // use the contructor-like New function
