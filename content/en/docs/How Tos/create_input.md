@@ -120,6 +120,7 @@ func TestMyInput(t *testing.T) {
     ch := make(chan *baker.Data)
     defer close(ch)
 
+    // start a goroutine that acts as Baker, consuming the baker.Data produced by the input
     go func() {
         for data := range ch {
             // test `data`, that comes from the component,
@@ -136,8 +137,6 @@ func TestMyInput(t *testing.T) {
     input, err := NewMyInput(cfg) // use the contructor-like New function
     // check err
 
-    // if the input requires other things, initialize/create them
-
     // run the input
     if err := input.Run(ch); err != nil {
         t.Fatal(err)
@@ -145,8 +144,8 @@ func TestMyInput(t *testing.T) {
 }
 ```
 
-The `List` input [has an example](https://github.com/AdRoll/baker/blob/main/input/list_test.go)
-of this testing strategy.
+The `List` input [has an example](https://github.com/AdRoll/baker/blob/main/input/list_test.go#77)
+of this testing strategy (look for the `TestListBasic` test).
 
 ### Test the component running a topology
 
