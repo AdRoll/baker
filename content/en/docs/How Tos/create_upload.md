@@ -12,6 +12,8 @@ To create an upload component and make it available to Baker, one must:
 * Fill an [`UploadDesc`](https://pkg.go.dev/github.com/AdRoll/baker#UploadDesc) structure and
 register it within Baker via [`Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components).
 
+At the moment Baker only proposes a single *Upload* component, [S3](https://github.com/AdRoll/baker/blob/main/upload/s3.go).
+
 ## The Upload interface
 
 ```go
@@ -28,8 +30,6 @@ creating a new Upload component.
 The `Run` function implements the component logic and receives a channel where the output sends what
 it produces (most probably file paths).
 
-Currently, only the [S3](https://github.com/AdRoll/baker/blob/main/upload/s3.go) component exists
-and it expects to receive in the channel the path to the files produced by an output.
 
 ## UploadDesc
 
