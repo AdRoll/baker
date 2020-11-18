@@ -38,7 +38,7 @@ To create a filter and make it available to Baker, one must:
  Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface The Filter interface determines the functions that a filter must implement.">
 <meta itemprop="datePublished" content="2020-11-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-11-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="801">
+<meta itemprop="wordCount" content="957">
 
 
 
@@ -489,6 +489,12 @@ To create a filter and make it available to Baker, one must:
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosread_stats" href="/docs/how-tos/read_stats/">Read statistics</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
       
       
@@ -496,6 +502,35 @@ To create a filter and make it available to Baker, one must:
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosconcurrency" href="/docs/how-tos/concurrency/">Tuning concurrency</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/docs/tutorials/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Tutorials</a>
+  </li>
+  <ul>
+    <li class="collapse " id="docstutorials">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docstutorialsbasic" href="/docs/tutorials/basic/">Basic: build a simple pipeline</a>
       
       
     </li>
@@ -556,6 +591,7 @@ To create a filter and make it available to Baker, one must:
         <li><a href="#createrecord">CreateRecord()</a></li>
       </ul>
     </li>
+    <li><a href="#write-tests">Write tests</a></li>
   </ul>
 </nav>
 
@@ -759,7 +795,38 @@ then store it to the filter object in the constructor as shown in this example:<
     <span style="color:#6272a4">//... do something with the record
 </span><span style="color:#6272a4"></span>    <span style="color:#50fa7b">next</span>(newRecord)
 }
-</code></pre></div>
+</code></pre></div><h2 id="write-tests">Write tests</h2>
+<p>When writing tests for a new filter, particular attention should be given to:</p>
+<ul>
+<li>the <code>New()</code> (constructor-like) function</li>
+<li>the <code>Process()</code> function</li>
+</ul>
+<p>Testing the <code>New</code> function means testing that we&rsquo;re able to intercept wrong configurations.</p>
+<p>An example, using the <code>NewMyFilter</code> function, is:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">cfg <span style="color:#ff79c6">:=</span> baker.FilterParams{
+    ComponentParams: baker.ComponentParams{
+        DecodedConfig: <span style="color:#ff79c6">&amp;</span>MyFilterConfig{},
+    },
+}
+
+<span style="color:#ff79c6">if</span> filter, err <span style="color:#ff79c6">:=</span> <span style="color:#50fa7b">NewMyFilter</span>(cfg); err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
+    t.<span style="color:#50fa7b">Errorf</span>(<span style="color:#f1fa8c">&#34;unexpected error: %v&#34;</span>, err)
+}
+</code></pre></div><blockquote>
+<p>Obviously, if the filter requires some configuration values (not like this empty demo filter),
+the test should also verify all possible values and corner cases.</p>
+</blockquote>
+<p>With the <code>filter</code> instance, it&rsquo;s then possible to test the <code>Process()</code> function, providing a
+manually crafted Record and checking whether the function calls the <code>next()</code> function:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">ll <span style="color:#ff79c6">:=</span> <span style="color:#ff79c6">&amp;</span>baker.LogLine{FieldSeparator: <span style="color:#f1fa8c">&#39;,&#39;</span>}
+<span style="color:#6272a4">// Set values to the record, triggering all the filter logic
+</span><span style="color:#6272a4">// ll.Set(&lt;someIndex&gt;, []byte(&#34;somevalue&#34;))
+</span><span style="color:#6272a4"></span>kept <span style="color:#ff79c6">:=</span> <span style="color:#ff79c6">false</span>
+filter.<span style="color:#50fa7b">Process</span>(ll, <span style="color:#8be9fd;font-style:italic">func</span>(baker.Record) {
+    kept = <span style="color:#ff79c6">true</span>
+})
+<span style="color:#6272a4">// check `kept` depending on what is expected for the set values
+</span></code></pre></div>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">Last modified November 2, 2020

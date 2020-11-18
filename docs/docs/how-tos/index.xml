@@ -5,7 +5,7 @@
     <description>Recent content in How-Tos on Baker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 16 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/how-tos/index.xml" rel="self" type="application/rss+xml" />
     
@@ -356,24 +356,24 @@ configuration page.&lt;/p&gt;
 &lt;h2 id=&#34;shardingfuncs&#34;&gt;ShardingFuncs&lt;/h2&gt;
 &lt;p&gt;This field holds a dictionary associating field indices to hash functions. When sharding
 is enabled, these hash functions are used to determine which shard a record is sent to.&lt;/p&gt;
-&lt;h3 id=&#34;validate&#34;&gt;Validate&lt;/h3&gt;
+&lt;h2 id=&#34;validate&#34;&gt;Validate&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;Validate&lt;/code&gt; is the function used to validate a record. It is called for each processed record
-unless &lt;code&gt;null&lt;/code&gt; or when &lt;code&gt;[general.dont_validate_fields]&lt;/code&gt; configuration is set to &lt;code&gt;true&lt;/code&gt;.&lt;/p&gt;
+unless &lt;code&gt;nil&lt;/code&gt; or when &lt;code&gt;[general.dont_validate_fields]&lt;/code&gt; configuration is set to &lt;code&gt;true&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Regardless of the TOML configuration, the function is passed to all components that can use
 it at their will.&lt;/p&gt;
-&lt;h3 id=&#34;createrecord&#34;&gt;CreateRecord&lt;/h3&gt;
+&lt;h2 id=&#34;createrecord&#34;&gt;CreateRecord&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;CreateRecord&lt;/code&gt; is the function that creates a new record. If not set, a default function is
 used that creates a &lt;code&gt;LogLine&lt;/code&gt; with the &lt;strong&gt;comma&lt;/strong&gt; field separator.&lt;/p&gt;
 &lt;p&gt;The function is used internally by Baker to create new records every time a new byte buffer enters
 the filter chain.&lt;/p&gt;
 &lt;p&gt;The function is also passed to components that can use it to create new records while processing.&lt;/p&gt;
-&lt;h3 id=&#34;fieldbyname&#34;&gt;FieldByName&lt;/h3&gt;
+&lt;h2 id=&#34;fieldbyname&#34;&gt;FieldByName&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;FieldByName&lt;/code&gt; returns a field index from its name.&lt;/p&gt;
 &lt;p&gt;The function is mainly used by the components (that receive it during setup) to retrieve the
 index of a field they need for filtering or processing, but it is also used internally by
 Baker when sending fields to the output (when at least one field is selected in the output
 TOML configuration).&lt;/p&gt;
-&lt;h3 id=&#34;fieldname&#34;&gt;FieldName&lt;/h3&gt;
+&lt;h2 id=&#34;fieldname&#34;&gt;FieldName&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;FieldName&lt;/code&gt; returns a field name from its index.&lt;/p&gt;
 &lt;p&gt;The function is passed to components that can use it internally.&lt;/p&gt;
 
@@ -620,7 +620,38 @@ then store it to the filter object in the constructor as shown in this example:&
     &lt;span style=&#34;color:#6272a4&#34;&gt;//... do something with the record
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#50fa7b&#34;&gt;next&lt;/span&gt;(newRecord)
 }
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;write-tests&#34;&gt;Write tests&lt;/h2&gt;
+&lt;p&gt;When writing tests for a new filter, particular attention should be given to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the &lt;code&gt;New()&lt;/code&gt; (constructor-like) function&lt;/li&gt;
+&lt;li&gt;the &lt;code&gt;Process()&lt;/code&gt; function&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Testing the &lt;code&gt;New&lt;/code&gt; function means testing that we&amp;rsquo;re able to intercept wrong configurations.&lt;/p&gt;
+&lt;p&gt;An example, using the &lt;code&gt;NewMyFilter&lt;/code&gt; function, is:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;cfg &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.FilterParams{
+    ComponentParams: baker.ComponentParams{
+        DecodedConfig: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;MyFilterConfig{},
+    },
+}
+
+&lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; filter, err &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;NewMyFilter&lt;/span&gt;(cfg); err &lt;span style=&#34;color:#ff79c6&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;nil&lt;/span&gt; {
+    t.&lt;span style=&#34;color:#50fa7b&#34;&gt;Errorf&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;unexpected error: %v&amp;#34;&lt;/span&gt;, err)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;Obviously, if the filter requires some configuration values (not like this empty demo filter),
+the test should also verify all possible values and corner cases.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;With the &lt;code&gt;filter&lt;/code&gt; instance, it&amp;rsquo;s then possible to test the &lt;code&gt;Process()&lt;/code&gt; function, providing a
+manually crafted Record and checking whether the function calls the &lt;code&gt;next()&lt;/code&gt; function:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;ll &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;baker.LogLine{FieldSeparator: &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;,&amp;#39;&lt;/span&gt;}
+&lt;span style=&#34;color:#6272a4&#34;&gt;// Set values to the record, triggering all the filter logic
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;// ll.Set(&amp;lt;someIndex&amp;gt;, []byte(&amp;#34;somevalue&amp;#34;))
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;kept &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;false&lt;/span&gt;
+filter.&lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(ll, &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(baker.Record) {
+    kept = &lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;
+})
+&lt;span style=&#34;color:#6272a4&#34;&gt;// check `kept` depending on what is expected for the set values
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
       </description>
     </item>
     
@@ -717,6 +748,56 @@ only be uploaded before Baker exits) or can upload files periodically, like the
 &lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/output/filewriter.go&#34;&gt;FileWriter&lt;/a&gt; component does
 when it rotates (i.e. it stops writing to a file, send its path to the upload, and then creates
 a new file).&lt;/p&gt;
+&lt;h2 id=&#34;write-tests&#34;&gt;Write tests&lt;/h2&gt;
+&lt;p&gt;Tests for output components often require either mocking external resources/dependencies (think
+to an output writing to DynamoDB) or creating temporary files. How to test the components is
+strictly tied to the component implementation.&lt;/p&gt;
+&lt;p&gt;For these reasons there isn&amp;rsquo;t a single golden rule for testing outputs, but some common rules
+can be identified:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;test the &lt;code&gt;New()&lt;/code&gt; (constructor-like) function, to check that the function is able to correctly
+instantiate the component with valid configurations and intercept wrong ones&lt;/li&gt;
+&lt;li&gt;create small and isolated functions where possible and unit-test them&lt;/li&gt;
+&lt;li&gt;test the whole component at integration level&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The last point is where we can go a bit deeper. A possible strategy is to create a new output
+instance using the &lt;code&gt;New&lt;/code&gt; function, passing it the &lt;strong&gt;in&lt;/strong&gt; (from Baker to the component) and &lt;strong&gt;out&lt;/strong&gt;
+(from the component to the upload) channels and use those channels to interact with the output.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;TestMyOutput&lt;/span&gt;(t &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;testing.T) {
+    cfg &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;...&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// define cfg with component configuration
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    output &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;NewMyOutput&lt;/span&gt;(cfg) &lt;span style=&#34;color:#6272a4&#34;&gt;// use the contructor-like New function
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    
+    outch &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;make&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;chan&lt;/span&gt; baker.OutputRecord)
+    upch &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;make&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;chan&lt;/span&gt; &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;)
+
+    wg &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;sync.WaitGroup{}
+    wg.&lt;span style=&#34;color:#50fa7b&#34;&gt;Add&lt;/span&gt;(&lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;)
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;go&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() {
+        outch &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;-&lt;/span&gt; baker.OutputRecord{Fields: []&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;{&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;a&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;b&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;c&amp;#34;&lt;/span&gt;}, Record: []&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;byte&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;rawrecord&amp;#34;&lt;/span&gt;)}
+        &lt;span style=&#34;color:#6272a4&#34;&gt;// add more records to outch
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;close&lt;/span&gt;(outch)
+        &lt;span style=&#34;color:#ff79c6&#34;&gt;for&lt;/span&gt; upchpath &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;range&lt;/span&gt; upch {
+            &lt;span style=&#34;color:#6272a4&#34;&gt;// check upchpath and set some vars/objs
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;            &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; upchpath &lt;span style=&#34;color:#ff79c6&#34;&gt;...&lt;/span&gt; { &lt;span style=&#34;color:#6272a4&#34;&gt;// check the path or open the file or whatever...
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;                checkVar = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;something&amp;#34;&lt;/span&gt;
+            }
+        }
+        wg.&lt;span style=&#34;color:#50fa7b&#34;&gt;Done&lt;/span&gt;()
+    }()
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// run the output, consuming the outch and sending results to upch
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    output.&lt;span style=&#34;color:#50fa7b&#34;&gt;Run&lt;/span&gt;(outch, upch)
+    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;close&lt;/span&gt;(upch)
+
+    wg.&lt;span style=&#34;color:#50fa7b&#34;&gt;Wait&lt;/span&gt;() &lt;span style=&#34;color:#6272a4&#34;&gt;// wait for the job to end
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// now we can check the vars/objs created in the goroutine
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; checkVar &lt;span style=&#34;color:#ff79c6&#34;&gt;!=&lt;/span&gt; wantVar {
+        t.&lt;span style=&#34;color:#50fa7b&#34;&gt;Fatalf&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;error!&amp;#34;&lt;/span&gt;)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;SQLite&lt;/code&gt; component
+&lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/output/sqlite_test.go&#34;&gt;has a good example&lt;/a&gt; of this
+strategy.&lt;/p&gt;
 
       </description>
     </item>
@@ -869,6 +950,40 @@ a Baker pipeline to report metrics. During construction, components receive the
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;MetricsClient&lt;/code&gt;&lt;/a&gt; instance.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
 supports the most common type of metric types: &lt;em&gt;gauges&lt;/em&gt;, &lt;em&gt;counters&lt;/em&gt; and &lt;em&gt;histograms&lt;/em&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Read statistics</title>
+      <link>https://getbaker.io/docs/how-tos/read_stats/</link>
+      <pubDate>Mon, 16 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/how-tos/read_stats/</guid>
+      <description>
+        
+        
+        &lt;p&gt;While running, Baker dumps statistics on stdout every second. This is an example line:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;Stats: 1s[w:29425 r:29638] total[w:411300 r:454498 u:1831] speed[w:27420 r:30299] errors[p:0 i:0 f:0 o:0 u:0]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The first bracket shows the current read and write speed, i.e. the records that entered the
+pipeline (reads) and the records that successfully exited from it (writes).&lt;/p&gt;
+&lt;p&gt;The second bracket is the total since the process was launched (the &lt;code&gt;u:&lt;/code&gt; key is the number of
+files successfully uploaded).&lt;/p&gt;
+&lt;p&gt;The third bracket shows the average read/write speed (records per second).&lt;/p&gt;
+&lt;p&gt;The fourth bracket shows the number of records that were discarded at some point because of errors:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;p:&lt;/code&gt; records discarded for a parsing error&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;i:&lt;/code&gt; input records discarded. Most of the time, this refers to validation issues.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;f:&lt;/code&gt; records discarded by filters.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;o:&lt;/code&gt; is the number of records that were discarded because of an error in the output component *&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;u:&lt;/code&gt; is the number files whose upload has failed&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;* Notice that output components should be resilient to transient network failures,
+and they abort the process in case of permanent configuration errors, so the number
+here reflects records that could not be permanently written because eg. validation
+issues. Eg. think of an output that expects a column to be in a specific format, and
+rejects records where that field is not in the expected format. A real-world example
+is empty columns that are not accepted by DynamoDB.&lt;/p&gt;
 
       </description>
     </item>

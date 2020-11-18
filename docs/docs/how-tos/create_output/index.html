@@ -34,7 +34,7 @@ To create an output and make it available to Baker, one must:
  Implement the Output interface Fill-up an OutputDesc struct and register it within Baker via Components  The Output interface type Output interface { Run(in &lt;-chan OutputRecord, upch chan&lt;- string) error Stats() OutputStats CanShard() bool } The Output interface must be implemented when creating a new output component.">
 <meta itemprop="datePublished" content="2020-11-10T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-11-10T00:00:00+00:00" />
-<meta itemprop="wordCount" content="742">
+<meta itemprop="wordCount" content="1027">
 
 
 
@@ -483,6 +483,12 @@ To create an output and make it available to Baker, one must:
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosread_stats" href="/docs/how-tos/read_stats/">Read statistics</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
       
       
@@ -490,6 +496,35 @@ To create an output and make it available to Baker, one must:
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosconcurrency" href="/docs/how-tos/concurrency/">Tuning concurrency</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/docs/tutorials/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Tutorials</a>
+  </li>
+  <ul>
+    <li class="collapse " id="docstutorials">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docstutorialsbasic" href="/docs/tutorials/basic/">Basic: build a simple pipeline</a>
       
       
     </li>
@@ -544,6 +579,7 @@ To create an output and make it available to Baker, one must:
     </li>
     <li><a href="#outputrecord">OutputRecord</a></li>
     <li><a href="#prepare-data-for-uploading">Prepare data for uploading</a></li>
+    <li><a href="#write-tests">Write tests</a></li>
   </ul>
 </nav>
 
@@ -677,6 +713,56 @@ only be uploaded before Baker exits) or can upload files periodically, like the
 <a href="https://github.com/AdRoll/baker/blob/main/output/filewriter.go">FileWriter</a> component does
 when it rotates (i.e. it stops writing to a file, send its path to the upload, and then creates
 a new file).</p>
+<h2 id="write-tests">Write tests</h2>
+<p>Tests for output components often require either mocking external resources/dependencies (think
+to an output writing to DynamoDB) or creating temporary files. How to test the components is
+strictly tied to the component implementation.</p>
+<p>For these reasons there isn&rsquo;t a single golden rule for testing outputs, but some common rules
+can be identified:</p>
+<ul>
+<li>test the <code>New()</code> (constructor-like) function, to check that the function is able to correctly
+instantiate the component with valid configurations and intercept wrong ones</li>
+<li>create small and isolated functions where possible and unit-test them</li>
+<li>test the whole component at integration level</li>
+</ul>
+<p>The last point is where we can go a bit deeper. A possible strategy is to create a new output
+instance using the <code>New</code> function, passing it the <strong>in</strong> (from Baker to the component) and <strong>out</strong>
+(from the component to the upload) channels and use those channels to interact with the output.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">TestMyOutput</span>(t <span style="color:#ff79c6">*</span>testing.T) {
+    cfg <span style="color:#ff79c6">:=</span> <span style="color:#ff79c6">...</span> <span style="color:#6272a4">// define cfg with component configuration
+</span><span style="color:#6272a4"></span>    output <span style="color:#ff79c6">:=</span> <span style="color:#50fa7b">NewMyOutput</span>(cfg) <span style="color:#6272a4">// use the contructor-like New function
+</span><span style="color:#6272a4"></span>    
+    outch <span style="color:#ff79c6">:=</span> <span style="color:#8be9fd;font-style:italic">make</span>(<span style="color:#8be9fd;font-style:italic">chan</span> baker.OutputRecord)
+    upch <span style="color:#ff79c6">:=</span> <span style="color:#8be9fd;font-style:italic">make</span>(<span style="color:#8be9fd;font-style:italic">chan</span> <span style="color:#8be9fd">string</span>)
+
+    wg <span style="color:#ff79c6">:=</span> <span style="color:#ff79c6">&amp;</span>sync.WaitGroup{}
+    wg.<span style="color:#50fa7b">Add</span>(<span style="color:#bd93f9">1</span>)
+    <span style="color:#ff79c6">go</span> <span style="color:#8be9fd;font-style:italic">func</span>() {
+        outch <span style="color:#ff79c6">&lt;-</span> baker.OutputRecord{Fields: []<span style="color:#8be9fd">string</span>{<span style="color:#f1fa8c">&#34;a&#34;</span>, <span style="color:#f1fa8c">&#34;b&#34;</span>, <span style="color:#f1fa8c">&#34;c&#34;</span>}, Record: []<span style="color:#8be9fd;font-style:italic">byte</span>(<span style="color:#f1fa8c">&#34;rawrecord&#34;</span>)}
+        <span style="color:#6272a4">// add more records to outch
+</span><span style="color:#6272a4"></span>        <span style="color:#8be9fd;font-style:italic">close</span>(outch)
+        <span style="color:#ff79c6">for</span> upchpath <span style="color:#ff79c6">:=</span> <span style="color:#ff79c6">range</span> upch {
+            <span style="color:#6272a4">// check upchpath and set some vars/objs
+</span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">if</span> upchpath <span style="color:#ff79c6">...</span> { <span style="color:#6272a4">// check the path or open the file or whatever...
+</span><span style="color:#6272a4"></span>                checkVar = <span style="color:#f1fa8c">&#34;something&#34;</span>
+            }
+        }
+        wg.<span style="color:#50fa7b">Done</span>()
+    }()
+    <span style="color:#6272a4">// run the output, consuming the outch and sending results to upch
+</span><span style="color:#6272a4"></span>    output.<span style="color:#50fa7b">Run</span>(outch, upch)
+    <span style="color:#8be9fd;font-style:italic">close</span>(upch)
+
+    wg.<span style="color:#50fa7b">Wait</span>() <span style="color:#6272a4">// wait for the job to end
+</span><span style="color:#6272a4"></span>    
+    <span style="color:#6272a4">// now we can check the vars/objs created in the goroutine
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> checkVar <span style="color:#ff79c6">!=</span> wantVar {
+        t.<span style="color:#50fa7b">Fatalf</span>(<span style="color:#f1fa8c">&#34;error!&#34;</span>)
+    }
+}
+</code></pre></div><p>The <code>SQLite</code> component
+<a href="https://github.com/AdRoll/baker/blob/main/output/sqlite_test.go">has a good example</a> of this
+strategy.</p>
 
 	
 	

@@ -473,6 +473,12 @@
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosread_stats" href="/docs/how-tos/read_stats/">Read statistics</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
       
       
@@ -480,6 +486,35 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosconcurrency" href="/docs/how-tos/concurrency/">Tuning concurrency</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/docs/tutorials/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Tutorials</a>
+  </li>
+  <ul>
+    <li class="collapse " id="docstutorials">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docstutorialsbasic" href="/docs/tutorials/basic/">Basic: build a simple pipeline</a>
       
       
     </li>
@@ -624,6 +659,8 @@ their final destination.</li>
 </ul>
 <p>If enabled, Baker collects all these metrics and forwards them to a metrics client.</p>
 <p>Metrics export is set up in Baker topology TOML files, <a href="/docs/how-to/metrics/">see how to configure it</a>.</p>
+<p>Baker also prints general metrics once per second on standard output, in single-line format. Read more
+about it <a href="/docs/how-tos/read_stats/">here</a>.</p>
 <h2 id="sharding">Sharding</h2>
 <p>Baker supports partitioning the records it processes into smaller subsets each
 of which is forwarded to an output shard: <em>divide and conquer</em>.</p>
@@ -640,6 +677,12 @@ since you can perform more work at the same time.</p>
     
     
     <hr class="panel-line">
+        
+            
+        
+            
+        
+            
         
             
         

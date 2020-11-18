@@ -480,6 +480,12 @@
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosread_stats" href="/docs/how-tos/read_stats/">Read statistics</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
       
       
@@ -487,6 +493,35 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosconcurrency" href="/docs/how-tos/concurrency/">Tuning concurrency</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/docs/tutorials/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Tutorials</a>
+  </li>
+  <ul>
+    <li class="collapse " id="docstutorials">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docstutorialsbasic" href="/docs/tutorials/basic/">Basic: build a simple pipeline</a>
       
       
     </li>
@@ -535,14 +570,11 @@
     <li><a href="#inputs-filters-outputs-and-uploads">Inputs, Filters, Outputs and Uploads</a></li>
     <li><a href="#metrics">Metrics</a></li>
     <li><a href="#user">User</a></li>
-    <li><a href="#shardingfuncs">ShardingFuncs</a>
-      <ul>
-        <li><a href="#validate">Validate</a></li>
-        <li><a href="#createrecord">CreateRecord</a></li>
-        <li><a href="#fieldbyname">FieldByName</a></li>
-        <li><a href="#fieldname">FieldName</a></li>
-      </ul>
-    </li>
+    <li><a href="#shardingfuncs">ShardingFuncs</a></li>
+    <li><a href="#validate">Validate</a></li>
+    <li><a href="#createrecord">CreateRecord</a></li>
+    <li><a href="#fieldbyname">FieldByName</a></li>
+    <li><a href="#fieldname">FieldName</a></li>
   </ul>
 </nav>
 
@@ -638,24 +670,24 @@ configuration page.</p>
 <h2 id="shardingfuncs">ShardingFuncs</h2>
 <p>This field holds a dictionary associating field indices to hash functions. When sharding
 is enabled, these hash functions are used to determine which shard a record is sent to.</p>
-<h3 id="validate">Validate</h3>
+<h2 id="validate">Validate</h2>
 <p><code>Validate</code> is the function used to validate a record. It is called for each processed record
-unless <code>null</code> or when <code>[general.dont_validate_fields]</code> configuration is set to <code>true</code>.</p>
+unless <code>nil</code> or when <code>[general.dont_validate_fields]</code> configuration is set to <code>true</code>.</p>
 <p>Regardless of the TOML configuration, the function is passed to all components that can use
 it at their will.</p>
-<h3 id="createrecord">CreateRecord</h3>
+<h2 id="createrecord">CreateRecord</h2>
 <p><code>CreateRecord</code> is the function that creates a new record. If not set, a default function is
 used that creates a <code>LogLine</code> with the <strong>comma</strong> field separator.</p>
 <p>The function is used internally by Baker to create new records every time a new byte buffer enters
 the filter chain.</p>
 <p>The function is also passed to components that can use it to create new records while processing.</p>
-<h3 id="fieldbyname">FieldByName</h3>
+<h2 id="fieldbyname">FieldByName</h2>
 <p><code>FieldByName</code> returns a field index from its name.</p>
 <p>The function is mainly used by the components (that receive it during setup) to retrieve the
 index of a field they need for filtering or processing, but it is also used internally by
 Baker when sending fields to the output (when at least one field is selected in the output
 TOML configuration).</p>
-<h3 id="fieldname">FieldName</h3>
+<h2 id="fieldname">FieldName</h2>
 <p><code>FieldName</code> returns a field name from its index.</p>
 <p>The function is passed to components that can use it internally.</p>
 

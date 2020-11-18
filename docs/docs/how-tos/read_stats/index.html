@@ -20,33 +20,27 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>FileWriter | Baker</title><meta property="og:title" content="FileWriter" />
-<meta property="og:description" content="Output FileWriter Overview This is a raw output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (output.fields in TOML).
-This output writes the records into compressed files in a directory.
-Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.
-The file names can contain placeholders that are populated by the output (see the keys help below)." />
+<title>Read statistics | Baker</title><meta property="og:title" content="Read statistics" />
+<meta property="og:description" content="How to read Baker stats
+" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://getbaker.io/docs/components/outputs/filewriter/" />
-<meta property="article:published_time" content="2020-11-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-11-12T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="FileWriter">
-<meta itemprop="description" content="Output FileWriter Overview This is a raw output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (output.fields in TOML).
-This output writes the records into compressed files in a directory.
-Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.
-The file names can contain placeholders that are populated by the output (see the keys help below).">
-<meta itemprop="datePublished" content="2020-11-12T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-11-12T00:00:00+00:00" />
-<meta itemprop="wordCount" content="266">
+<meta property="og:url" content="https://getbaker.io/docs/how-tos/read_stats/" />
+<meta property="article:published_time" content="2020-11-16T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-11-16T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Read statistics">
+<meta itemprop="description" content="How to read Baker stats
+">
+<meta itemprop="datePublished" content="2020-11-16T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-11-16T00:00:00+00:00" />
+<meta itemprop="wordCount" content="233">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="FileWriter"/>
-<meta name="twitter:description" content="Output FileWriter Overview This is a raw output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (output.fields in TOML).
-This output writes the records into compressed files in a directory.
-Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.
-The file names can contain placeholders that are populated by the output (see the keys help below)."/>
+<meta name="twitter:title" content="Read statistics"/>
+<meta name="twitter:description" content="How to read Baker stats
+"/>
 
 
 
@@ -187,10 +181,10 @@ The file names can contain placeholders that are populated by the output (see th
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Components</a>
+    <a  href="/docs/components/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Components</a>
   </li>
   <ul>
-    <li class="collapse show" id="docscomponents">
+    <li class="collapse " id="docscomponents">
       
       
       
@@ -328,10 +322,10 @@ The file names can contain placeholders that are populated by the output (see th
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/outputs/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Outputs</a>
+    <a  href="/docs/components/outputs/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Outputs</a>
   </li>
   <ul>
-    <li class="collapse show" id="docscomponentsoutputs">
+    <li class="collapse " id="docscomponentsoutputs">
       
       
       
@@ -344,7 +338,7 @@ The file names can contain placeholders that are populated by the output (see th
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscomponentsoutputsfilewriter" href="/docs/components/outputs/filewriter/">FileWriter</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsoutputsfilewriter" href="/docs/components/outputs/filewriter/">FileWriter</a>
       
       
       
@@ -422,10 +416,10 @@ The file names can contain placeholders that are populated by the output (see th
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">How-Tos</a>
+    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-Tos</a>
   </li>
   <ul>
-    <li class="collapse " id="docshow-tos">
+    <li class="collapse show" id="docshow-tos">
       
       
       
@@ -486,7 +480,7 @@ The file names can contain placeholders that are populated by the output (see th
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosread_stats" href="/docs/how-tos/read_stats/">Read statistics</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-tosread_stats" href="/docs/how-tos/read_stats/">Read statistics</a>
       
       
       
@@ -561,8 +555,8 @@ The file names can contain placeholders that are populated by the output (see th
 
 
 
-<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/Components/Outputs/FileWriter.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=FileWriter" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/How%20Tos/read_stats.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Read%20statistics" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -570,17 +564,6 @@ The file names can contain placeholders that are populated by the output (see th
 
 
 
-
-<nav id="TableOfContents">
-  <ul>
-    <li><a href="#output-filewriter">Output <em>FileWriter</em></a>
-      <ul>
-        <li><a href="#overview">Overview</a></li>
-        <li><a href="#configuration">Configuration</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
 
 
 
@@ -602,9 +585,6 @@ The file names can contain placeholders that are populated by the output (see th
 
 
 
-
-
-
 <li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/">Documentation</a>
 </li>
@@ -613,21 +593,14 @@ The file names can contain placeholders that are populated by the output (see th
 
 
 <li class="breadcrumb-item" >
-	<a href="https://getbaker.io/docs/components/">Components</a>
-</li>
-
-
-
-
-<li class="breadcrumb-item" >
-	<a href="https://getbaker.io/docs/components/outputs/">Outputs</a>
+	<a href="https://getbaker.io/docs/how-tos/">How-Tos</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/components/outputs/filewriter/">FileWriter</a>
+	<a href="https://getbaker.io/docs/how-tos/read_stats/">Read statistics</a>
 </li>
 
 	</ol>
@@ -635,69 +608,34 @@ The file names can contain placeholders that are populated by the output (see th
 
             
 <div class="td-content">
-	<h1>FileWriter</h1>
-    
+	<h1>Read statistics</h1>
+    <div class="lead">How to read Baker stats</div>
 	       
-	<h2 id="output-filewriter">Output <em>FileWriter</em></h2>
-<h3 id="overview">Overview</h3>
-<p>This is a <em>raw</em> output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (<code>output.fields</code> in TOML).</p>
-<p>This output writes the records into compressed files in a directory.</p>
-<p>Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.</p>
-<p>The file names can contain placeholders that are populated by the output (see the keys help below).</p>
-<p>When the special {{.
-Field0}} placeholder is used, then the user must specify the field name to
-use for replacement in the fields configuration list.</p>
-<p>The value of that field, extracted from each record, is used as replacement and, moreover, this
-also means that each created file will contain only records with that same value for the field.</p>
-<p>Note that, with this option, the FileWriter creates as many workers as the different values
-of the field, and each one of these workers concurrently writes to a different file.</p>
-<h3 id="configuration">Configuration</h3>
-<p>Keys available in the <code>[output.config]</code> section:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">Name</th>
-<th style="text-align:center">Type</th>
-<th style="text-align:center">Default</th>
-<th style="text-align:center">Required</th>
-<th style="text-align:center">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">PathString</td>
-<td style="text-align:center">string</td>
-<td style="text-align:center">&quot;&quot;</td>
-<td style="text-align:center">false</td>
-<td style="text-align:center">Template to describe location of the output directory: supports .Year, .Month, .Day and .Rotation. Also .Field0 if a field name has been specified in the output&rsquo;s fields list.</td>
-</tr>
-<tr>
-<td style="text-align:center">RotateInterval</td>
-<td style="text-align:center">duration</td>
-<td style="text-align:center">60s</td>
-<td style="text-align:center">false</td>
-<td style="text-align:center">Time after which data will be rotated. If -1, it will not rotate until the end.</td>
-</tr>
-<tr>
-<td style="text-align:center">ZstdCompressionLevel</td>
-<td style="text-align:center">int</td>
-<td style="text-align:center">3</td>
-<td style="text-align:center">false</td>
-<td style="text-align:center">zstd compression level, ranging from 1 (best speed) to 19 (best compression).</td>
-</tr>
-<tr>
-<td style="text-align:center">ZstdWindowLog</td>
-<td style="text-align:center">int</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">false</td>
-<td style="text-align:center">Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled.</td>
-</tr>
-</tbody>
-</table>
+	<p>While running, Baker dumps statistics on stdout every second. This is an example line:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">Stats: 1s[w:29425 r:29638] total[w:411300 r:454498 u:1831] speed[w:27420 r:30299] errors[p:0 i:0 f:0 o:0 u:0]
+</code></pre></div><p>The first bracket shows the current read and write speed, i.e. the records that entered the
+pipeline (reads) and the records that successfully exited from it (writes).</p>
+<p>The second bracket is the total since the process was launched (the <code>u:</code> key is the number of
+files successfully uploaded).</p>
+<p>The third bracket shows the average read/write speed (records per second).</p>
+<p>The fourth bracket shows the number of records that were discarded at some point because of errors:</p>
+<ul>
+<li><code>p:</code> records discarded for a parsing error</li>
+<li><code>i:</code> input records discarded. Most of the time, this refers to validation issues.</li>
+<li><code>f:</code> records discarded by filters.</li>
+<li><code>o:</code> is the number of records that were discarded because of an error in the output component *</li>
+<li><code>u:</code> is the number files whose upload has failed</li>
+</ul>
+<p>* Notice that output components should be resilient to transient network failures,
+and they abort the process in case of permanent configuration errors, so the number
+here reflects records that could not be permanently written because eg. validation
+issues. Eg. think of an output that expects a column to be in a specific format, and
+rejects records where that field is not in the expected format. A real-world example
+is empty columns that are not accepted by DynamoDB.</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 12, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified November 16, 2020
 </div>
 </div>
 
