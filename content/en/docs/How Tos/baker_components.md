@@ -6,30 +6,42 @@ description: >
   baker.Components is the main object used to create a Baker topology
 ---
 
-To create a Topology, Baker requires 2 elements:
+The [`baker.Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components) struct
+lists all the components available to Baker when defining topologies.
 
-* `baker.Components` describes the list of components Baker can use in topologies
-* a TOML configuration that specifically describes a single topology, using components from 1)
 
-The next paragraphs gives you a high level overview of each section of `baker.Components`.
+Hence, to create a topology, Baker requires:
 
-To get a deeper understanding, read the
-[full API reference for `baker.Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components).
+* an instance of [`baker.Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components)
+* a TOML configuration file describing the topology we want to run
+
+```go
+func main() {
+	comp := baker.Component {
+		// ...
+	}
+
+	f, _ := os.Open("/path/to/topology.go")
+	cfg, _ := baker.NewConfigFromToml(f, components)
+
+_ = baker.Main(cfg)
+}
+```
+
+The next paragraphs gives you a high level overview of each field of the 
+[`baker.Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components) struct.
+
 
 ## Inputs, Filters, Outputs and Uploads
 
-These fields contain the list of components that are available to the topology.
+These fields lists the components that are available to topologies. All components present
+in `baker.Components` can be used in the [TOML configuration file](/docs/core-concepts/toml/).
 
-The [TOML configuration file](/docs/core-concepts/toml/) must specify components that are
-present in these lists.
+The following is an example of `baker.Components` where:
 
-All components already available to Baker or custom components can be set here.
-
-The following is an example of `baker.Components` configuration where:
-
-* **inputs** and **uploads** are those already included into Baker
-* only a custom **filter** is set
-* a custom **output** is added to the outputs included into Baker
+* we use all **inputs** and **uploads** provided in Baker repository
+* only a single **filter** is set, a custom one we declared ourselves
+* all Baker **outputs** are added in addition our own custom output
 
 ```go
 import (
@@ -44,22 +56,49 @@ comp := baker.Components{
     Filters:       []baker.FilterDesc{MyCustomFilterDesc},
 	Outputs:       append(output.All, MyCustomOutputDesc...),
 	Uploads:       upload.All,
+
+	// Other fields now shown here.
 }
 ```
 
 ## Metrics
 
-The list of available metrics backends.
+`Metrics` lists the metrics clients available when creating topologies.
+
+```go
+import (
+	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/metrics"
+)
+
+comp := baker.Components{
+    Metrics: metrics.All,
+
+	// Other fields now shown here.
+}
+```
+
 
 This list can contain a metric backend already included into Baker or a custom implementation
 of the `baker.MetricsClient` interface.
 
-For details about metrics, [see the dedicated page](/docs/core-concepts/metrics).
+For more, see the page [dedicated to metrics](/docs/core-concepts/metrics).
 
 ## User
 
-This field contains a list of user-defined configurations structures that are not strictly
-useful to Baker but that users can add to Baker TOML file and use for other purposes.
+```go
+import "github.com/AdRoll/baker"
+
+comp := baker.Components{
+	User:    []baker.UserDesc{ /* list of user-specific structs */},
+
+	// Other fields now shown here.
+}
+```
+
+Baker users might want to use Baker TOML files to store application-specific configuration.
+The `User` fields lists user-defined configurations structures which aren't strictly
+useful to Baker. 
 
 To learn more about this topic, read the
 [dedicated section](/docs/core-concepts/toml/#user-defined-configurations) in the Pipeline
@@ -67,30 +106,88 @@ configuration page.
 
 ## ShardingFuncs
 
-This field holds a dictionary associating field indices to hash functions. When sharding
+```go
+import "github.com/AdRoll/baker"
+
+shardingFuncs := make(map[baker.FieldIndex]baker.ShardingFunc)
+
+comp := baker.Components{
+	ShardingFuncs: shardingFuncs,
+
+	// Other fields now shown here.
+}
+```
+
+`ShardingFuncs` holds a dictionary associating field indexes to hash functions. When sharding
 is enabled, these hash functions are used to determine which shard a record is sent to.
 
 ## Validate
 
-`Validate` is the function used to validate a record. It is called for each processed record
-unless `nil` or when `[general.dont_validate_fields]` configuration is set to `true`.
+```go
+import "github.com/AdRoll/baker"
 
-Regardless of the TOML configuration, the function is passed to all components that can use
-it at their will.
+func validate(baker.Record) (bool, baker.FieldIndex) {
+	// ...
+}
+
+comp := baker.Components{
+	Validate: validate,
+
+	// Other fields now shown here.
+}
+```
+
+`Validate` is the function used to validate a record. It is called for each processed record
+unless `nil` or when `dont_validate_fields` is set to `true` in TOML's `[general]` section.
+
+Regardless of the `dont_validate_fields` value, the `Validate` function is made accessible
+to all components that can use so that they can use it at their will.
 
 ## CreateRecord
 
-`CreateRecord` is the function that creates a new record. If not set, a default function is
+```go
+import "github.com/AdRoll/baker"
+
+func create() baker.Record {
+	// ...
+}
+
+comp := baker.Components{
+	CreateRecord: create,
+
+	// Other fields now shown here.
+}
+```
+
+`CreateRecord` is a factory function returning new `Record` instances. If not set, a default function is
 used that creates a `LogLine` with the **comma** field separator.
 
-The function is used internally by Baker to create new records every time a new byte buffer enters
-the filter chain.
+The function is used internally by Baker to create new records each time a new Record must be created
+after having parsed a blob of raw serialized data provided by the `Input` component.
 
-The function is also passed to components that can use it to create new records while processing.
+The function is also available for components needing to create new records.
 
 ## FieldByName
 
-`FieldByName` returns a field index from its name.
+```go
+import "github.com/AdRoll/baker"
+
+func fieldByName(name string) (baker.FieldIndex, bool) {
+	// ...
+}
+
+comp := baker.Components{
+	FieldByName: fieldByName,
+
+	// Other fields now shown here.
+}
+```
+
+`FieldByName` returns the index of a field given its name.
+
+Internally Baker refers to fields by their indexes, but it's simpler for users to refer to fields
+with their name. This function exists to convert a field name to its index, it also controls
+if the name is valid. 
 
 The function is mainly used by the components (that receive it during setup) to retrieve the
 index of a field they need for filtering or processing, but it is also used internally by
@@ -99,6 +196,19 @@ TOML configuration).
 
 ## FieldName
 
+```go
+import "github.com/AdRoll/baker"
+
+func fieldName(idx baker.FieldIndex) string {
+	// ...
+}
+
+comp := baker.Components{
+	FieldName: fieldName,
+
+	// Other fields now shown here.
+}
+```
 `FieldName` returns a field name from its index.
 
-The function is passed to components that can use it internally.
+The function is provided for components to use in case they need it.
