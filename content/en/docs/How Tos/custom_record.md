@@ -21,7 +21,7 @@ version of the `Record` interface, implementing the
 Once your Record version is ready, you need to use it in your code.
 
 In order to do so, some functions may be implemented while instantiating
-[`baker.Components`](/docs/how-to/baker_components/):
+[`baker.Components`](/docs/how-tos/baker_components/):
 
 ```go
 type Components struct {

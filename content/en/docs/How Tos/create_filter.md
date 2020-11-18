@@ -71,7 +71,7 @@ a costructor function (`New`), a config object (used to parse the filter configu
 TOML file) and a help text.
 
 In this case the filter can be used with this configuration in the
-[TOML file](/docs/how-to/pipeline_configuration/):
+[TOML file](/docs/how-tos/pipeline_configuration/):
 
 ```toml
 [[filter]]
