@@ -1,10 +1,10 @@
 ---
-title: "Enable sharding in a topology"
+title: "Sharding setup"
 date: 2020-10-29
 weight: 780
 ---
 
-## How to enable sharding in a topology?
+## How to configure a topology with output sharding?
 
 Sharding is enabled in the `[output]` section of the topology TOML 
 configuration file, by indicating the name of the field used to partition
@@ -63,7 +63,7 @@ input values, and in terms of performance.
 
 For example, if you know the sharded field is only made of integers from 0 to 
 1000, the hash function would be implemented differently than if the values for that 
-field are arbitraty long strings. 
+field are arbitrary long strings.
 
 It's however possible to use a non-optimal but best effort general hash function.
 (we're planning to add this to Baker soon).
