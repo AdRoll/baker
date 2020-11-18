@@ -79,7 +79,9 @@ wisely and documented extensively.
 
 ## Write tests
 
-Testing an upload component can seem sometimes a bit useless as it probably uses external resources
+Since by definition an upload component involves external resources you either have to mock that resource 
+or use it directly. See an example of how to mock an external resource in the [insert s3 mock test link]. 
+However writing a test that uses the actual external resource (a.k.a end-to-end testing) is out of the scope of this how-to.
 and libraries for most of its job.
 
 We thereby provide some suggestions to test those components:
