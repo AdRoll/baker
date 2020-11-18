@@ -29,7 +29,7 @@ ends its job.
 * **Daemon**: in this case, the input component never exits and thus also Baker, that keeps waiting
 for incoming records from the input (e.g.: Kinesis), processes them and sends them to the output.
 
-Also read [Pipeline configuration](/docs/how-to/pipeline_configuration/)
+Also read [Pipeline configuration](/docs/how-tos/pipeline_configuration/)
 
 ## Record and LogLine
 
@@ -39,8 +39,8 @@ of flattened data, where columns of fields are indexed through integers.
 Baker currently provides a single implementation of Record, called `LogLine` (
 [API reference](https://pkg.go.dev/github.com/AdRoll/baker#LogLine)).
 
-If `LogLine` doesn't fit your needs, you can [customize it](/docs/how-to/record_and_logline/)
-or [implement your version of the Record](/docs/how-to/custom_record/).
+If `LogLine` doesn't fit your needs, you can [customize it](/docs/how-tos/record_and_logline/)
+or [implement your version of the Record](/docs/how-tos/custom_record/).
 
 ## Components
 
@@ -71,7 +71,7 @@ During execution, Baker collects different kind of performance data points:
 
 If enabled, Baker collects all these metrics and forwards them to a metrics client.
 
-Metrics export is set up in Baker topology TOML files, [see how to configure it](/docs/how-to/metrics/).
+Metrics export is set up in Baker topology TOML files, [see how to configure it](/docs/how-tos/metrics/).
 
 Baker also prints general metrics once per second on standard output, in single-line format. Read more 
 about it [here](/docs/how-tos/read_stats/).
@@ -87,4 +87,4 @@ specific subset of records, based on a the value a specific field has. This
 horizontal partioning allows to get the most of the resources at your disposal,
 since you can perform more work at the same time.
 
-[Read more about sharding and how to configure it](/docs/how-to/sharding/)
+[Read more about sharding and how to configure it](/docs/how-tos/sharding/)
