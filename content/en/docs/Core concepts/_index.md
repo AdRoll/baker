@@ -47,13 +47,16 @@ or [implement your version of the Record](/docs/how-tos/custom_record/).
 
 To process records, Baker uses up to 4 component types, each one with a different job:
 
-* **Input** reads the input records (as raw data) and sends them to Baker
-* Baker parses the records from the raw bytes received by the input and sends them through
-the filter chain, an ordered list of **Filter** components that can modify, drop or create Records
-* At the end of the filter chain, the records are sent to the **Output** component, whose job is
-to save them somewhere.
-* An optional **Upload** component receives the files produced by the Output and upload them to
-their final destination.
+* **Input** reads blobs of data representing serialized records and sends them to Baker.
+* Baker then parses the raw bytes, creates records from them and sends them through
+the filter chain, an ordered list of **Filter** components that can modify, drop or create 
+Records.
+* At the end of the filter chain, records are sent to the **Output** component. There are 
+2 types of output componets. Raw outputs receives serialized records while non-raw outputs 
+just receive a set of fields. Whatever its type, the output most certainly writes records
+on disk or to an external service.
+* In case the output saves files to disk, an optional **Upload** component can upload 
+these files to a remote destination, such as Amazon S3 for example.
 
 Read our How-to guides to know how to:
 
