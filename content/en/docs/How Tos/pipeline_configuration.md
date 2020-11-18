@@ -97,10 +97,10 @@ the fields are written.
 
 #### Metrics configuration
 
-The `[metrics]` section allows to configure the metrics backend to use. Currently, only `datadog` is
+The `[metrics]` section allows to configure the monitoring solution to use. Currently, only `datadog` is
 supported.
 
-See the dedicated page to learn how to configure DataDog metrics with Baker. (TODO: add link)
+See the [dedicated page](/docs/how-tos/metrics/) to learn how to configure DataDog metrics with Baker.
 
 #### User defined configurations
 
