@@ -15,6 +15,8 @@ it within Baker via [`Components`](https://pkg.go.dev/github.com/AdRoll/baker#Co
 
 ## The Output interface
 
+New *Output* components need to implement the [Output interface](https://pkg.go.dev/github.com/AdRoll/baker#Output).
+
 ```go
 type Output interface {
 	Run(in <-chan OutputRecord, upch chan<- string) error
@@ -22,9 +24,6 @@ type Output interface {
 	CanShard() bool
 }
 ```
-
-The [Output interface](https://pkg.go.dev/github.com/AdRoll/baker#Output) must be implemented when
-creating a new output component.
 
 The `Run` function implements the component logic and gets a channel where it receives
 [OutputRecord](https://pkg.go.dev/github.com/AdRoll/baker#OutputRecord) objects and a channel to

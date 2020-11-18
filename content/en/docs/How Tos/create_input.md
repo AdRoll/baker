@@ -39,6 +39,8 @@ Typical information could be the time of retrieval, the filename (in case `Recor
 
 ## The Input interface
 
+New *Input* components need to implement the [Input interface](https://pkg.go.dev/github.com/AdRoll/baker#Input).
+
 ```go
 type Input interface {
 	Run(output chan<- *Data) error
@@ -47,9 +49,6 @@ type Input interface {
 	FreeMem(data *Data)
 }
 ```
-
-The [Input interface](https://pkg.go.dev/github.com/AdRoll/baker#Input) must be implemented when
-creating a new input component.
 
 The `Run` function implements the component logic and receives a channel where it sends the
 [raw data](https://pkg.go.dev/github.com/AdRoll/baker#Data) it processes.

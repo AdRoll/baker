@@ -16,6 +16,8 @@ At the moment Baker only proposes a single *Upload* component, [S3](https://gith
 
 ## The Upload interface
 
+New *Upload* components need to implement the [Upload interface](https://pkg.go.dev/github.com/AdRoll/baker#Upload).
+
 ```go
 type Upload interface {
 	Run(upch <-chan string) error
@@ -24,11 +26,8 @@ type Upload interface {
 }
 ```
 
-The [Upload interface](https://pkg.go.dev/github.com/AdRoll/baker#Upload) must be implemented when
-creating a new Upload component.
-
-The `Run` function implements the component logic and receives a channel where the output sends what
-it produces (most probably file paths).
+The `Run` function implements the component logic, it is passed a channel from which the upload
+receives absolute paths of the files to upload. These files are produced by the Output component.
 
 
 ## UploadDesc

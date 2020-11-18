@@ -21,9 +21,14 @@ the available filters in [`Components`](https://pkg.go.dev/github.com/AdRoll/bak
 
 ## The Filter interface
 
-The [Filter interface](https://pkg.go.dev/github.com/AdRoll/baker#Filter) determines the functions
-that a filter must implement. The interface is quite simple and contains only two functions:
-`Process(l Record, next func(Record))` and `Stats() FilterStats`:
+New *Filter* components need to implement the [Filter interface](https://pkg.go.dev/github.com/AdRoll/baker#Filter).
+
+```go
+type Filter interface {
+	Process(l Record, next func(Record))
+	Stats() FilterStats
+}
+```
 
 * `Process` is the function that actually filters the records
 * `Stats` return statistics ([FilterStats](https://pkg.go.dev/github.com/AdRoll/baker#FilterStats)) about the filtering process
