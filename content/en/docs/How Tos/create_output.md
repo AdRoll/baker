@@ -33,7 +33,7 @@ communicate to the Upload components what to upload.
 `CanShard` is the function telling whether the output is able to manage sharding. Read the page
 [dedicated to the sharding](/docs/how-tos/sharding/) to go deeper in the topic.
 
-`Stats` is used to report metrics, see the [dedicated page](/docs/how-to/metrics/).
+`Stats` is used to report metrics, see the [dedicated page](/docs/how-tos/metrics/).
 
 ## OutputDesc
 
@@ -53,9 +53,9 @@ TOML file) and a help text that must help the users to use the component and its
 parameters. The `Raw` field instructs Baker whether it should send raw records in addition
 to single fields (see below for details).
 
-### Output constructor-like function
+### The `New` function
 
-The `New` field in the `OutputDesc` object represents the constructor-like function.
+The `New` field in the `OutputDesc`  object should be to assigned to a function that returns a new `Output`.
 
 The function receives an [OutputParams](https://pkg.go.dev/github.com/AdRoll/baker#OutputParams)
 object and returns an instance of [Output](https://pkg.go.dev/github.com/AdRoll/baker#Output).
@@ -77,7 +77,7 @@ below for details.
 If, for any reason, the output needs to retrieve the fields name (like the SQLite output does to
 get the columns names), then `OutputParams.FieldName` can be used.
 
-### The output configuration and help
+### Output configuration and help
 
 The output configuration object (`MyOutputConfig` in the previous example) must export all
 configuration parameters that the user can set in the TOML topology file.

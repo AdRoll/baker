@@ -25,7 +25,7 @@ The [Filter interface](https://pkg.go.dev/github.com/AdRoll/baker#Filter) determ
 that a filter must implement. The interface is quite simple and contains only two functions:
 `Process(l Record, next func(Record))` and `Stats() FilterStats`:
 
-* `Process` is the function the actually filters the records
+* `Process` is the function that actually filters the records
 * `Stats` return statistics ([FilterStats](https://pkg.go.dev/github.com/AdRoll/baker#FilterStats)) about the filtering process
 
 A very simple example of filter doing nothing is:
@@ -73,7 +73,9 @@ In this case the filter can be used with this configuration in the
 name = "MyFilter"
 ```
 
-### Filter constructor
+### The `New` function
+
+The `New` field in the `FilterDesc`  object should be to assigned to a function that returns a new `Filter`.
 
 Each filter must have a constructor function that receives a
 [FilterParams](https://pkg.go.dev/github.com/AdRoll/baker#FilterParams) and returns the 
@@ -88,7 +90,7 @@ func MyFilter(cfg baker.FilterParams) (baker.Filter, error) {
 The [filtering example](https://github.com/AdRoll/baker/blob/main/examples/filtering/filter.go)
 shows a more complex constructor that also uses the `FilterParams` argument.
 
-### The filter configuration and help
+### Filter configuration and help
 
 A filter requiring some configurations also has a config object, including as many keys as it
 needs and tagging each one with an `help` tag, a string that contains what a user needs to know

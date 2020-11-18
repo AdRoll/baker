@@ -47,9 +47,9 @@ a constructor-like function (`New`), a config object (where the parsed upload co
 TOML file is stored) and a help text that must help the users to use the component and its
 configuration parameters.
 
-### Upload constructor-like function
+### The `New` function
 
-The `New` key in the `UploadDesc` object should be set to a function returning an Upload.
+The `New` field in the `UploadDesc`  object should be to assigned to a function that returns a new `Upload`.
 
 The function receives an [UploadParams](https://pkg.go.dev/github.com/AdRoll/baker#UploadParams)
 object and returns an instance of [Upload](https://pkg.go.dev/github.com/AdRoll/baker#Upload).
