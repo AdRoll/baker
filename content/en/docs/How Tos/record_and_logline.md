@@ -15,7 +15,8 @@ called [`LogLine`](https://pkg.go.dev/github.com/AdRoll/baker#LogLine).
 
 If `LogLine` doesn't fit your needs, you can implement the 
 [`Record` interface](https://pkg.go.dev/github.com/AdRoll/baker#Record) or 
-modify [`LogLine`](#custom-logline).
+modify [`LogLine`](#custom-logline). See the [custom Record how-to](/docs/how-tos/custom_record/)
+for more details about implementing the `Record` interface from scratch.
 
 ## LogLine
 

@@ -13,7 +13,7 @@ A `Record`, in Baker, is an interface that provides an abstraction over a record
 where columns of fields are indexed through integers.
 
 If the Record implementations provided by Baker doesn't fit your needs, you can create your own
-version of the Record, implementing the
+version of the `Record` interface, implementing the
 [`Record` inteface](https://pkg.go.dev/github.com/AdRoll/baker#Record).
 
 ## How to use a custom version of the Record
@@ -42,7 +42,7 @@ the TOML file.
 Regardless of the TOML configuration, the function is passed to all components that can use
 it at their will.
 
-### CreateRecord
+### `CreateRecord`
 
 `CreateRecord` is the function that creates a new record. If not set, a default function is
 used that creates a `LogLine` with `,` as field separator.
@@ -52,25 +52,25 @@ the input.
 
 The function is also passed to components that can use it to create new records while processing.
 
-### FieldByName
+### `FieldByName`
 
 `FieldByName` gets a field index by its name. The function is mainly used by the components
 (that receive it during setup) to retrieve the index of a field they need for filtering or
 processing, but it is also used internally by Baker when sending fields to the output
 (when at least one field is selected in the output TOML configuration).
 
-### FieldIndex
+### `FieldName`
 
 `FieldName` gets a field name by its index. The function is passed to components that can use
 it for their internal logic.
 
-## RecordConformanceTest
+## Record conformance test
 
-The `test_helper.go` provides a `RecordConformanceTest` test helper whose goal is to give the
-user a structured test for new implementations of the Record.
+[`test_helper.go`](https://github.com/AdRoll/baker/blob/23938bc743100373379403dd25618c25f0822231/test_helper.go#L11)
+provides a test helper, `RecordConformanceTest`, one can and should use to verify their 
+custom `Record` satisfies the invariants required for any `Record` implementation.
 
-The helper receives the implementation of `CreateRecord` and creates new records testing
-them against a set of requirements.
+Just pass to `RecordConformanceTest` a factory function creating new instances of your `Record`.
 
 {{% alert title="Warning" color="warning" %}}
 The conformance test provides a way to verify that a record implementation respects the
