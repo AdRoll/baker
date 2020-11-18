@@ -101,7 +101,7 @@ is not defined.
 To test an input component we suggest two main paths:
 
 * test the component in isolation, calling the `Run` function
-* test the input at high-level, running a complete Baker topology
+* write an higher-level test by running a complete Baker topology
 
 Regardless of the chosen path, two additional unit tests are always suggested:
 
