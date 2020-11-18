@@ -83,6 +83,9 @@ records. As other components, each filter may be followed by a `[filter.config]`
 the filter chain without being discarded end up. In this case, the `DynamoDB` output is selected,
 and its configuration is specified in `[output.config]`.
 
+In the example topology above we don't specify an `[upload]` section since the output 
+doesn't create files on the local filesystem, it makes queries to DynamoDB.
+
 The `fields` option in the `[output]` section selects which fields of the record are sent
 to the output.  
 In fact, most pipelines don't want to send the full records to the output, but they select
