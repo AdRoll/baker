@@ -12,11 +12,11 @@ To create an upload component and make it available to Baker, one must:
 * Fill an [`UploadDesc`](https://pkg.go.dev/github.com/AdRoll/baker#UploadDesc) structure and
 register it within Baker via [`Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components).
 
-At the moment Baker only proposes a single *Upload* component, [S3](https://github.com/AdRoll/baker/blob/main/upload/s3.go).
+At the moment Baker only proposes a single `Upload` component, [S3](https://github.com/AdRoll/baker/blob/main/upload/s3.go).
 
 ## The Upload interface
 
-New *Upload* components need to implement the [Upload interface](https://pkg.go.dev/github.com/AdRoll/baker#Upload).
+New `Upload` components need to implement the [Upload interface](https://pkg.go.dev/github.com/AdRoll/baker#Upload).
 
 ```go
 type Upload interface {
@@ -48,7 +48,7 @@ configuration parameters.
 
 ### The `New` function
 
-The `New` field in the `UploadDesc`  object should be to assigned to a function that returns a new `Upload`.
+The `New` field in the `UploadDesc` object should be to assigned to a function that returns a new `Upload`.
 
 The function receives an [UploadParams](https://pkg.go.dev/github.com/AdRoll/baker#UploadParams)
 object and returns an instance of [Upload](https://pkg.go.dev/github.com/AdRoll/baker#Upload).

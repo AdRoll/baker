@@ -39,7 +39,7 @@ Typical information could be the time of retrieval, the filename (in case `Recor
 
 ## The Input interface
 
-New *Input* components need to implement the [Input interface](https://pkg.go.dev/github.com/AdRoll/baker#Input).
+New `Input` components need to implement the [Input interface](https://pkg.go.dev/github.com/AdRoll/baker#Input).
 
 ```go
 type Input interface {
@@ -75,7 +75,7 @@ configuration parameters.
 
 ### The `New` function
 
-The `New` field in the `InputDesc`  object should be to assigned to a function that returns a new `Input`.
+The `New` field in the `InputDesc` object should be to assigned to a function that returns a new `Input`.
 
 The function receives a [InputParams](https://pkg.go.dev/github.com/AdRoll/baker#InputParams)
 object and returns an instance of [Input](https://pkg.go.dev/github.com/AdRoll/baker#Input).

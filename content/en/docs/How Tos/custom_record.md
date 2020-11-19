@@ -13,8 +13,7 @@ A `Record`, in Baker, is an interface that provides an abstraction over a record
 where columns of fields are indexed through integers.
 
 If the Record implementations provided by Baker doesn't fit your needs, you can create your own
-version of the `Record` interface, implementing the
-[`Record` inteface](https://pkg.go.dev/github.com/AdRoll/baker#Record).
+version, implementing the [`Record` inteface](https://pkg.go.dev/github.com/AdRoll/baker#Record).
 
 ## How to use a custom version of the Record
 

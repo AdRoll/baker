@@ -21,7 +21,7 @@ the available filters in [`Components`](https://pkg.go.dev/github.com/AdRoll/bak
 
 ## The Filter interface
 
-New *Filter* components need to implement the [Filter interface](https://pkg.go.dev/github.com/AdRoll/baker#Filter).
+New `Filter` components need to implement the [Filter interface](https://pkg.go.dev/github.com/AdRoll/baker#Filter).
 
 ```go
 type Filter interface {
@@ -80,7 +80,7 @@ name = "MyFilter"
 
 ### The `New` function
 
-The `New` field in the `FilterDesc`  object should be to assigned to a function that returns a new `Filter`.
+The `New` field in the `FilterDesc` object should be to assigned to a function that returns a new `Filter`.
 
 Each filter must have a constructor function that receives a
 [FilterParams](https://pkg.go.dev/github.com/AdRoll/baker#FilterParams) and returns the 

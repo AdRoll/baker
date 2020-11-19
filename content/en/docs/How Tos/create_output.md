@@ -15,7 +15,7 @@ it within Baker via [`Components`](https://pkg.go.dev/github.com/AdRoll/baker#Co
 
 ## The Output interface
 
-New *Output* components need to implement the [Output interface](https://pkg.go.dev/github.com/AdRoll/baker#Output).
+New `Output` components need to implement the [Output interface](https://pkg.go.dev/github.com/AdRoll/baker#Output).
 
 ```go
 type Output interface {
@@ -54,7 +54,7 @@ to single fields (see below for details).
 
 ### The `New` function
 
-The `New` field in the `OutputDesc`  object should be to assigned to a function that returns a new `Output`.
+The `New` field in the `OutputDesc` object should be to assigned to a function that returns a new `Output`.
 
 The function receives an [OutputParams](https://pkg.go.dev/github.com/AdRoll/baker#OutputParams)
 object and returns an instance of [Output](https://pkg.go.dev/github.com/AdRoll/baker#Output).

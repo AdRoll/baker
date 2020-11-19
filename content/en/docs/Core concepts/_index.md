@@ -16,7 +16,7 @@ It is configured in a TOML file and is defined by:
 
 * One input component, determining where to fetch records from
 * Zero or more filters, applied sequentially, which together compose the **filter chain**. A filter is
-a function that processes record, it can modify fields, discard records or create additional ones
+a function that processes record: it can modify fields, discard records or create additional ones
 * One output component, specifying where to send the records that made it so far
 * One optional upload component, that can be added if the output creates files that need to be uploaded to
   a remote destination
@@ -52,7 +52,7 @@ To process records, Baker uses up to 4 component types, each one with a differen
 the filter chain, an ordered list of **Filter** components that can modify, drop or create 
 Records.
 * At the end of the filter chain, records are sent to the **Output** component. There are 
-2 types of output componets. Raw outputs receives serialized records while non-raw outputs 
+2 types of output components. Raw outputs receive serialized records while non-raw outputs 
 just receive a set of fields. Whatever its type, the output most certainly writes records
 on disk or to an external service.
 * In case the output saves files to disk, an optional **Upload** component can upload 

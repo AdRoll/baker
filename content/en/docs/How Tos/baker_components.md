@@ -28,13 +28,13 @@ _ = baker.Main(cfg)
 }
 ```
 
-The next paragraphs gives you a high level overview of each field of the 
+The next paragraphs give you a high level overview of each field of the 
 [`baker.Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components) struct.
 
 
 ## Inputs, Filters, Outputs and Uploads
 
-These fields lists the components that are available to topologies. All components present
+These fields list the components that are available to topologies. All components present
 in `baker.Components` can be used in the [TOML configuration file](/docs/core-concepts/toml/).
 
 The following is an example of `baker.Components` where:
@@ -97,7 +97,7 @@ comp := baker.Components{
 ```
 
 Baker users might want to use Baker TOML files to store application-specific configuration.
-The `User` fields lists user-defined configurations structures which aren't strictly
+The `User` field lists user-defined configurations structures which aren't strictly
 useful to Baker. 
 
 To learn more about this topic, read the
@@ -141,7 +141,7 @@ comp := baker.Components{
 unless `nil` or when `dont_validate_fields` is set to `true` in TOML's `[general]` section.
 
 Regardless of the `dont_validate_fields` value, the `Validate` function is made accessible
-to all components that can use so that they can use it at their will.
+to all components so that they can use it at their will.
 
 ## CreateRecord
 
@@ -162,8 +162,8 @@ comp := baker.Components{
 `CreateRecord` is a factory function returning new `Record` instances. If not set, a default function is
 used that creates a `LogLine` with the **comma** field separator.
 
-The function is used internally by Baker to create new records each time a new Record must be created
-after having parsed a blob of raw serialized data provided by the `Input` component.
+The function is used internally by Baker each time a new Record must be created. This
+happens when blobs of raw serialized data, provided by the `Input` component, are parsed.
 
 The function is also available for components needing to create new records.
 
@@ -186,7 +186,7 @@ comp := baker.Components{
 `FieldByName` returns the index of a field given its name.
 
 Internally Baker refers to fields by their indexes, but it's simpler for users to refer to fields
-with their name. This function exists to convert a field name to its index, it also controls
+with their names. This function exists to convert a field name to its index, it also controls
 if the name is valid. 
 
 The function is mainly used by the components (that receive it during setup) to retrieve the

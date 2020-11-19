@@ -6,17 +6,17 @@ description: >
   How to export metrics from Baker
 ---
 
-During its execution, Baker can publish various kind of metrics that may be used
-to monitor a pipeline in execution. The metrics exported range from numbers giving 
-an high-level overview of the ongoing pipeline (total processed records, current
-speed in records per second, etc.) or per-component metrics such as the number of
-files read or written for example, to performance statistics published by the Go 
-runtime in order to monitor lower level information (objects, memory, garbage collection, etc.).
+Baker can publish various kind of metrics that may be used to monitor a pipeline
+in execution. The metrics exported range from numbers giving an high-level overview
+of the ongoing pipeline (total processed records, current speed in records per
+second, etc.) or per-component metrics such as the number of files read or written,
+to performance statistics published by the Go runtime in order to monitor lower
+level information (objects, memory, garbage collection, etc.).
 
-All component need to implement a `Stats` method where they can expose metrics. 
+All components need to implement a `Stats` method where they can expose metrics. 
 Baker calls the `Stats` method of each component once per second. `Stats` returns
 a predefined set of metrics (depending on the component type) and a 
-[`baker.MetricsBag`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag).
+[`baker.MetricsBag`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag),
 in which one can add other metrics (of arbitrary name and type).
 
 Let's illustrate this with metrics exported by a filter via 
@@ -35,9 +35,11 @@ lines since the filter creation, while `NumFilteredLines` is the number of disca
 (i.e filtered) records. Due to historical reasons these fields have the word
 _lines_ in them but they do mean the number of records.
 
+#### A practical example
+
 Let's say our filter needs to perform HTTP requests in order to decide whether a record
-should be discarded, we might want to keep track of the request durations in an histogram.
-In this case, we can would probably record a slice of `time.Duration` in our filter and call
+should be discarded, we might want to keep track of the requests' durations in an histogram.
+In this case, we would probably record a slice of `time.Duration` in our filter and call
 [`AddTimings`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag.AddTimings) on the
 returned `MetricsBag`.
 
