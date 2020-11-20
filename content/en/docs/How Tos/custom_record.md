@@ -7,7 +7,7 @@ description: >
 ---
 
 As you can read in the [Record and LogLine page](/docs/core-concepts/record_implementation/),
-Baker processes objects in form of “records”.
+Baker processes objects called **records**.
 
 A `Record`, in Baker, is an interface that provides an abstraction over a record of flattened data,
 where columns of fields are indexed through integers.
