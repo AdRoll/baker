@@ -11,7 +11,7 @@ file in [TOML format](https://toml.io/en/).
 We use this file to:
  * define the topology (i.e the list of components) of the pipeline we want to run
  * configure each component
- * setup general elements such as metrics for instance
+ * setup general elements such as metrics
 
 
 ### Configuration file
