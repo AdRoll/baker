@@ -6,12 +6,13 @@ description: >
   How to export metrics from Baker
 ---
 
-Baker can publish various kind of metrics that may be used to monitor a pipeline
-in execution. The metrics exported range from numbers giving an high-level overview
-of the ongoing pipeline (total processed records, current speed in records per
-second, etc.) or per-component metrics such as the number of files read or written,
-to performance statistics published by the Go runtime in order to monitor lower
-level information (objects, memory, garbage collection, etc.).
+Baker can publish various kind of [metrics](/docs/core-concepts/#metrics) that may
+be used to monitor a pipeline in execution. The metrics exported range from numbers
+giving an high-level overview of the ongoing pipeline (total processed records, 
+current speed in records per second, etc.) or per-component metrics such as the 
+number of files read or written, to performance statistics published by the Go 
+runtime in order to monitor lower level information (objects, memory, garbage 
+collection, etc.).
 
 All components need to implement a `Stats` method where they can expose metrics. 
 Baker calls the `Stats` method of each component once per second. `Stats` returns
