@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.77.0" />
+<meta name="generator" content="Hugo 0.78.2" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
@@ -32,7 +32,7 @@
 ">
 <meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
-<meta itemprop="wordCount" content="402">
+<meta itemprop="wordCount" content="395">
 
 
 
@@ -46,8 +46,8 @@
 
 
 
-<link rel="preload" href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" as="style">
-<link href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" as="style">
+<link href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -444,7 +444,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">baker.Components</a>
       
       
       
@@ -486,7 +486,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Sharding setup</a>
       
       
       
@@ -570,12 +570,12 @@
     <li><a href="#how-to-use-a-custom-version-of-the-record">How to use a custom version of the Record</a>
       <ul>
         <li><a href="#validate">Validate</a></li>
-        <li><a href="#createrecord">CreateRecord</a></li>
-        <li><a href="#fieldbyname">FieldByName</a></li>
-        <li><a href="#fieldindex">FieldIndex</a></li>
+        <li><a href="#createrecord"><code>CreateRecord</code></a></li>
+        <li><a href="#fieldbyname"><code>FieldByName</code></a></li>
+        <li><a href="#fieldname"><code>FieldName</code></a></li>
       </ul>
     </li>
-    <li><a href="#recordconformancetest">RecordConformanceTest</a></li>
+    <li><a href="#record-conformance-test">Record conformance test</a></li>
   </ul>
 </nav>
 
@@ -626,16 +626,15 @@
     <div class="lead">Record is the interface provided by Baker to represent an &ldquo;object&rdquo; of data</div>
 	       
 	<p>As you can read in the <a href="/docs/core-concepts/record_implementation/">Record and LogLine page</a>,
-Baker processes objects in form of “records”.</p>
+Baker processes objects called <strong>records</strong>.</p>
 <p>A <code>Record</code>, in Baker, is an interface that provides an abstraction over a record of flattened data,
 where columns of fields are indexed through integers.</p>
 <p>If the Record implementations provided by Baker doesn&rsquo;t fit your needs, you can create your own
-version of the Record, implementing the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#Record"><code>Record</code> inteface</a>.</p>
+version, implementing the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Record"><code>Record</code> inteface</a>.</p>
 <h2 id="how-to-use-a-custom-version-of-the-record">How to use a custom version of the Record</h2>
 <p>Once your Record version is ready, you need to use it in your code.</p>
 <p>In order to do so, some functions may be implemented while instantiating
-<a href="/docs/how-to/baker_components/"><code>baker.Components</code></a>:</p>
+<a href="/docs/how-tos/baker_components/"><code>baker.Components</code></a>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> Components <span style="color:#8be9fd;font-style:italic">struct</span> {
 	Validate      ValidationFunc
     CreateRecord  <span style="color:#8be9fd;font-style:italic">func</span>() Record
@@ -649,25 +648,25 @@ unless not set or when the <code>[general] dont_validate_fields = true</code> co
 the TOML file.</p>
 <p>Regardless of the TOML configuration, the function is passed to all components that can use
 it at their will.</p>
-<h3 id="createrecord">CreateRecord</h3>
+<h3 id="createrecord"><code>CreateRecord</code></h3>
 <p><code>CreateRecord</code> is the function that creates a new record. If not set, a default function is
 used that creates a <code>LogLine</code> with <code>,</code> as field separator.</p>
 <p>The function is used internally by Baker to create new records every time a new one comes from
 the input.</p>
 <p>The function is also passed to components that can use it to create new records while processing.</p>
-<h3 id="fieldbyname">FieldByName</h3>
+<h3 id="fieldbyname"><code>FieldByName</code></h3>
 <p><code>FieldByName</code> gets a field index by its name. The function is mainly used by the components
 (that receive it during setup) to retrieve the index of a field they need for filtering or
 processing, but it is also used internally by Baker when sending fields to the output
 (when at least one field is selected in the output TOML configuration).</p>
-<h3 id="fieldindex">FieldIndex</h3>
+<h3 id="fieldname"><code>FieldName</code></h3>
 <p><code>FieldName</code> gets a field name by its index. The function is passed to components that can use
 it for their internal logic.</p>
-<h2 id="recordconformancetest">RecordConformanceTest</h2>
-<p>The <code>test_helper.go</code> provides a <code>RecordConformanceTest</code> test helper whose goal is to give the
-user a structured test for new implementations of the Record.</p>
-<p>The helper receives the implementation of <code>CreateRecord</code> and creates new records testing
-them against a set of requirements.</p>
+<h2 id="record-conformance-test">Record conformance test</h2>
+<p><a href="https://github.com/AdRoll/baker/blob/23938bc743100373379403dd25618c25f0822231/test_helper.go#L11"><code>test_helper.go</code></a>
+provides a test helper, <code>RecordConformanceTest</code>, one can and should use to verify their
+custom <code>Record</code> satisfies the invariants required for any <code>Record</code> implementation.</p>
+<p>Just pass to <code>RecordConformanceTest</code> a factory function creating new instances of your <code>Record</code>.</p>
 
 
 <div class="alert alert-warning" role="alert">

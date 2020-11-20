@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.77.0" />
+<meta name="generator" content="Hugo 0.78.2" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
@@ -21,33 +21,33 @@
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
 <title>Record and LogLine | Baker</title><meta property="og:title" content="Record and LogLine" />
-<meta property="og:description" content="Baker deals with &#34;record&#34; objects, an abstraction of flattened data with indexed fields.
+<meta property="og:description" content="Baker operates on objects called &#34;records&#34;, an abstraction over integer-indexable structured data.
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://getbaker.io/docs/how-tos/record_and_logline/" />
 <meta property="article:published_time" content="2020-10-29T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-10-29T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
 <meta itemprop="name" content="Record and LogLine">
-<meta itemprop="description" content="Baker deals with &#34;record&#34; objects, an abstraction of flattened data with indexed fields.
+<meta itemprop="description" content="Baker operates on objects called &#34;records&#34;, an abstraction over integer-indexable structured data.
 ">
 <meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
-<meta itemprop="wordCount" content="220">
+<meta itemprop="wordCount" content="233">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Record and LogLine"/>
-<meta name="twitter:description" content="Baker deals with &#34;record&#34; objects, an abstraction of flattened data with indexed fields.
+<meta name="twitter:description" content="Baker operates on objects called &#34;records&#34;, an abstraction over integer-indexable structured data.
 "/>
 
 
 
 
 
-<link rel="preload" href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" as="style">
-<link href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" as="style">
+<link href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -444,7 +444,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">baker.Components</a>
       
       
       
@@ -486,7 +486,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Sharding setup</a>
       
       
       
@@ -609,17 +609,21 @@
             
 <div class="td-content">
 	<h1>Record and LogLine</h1>
-    <div class="lead">Baker deals with &ldquo;record&rdquo; objects, an abstraction of flattened data with indexed fields.</div>
+    <div class="lead">Baker operates on objects called &ldquo;records&rdquo;, an abstraction over integer-indexable structured data.</div>
 	       
-	<p>Baker processes objects in form of &ldquo;records&rdquo;. A Record, in Baker, is an interface that
-provides an abstraction over a record of flattened data, where columns of fields are
-indexed through integers.</p>
-<p>Baker currently provides a single implementation of Record, called <code>LogLine</code> (
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine">API reference</a>).</p>
-<p>If <code>LogLine</code> doesn&rsquo;t fit your needs, you can easily implement the Record interface with your
-<a href="#custom-logline">custom logic</a>.</p>
+	<p>Baker processes objects called <a href="http://localhost:1313/docs/core-concepts/#record-and-logline"><strong>records</strong></a>.
+A <code>Record</code>, in Baker, is an interface that provides an abstraction over a record of
+structured data, where fields are indexed and accessed via integers.</p>
+<p>At the moment, Baker provides a single implementation of the Record interface,
+called <a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine"><code>LogLine</code></a>.</p>
+<p>If <code>LogLine</code> doesn&rsquo;t fit your needs, you can implement the
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#Record"><code>Record</code> interface</a> or
+modify <a href="#custom-logline"><code>LogLine</code></a>. See the <a href="/docs/how-tos/custom_record/">custom Record how-to</a>
+for more details about implementing the <code>Record</code> interface from scratch.</p>
 <h2 id="logline">LogLine</h2>
-<p>A <a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine"><code>LogLine</code></a> is a Record implementation which is highly optimized for fast parsing and serializing of CSV records.</p>
+<p>A <a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine"><code>LogLine</code></a> is an implementation
+of the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Record"><code>Record</code> interface</a>
+which is highly optimized for fast parsing and serializing of CSV records.</p>
 <p>It supports any single-byte field separator and doesn&rsquo;t handle quotes (neither single nor double).</p>
 <p>The maximum number of fields is hard-coded by the <code>LogLineNumFields</code> constant which is 3000.</p>
 <p>100 extra fields can be stored at runtime in a <code>LogLine</code> (also hardcoded with <code>NumFieldsBaker</code>),
@@ -628,13 +632,13 @@ neither handled during Parsing (i.e <code>LogLine.Parse</code>) nor serializatio
 <h3 id="custom-logline">Custom LogLine</h3>
 <p>If the hardcoded values for
 <a href="https://pkg.go.dev/github.com/AdRoll/baker#pkg-constants"><code>LogLineNumFields</code> and <code>NumFieldsBaker</code></a>
-do not suit your needs, it&rsquo;s advised that you copy <code>logline.go</code> in your project and modify the
-constants declared at the top of the file.</p>
+do not suit your needs, you can copy <a href="https://github.com/AdRoll/baker/blob/main/logline.go"><code>logline.go</code></a>
+in your project and modify the constants declared at the top of the file.</p>
 <p>Your specialized <code>LogLine</code> will still implement <code>baker.Record</code> and thus can be used in lieu
 of <code>baker.LogLine</code>.</p>
 <p>The <code>CreateRecord</code> function set into
 <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>baker.Components</code></a> must return an
-instance of your custom LogLine instead of the default one.</p>
+instance of your custom <code>LogLine</code> instead of the default one.</p>
 
 	
 	

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.77.0" />
+<meta name="generator" content="Hugo 0.78.2" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
@@ -23,7 +23,8 @@
 <title>Create a custom upload component | Baker</title><meta property="og:title" content="Create a custom upload component" />
 <meta property="og:description" content="The last (optional) component of a Baker pipeline is the Upload, whose job is to, precisely, upload local files produced by the output component.
 To create an upload component and make it available to Baker, one must:
- Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  The Upload interface type Upload interface { Run(upch &lt;-chan string) error Stop() Stats() UploadStats } The Upload interface must be implemented when creating a new Upload component." />
+ Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  At the moment Baker only proposes a single Upload component, S3.
+The Upload interface New Upload components need to implement the Upload interface." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://getbaker.io/docs/how-tos/create_upload/" />
 <meta property="article:published_time" content="2020-11-11T00:00:00+00:00" />
@@ -31,10 +32,11 @@ To create an upload component and make it available to Baker, one must:
 <meta itemprop="name" content="Create a custom upload component">
 <meta itemprop="description" content="The last (optional) component of a Baker pipeline is the Upload, whose job is to, precisely, upload local files produced by the output component.
 To create an upload component and make it available to Baker, one must:
- Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  The Upload interface type Upload interface { Run(upch &lt;-chan string) error Stop() Stats() UploadStats } The Upload interface must be implemented when creating a new Upload component.">
+ Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  At the moment Baker only proposes a single Upload component, S3.
+The Upload interface New Upload components need to implement the Upload interface.">
 <meta itemprop="datePublished" content="2020-11-11T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-11-11T00:00:00+00:00" />
-<meta itemprop="wordCount" content="526">
+<meta itemprop="wordCount" content="524">
 
 
 
@@ -43,14 +45,15 @@ To create an upload component and make it available to Baker, one must:
 <meta name="twitter:title" content="Create a custom upload component"/>
 <meta name="twitter:description" content="The last (optional) component of a Baker pipeline is the Upload, whose job is to, precisely, upload local files produced by the output component.
 To create an upload component and make it available to Baker, one must:
- Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  The Upload interface type Upload interface { Run(upch &lt;-chan string) error Stop() Stats() UploadStats } The Upload interface must be implemented when creating a new Upload component."/>
+ Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  At the moment Baker only proposes a single Upload component, S3.
+The Upload interface New Upload components need to implement the Upload interface."/>
 
 
 
 
 
-<link rel="preload" href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" as="style">
-<link href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" as="style">
+<link href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -447,7 +450,7 @@ To create an upload component and make it available to Baker, one must:
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">baker.Components</a>
       
       
       
@@ -489,7 +492,7 @@ To create an upload component and make it available to Baker, one must:
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Sharding setup</a>
       
       
       
@@ -573,7 +576,7 @@ To create an upload component and make it available to Baker, one must:
     <li><a href="#the-upload-interface">The Upload interface</a></li>
     <li><a href="#uploaddesc">UploadDesc</a>
       <ul>
-        <li><a href="#upload-constructor-like-function">Upload constructor-like function</a></li>
+        <li><a href="#the-new-function">The <code>New</code> function</a></li>
         <li><a href="#upload-configuration-and-help">Upload configuration and help</a></li>
       </ul>
     </li>
@@ -636,18 +639,16 @@ upload local files produced by the output component.</p>
 <li>Fill an <a href="https://pkg.go.dev/github.com/AdRoll/baker#UploadDesc"><code>UploadDesc</code></a> structure and
 register it within Baker via <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>Components</code></a>.</li>
 </ul>
+<p>At the moment Baker only proposes a single <code>Upload</code> component, <a href="https://github.com/AdRoll/baker/blob/main/upload/s3.go">S3</a>.</p>
 <h2 id="the-upload-interface">The Upload interface</h2>
+<p>New <code>Upload</code> components need to implement the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Upload">Upload interface</a>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> Upload <span style="color:#8be9fd;font-style:italic">interface</span> {
 	<span style="color:#50fa7b">Run</span>(upch <span style="color:#ff79c6">&lt;-</span><span style="color:#8be9fd;font-style:italic">chan</span> <span style="color:#8be9fd">string</span>) <span style="color:#8be9fd">error</span>
 	<span style="color:#50fa7b">Stop</span>()
 	<span style="color:#50fa7b">Stats</span>() UploadStats
 }
-</code></pre></div><p>The <a href="https://pkg.go.dev/github.com/AdRoll/baker#Upload">Upload interface</a> must be implemented when
-creating a new Upload component.</p>
-<p>The <code>Run</code> function implements the component logic and receives a channel where the output sends what
-it produces (most probably file paths).</p>
-<p>Currently, only the <a href="https://github.com/AdRoll/baker/blob/main/upload/s3.go">S3</a> component exists
-and it expects to receive in the channel the path to the files produced by an output.</p>
+</code></pre></div><p>The <code>Run</code> function implements the component logic, it is passed a channel from which the upload
+receives absolute paths of the files to upload. These files are produced by the Output component.</p>
 <h2 id="uploaddesc">UploadDesc</h2>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> MyUploadDesc = baker.UploadDesc{
 	Name:   <span style="color:#f1fa8c">&#34;MyUpload&#34;</span>,
@@ -659,8 +660,8 @@ and it expects to receive in the channel the path to the files produced by an ou
 a constructor-like function (<code>New</code>), a config object (where the parsed upload configuration from the
 TOML file is stored) and a help text that must help the users to use the component and its
 configuration parameters.</p>
-<h3 id="upload-constructor-like-function">Upload constructor-like function</h3>
-<p>The <code>New</code> key in the <code>UploadDesc</code> object should be set to a function returning an Upload.</p>
+<h3 id="the-new-function">The <code>New</code> function</h3>
+<p>The <code>New</code> field in the <code>UploadDesc</code> object should be to assigned to a function that returns a new <code>Upload</code>.</p>
 <p>The function receives an <a href="https://pkg.go.dev/github.com/AdRoll/baker#UploadParams">UploadParams</a>
 object and returns an instance of <a href="https://pkg.go.dev/github.com/AdRoll/baker#Upload">Upload</a>.</p>
 <p>It should verify the configuration, accessed via <code>UploadParams.DecodedConfig</code> and initialize

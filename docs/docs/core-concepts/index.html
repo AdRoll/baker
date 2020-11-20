@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.77.0" />
+<meta name="generator" content="Hugo 0.78.2" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
@@ -39,8 +39,8 @@
 
 
 
-<link rel="preload" href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" as="style">
-<link href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" as="style">
+<link href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -437,7 +437,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">baker.Components</a>
       
       
       
@@ -479,7 +479,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Sharding setup</a>
       
       
       
@@ -607,13 +607,14 @@
 	<h2 id="pipeline">Pipeline</h2>
 <p>A pipeline (a.k.a. Topology) is the configured set of operations that Baker performs during
 its execution.</p>
-<p>It is defined by:</p>
+<p>It is configured in a TOML file and is defined by:</p>
 <ul>
-<li>One input component, defining where to fetch records from</li>
-<li>Zero or more filters, applied sequentially, which together define the <strong>filter chain</strong>. A filter is
-a function that processes record (modifying fields, discarding or creating records).</li>
-<li>One output component, defining where to send the filtered records to (and which fields)</li>
-<li>One optional upload component, defining where to send files produced by the output component</li>
+<li>One input component, determining where to fetch records from</li>
+<li>Zero or more filters, applied sequentially, which together compose the <strong>filter chain</strong>. A filter is
+a function that processes record: it can modify fields, discard records or create additional ones</li>
+<li>One output component, specifying where to send the records that made it so far</li>
+<li>One optional upload component, that can be added if the output creates files that need to be uploaded to
+a remote destination</li>
 </ul>
 <p>Notice that there are two main usage scenarios for Baker, batch or daemon processing, that depend on
 the input component behavior:</p>
@@ -624,24 +625,27 @@ ends its job.</li>
 <li><strong>Daemon</strong>: in this case, the input component never exits and thus also Baker, that keeps waiting
 for incoming records from the input (e.g.: Kinesis), processes them and sends them to the output.</li>
 </ul>
-<p>Also read <a href="/docs/how-to/pipeline_configuration/">Pipeline configuration</a></p>
+<p>Also read <a href="/docs/how-tos/pipeline_configuration/">Pipeline configuration</a></p>
 <h2 id="record-and-logline">Record and LogLine</h2>
 <p>Baker processes &ldquo;records&rdquo;. A <code>Record</code> is an interface that provides an abstraction over a record
 of flattened data, where columns of fields are indexed through integers.</p>
 <p>Baker currently provides a single implementation of Record, called <code>LogLine</code> (
 <a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine">API reference</a>).</p>
-<p>If <code>LogLine</code> doesn&rsquo;t fit your needs, you can <a href="/docs/how-to/record_and_logline/">customize it</a>
-or <a href="/docs/how-to/custom_record/">implement your version of the Record</a>.</p>
+<p>If <code>LogLine</code> doesn&rsquo;t fit your needs, you can <a href="/docs/how-tos/record_and_logline/">customize it</a>
+or <a href="/docs/how-tos/custom_record/">implement your version of the Record</a>.</p>
 <h2 id="components">Components</h2>
 <p>To process records, Baker uses up to 4 component types, each one with a different job:</p>
 <ul>
-<li><strong>Input</strong> reads the input records (as raw data) and sends them to Baker</li>
-<li>Baker parses the records from the raw bytes received by the input and sends them through
-the filter chain, an ordered list of <strong>Filter</strong> components that can modify, drop or create Records</li>
-<li>At the end of the filter chain, the records are sent to the <strong>Output</strong> component, whose job is
-to save them somewhere.</li>
-<li>An optional <strong>Upload</strong> component receives the files produced by the Output and upload them to
-their final destination.</li>
+<li><strong>Input</strong> reads blobs of data representing serialized records and sends them to Baker.</li>
+<li>Baker then parses the raw bytes, creates records from them and sends them through
+the filter chain, an ordered list of <strong>Filter</strong> components that can modify, drop or create
+Records.</li>
+<li>At the end of the filter chain, records are sent to the <strong>Output</strong> component. There are
+2 types of output components. Raw outputs receive serialized records while non-raw outputs
+just receive a set of fields. Whatever its type, the output most certainly writes records
+on disk or to an external service.</li>
+<li>In case the output saves files to disk, an optional <strong>Upload</strong> component can upload
+these files to a remote destination, such as Amazon S3 for example.</li>
 </ul>
 <p>Read our How-to guides to know how to:</p>
 <ul>
@@ -653,12 +657,13 @@ their final destination.</li>
 <h2 id="metrics">Metrics</h2>
 <p>During execution, Baker collects different kind of performance data points:</p>
 <ul>
-<li>general pipeline metrics such as the total number of records processed and records per seconds.</li>
-<li>component-specific metrics: files written per second, discarded records (by a filter), errors, etc.</li>
+<li>General pipeline metrics such as the total number of records processed and records per seconds.</li>
+<li>Component-specific metrics: files written per second, discarded records (by a filter), errors, etc.</li>
 <li>Go runtime metrics: mallocs, frees, garbage collections and so on.</li>
 </ul>
-<p>If enabled, Baker collects all these metrics and forwards them to a metrics client.</p>
-<p>Metrics export is set up in Baker topology TOML files, <a href="/docs/how-to/metrics/">see how to configure it</a>.</p>
+<p>If enabled, Baker collects all these metrics and publishes them to a monitoring solution, such as Datadog
+or Prometheus.</p>
+<p>Metrics export is configured in Baker topology TOML files, <a href="/docs/how-tos/metrics/">see how to configure it</a>.</p>
 <p>Baker also prints general metrics once per second on standard output, in single-line format. Read more
 about it <a href="/docs/how-tos/read_stats/">here</a>.</p>
 <h2 id="sharding">Sharding</h2>
@@ -669,7 +674,7 @@ same output component, run concurrently. Each of them only gets to process a
 specific subset of records, based on a the value a specific field has. This
 horizontal partioning allows to get the most of the resources at your disposal,
 since you can perform more work at the same time.</p>
-<p><a href="/docs/how-to/sharding/">Read more about sharding and how to configure it</a></p>
+<p><a href="/docs/how-tos/sharding/">Read more about sharding and how to configure it</a></p>
 
         <div class="section-index">
     

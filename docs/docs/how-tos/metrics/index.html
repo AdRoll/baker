@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.77.0" />
+<meta name="generator" content="Hugo 0.78.2" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
@@ -32,7 +32,7 @@
 ">
 <meta itemprop="datePublished" content="2020-11-03T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-11-03T00:00:00+00:00" />
-<meta itemprop="wordCount" content="476">
+<meta itemprop="wordCount" content="619">
 
 
 
@@ -46,8 +46,8 @@
 
 
 
-<link rel="preload" href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" as="style">
-<link href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" as="style">
+<link href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -444,7 +444,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">baker.Components</a>
       
       
       
@@ -486,7 +486,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Sharding setup</a>
       
       
       
@@ -611,13 +611,18 @@
 	<h1>Export metrics</h1>
     <div class="lead">How to export metrics from Baker</div>
 	       
-	<p>During its execution, a Baker pipeline exports metrics about the Go runtime as
-well as general metrics giving an high-level overview of the ongoing job.</p>
-<p>More specific metrics are also exported on a per-component basis. To that effect,
-<code>baker.Input</code>, <code>baker.Filter</code>, <code>baker.Output</code> and <code>baker.Upload</code> all have a <code>Stats</code>
-method. <code>Stats</code> is called every second and the component is expected to return both
-a predefined set of metrics and a <a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag"><code>baker.MetricsBag</code></a>
-containing metrics of arbitrary name and types.</p>
+	<p>Baker can publish various kind of <a href="/docs/core-concepts/#metrics">metrics</a> that may
+be used to monitor a pipeline in execution. The metrics exported range from numbers
+giving an high-level overview of the ongoing pipeline (total processed records,
+current speed in records per second, etc.) or per-component metrics such as the
+number of files read or written, to performance statistics published by the Go
+runtime in order to monitor lower level information (objects, memory, garbage
+collection, etc.).</p>
+<p>All components need to implement a <code>Stats</code> method where they can expose metrics.
+Baker calls the <code>Stats</code> method of each component once per second. <code>Stats</code> returns
+a predefined set of metrics (depending on the component type) and a
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag"><code>baker.MetricsBag</code></a>,
+in which one can add other metrics (of arbitrary name and type).</p>
 <p>Let&rsquo;s illustrate this with metrics exported by a filter via
 <a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterStats"><code>baker.FilterStats</code></a>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> FilterStats <span style="color:#8be9fd;font-style:italic">struct</span> {
@@ -625,21 +630,43 @@ containing metrics of arbitrary name and types.</p>
 	NumFilteredLines  <span style="color:#8be9fd">int64</span>
 	Metrics           MetricsBag
 }
-</code></pre></div><p>In this case <code>NumProcessedLines</code> must represent the <strong>total</strong> number of processed
-lines since Baker started, and <code>NumFilteredLines</code> is the number of discarded
-(or filtered) records. Due to historical reasons these fields have the word
+</code></pre></div><p>In this case <code>NumProcessedLines</code> should represent the <strong>total</strong> number of processed
+lines since the filter creation, while <code>NumFilteredLines</code> is the number of discarded
+(i.e filtered) records. Due to historical reasons these fields have the word
 <em>lines</em> in them but they do mean the number of records.</p>
-<p>An important point is that <code>Stats</code> can be called from any goroutine so it must be
-safe for concurrent use by multiple goroutines.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> (i <span style="color:#ff79c6">*</span>myFilter) <span style="color:#50fa7b">Stats</span>() baker.FilterStats {
-    bag <span style="color:#ff79c6">:=</span> <span style="color:#8be9fd;font-style:italic">make</span>(baker.MetricsBag)
-    bag.<span style="color:#50fa7b">AddGauge</span>(<span style="color:#f1fa8c">&#34;current_speed&#34;</span>, <span style="color:#8be9fd;font-style:italic">float64</span>(atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>myFilter.speed)))
+<h4 id="a-practical-example">A practical example</h4>
+<p>Let&rsquo;s say our filter needs to perform HTTP requests in order to decide whether a record
+should be discarded, we might want to keep track of the requests' durations in an histogram.
+In this case, we would probably record a slice of <code>time.Duration</code> in our filter and call
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag.AddTimings"><code>AddTimings</code></a> on the
+returned <code>MetricsBag</code>.</p>
+<p>An important point is that Baker may call <code>Process</code> and <code>Stats</code> concurrently, from different
+goroutines so you must use proper locking on data structures which are shared between the
+these two methods.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>myFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
+    atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>myFilter.totalLines, <span style="color:#bd93f9">1</span>)
+
+    <span style="color:#6272a4">/* perform http request and keep track of its duration
+</span><span style="color:#6272a4">     * in i.requestDurations
+</span><span style="color:#6272a4">     */</span>
+
+    <span style="color:#ff79c6">if</span> (<span style="color:#6272a4">/* filter logic*/</span>) {
+        <span style="color:#6272a4">// discard line
+</span><span style="color:#6272a4"></span>        atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>myFilter.filteredLines, <span style="color:#bd93f9">1</span>)
+        <span style="color:#ff79c6">return</span>
+    }
+}
+
+<span style="color:#8be9fd;font-style:italic">func</span> (i <span style="color:#ff79c6">*</span>myFilter) <span style="color:#50fa7b">Stats</span>() baker.FilterStats {
+    i.mu.<span style="color:#50fa7b">Lock</span>()
+    bag <span style="color:#ff79c6">:=</span> <span style="color:#8be9fd;font-style:italic">make</span>(baker.MetricsBag)    
+    bag.<span style="color:#50fa7b">AddTimings</span>(<span style="color:#f1fa8c">&#34;myfilter_http_request_duration&#34;</span>, i.requestDurations)
+    i.mu.<span style="color:#50fa7b">Unlock</span>()
 
     <span style="color:#ff79c6">return</span> baker.FilterStats{
         NumProcessedLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>myFilter.totalLines),
         NumFilteredLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>myFilter.filteredLines),
-        <span style="color:#6272a4">// Metrics could be let to its default value, nil, if not needed.
-</span><span style="color:#6272a4"></span>        Metrics: bag,
+        Metrics: bag,
     }
 }
 </code></pre></div><h4 id="configuring-metrics-in-toml">Configuring metrics in TOML</h4>
@@ -656,12 +683,11 @@ name=<span style="color:#f1fa8c">&#34;datadog&#34;</span>
     prefix=<span style="color:#f1fa8c">&#34;myapp.baker.&#34;</span>                  <span style="color:#6272a4"># prefix for all exported metric names</span>
     send_logs=<span style="color:#ff79c6">true</span>                         <span style="color:#6272a4"># whether we should log messages (as Dogstatd events) or not </span>
     tags=[<span style="color:#f1fa8c">&#34;env:prod&#34;</span>, <span style="color:#f1fa8c">&#34;region:eu-west-1&#34;</span>]  <span style="color:#6272a4"># extra tags to associate to all exported metrics </span>
-</code></pre></div><h4 id="disaling-metrics-export">Disaling metrics export</h4>
-<p>To not export any metrics, it&rsquo;s enough to not provide the <code>[metrics]</code> section in
+</code></pre></div><h4 id="disabling-metrics">Disabling metrics</h4>
+<p>If you don&rsquo;t want to publish any metrics, it&rsquo;s enough to not provide the <code>[metrics]</code> TOML section in
 Baker configuration file.</p>
 <h4 id="implementing-a-new-metrics-client">Implementing a new metrics client</h4>
-<p>The <a href="https://github.com/AdRoll/baker/tree/main/examples/metrics">metrics
-example</a> shows an
+<p>The <a href="https://github.com/AdRoll/baker/tree/main/examples/metrics">metrics example</a> shows an
 example implementation of
 <a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>baker.MetricsClient</code></a>
 and how to register it within Baker so that it can be selected in the

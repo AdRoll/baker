@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.77.0" />
+<meta name="generator" content="Hugo 0.78.2" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
@@ -25,7 +25,7 @@
 In fact, filters are the components that apply the business logic to a Baker pipeline, creating or discarding records or modifying fields.
 A working example of a custom filter can be found in the filtering example
 To create a filter and make it available to Baker, one must:
- Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface The Filter interface determines the functions that a filter must implement." />
+ Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface New Filter components need to implement the Filter interface." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://getbaker.io/docs/how-tos/create_filter/" />
 <meta property="article:published_time" content="2020-11-02T00:00:00+00:00" />
@@ -35,10 +35,10 @@ To create a filter and make it available to Baker, one must:
 In fact, filters are the components that apply the business logic to a Baker pipeline, creating or discarding records or modifying fields.
 A working example of a custom filter can be found in the filtering example
 To create a filter and make it available to Baker, one must:
- Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface The Filter interface determines the functions that a filter must implement.">
+ Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface New Filter components need to implement the Filter interface.">
 <meta itemprop="datePublished" content="2020-11-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-11-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="957">
+<meta itemprop="wordCount" content="968">
 
 
 
@@ -49,14 +49,14 @@ To create a filter and make it available to Baker, one must:
 In fact, filters are the components that apply the business logic to a Baker pipeline, creating or discarding records or modifying fields.
 A working example of a custom filter can be found in the filtering example
 To create a filter and make it available to Baker, one must:
- Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface The Filter interface determines the functions that a filter must implement."/>
+ Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface New Filter components need to implement the Filter interface."/>
 
 
 
 
 
-<link rel="preload" href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" as="style">
-<link href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" as="style">
+<link href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -453,7 +453,7 @@ To create a filter and make it available to Baker, one must:
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">baker.Components</a>
       
       
       
@@ -495,7 +495,7 @@ To create a filter and make it available to Baker, one must:
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Sharding setup</a>
       
       
       
@@ -579,8 +579,8 @@ To create a filter and make it available to Baker, one must:
     <li><a href="#the-filter-interface">The Filter interface</a></li>
     <li><a href="#filterdesc">FilterDesc</a>
       <ul>
-        <li><a href="#filter-constructor">Filter constructor</a></li>
-        <li><a href="#the-filter-configuration-and-help">The filter configuration and help</a></li>
+        <li><a href="#the-new-function">The <code>New</code> function</a></li>
+        <li><a href="#filter-configuration-and-help">Filter configuration and help</a></li>
       </ul>
     </li>
     <li><a href="#modify-record-fields">Modify record fields</a></li>
@@ -653,11 +653,13 @@ To create a filter and make it available to Baker, one must:
 the available filters in <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>Components</code></a></li>
 </ul>
 <h2 id="the-filter-interface">The Filter interface</h2>
-<p>The <a href="https://pkg.go.dev/github.com/AdRoll/baker#Filter">Filter interface</a> determines the functions
-that a filter must implement. The interface is quite simple and contains only two functions:
-<code>Process(l Record, next func(Record))</code> and <code>Stats() FilterStats</code>:</p>
-<ul>
-<li><code>Process</code> is the function the actually filters the records</li>
+<p>New <code>Filter</code> components need to implement the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Filter">Filter interface</a>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> Filter <span style="color:#8be9fd;font-style:italic">interface</span> {
+	<span style="color:#50fa7b">Process</span>(l Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record))
+	<span style="color:#50fa7b">Stats</span>() FilterStats
+}
+</code></pre></div><ul>
+<li><code>Process</code> is the function that actually filters the records</li>
 <li><code>Stats</code> return statistics (<a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterStats">FilterStats</a>) about the filtering process</li>
 </ul>
 <p>A very simple example of filter doing nothing is:</p>
@@ -688,10 +690,11 @@ that a filter must implement. The interface is quite simple and contains only tw
 a costructor function (<code>New</code>), a config object (used to parse the filter configuration in the
 TOML file) and a help text.</p>
 <p>In this case the filter can be used with this configuration in the
-<a href="/docs/how-to/pipeline_configuration/">TOML file</a>:</p>
+<a href="/docs/how-tos/pipeline_configuration/">TOML file</a>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[[filter]]
 name = <span style="color:#f1fa8c">&#34;MyFilter&#34;</span>
-</code></pre></div><h3 id="filter-constructor">Filter constructor</h3>
+</code></pre></div><h3 id="the-new-function">The <code>New</code> function</h3>
+<p>The <code>New</code> field in the <code>FilterDesc</code> object should be to assigned to a function that returns a new <code>Filter</code>.</p>
 <p>Each filter must have a constructor function that receives a
 <a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterParams">FilterParams</a> and returns the
 <a href="https://pkg.go.dev/github.com/AdRoll/baker#Filter">Filter interface</a> implemented by the filter:</p>
@@ -700,7 +703,7 @@ name = <span style="color:#f1fa8c">&#34;MyFilter&#34;</span>
 }
 </code></pre></div><p>The <a href="https://github.com/AdRoll/baker/blob/main/examples/filtering/filter.go">filtering example</a>
 shows a more complex constructor that also uses the <code>FilterParams</code> argument.</p>
-<h3 id="the-filter-configuration-and-help">The filter configuration and help</h3>
+<h3 id="filter-configuration-and-help">Filter configuration and help</h3>
 <p>A filter requiring some configurations also has a config object, including as many keys as it
 needs and tagging each one with an <code>help</code> tag, a string that contains what a user needs to know
 which values set for it:</p>

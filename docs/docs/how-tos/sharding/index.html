@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.77.0" />
+<meta name="generator" content="Hugo 0.78.2" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
@@ -20,34 +20,31 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Enable sharding in a topology | Baker</title><meta property="og:title" content="Enable sharding in a topology" />
-<meta property="og:description" content="How to enable sharding in a topology? Sharding is enabled in the [output] section of the topology TOML configuration file, by indicating the name of the field used to partition the records space.
-In the following topology extract, we&rsquo;re using a sharded Filewriter output and set the number of instances to 4 (i.e 4 shards). In our case, Baker is going to extract and hash the name field of each Record to determine which of the 4 Filewriter instances a Record is sent to:" />
+<title>Sharding setup | Baker</title><meta property="og:title" content="Sharding setup" />
+<meta property="og:description" content="How to configure a topology with output sharding?" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://getbaker.io/docs/how-tos/sharding/" />
 <meta property="article:published_time" content="2020-10-29T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-10-29T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Enable sharding in a topology">
-<meta itemprop="description" content="How to enable sharding in a topology? Sharding is enabled in the [output] section of the topology TOML configuration file, by indicating the name of the field used to partition the records space.
-In the following topology extract, we&rsquo;re using a sharded Filewriter output and set the number of instances to 4 (i.e 4 shards). In our case, Baker is going to extract and hash the name field of each Record to determine which of the 4 Filewriter instances a Record is sent to:">
+<meta itemprop="name" content="Sharding setup">
+<meta itemprop="description" content="How to configure a topology with output sharding?">
 <meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
-<meta itemprop="wordCount" content="699">
+<meta itemprop="wordCount" content="721">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Enable sharding in a topology"/>
-<meta name="twitter:description" content="How to enable sharding in a topology? Sharding is enabled in the [output] section of the topology TOML configuration file, by indicating the name of the field used to partition the records space.
-In the following topology extract, we&rsquo;re using a sharded Filewriter output and set the number of instances to 4 (i.e 4 shards). In our case, Baker is going to extract and hash the name field of each Record to determine which of the 4 Filewriter instances a Record is sent to:"/>
+<meta name="twitter:title" content="Sharding setup"/>
+<meta name="twitter:description" content="How to configure a topology with output sharding?"/>
 
 
 
 
 
-<link rel="preload" href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" as="style">
-<link href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" as="style">
+<link href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -444,7 +441,7 @@ In the following topology extract, we&rsquo;re using a sharded Filewriter output
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">baker.Components</a>
       
       
       
@@ -486,7 +483,7 @@ In the following topology extract, we&rsquo;re using a sharded Filewriter output
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Sharding setup</a>
       
       
       
@@ -556,7 +553,7 @@ In the following topology extract, we&rsquo;re using a sharded Filewriter output
 
 
 <a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/How%20Tos/sharding.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Enable%20sharding%20in%20a%20topology" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Sharding%20setup" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -567,7 +564,6 @@ In the following topology extract, we&rsquo;re using a sharded Filewriter output
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#how-to-enable-sharding-in-a-topology">How to enable sharding in a topology?</a></li>
     <li><a href="#limitations">Limitations</a></li>
     <li><a href="#hash-functions">Hash functions</a></li>
     <li><a href="#register-sharding-functions">Register sharding functions</a></li>
@@ -610,7 +606,7 @@ In the following topology extract, we&rsquo;re using a sharded Filewriter output
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/how-tos/sharding/">Enable sharding in a topology</a>
+	<a href="https://getbaker.io/docs/how-tos/sharding/">Sharding setup</a>
 </li>
 
 	</ol>
@@ -618,13 +614,13 @@ In the following topology extract, we&rsquo;re using a sharded Filewriter output
 
             
 <div class="td-content">
-	<h1>Enable sharding in a topology</h1>
-    
+	<h1>Sharding setup</h1>
+    <div class="lead">How to configure a topology with output sharding?</div>
 	       
-	<h2 id="how-to-enable-sharding-in-a-topology">How to enable sharding in a topology?</h2>
-<p>Sharding is enabled in the <code>[output]</code> section of the topology TOML
-configuration file, by indicating the name of the field used to partition
-the records space.</p>
+	<p>When a topology is configured with multiple output processes, <a href="/docs/core-concepts/#sharding">Sharding</a>
+allows to partition the records sent to each of them based on the value of a given field.</p>
+<p>Sharding is enabled in the <code>[output]</code> section of the TOML file, by indicating the name
+of the field we wish to use to partition the records space.</p>
 <p>In the following topology extract, we&rsquo;re using a sharded <code>Filewriter</code> output
 and set the number of instances to 4 (i.e 4 shards). In our case, Baker is
 going to extract and hash the <code>name</code> field of each <code>Record</code> to determine which
@@ -665,7 +661,7 @@ function, that both guarantees the uniformity of output values with respect to
 input values, and in terms of performance.</p>
 <p>For example, if you know the sharded field is only made of integers from 0 to
 1000, the hash function would be implemented differently than if the values for that
-field are arbitraty long strings.</p>
+field are arbitrary long strings.</p>
 <p>It&rsquo;s however possible to use a non-optimal but best effort general hash function.
 (we&rsquo;re planning to add this to Baker soon).</p>
 <p>A hash function should of course be deterministic (i.e the same input should

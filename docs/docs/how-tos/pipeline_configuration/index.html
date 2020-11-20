@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.77.0" />
+<meta name="generator" content="Hugo 0.78.2" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
@@ -32,7 +32,7 @@
 ">
 <meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
-<meta itemprop="wordCount" content="743">
+<meta itemprop="wordCount" content="807">
 
 
 
@@ -46,8 +46,8 @@
 
 
 
-<link rel="preload" href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" as="style">
-<link href="/scss/main.min.1ef8fb643994b286ed228546b9f7b424c87b55492a8e508eac072cf5f45043b5.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" as="style">
+<link href="/scss/main.min.54885eeb24b7e10f208b34542d960e5c216b4721424233ca73be8cdd90eaa4cf.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -444,7 +444,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">Create baker.Components</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosbaker_components" href="/docs/how-tos/baker_components/">baker.Components</a>
       
       
       
@@ -486,7 +486,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Enable sharding in a topology</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tossharding" href="/docs/how-tos/sharding/">Sharding setup</a>
       
       
       
@@ -622,8 +622,16 @@
 	<h1>Pipeline configuration</h1>
     <div class="lead">How to configure Baker using TOML files</div>
 	       
-	<h3 id="configuration-file">Configuration file</h3>
-<p>Baker is configured using a <a href="https://toml.io/en/">TOML file</a>, whose content is processed by the
+	<p>A Baker <a href="/docs/core-concepts/#pipeline">pipeline</a> is declared in a configuration
+file in <a href="https://toml.io/en/">TOML format</a>.
+We use this file to:</p>
+<ul>
+<li>define the topology (i.e the list of components) of the pipeline we want to run</li>
+<li>configure each component</li>
+<li>setup general elements such as metrics</li>
+</ul>
+<h3 id="configuration-file">Configuration file</h3>
+<p>Baker is configured using a <a href="https://toml.io/en/">TOML</a> file, which content is processed by the
 <a href="https://pkg.go.dev/github.com/AdRoll/Baker#NewConfigFromToml"><code>NewConfigFromToml</code></a> function.</p>
 <p>The file has several sections, described below:</p>
 <table>
@@ -732,6 +740,8 @@ records. As other components, each filter may be followed by a <code>[filter.con
 <p><code>[output]</code> selects the output component; the output is where records that made it to the end of
 the filter chain without being discarded end up. In this case, the <code>DynamoDB</code> output is selected,
 and its configuration is specified in <code>[output.config]</code>.</p>
+<p>In the example topology above we don&rsquo;t specify an <code>[upload]</code> section since the output
+doesn&rsquo;t create files on the local filesystem, it makes queries to DynamoDB.</p>
 <p>The <code>fields</code> option in the <code>[output]</code> section selects which fields of the record are sent
 to the output.<br>
 In fact, most pipelines don&rsquo;t want to send the full records to the output, but they select
@@ -741,9 +751,9 @@ physically serialize those fields. For instance, the <code>DynamoDB</code> compo
 to specify an option called columns that specifies the name and the type of the column where
 the fields are written.</p>
 <h4 id="metrics-configuration">Metrics configuration</h4>
-<p>The <code>[metrics]</code> section allows to configure the metrics backend to use. Currently, only <code>datadog</code> is
+<p>The <code>[metrics]</code> section allows to configure the monitoring solution to use. Currently, only <code>datadog</code> is
 supported.</p>
-<p>See the dedicated page to learn how to configure DataDog metrics with Baker. (TODO: add link)</p>
+<p>See the <a href="/docs/how-tos/metrics/">dedicated page</a> to learn how to configure DataDog metrics with Baker.</p>
 <h4 id="user-defined-configurations">User defined configurations</h4>
 <p>The <code>baker.NewConfigFromToml</code> function, used by Baker to parse the TOML configuration file, can be
 also used to add custom configurations to the TOML file (useful as Baker can be used as library in
