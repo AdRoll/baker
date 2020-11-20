@@ -6,9 +6,17 @@ description: >
   How to configure Baker using TOML files
 ---
 
+A Baker [pipeline](/docs/core-concepts/#pipeline) is declared in a configuration
+file in [TOML format](https://toml.io/en/).
+We use this file to:
+ * define the topology (i.e the list of components) of the pipeline we want to run
+ * configure each component
+ * setup general elements such as metrics for instance
+
+
 ### Configuration file
 
-Baker is configured using a [TOML file](https://toml.io/en/), whose content is processed by the
+Baker is configured using a [TOML](https://toml.io/en/) file, which content is processed by the
 [`NewConfigFromToml`](https://pkg.go.dev/github.com/AdRoll/Baker#NewConfigFromToml) function.
 
 The file has several sections, described below:
