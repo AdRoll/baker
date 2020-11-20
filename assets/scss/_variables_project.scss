@@ -1,3 +1,7 @@
 .highlight pre {
     padding: 2em;
 }
+
+.navbar-brand {
+    display: none !important; // This is imported on top of the css, so !important in needed
+}

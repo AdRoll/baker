@@ -67,7 +67,7 @@ weight = 1
 # Everything below this are Site Params
 
 [params]
-copyright = "© 2006-2020, NextRoll, Inc."
+copyright = "NextRoll, Inc."
 privacy_policy = "https://www.nextroll.com/privacy"
 
 # First one is picked as the Twitter card image if not set on page.
@@ -107,7 +107,7 @@ github_branch = "gh-pages"
 algolia_docsearch = false
 
 # Enable Lunr.js offline search
-offlineSearch = false
+offlineSearch = true
 
 # Enable syntax highlighting and copy buttons on code blocks with Prism
 prism_syntax_highlighting = false
@@ -143,34 +143,59 @@ enable = false
 
 [params.links]
 # End user relevant links. These will show up on left side of footer and in the community page if you have one.
-# [[params.links.user]]
-# 	name = "User mailing list"
-# 	url = "https://example.org/mail"
-# 	icon = "fa fa-envelope"
-#         desc = "Discussion and help from your fellow users"
 [[params.links.user]]
+	name = "Contributions welcome! Open a PR"
+	url = "https://github.com/AdRoll/baker/pulls"
+	icon = "fa fa-hands-helping"
+    desc = "We encourage all users to contribute to the project by adding new components, improve the core or the documentation."
+[[params.links.user]]
+	name = "Bug found? File an issue"
+	url = "https://github.com/AdRoll/baker/issues/new?labels=bug"
+	icon = "fa fa-bug"
+    desc = "If you think you found a bug, please create a new issue on GitHub"
+
+[[params.links.developer]]
 	name ="Twitter"
 	url = "https://twitter.com/nextroll_inc"
 	icon = "fab fa-twitter"
-        desc = "Follow us on Twitter to get the latest news!"
-# [[params.links.user]]
-# 	name = "Stack Overflow"
-# 	url = "https://example.org/stack"
-# 	icon = "fab fa-stack-overflow"
-#         desc = "Practical questions and curated answers"
-# Developer relevant links. These will show up on right side of footer and in the community page if you have one.
+    desc = "Follow us on Twitter to get the latest news!"
 [[params.links.developer]]
 	name = "GitHub"
 	url = "https://github.com/adroll/baker"
 	icon = "fab fa-github"
-        desc = "Development takes place here!"
-# [[params.links.developer]]
-# 	name = "Slack"
-# 	url = "https://example.org/slack"
-# 	icon = "fab fa-slack"
-#         desc = "Chat with other project developers"
-# [[params.links.developer]]
-# 	name = "Developer mailing list"
-# 	url = "https://example.org/mail"
-# 	icon = "fa fa-envelope"
-#         desc = "Discuss development issues around the project"
+    desc = "Development takes place here!"
+[[params.links.developer]]
+	name = "Slack"
+	url = "https://gophers.slack.com/app_redirect?channel=baker"
+	icon = "fab fa-slack"
+    desc = "Get in touch with us on Slack!"
+
+[[menu.main]]
+    name = "Getting Started"
+    weight = 10
+    url = "/docs/getting-started/"
+
+[[menu.main]]
+    name = "Core Concepts"
+    weight = 20
+    url = "/docs/core-concepts/"
+
+[[menu.main]]
+    name = "Components"
+    weight = 30
+    url = "/docs/components/"
+
+[[menu.main]]
+    name = "How-tos"
+    weight = 40
+    url = "/docs/how-tos/"
+
+[[menu.main]]
+    name = "API"
+    weight = 50
+    url = "https://pkg.go.dev/github.com/AdRoll/baker"
+
+[[menu.main]]
+    name = "GitHub"
+    weight = 60
+    url = "https://github.com/adroll/baker"

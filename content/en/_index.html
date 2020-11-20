@@ -3,10 +3,10 @@ title = "Baker"
 linkTitle = "Baker"
 +++
 
-{{< blocks/cover title="High performance, composable and extendable data-processing pipeline for the big data era" image_anchor="top" height="med" color="blue" >}}
+{{< blocks/cover title="High performance modular pipelines for the Big Data era" image_anchor="top" height="min" color="blue" >}}
 <div class="mx-auto">
 	<a class="btn btn-lg btn-primary mr-3 mb-4" href="{{< relref "/docs/" >}}">
-		Learn More <i class="fas fa-arrow-alt-circle-right ml-2"></i>
+		Documentation <i class="fas fa-book-open ml-2"></i>
 	</a>
 	<a class="btn btn-lg btn-secondary mr-3 mb-4" href="https://github.com/adroll/baker">
 		Github repository <i class="fab fa-github ml-2 "></i>
@@ -14,97 +14,40 @@ linkTitle = "Baker"
 </div>
 {{< /blocks/cover >}}
 
-{{% blocks/lead color="primary" %}}
+{{% blocks/lead color="light" %}}
+<p><img src="/baker-pipeline.png" /></p>
 Baker can convert, process, extract or store records (structured data), applying whatever transformation between input and output through easy-to-write filters.
 
 It is fully parallel and maximizes usage of both CPU-bound and I/O bound pipelines.
 
-Baker is an open source project by <a href="https://www.nextroll.com/" target="_blank">NextRoll, inc.</a> and it's completely written in <a href="https://golang.org/" target="_blank">Go</a>
+Baker is an open source project made in <a href="https://www.nextroll.com/" target="_blank">NextRoll, inc.</a> and it's completely written in <a href="https://golang.org/" target="_blank">Go</a>
 
 <img src="./images/nextroll-logo-2x.png" alt="NextRoll, inc." />
 
 {{% /blocks/lead %}}
 
-{{< blocks/section color="dark" >}}
-{{% blocks/feature icon="fas fa-tools" title="Fully customizable" %}}
+{{< blocks/section color="primary" >}}
+{{% blocks/feature icon="fas fa-link" title="Modular pipeline" %}}
 
-Baker is a Go library, import it in your project, use provided components (or create your own) and run the topology!
+Baker uses modular components in a 4-levels stack: inputs, filters, outputs and uploads.
+
+Each component of a level can connect with any other from the previous and the next one.
 {{% /blocks/feature %}}
 
-{{% blocks/feature icon="fab fa-github" title="Contributions welcome!" %}}
-We encourage all users to contribute to the project by adding new components, improve the core or the documentation.
+{{% blocks/feature icon="fas fa-shipping-fast" title="High performances" %}}
+Baker is fully parallel and maximizes usage of both CPU-bound and I/O bound pipelines.
 
-Visit the project on GitHub and feel free to open a new [Pull Request](https://github.com/AdRoll/baker/pulls).
+On a c5.2xlarge EC2 instance, Baker managed to read zstandard records from S3, uncompress them and
+apply a basic filtering logic, compressing them back on local files with zstandard
+using ~90% of capacity of each vCPU (8 in total) and ~3.5GB of RAM, reading and writing ~178000
+records per second.
 {{% /blocks/feature %}}
 
-{{% blocks/feature icon="fas fa-bug" title="I found a bug!" %}}
-If you think you found a bug, please create a [new issue](https://github.com/AdRoll/baker/issues/new) on GitHub
+{{% blocks/feature icon="fas fa-puzzle-piece" title="Extendable" %}}
+With Baker it's super easy to write new components or process any kind of structured data.
+
+Read the <a href="/docs/how-tos/" alt="How-tos" />How-tos</a> pages in the documentation
+to learn how to do it.
 {{% /blocks/feature %}}
 
-{{< /blocks/section >}}
-
-{{< blocks/section >}}
-<div class="container">
-
-<div class="mx-auto mb-4">
-    This is a simple example of Baker usage. Check out more examples in the <a href="https://github.com/AdRoll/baker/tree/main/examples">project repository</a>
-</div>
-
-<div class="col-12">
-{{< highlight go >}}
-package main
-import (
-	"log"
-	"strings"
-	"time"
-	"github.com/AdRoll/baker"
-	"github.com/AdRoll/baker/input"
-	"github.com/AdRoll/baker/output"
-)
-// Some example fields
-const (
-	Timestamp baker.FieldIndex = 0
-	Source    baker.FieldIndex = 1
-	Target    baker.FieldIndex = 2
-)
-var fields = map[string]baker.FieldIndex{
-	"timestamp": Timestamp,
-	"source":    Source,
-	"target":    Target,
-}
-func fieldByName(key string) (baker.FieldIndex, bool) {
-	idx, ok := fields[key]
-	return idx, ok
-}
-func main() {
-	toml := `
-[input]
-name = "List"
-	[input.config]
-	files=["testdata/input.csv.zst"]
-[output]
-name = "FileWriter"
-procs=1
-	[output.config]
-	PathString="./_out/output.csv.gz"
-`
-	c := baker.Components{
-		Inputs:      input.All,
-		Outputs:     output.All,
-		FieldByName: fieldByName,
-	}
-	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), c)
-	if err != nil {
-		log.Fatal(err)
-	}
-	var duration time.Duration
-	err = baker.Main(cfg, duration)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-{{< / highlight >}}
-</div>
-
-</div>
 {{< /blocks/section >}}
