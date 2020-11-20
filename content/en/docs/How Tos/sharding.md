@@ -5,9 +5,11 @@ weight: 780
 description: How to configure a topology with output sharding?
 ---
 
-[Sharding](/docs/core-concepts/#sharding) is enabled in the `[output]` 
-section of the topology TOML  configuration file, by indicating the name
-of the field used to partition the records space.
+When a topology is configured with multiple output processes, [Sharding](/docs/core-concepts/#sharding)
+allows to partition the records sent to each of them based on the value of a given field.
+
+Sharding is enabled in the `[output]` section of the TOML file, by indicating the name
+of the field we wish to use to partition the records space.
 
 In the following topology extract, we're using a sharded `Filewriter` output
 and set the number of instances to 4 (i.e 4 shards). In our case, Baker is 
