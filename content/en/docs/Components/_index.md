@@ -2,7 +2,7 @@
 title: "Components"
 weight: 250
 date: 2020-11-12
-no_list: true
+description: "All Baker components: inputs, filters, outputs and uploads"
 ---
 
 ### **Inputs**

@@ -15,15 +15,20 @@ linkTitle = "Baker"
 {{< /blocks/cover >}}
 
 {{% blocks/lead color="light" %}}
-<p><img src="/baker-pipeline.png" /></p>
-Baker can convert, process, extract or store records (structured data), applying whatever transformation between input and output through easy-to-write filters.
-
-It is fully parallel and maximizes usage of both CPU-bound and I/O bound pipelines.
-
-Baker is an open source project made in <a href="https://www.nextroll.com/" target="_blank">NextRoll, inc.</a> and it's completely written in <a href="https://golang.org/" target="_blank">Go</a>
-
+<div style="display:flex;justify-content:space-around;align-items:center;align-content:center;">
+<div style="padding-right:1em;">
+    <img src="/baker.png" style="min-width:400px;max-width:600px;" />
+</div>
+<div style="padding-left:1em;">
+<p>Baker pipelines can fetch, transform and store records in a flash <i class="fa fa-bolt"></i>
+thanks to a high-performant and fully-parallel implementation.
+</p>
+<p>
+Baker is open-source and written in <a href="https://golang.org/" target="_blank">Go</a> by <a href="https://www.nextroll.com/" target="_blank">NextRoll, inc.</a>.
+</p>
 <img src="./images/nextroll-logo-2x.png" alt="NextRoll, inc." />
-
+</div>
+</div>
 {{% /blocks/lead %}}
 
 {{< blocks/section color="primary" >}}
@@ -37,10 +42,10 @@ Each component of a level can connect with any other from the previous and the n
 {{% blocks/feature icon="fas fa-shipping-fast" title="High performances" %}}
 Baker is fully parallel and maximizes usage of both CPU-bound and I/O bound pipelines.
 
-On a c5.2xlarge EC2 instance, Baker managed to read zstandard records from S3, uncompress them and
-apply a basic filtering logic, compressing them back on local files with zstandard
-using ~90% of capacity of each vCPU (8 in total) and ~3.5GB of RAM, reading and writing ~178000
-records per second.
+<img src="/speed.png" style="min-width:400px;max-width:600px;" />
+
+More examples of <a href="/docs/performance/">Baker performances &raquo;</a>
+
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fas fa-puzzle-piece" title="Extendable" %}}

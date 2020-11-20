@@ -171,6 +171,11 @@ enable = false
     desc = "Get in touch with us on Slack!"
 
 [[menu.main]]
+    name = "Home"
+    weight = 1
+    url = "/"
+
+[[menu.main]]
     name = "Getting Started"
     weight = 10
     url = "/docs/getting-started/"
