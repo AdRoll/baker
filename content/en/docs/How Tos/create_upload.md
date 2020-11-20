@@ -12,7 +12,11 @@ To create an upload component and make it available to Baker, one must:
 * Fill an [`UploadDesc`](https://pkg.go.dev/github.com/AdRoll/baker#UploadDesc) structure and
 register it within Baker via [`Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components).
 
+At the moment Baker only proposes a single `Upload` component, [S3](https://github.com/AdRoll/baker/blob/main/upload/s3.go).
+
 ## The Upload interface
+
+New `Upload` components need to implement the [Upload interface](https://pkg.go.dev/github.com/AdRoll/baker#Upload).
 
 ```go
 type Upload interface {
@@ -22,14 +26,9 @@ type Upload interface {
 }
 ```
 
-The [Upload interface](https://pkg.go.dev/github.com/AdRoll/baker#Upload) must be implemented when
-creating a new Upload component.
+The `Run` function implements the component logic, it is passed a channel from which the upload
+receives absolute paths of the files to upload. These files are produced by the Output component.
 
-The `Run` function implements the component logic and receives a channel where the output sends what
-it produces (most probably file paths).
-
-Currently, only the [S3](https://github.com/AdRoll/baker/blob/main/upload/s3.go) component exists
-and it expects to receive in the channel the path to the files produced by an output.
 
 ## UploadDesc
 
@@ -47,9 +46,9 @@ a constructor-like function (`New`), a config object (where the parsed upload co
 TOML file is stored) and a help text that must help the users to use the component and its
 configuration parameters.
 
-### Upload constructor-like function
+### The `New` function
 
-The `New` key in the `UploadDesc` object should be set to a function returning an Upload.
+The `New` field in the `UploadDesc` object should be to assigned to a function that returns a new `Upload`.
 
 The function receives an [UploadParams](https://pkg.go.dev/github.com/AdRoll/baker#UploadParams)
 object and returns an instance of [Upload](https://pkg.go.dev/github.com/AdRoll/baker#Upload).

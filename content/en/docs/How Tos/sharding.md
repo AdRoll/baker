@@ -1,14 +1,15 @@
 ---
-title: "Enable sharding in a topology"
+title: "Sharding setup"
 date: 2020-10-29
 weight: 780
+description: How to configure a topology with output sharding?
 ---
 
-## How to enable sharding in a topology?
+When a topology is configured with multiple output processes, [Sharding](/docs/core-concepts/#sharding)
+allows to partition the records sent to each of them based on the value of a given field.
 
-Sharding is enabled in the `[output]` section of the topology TOML 
-configuration file, by indicating the name of the field used to partition
-the records space.
+Sharding is enabled in the `[output]` section of the TOML file, by indicating the name
+of the field we wish to use to partition the records space.
 
 In the following topology extract, we're using a sharded `Filewriter` output
 and set the number of instances to 4 (i.e 4 shards). In our case, Baker is 
@@ -63,7 +64,7 @@ input values, and in terms of performance.
 
 For example, if you know the sharded field is only made of integers from 0 to 
 1000, the hash function would be implemented differently than if the values for that 
-field are arbitraty long strings. 
+field are arbitrary long strings.
 
 It's however possible to use a non-optimal but best effort general hash function.
 (we're planning to add this to Baker soon).

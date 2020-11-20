@@ -6,14 +6,19 @@ description: >
   How to export metrics from Baker
 ---
 
-During its execution, a Baker pipeline exports metrics about the Go runtime as
-well as general metrics giving an high-level overview of the ongoing job.
+Baker can publish various kind of [metrics](/docs/core-concepts/#metrics) that may
+be used to monitor a pipeline in execution. The metrics exported range from numbers
+giving an high-level overview of the ongoing pipeline (total processed records, 
+current speed in records per second, etc.) or per-component metrics such as the 
+number of files read or written, to performance statistics published by the Go 
+runtime in order to monitor lower level information (objects, memory, garbage 
+collection, etc.).
 
-More specific metrics are also exported on a per-component basis. To that effect, 
-`baker.Input`, `baker.Filter`, `baker.Output` and `baker.Upload` all have a `Stats` 
-method. `Stats` is called every second and the component is expected to return both
-a predefined set of metrics and a [`baker.MetricsBag`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag)
-containing metrics of arbitrary name and types.
+All components need to implement a `Stats` method where they can expose metrics. 
+Baker calls the `Stats` method of each component once per second. `Stats` returns
+a predefined set of metrics (depending on the component type) and a 
+[`baker.MetricsBag`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag),
+in which one can add other metrics (of arbitrary name and type).
 
 Let's illustrate this with metrics exported by a filter via 
 [`baker.FilterStats`](https://pkg.go.dev/github.com/AdRoll/baker#FilterStats):
@@ -26,23 +31,47 @@ type FilterStats struct {
 }
 ```
 
-In this case `NumProcessedLines` must represent the **total** number of processed 
-lines since Baker started, and `NumFilteredLines` is the number of discarded 
-(or filtered) records. Due to historical reasons these fields have the word
+In this case `NumProcessedLines` should represent the **total** number of processed 
+lines since the filter creation, while `NumFilteredLines` is the number of discarded 
+(i.e filtered) records. Due to historical reasons these fields have the word
 _lines_ in them but they do mean the number of records.
 
-An important point is that `Stats` can be called from any goroutine so it must be
-safe for concurrent use by multiple goroutines. 
+#### A practical example
+
+Let's say our filter needs to perform HTTP requests in order to decide whether a record
+should be discarded, we might want to keep track of the requests' durations in an histogram.
+In this case, we would probably record a slice of `time.Duration` in our filter and call
+[`AddTimings`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag.AddTimings) on the
+returned `MetricsBag`.
+
+An important point is that Baker may call `Process` and `Stats` concurrently, from different
+goroutines so you must use proper locking on data structures which are shared between the
+these two methods. 
 
 ```go
+func (f *myFilter) Process(r Record, next func(Record)) {
+    atomic.AddInt64(&myFilter.totalLines, 1)
+
+    /* perform http request and keep track of its duration
+     * in i.requestDurations
+     */
+
+    if (/* filter logic*/) {
+        // discard line
+        atomic.AddInt64(&myFilter.filteredLines, 1)
+        return
+    }
+}
+
 func (i *myFilter) Stats() baker.FilterStats {
-    bag := make(baker.MetricsBag)
-    bag.AddGauge("current_speed", float64(atomic.LoadInt64(&myFilter.speed)))
+    i.mu.Lock()
+    bag := make(baker.MetricsBag)    
+    bag.AddTimings("myfilter_http_request_duration", i.requestDurations)
+    i.mu.Unlock()
 
     return baker.FilterStats{
         NumProcessedLines: atomic.LoadInt64(&myFilter.totalLines),
         NumFilteredLines: atomic.LoadInt64(&myFilter.filteredLines),
-        // Metrics could be let to its default value, nil, if not needed.
         Metrics: bag,
     }
 }
@@ -69,16 +98,15 @@ name="datadog"
     tags=["env:prod", "region:eu-west-1"]  # extra tags to associate to all exported metrics 
 ```
 
-#### Disaling metrics export
+#### Disabling metrics
 
-To not export any metrics, it's enough to not provide the `[metrics]` section in
+If you don't want to publish any metrics, it's enough to not provide the `[metrics]` TOML section in
 Baker configuration file.
 
 
 #### Implementing a new metrics client
 
-The [metrics
-example](https://github.com/AdRoll/baker/tree/main/examples/metrics) shows an
+The [metrics example](https://github.com/AdRoll/baker/tree/main/examples/metrics) shows an
 example implementation of
 [`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient)
 and how to register it within Baker so that it can be selected in the

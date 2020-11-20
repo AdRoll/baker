@@ -6,9 +6,17 @@ description: >
   How to configure Baker using TOML files
 ---
 
+A Baker [pipeline](/docs/core-concepts/#pipeline) is declared in a configuration
+file in [TOML format](https://toml.io/en/).
+We use this file to:
+ * define the topology (i.e the list of components) of the pipeline we want to run
+ * configure each component
+ * setup general elements such as metrics
+
+
 ### Configuration file
 
-Baker is configured using a [TOML file](https://toml.io/en/), whose content is processed by the
+Baker is configured using a [TOML](https://toml.io/en/) file, which content is processed by the
 [`NewConfigFromToml`](https://pkg.go.dev/github.com/AdRoll/Baker#NewConfigFromToml) function.
 
 The file has several sections, described below:
@@ -83,6 +91,9 @@ records. As other components, each filter may be followed by a `[filter.config]`
 the filter chain without being discarded end up. In this case, the `DynamoDB` output is selected,
 and its configuration is specified in `[output.config]`.
 
+In the example topology above we don't specify an `[upload]` section since the output 
+doesn't create files on the local filesystem, it makes queries to DynamoDB.
+
 The `fields` option in the `[output]` section selects which fields of the record are sent
 to the output.  
 In fact, most pipelines don't want to send the full records to the output, but they select
@@ -94,10 +105,10 @@ the fields are written.
 
 #### Metrics configuration
 
-The `[metrics]` section allows to configure the metrics backend to use. Currently, only `datadog` is
+The `[metrics]` section allows to configure the monitoring solution to use. Currently, only `datadog` is
 supported.
 
-See the dedicated page to learn how to configure DataDog metrics with Baker. (TODO: add link)
+See the [dedicated page](/docs/how-tos/metrics/) to learn how to configure DataDog metrics with Baker.
 
 #### User defined configurations
 

@@ -21,11 +21,16 @@ the available filters in [`Components`](https://pkg.go.dev/github.com/AdRoll/bak
 
 ## The Filter interface
 
-The [Filter interface](https://pkg.go.dev/github.com/AdRoll/baker#Filter) determines the functions
-that a filter must implement. The interface is quite simple and contains only two functions:
-`Process(l Record, next func(Record))` and `Stats() FilterStats`:
+New `Filter` components need to implement the [Filter interface](https://pkg.go.dev/github.com/AdRoll/baker#Filter).
 
-* `Process` is the function the actually filters the records
+```go
+type Filter interface {
+	Process(l Record, next func(Record))
+	Stats() FilterStats
+}
+```
+
+* `Process` is the function that actually filters the records
 * `Stats` return statistics ([FilterStats](https://pkg.go.dev/github.com/AdRoll/baker#FilterStats)) about the filtering process
 
 A very simple example of filter doing nothing is:
@@ -66,14 +71,16 @@ a costructor function (`New`), a config object (used to parse the filter configu
 TOML file) and a help text.
 
 In this case the filter can be used with this configuration in the
-[TOML file](/docs/how-to/pipeline_configuration/):
+[TOML file](/docs/how-tos/pipeline_configuration/):
 
 ```toml
 [[filter]]
 name = "MyFilter"
 ```
 
-### Filter constructor
+### The `New` function
+
+The `New` field in the `FilterDesc` object should be to assigned to a function that returns a new `Filter`.
 
 Each filter must have a constructor function that receives a
 [FilterParams](https://pkg.go.dev/github.com/AdRoll/baker#FilterParams) and returns the 
@@ -88,7 +95,7 @@ func MyFilter(cfg baker.FilterParams) (baker.Filter, error) {
 The [filtering example](https://github.com/AdRoll/baker/blob/main/examples/filtering/filter.go)
 shows a more complex constructor that also uses the `FilterParams` argument.
 
-### The filter configuration and help
+### Filter configuration and help
 
 A filter requiring some configurations also has a config object, including as many keys as it
 needs and tagging each one with an `help` tag, a string that contains what a user needs to know

@@ -39,6 +39,8 @@ Typical information could be the time of retrieval, the filename (in case `Recor
 
 ## The Input interface
 
+New `Input` components need to implement the [Input interface](https://pkg.go.dev/github.com/AdRoll/baker#Input).
+
 ```go
 type Input interface {
 	Run(output chan<- *Data) error
@@ -47,9 +49,6 @@ type Input interface {
 	FreeMem(data *Data)
 }
 ```
-
-The [Input interface](https://pkg.go.dev/github.com/AdRoll/baker#Input) must be implemented when
-creating a new input component.
 
 The `Run` function implements the component logic and receives a channel where it sends the
 [raw data](https://pkg.go.dev/github.com/AdRoll/baker#Data) it processes.
@@ -74,9 +73,9 @@ a costructor-like function (`New`), a config object (where the parsed input conf
 TOML file is stored) and a help text that must help the users to use the component and its
 configuration parameters.
 
-### Input constructor-like function
+### The `New` function
 
-The `New` key in the `InputDesc` object represents the constructor-like function.
+The `New` field in the `InputDesc` object should be to assigned to a function that returns a new `Input`.
 
 The function receives a [InputParams](https://pkg.go.dev/github.com/AdRoll/baker#InputParams)
 object and returns an instance of [Input](https://pkg.go.dev/github.com/AdRoll/baker#Input).
@@ -84,7 +83,7 @@ object and returns an instance of [Input](https://pkg.go.dev/github.com/AdRoll/b
 The function should verify the configuration params into `InputParams.DecodedConfig` and initialize
 the component.
 
-### The input configuration and help
+### Input configuration and help
 
 The input configuration object (`MyInputConfig` in the previous example) must export all
 configuration parameters that the user can set in the TOML topology file.
