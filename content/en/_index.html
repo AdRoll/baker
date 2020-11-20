@@ -3,7 +3,8 @@ title = "Baker"
 linkTitle = "Baker"
 +++
 
-{{< blocks/cover title="High performance modular pipelines for the Big Data era" image_anchor="top" height="min" color="blue" >}}
+{{< blocks/cover title="Baker" image_anchor="top" height="min" color="blue" >}}
+<h2 class="display-3 mt-0 pb-5">High performance modular pipelines for the Big Data era</h2>
 <div class="mx-auto">
 	<a class="btn btn-lg btn-primary mr-3 mb-4" href="{{< relref "/docs/" >}}">
 		Documentation <i class="fas fa-book-open ml-2"></i>
@@ -34,9 +35,10 @@ Baker is open-source and written in <a href="https://golang.org/" target="_blank
 {{< blocks/section color="primary" >}}
 {{% blocks/feature icon="fas fa-link" title="Modular pipeline" %}}
 
-Baker uses modular components in a 4-levels stack: inputs, filters, outputs and uploads.
+Baker pipelines are assembled using up to 4 kinds of components: inputs, filters, outputs and uploads.
 
-Each component of a level can connect with any other from the previous and the next one.
+They are fully modular: any component can be replaced with another of the same kind.
+
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fas fa-shipping-fast" title="High performances" %}}
@@ -49,7 +51,7 @@ More examples of <a href="/docs/performance/">Baker performances &raquo;</a>
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fas fa-puzzle-piece" title="Extendable" %}}
-With Baker it's super easy to write new components or process any kind of structured data.
+With Baker it is super easy to write your own components and process any kind of structured data.
 
 Read the <a href="/docs/how-tos/" alt="How-tos" />How-tos</a> pages in the documentation
 to learn how to do it.
