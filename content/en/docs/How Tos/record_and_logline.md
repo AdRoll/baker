@@ -3,12 +3,12 @@ title: "Record and LogLine"
 date: 2020-10-29
 weight: 200
 description: >
-  Baker deals with "record" objects, an abstraction of flattened data with indexed fields.
+  Baker operates on objects called "records", an abstraction over integer-indexable structured data.
 ---
 
-Baker processes objects in form of "records". A Record, in Baker, is an interface that
-provides an abstraction over a record of flattened data, where columns of fields are
-indexed through integers.
+Baker processes objects called [**records**](http://localhost:1313/docs/core-concepts/#record-and-logline).
+A `Record`, in Baker, is an interface that provides an abstraction over a record of 
+structured data, where fields are indexed and accessed via integers.
 
 At the moment, Baker provides a single implementation of the Record interface,
 called [`LogLine`](https://pkg.go.dev/github.com/AdRoll/baker#LogLine).
