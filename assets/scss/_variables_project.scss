@@ -5,3 +5,8 @@
 .navbar-brand {
     display: none !important; // This is imported on top of the css, so !important in needed
 }
+
+.td-box--primary p > a:hover {
+    color: #cadcf5 !important;
+    text-decoration: underline;
+}
