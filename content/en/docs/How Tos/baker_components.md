@@ -1,13 +1,13 @@
 ---
-title: "Create baker.Components"
+title: "baker.Components"
 date: 2020-10-29
 weight: 500
 description: >
-  baker.Components is the main object used to create a Baker topology
+  How to use and set baker.Components
 ---
 
 The [`baker.Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components) struct
-lists all the components available to Baker when defining topologies.
+lists all the [components](/docs/core-concepts/#record-and-logline) available to Baker when defining topologies.
 
 
 Hence, to create a topology, Baker requires:
