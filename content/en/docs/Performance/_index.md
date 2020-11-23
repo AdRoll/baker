@@ -20,7 +20,7 @@ them and apply a basic filtering logic, compressing them back on local files wit
 compression level 3 and long range mode at 27 using ~90% of capacity of each vCPU (8 in total) and
 ~3.5GB of RAM.  
 
-It reads and writes a total of 94 million records in 8'51" (~178k r/w records per second).
+It reads and writes a total of 94 million records in less than 9 minutes, that's 178k records per second.
 
 On a `c5.2xlarge` instance (48vCPUs) the same test takes 2'2" (~775k r/w records per second).
 
