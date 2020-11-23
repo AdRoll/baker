@@ -22,7 +22,7 @@ compression level 3 and long range mode at 27 using ~90% of capacity of each vCP
 
 It reads and writes a total of 94 million records in less than 9 minutes, that's 178k records per second.
 
-On a `c5.2xlarge` instance (48vCPUs) the same test takes 2'2" (~775k r/w records per second).
+On a `c5.2xlarge` instance (48 vCPUs) the same test takes 2 minutes, so that's a speed of 775k records per second.
 
 For this test we use 711 zstd compressed files for a total of 17 GB of compressed size and 374 GB
 of uncompressed size. The average size of each record is ~4.5 KB.
