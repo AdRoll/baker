@@ -31,7 +31,7 @@ of uncompressed size. The average size of each record is 4.5 KB.
 
 On a `c5.4xlarge` instance, Baker reads zstd compressed files from S3 writing to DynamoDB (configured
 with 20k write capacity units) at an average speed of 60k records/s (the average size of each record
-is 4.3 KB) using less than 1 GB of memory and ~300% of the total CPU capacity (less than 20% for
+is 4.3 KB) using less than 1 GB of memory and 300% of the total CPU capacity (less than 20% for
 each core).
 
 The bottleneck here is the DynamoDB write capacity, so Baker can easily cope with an increased load
