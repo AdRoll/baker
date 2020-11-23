@@ -25,7 +25,7 @@ It reads and writes a total of 94 million records in less than 9 minutes, that's
 On a `c5.2xlarge` instance (48 vCPUs) the same test takes 2 minutes, so that's a speed of 775k records per second.
 
 For this test we use 711 zstd compressed files for a total of 17 GB of compressed size and 374 GB
-of uncompressed size. The average size of each record is ~4.5 KB.
+of uncompressed size. The average size of each record is 4.5 KB.
 
 ### Read from S3 and write to DynamoDB (in the same region)
 
