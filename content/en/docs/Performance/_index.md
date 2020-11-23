@@ -34,8 +34,8 @@ with 20k write capacity units) at an average speed of 60k records/s (the average
 is 4.3 KB) using less than 1 GB of memory and 300% of the total CPU capacity (less than 20% for
 each core).
 
-The bottleneck here is the DynamoDB write capacity, so Baker can easily cope with an increased load
-just increasing the write capacity units in DynamoDB (up to 400k).
+The bottleneck here is the DynamoDB write capacity, so Baker could handle the additional load caused by
+a possible increase in the write capacity.
 
 ### Read from Kinesis and write to DynamoDB (in the same region)
 
