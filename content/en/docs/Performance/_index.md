@@ -41,5 +41,5 @@ a possible increase in the write capacity.
 
 On a `c5.4xlarge` instance, we performed a test reading from a Kinesis stream with 130 shards and
 writing to a DynamoDB table with 20k write capacity units. Baker is able to read and write more
-than 10k records per second (the avg size of each record is 4.5 KB) using less than 1 GB of RAM and
-~400% of the total CPU capacity (less than 25% for each core).
+than 10k records per second (the average size of each record is 4.5 KB) using less than 1 GB of RAM and
+around 400% of the total CPU capacity (each core being used at less than 25%).
