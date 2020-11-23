@@ -7,6 +7,7 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
+<link rel="alternate" type="application/rss&#43;xml" href="https://getbaker.io/docs/performance/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -20,26 +21,18 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Read statistics | Baker</title><meta property="og:title" content="Read statistics" />
-<meta property="og:description" content="How to read Baker stats
+<title>Performance | Baker</title><meta property="og:title" content="Performance" />
+<meta property="og:description" content="Baker performance test cases
 " />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://getbaker.io/docs/how-tos/read_stats/" />
-<meta property="article:published_time" content="2020-11-16T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-11-16T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
-<meta itemprop="name" content="Read statistics">
-<meta itemprop="description" content="How to read Baker stats
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://getbaker.io/docs/performance/" />
+<meta property="og:updated_time" content="2020-11-20T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta itemprop="name" content="Performance">
+<meta itemprop="description" content="Baker performance test cases
 ">
-<meta itemprop="datePublished" content="2020-11-16T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-11-16T00:00:00+00:00" />
-<meta itemprop="wordCount" content="233">
-
-
-
-<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Read statistics"/>
-<meta name="twitter:description" content="How to read Baker stats
+<meta name="twitter:title" content="Performance"/>
+<meta name="twitter:description" content="Baker performance test cases
 "/>
 
 
@@ -64,7 +57,7 @@
 
 
   </head>
-  <body class="td-page">
+  <body class="td-section">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -237,10 +230,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/performance/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Performance</a>
+    <a  href="/docs/performance/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Performance</a>
   </li>
   <ul>
-    <li class="collapse " id="docsperformance">
+    <li class="collapse show" id="docsperformance">
       
       
       
@@ -518,10 +511,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-Tos</a>
+    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">How-Tos</a>
   </li>
   <ul>
-    <li class="collapse show" id="docshow-tos">
+    <li class="collapse " id="docshow-tos">
       
       
       
@@ -582,7 +575,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-tosread_stats" href="/docs/how-tos/read_stats/">Read statistics</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosread_stats" href="/docs/how-tos/read_stats/">Read statistics</a>
       
       
       
@@ -657,8 +650,8 @@
 
 
 
-<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/How%20Tos/read_stats.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Read%20statistics" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/Performance/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Performance" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -666,6 +659,18 @@
 
 
 
+
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#read-from-s3-and-write-to-local-disk">Read from S3 and write to local disk</a></li>
+        <li><a href="#read-from-s3-and-write-to-dynamodb-in-the-same-region">Read from S3 and write to DynamoDB (in the same region)</a></li>
+        <li><a href="#read-from-kinesis-and-write-to-dynamodb-in-the-same-region">Read from Kinesis and write to DynamoDB (in the same region)</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
 
 
@@ -684,9 +689,6 @@
 
 
 
-
-
-
 <li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/">Documentation</a>
 </li>
@@ -694,15 +696,8 @@
 
 
 
-<li class="breadcrumb-item" >
-	<a href="https://getbaker.io/docs/how-tos/">How-Tos</a>
-</li>
-
-
-
-
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/how-tos/read_stats/">Read statistics</a>
+	<a href="https://getbaker.io/docs/performance/">Performance</a>
 </li>
 
 	</ol>
@@ -710,37 +705,141 @@
 
             
 <div class="td-content">
-	<h1>Read statistics</h1>
-    <div class="lead">How to read Baker stats</div>
-	       
-	<p>While running, Baker dumps statistics on stdout every second. This is an example line:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">Stats: 1s[w:29425 r:29638] total[w:411300 r:454498 u:1831] speed[w:27420 r:30299] errors[p:0 i:0 f:0 o:0 u:0]
-</code></pre></div><p>The first bracket shows the current read and write speed, i.e. the records that entered the
-pipeline (reads) and the records that successfully exited from it (writes).</p>
-<p>The second bracket is the total since the process was launched (the <code>u:</code> key is the number of
-files successfully uploaded).</p>
-<p>The third bracket shows the average read/write speed (records per second).</p>
-<p>The fourth bracket shows the number of records that were discarded at some point because of errors:</p>
-<ul>
-<li><code>p:</code> records discarded for a parsing error</li>
-<li><code>i:</code> input records discarded. Most of the time, this refers to validation issues.</li>
-<li><code>f:</code> records discarded by filters.</li>
-<li><code>o:</code> is the number of records that were discarded because of an error in the output component *</li>
-<li><code>u:</code> is the number files whose upload has failed</li>
-</ul>
-<p>* Notice that output components should be resilient to transient network failures,
-and they abort the process in case of permanent configuration errors, so the number
-here reflects records that could not be permanently written because eg. validation
-issues. Eg. think of an output that expects a column to be in a specific format, and
-rejects records where that field is not in the expected format. A real-world example
-is empty columns that are not accepted by DynamoDB.</p>
+	<h1>Performance</h1>
+        <div class="lead">Baker performance test cases</div>
+	
+	<p>We report in this page some practical examples of Baker performances we could measure in the
+NextRoll production environment.</p>
+<p>Within NextRoll, Baker is often executed on AWS EC2 instances, and thus you find in this page
+many references to
+<a href="https://aws.amazon.com/ec2/instance-types/">EC2 instance types</a> (<code>c5.2xlarge</code>, <code>c5.2xlarge</code>, etc.).</p>
+<h3 id="read-from-s3-and-write-to-local-disk">Read from S3 and write to local disk</h3>
+<p>On an AWS EC2 instance of size <code>c5.2xlarge</code>, Baker can read zstandard records from S3, uncompress
+them and apply a basic filtering logic, compressing them back on local files using ~90% of capacity
+of each vCPU (8 in total) and
+~3.5GB of RAM.</p>
+<p>It reads and writes a total of 94 million records in less than 9 minutes, that&rsquo;s 178k records per
+second.</p>
+<p>On a <code>c5.2xlarge</code> instance (48 vCPUs) the same test takes 2 minutes, so that&rsquo;s a speed of 775k
+records per second.</p>
+<p>For this test we use 711 zstd compressed files for a total of 17 GB of compressed size and 374 GB
+of uncompressed size. The average size of each record is 4.5 KB.</p>
+<h3 id="read-from-s3-and-write-to-dynamodb-in-the-same-region">Read from S3 and write to DynamoDB (in the same region)</h3>
+<p>On a <code>c5.4xlarge</code> instance, Baker reads zstd compressed files from S3 writing to DynamoDB
+(configured with 20k write capacity units) at an average speed of 60k records/s (the average size of
+each record is 4.3 KB) using less than 1 GB of memory and 300% of the total CPU capacity (less than
+20% for each core).</p>
+<p>The bottleneck here is the DynamoDB write capacity, so Baker could handle the additional load caused
+by a possible increase in the write capacity.</p>
+<h3 id="read-from-kinesis-and-write-to-dynamodb-in-the-same-region">Read from Kinesis and write to DynamoDB (in the same region)</h3>
+<p>On a <code>c5.4xlarge</code> instance, we performed a test reading from a Kinesis stream with 130 shards and
+writing to a DynamoDB table with 20k write capacity units. Baker is able to read and write more
+than 10k records per second (the average size of each record is 4.5 KB) using less than 1 GB of RAM
+and around 400% of the total CPU capacity (each core being used at less than 25%).</p>
+
+        <div class="section-index">
+    
+    
+    
+    
+    <hr class="panel-line">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    
+</div>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 16, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified November 20, 2020
 </div>
 </div>
-
 
           </main>
         </div>

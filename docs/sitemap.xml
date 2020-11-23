@@ -98,11 +98,6 @@
   </url>
   
   <url>
-    <loc>https://getbaker.io/docs/</loc>
-    <lastmod>2020-11-16T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://getbaker.io/docs/components/outputs/oplog/</loc>
     <lastmod>2020-11-12T00:00:00+00:00</lastmod>
   </url>
@@ -134,6 +129,11 @@
   
   <url>
     <loc>https://getbaker.io/docs/getting-started/</loc>
+  </url>
+  
+  <url>
+    <loc>https://getbaker.io/docs/performance/</loc>
+    <lastmod>2020-11-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -218,7 +218,16 @@
   
   <url>
     <loc>https://getbaker.io/</loc>
-    <lastmod>2020-11-16T00:00:00+00:00</lastmod>
+    <lastmod>2020-11-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://getbaker.io/docs/</loc>
+    <lastmod>2020-11-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://getbaker.io/search/</loc>
   </url>
   
 </urlset>
