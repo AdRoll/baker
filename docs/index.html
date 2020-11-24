@@ -38,8 +38,8 @@
 
 
 
-<link rel="preload" href="/scss/main.min.d539e0f3f0b87f0a8a3fcd992f6ea02c567abc8bd34b44ca5fd97538a6a79057.css" as="style">
-<link href="/scss/main.min.d539e0f3f0b87f0a8a3fcd992f6ea02c567abc8bd34b44ca5fd97538a6a79057.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.6ed4822707111ca9db50e5894247d3f905f043b5e4eba295c0b9f18e279839d3.css" as="style">
+<link href="/scss/main.min.6ed4822707111ca9db50e5894247d3f905f043b5e4eba295c0b9f18e279839d3.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -137,7 +137,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.9187c6a82162d7c6c90095ccf79aa715e16ab150cb9f3a0755cd3df6b51acd2370c4ff523cf4c28c50a9db0eb6dbd30b8993b6e9f6fb7557851d04caed22ce35.json"
+  data-offline-search-index-json-src="/offline-search-index.69b9d2a09c643dc60c2f6b79f4db4e53e1fe8570c3fa277a51607d6dec83445df0dd597f64195f13d36a650598bf57df5ebd801d611d6e9d468936b610822717.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -204,39 +204,34 @@
 </section>
 
 
-
-
-
-
-<a id="td-block-1" class="td-offset-anchor"></a>
 <section class="row td-box td-box--light position-relative td-box--gradient td-box--height-auto">
-	<div class="container text-center td-arrow-down">
-		<span class="h4 mb-0">
-			<div style="display:flex;justify-content:space-around;align-items:center;align-content:center;">
-<div style="padding-right:1em;">
-    <img src="/baker.png" style="width:400px;" />
-</div>
-<div style="padding-left:1em;">
-<p>Baker pipelines can fetch, transform and store records in a flash <i class="fa fa-bolt"></i>
-thanks to a high-performant and fully-parallel implementation.
-</p>
-<p>
-Baker is open-source and written in <a href="https://golang.org/" target="_blank">Go</a> by <a href="https://www.nextroll.com/" target="_blank">NextRoll, inc.</a>
-</p>
-<img src="./images/nextroll-logo-2x.png" alt="NextRoll, inc." />
-</div>
-</div>
-
-		</span>
-	</div>
+    <div class="container-fluid text-center td-arrow-down">
+    <span class="h4 mb-0">
+        <div class="col">
+            <div class="row align-items-center">
+                <div class="offset-lg-3 col-lg-3 mb-5 mb-lg-0 text-center">
+                    <img src="/baker.png" class="responsive-img" />
+                </div>
+                <div class="col-lg-4 mb-5 mb-lg-0 text-center">
+                    <p>Baker pipelines can fetch, transform and store records in a flash <i class="fa fa-bolt"></i>
+                    thanks to a high-performant and fully-parallel implementation.
+                    </p>
+                    <p>
+                    Baker is open-source and written in <a href="https://golang.org/" target="_blank">Go</a> by <a href="https://www.nextroll.com/" target="_blank">NextRoll, inc.</a>
+                    </p>
+                    <img src="./images/nextroll-logo-2x.png" alt="NextRoll, inc." />
+                </div>
+            </div>
+        </div>
+    </span>
+    </div>
 </section>
 
 
 
 
-
  
-<a id="td-block-2" class="td-offset-anchor"></a>
+<a id="td-block-1" class="td-offset-anchor"></a>
 <section class="row td-box td-box--primary td-box--gradient td-box--height-auto">
 	<div class="col">
 		<div class="row ">
@@ -245,8 +240,12 @@ Baker is open-source and written in <a href="https://golang.org/" target="_blank
     <i class="fas fa-link"></i>
   </div>
   <h4 class="h3">Modular pipeline</h4>
-  <p class="mb-0"><p>Baker pipelines are assembled using up to 4 kinds of components: inputs, filters, outputs and uploads.</p>
-<p>They are fully modular: any component can be replaced with another of the same kind.</p>
+  <p class="mb-0"><p><a href="/docs/core-concepts/#pipeline">Baker pipelines</a> are assembled using up to 4 kinds of
+components: inputs, filters, outputs and uploads.</p>
+<p>They are fully modular: any component can be replaced
+with another of the same kind.</p>
+<p>Available components include many AWS services (S3, Kinesis, DynamoDB, SQS) as well as websocket,
+TCP, local disk, etc.<br /><a href="/docs/components">Check out the full list »</a></p>
 </p>
 </div>
 <div class="col-lg-4 mb-5 mb-lg-0 text-center ">
@@ -255,7 +254,7 @@ Baker is open-source and written in <a href="https://golang.org/" target="_blank
   </div>
   <h4 class="h3">High performances</h4>
   <p class="mb-0"><p>Baker is fully parallel and maximizes usage of both CPU-bound and I/O bound pipelines.</p>
-<p><img src="/speed.png" style="width:400px" /></p>
+<p><img src="/speed.png" class="responsive-img" /></p>
 <p>More examples of <a href="/docs/performance/">Baker performances »</a></p>
 </p>
 </div>
