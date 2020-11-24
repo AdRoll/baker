@@ -5,7 +5,7 @@
     <description>Recent content in Outputs on Baker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 12 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/outputs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: DynamoDB</title>
       <link>https://getbaker.io/docs/components/outputs/dynamodb/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/dynamodb/</guid>
       <description>
@@ -27,71 +27,69 @@
         &lt;h2 id=&#34;output-dynamodb&#34;&gt;Output &lt;em&gt;DynamoDB&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;non-raw&lt;/em&gt; output, it doesn&amp;rsquo;t receive whole records. Instead it receives a list of fields for each record (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;This output writes the filtered log lines to DynamoDB.
+&lt;p&gt;This output writes the filtered log lines to DynamoDB.&lt;br&gt;
 It must be
 configured specifying the region, the table name, and the columns
 to write.&lt;/p&gt;
-&lt;p&gt;Columns are specified using the syntax &amp;ldquo;t:
-name&amp;rdquo; where &amp;ldquo;t&amp;rdquo;
-is the type of the data, and &amp;ldquo;name&amp;rdquo; is the name of column.
+&lt;p&gt;Columns are specified using the syntax &amp;ldquo;t:name&amp;rdquo; where &amp;ldquo;t&amp;rdquo;
+is the type of the data, and &amp;ldquo;name&amp;rdquo; is the name of column.&lt;br&gt;
 Supported
-types are:
-&amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings.&lt;/p&gt;
+types are: &amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings.&lt;/p&gt;
 &lt;p&gt;The first column (and field) must be the primary key.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[output.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Regions&lt;/td&gt;
+&lt;td&gt;Regions&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;us-west-2&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;DynamoDB regions to connect to&lt;/td&gt;
+&lt;td&gt;DynamoDB regions to connect to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Table&lt;/td&gt;
+&lt;td&gt;Table&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Name of the table to modify&lt;/td&gt;
+&lt;td&gt;Name of the table to modify&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Columns&lt;/td&gt;
+&lt;td&gt;Columns&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Table columns that correspond to each of the fields being written&lt;/td&gt;
+&lt;td&gt;Table columns that correspond to each of the fields being written&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;FlushInterval&lt;/td&gt;
+&lt;td&gt;FlushInterval&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;1s&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Interval at which flush the data to DynamoDB even if we have not reached 25 records&lt;/td&gt;
+&lt;td&gt;Interval at which flush the data to DynamoDB even if we have not reached 25 records&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;MaxWritesPerSec&lt;/td&gt;
+&lt;td&gt;MaxWritesPerSec&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;int&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;0&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Maximum number of writes per second that DynamoDB can accept (0 for unlimited)&lt;/td&gt;
+&lt;td&gt;Maximum number of writes per second that DynamoDB can accept (0 for unlimited)&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;MaxBackoff&lt;/td&gt;
+&lt;td&gt;MaxBackoff&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;2m&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Maximum retry/backoff time in case of errors before giving up&lt;/td&gt;
+&lt;td&gt;Maximum retry/backoff time in case of errors before giving up&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -102,7 +100,7 @@ types are:
     <item>
       <title>Docs: FileWriter</title>
       <link>https://getbaker.io/docs/components/outputs/filewriter/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/filewriter/</guid>
       <description>
@@ -114,7 +112,7 @@ types are:
 &lt;p&gt;This output writes the records into compressed files in a directory.&lt;/p&gt;
 &lt;p&gt;Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.&lt;/p&gt;
 &lt;p&gt;The file names can contain placeholders that are populated by the output (see the keys help below).&lt;/p&gt;
-&lt;p&gt;When the special {{.
+&lt;p&gt;When the special {{.&lt;br&gt;
 Field0}} placeholder is used, then the user must specify the field name to
 use for replacement in the fields configuration list.&lt;/p&gt;
 &lt;p&gt;The value of that field, extracted from each record, is used as replacement and, moreover, this
@@ -126,41 +124,41 @@ of the field, and each one of these workers concurrently writes to a different f
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;PathString&lt;/td&gt;
+&lt;td&gt;PathString&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Template to describe location of the output directory: supports .Year, .Month, .Day and .Rotation. Also .Field0 if a field name has been specified in the output&amp;rsquo;s fields list.&lt;/td&gt;
+&lt;td&gt;Template to describe location of the output directory: supports .Year, .Month, .Day and .Rotation. Also .Field0 if a field name has been specified in the output&amp;rsquo;s fields list.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;RotateInterval&lt;/td&gt;
+&lt;td&gt;RotateInterval&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;60s&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Time after which data will be rotated. If -1, it will not rotate until the end.&lt;/td&gt;
+&lt;td&gt;Time after which data will be rotated. If -1, it will not rotate until the end.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;ZstdCompressionLevel&lt;/td&gt;
+&lt;td&gt;ZstdCompressionLevel&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;int&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;3&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;zstd compression level, ranging from 1 (best speed) to 19 (best compression).&lt;/td&gt;
+&lt;td&gt;zstd compression level, ranging from 1 (best speed) to 19 (best compression).&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;ZstdWindowLog&lt;/td&gt;
+&lt;td&gt;ZstdWindowLog&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;int&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;0&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled.&lt;/td&gt;
+&lt;td&gt;Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -171,7 +169,7 @@ of the field, and each one of these workers concurrently writes to a different f
     <item>
       <title>Docs: Nop</title>
       <link>https://getbaker.io/docs/components/outputs/nop/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/nop/</guid>
       <description>
@@ -180,7 +178,7 @@ of the field, and each one of these workers concurrently writes to a different f
         &lt;h2 id=&#34;output-nop&#34;&gt;Output &lt;em&gt;Nop&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;non-raw&lt;/em&gt; output, it doesn&amp;rsquo;t receive whole records. Instead it receives a list of fields for each record (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;No-operation output.
+&lt;p&gt;No-operation output.&lt;br&gt;
 This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;No configuration available&lt;/p&gt;
@@ -191,7 +189,7 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
     <item>
       <title>Docs: OpLog</title>
       <link>https://getbaker.io/docs/components/outputs/oplog/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/oplog/</guid>
       <description>
@@ -210,7 +208,7 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
     <item>
       <title>Docs: Stats</title>
       <link>https://getbaker.io/docs/components/outputs/stats/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/stats/</guid>
       <description>
@@ -219,41 +217,41 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
         &lt;h2 id=&#34;output-stats&#34;&gt;Output &lt;em&gt;Stats&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;raw&lt;/em&gt; output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;Compute various distributions of the records it receives and dumps that to CSV.
+&lt;p&gt;Compute various distributions of the records it receives and dumps that to CSV.&lt;br&gt;
 It computes the distribution of record by size and the distribution of the values of certain fields&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[output.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;CountEmptyFields&lt;/td&gt;
+&lt;td&gt;CountEmptyFields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;bool&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Whether fields with empty values are counted or not&lt;/td&gt;
+&lt;td&gt;Whether fields with empty values are counted or not&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;CSVPath&lt;/td&gt;
+&lt;td&gt;CSVPath&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;stats.csv&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Path of the CSV file to create&lt;/td&gt;
+&lt;td&gt;Path of the CSV file to create&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;TimestampField&lt;/td&gt;
+&lt;td&gt;TimestampField&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Name of a field containing a POSIX timestamp (in seconds) used to build the times stats&lt;/td&gt;
+&lt;td&gt;Name of a field containing a POSIX timestamp (in seconds) used to build the times stats&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -264,7 +262,7 @@ It computes the distribution of record by size and the distribution of the value
     <item>
       <title>Docs: WebSocket</title>
       <link>https://getbaker.io/docs/components/outputs/websocket/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/websocket/</guid>
       <description>

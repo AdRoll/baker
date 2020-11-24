@@ -5,7 +5,7 @@
     <description>Recent content in Inputs on Baker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 12 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/inputs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: KCL</title>
       <link>https://getbaker.io/docs/components/inputs/kcl/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/kcl/</guid>
       <description>
@@ -26,12 +26,12 @@
         
         &lt;h2 id=&#34;input-kcl&#34;&gt;Input &lt;em&gt;KCL&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This input fetches records from Kinesis with KCL.
+&lt;p&gt;This input fetches records from Kinesis with KCL.&lt;br&gt;
 It consumes a specified stream, and
-processes all shards in that stream.
+processes all shards in that stream.&lt;br&gt;
 It never exits.&lt;/p&gt;
 &lt;p&gt;Multiple baker instances can consume the same stream, in that case the KCL will take care of
-balancing the shards between workers.
+balancing the shards between workers.&lt;br&gt;
 Careful (shard stealing is not implemented yet).&lt;/p&gt;
 &lt;p&gt;Resharding on the producer side is automatically handled by the KCL that will distribute
 the shards among KCL workers.&lt;/p&gt;
@@ -40,55 +40,55 @@ the shards among KCL workers.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AwsRegion&lt;/td&gt;
+&lt;td&gt;AwsRegion&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;us-west-2&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AWS region to connect to&lt;/td&gt;
+&lt;td&gt;AWS region to connect to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Stream&lt;/td&gt;
+&lt;td&gt;Stream&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Name of Kinesis stream&lt;/td&gt;
+&lt;td&gt;Name of Kinesis stream&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AppName&lt;/td&gt;
+&lt;td&gt;AppName&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Used by KCL to allow multiple app to consume the same stream.&lt;/td&gt;
+&lt;td&gt;Used by KCL to allow multiple app to consume the same stream.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;MaxShards&lt;/td&gt;
+&lt;td&gt;MaxShards&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;int&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;32767&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Max shards this Worker can handle at a time&lt;/td&gt;
+&lt;td&gt;Max shards this Worker can handle at a time&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;ShardSync&lt;/td&gt;
+&lt;td&gt;ShardSync&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;60s&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Time between tasks to sync leases and Kinesis shards&lt;/td&gt;
+&lt;td&gt;Time between tasks to sync leases and Kinesis shards&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;InitialPosition&lt;/td&gt;
+&lt;td&gt;InitialPosition&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;LATEST&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Position in the stream where a new application should start from. Values: LATEST or TRIM_HORIZON&lt;/td&gt;
+&lt;td&gt;Position in the stream where a new application should start from. Values: LATEST or TRIM_HORIZON&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -99,7 +99,7 @@ the shards among KCL workers.&lt;/p&gt;
     <item>
       <title>Docs: Kinesis</title>
       <link>https://getbaker.io/docs/components/inputs/kinesis/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/kinesis/</guid>
       <description>
@@ -107,43 +107,43 @@ the shards among KCL workers.&lt;/p&gt;
         
         &lt;h2 id=&#34;input-kinesis&#34;&gt;Input &lt;em&gt;Kinesis&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This input fetches log lines from Kinesis.
+&lt;p&gt;This input fetches log lines from Kinesis.&lt;br&gt;
 It listens on a specified stream, and
-processes all the shards in that stream.
+processes all the shards in that stream.&lt;br&gt;
 It never exits.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[input.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AwsRegion&lt;/td&gt;
+&lt;td&gt;AwsRegion&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;us-west-2&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AWS region to connect to&lt;/td&gt;
+&lt;td&gt;AWS region to connect to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Stream&lt;/td&gt;
+&lt;td&gt;Stream&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Stream name on Kinesis&lt;/td&gt;
+&lt;td&gt;Stream name on Kinesis&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;IdleTime&lt;/td&gt;
+&lt;td&gt;IdleTime&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;100ms&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Time between polls of each shard&lt;/td&gt;
+&lt;td&gt;Time between polls of each shard&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -154,7 +154,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: List</title>
       <link>https://getbaker.io/docs/components/inputs/list/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/list/</guid>
       <description>
@@ -162,77 +162,65 @@ It never exits.&lt;/p&gt;
         
         &lt;h2 id=&#34;input-list&#34;&gt;Input &lt;em&gt;List&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This input fetches logs from a predefined list of local or remote sources.
+&lt;p&gt;This input fetches logs from a predefined list of local or remote sources.&lt;br&gt;
 The &amp;ldquo;Files&amp;rdquo;
-configuration variable is a list of &amp;ldquo;file specifiers&amp;rdquo;.
+configuration variable is a list of &amp;ldquo;file specifiers&amp;rdquo;.&lt;br&gt;
 Each &amp;ldquo;file specifier&amp;rdquo; can be:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;A local file path on the filesystem:
-the log file at that path will be processed&lt;/li&gt;
-&lt;li&gt;A HTTP/HTTPS URL:
-the log file at that URL will be downloaded and processed&lt;/li&gt;
-&lt;li&gt;A S3 URL:
-the log file at that URL that will be downloaded and processed&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a local path pointing to a file:
-the file is expected to be a text file
+&lt;li&gt;A local file path on the filesystem: the log file at that path will be processed&lt;/li&gt;
+&lt;li&gt;A HTTP/HTTPS URL: the log file at that URL will be downloaded and processed&lt;/li&gt;
+&lt;li&gt;A S3 URL: the log file at that URL that will be downloaded and processed&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a local path pointing to a file: the file is expected to be a text file
 and each line will be read and parsed as a &amp;ldquo;file specifier&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a HTTP/HTTPS URL:
-the text file pointed by the URL will be downloaded,
+&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a HTTP/HTTPS URL: the text file pointed by the URL will be downloaded,
 and each line will be read and parsed as a &amp;ldquo;file specifier&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a S3 URL pointing to a file:
-the text file pointed by the URL will be
+&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a S3 URL pointing to a file: the text file pointed by the URL will be
 downloaded, and each line will be read and parsed as a &amp;ldquo;file specifier&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a local path pointing to a directory (must end with a slash):
-the directory will be recursively
+&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a local path pointing to a directory (must end with a slash): the directory will be recursively
 walked, and all files matching the &amp;ldquo;MatchPath&amp;rdquo; option regexp will be processed as logfiles&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a S3 URL pointing to a directory:
-the directory on S3 will be recursively
+&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a S3 URL pointing to a directory: the directory on S3 will be recursively
 walked, and all files matching the &amp;ldquo;MatchPath&amp;rdquo; option regexp will be processed as logfiles&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;-&amp;quot;:
-the contents of a log file will be read from stdin and processed&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;@-&amp;quot;:
-each line read from stdin will be parsed as a &amp;ldquo;file specifier&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;-&amp;quot;: the contents of a log file will be read from stdin and processed&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;@-&amp;quot;: each line read from stdin will be parsed as a &amp;ldquo;file specifier&amp;rdquo;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;All records produced by this input contain 2 metadata values:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;url:
-the files that originally contained the record&lt;/li&gt;
-&lt;li&gt;last_modified:
-the last modification datetime of the above file&lt;/li&gt;
+&lt;li&gt;url: the files that originally contained the record&lt;/li&gt;
+&lt;li&gt;last_modified: the last modification datetime of the above file&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[input.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Files&lt;/td&gt;
+&lt;td&gt;Files&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;[&amp;quot;-&amp;quot;]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;List of log-files, directories and/or list-files to process&lt;/td&gt;
+&lt;td&gt;List of log-files, directories and/or list-files to process&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;MatchPath&lt;/td&gt;
+&lt;td&gt;MatchPath&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;.*.log.gz&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;regexp to filter files in specified directories&lt;/td&gt;
+&lt;td&gt;regexp to filter files in specified directories&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Region&lt;/td&gt;
+&lt;td&gt;Region&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;us-west-2&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AWS Region for fetching from S3&lt;/td&gt;
+&lt;td&gt;AWS Region for fetching from S3&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -243,7 +231,7 @@ the last modification datetime of the above file&lt;/li&gt;
     <item>
       <title>Docs: SQS</title>
       <link>https://getbaker.io/docs/components/inputs/sqs/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/sqs/</guid>
       <description>
@@ -259,62 +247,62 @@ on S3; it is meant to be used with SQS queues popoulated by SNS.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AwsRegion&lt;/td&gt;
+&lt;td&gt;AwsRegion&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;us-west-2&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AWS region to connect to&lt;/td&gt;
+&lt;td&gt;AWS region to connect to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Bucket&lt;/td&gt;
+&lt;td&gt;Bucket&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;S3 Bucket to use for processing&lt;/td&gt;
+&lt;td&gt;S3 Bucket to use for processing&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;QueuePrefixes&lt;/td&gt;
+&lt;td&gt;QueuePrefixes&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Prefixes of the names of the SQS queues to monitor&lt;/td&gt;
+&lt;td&gt;Prefixes of the names of the SQS queues to monitor&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;MessageFormat&lt;/td&gt;
+&lt;td&gt;MessageFormat&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;sns&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;The format of the SQS messages.&lt;/td&gt;
+&lt;td&gt;The format of the SQS messages.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&amp;lsquo;plain&amp;rsquo; the SQS messages received have the S3 file path as a plain string.&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&amp;lsquo;sns&amp;rsquo; the SQS messages were produced by a SNS notification.&lt;/td&gt;
+&lt;td&gt;&amp;lsquo;plain&amp;rsquo; the SQS messages received have the S3 file path as a plain string.&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;FilePathFilter&lt;/td&gt;
+&lt;td&gt;&amp;lsquo;sns&amp;rsquo; the SQS messages were produced by a SNS notification.&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;FilePathFilter&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;If provided, will only use S3 files with the given path.&lt;/td&gt;
+&lt;td&gt;If provided, will only use S3 files with the given path.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -325,7 +313,7 @@ on S3; it is meant to be used with SQS queues popoulated by SNS.&lt;/p&gt;
     <item>
       <title>Docs: TCP</title>
       <link>https://getbaker.io/docs/components/inputs/tcp/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/tcp/</guid>
       <description>
@@ -342,20 +330,20 @@ It never exits.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Listener&lt;/td&gt;
+&lt;td&gt;Listener&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Host:Port to bind to&lt;/td&gt;
+&lt;td&gt;Host:Port to bind to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;

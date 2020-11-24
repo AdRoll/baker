@@ -5,7 +5,7 @@
     <description>Recent content in Documentation on Baker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 20 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: KCL</title>
       <link>https://getbaker.io/docs/components/inputs/kcl/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/kcl/</guid>
       <description>
@@ -26,12 +26,12 @@
         
         &lt;h2 id=&#34;input-kcl&#34;&gt;Input &lt;em&gt;KCL&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This input fetches records from Kinesis with KCL.
+&lt;p&gt;This input fetches records from Kinesis with KCL.&lt;br&gt;
 It consumes a specified stream, and
-processes all shards in that stream.
+processes all shards in that stream.&lt;br&gt;
 It never exits.&lt;/p&gt;
 &lt;p&gt;Multiple baker instances can consume the same stream, in that case the KCL will take care of
-balancing the shards between workers.
+balancing the shards between workers.&lt;br&gt;
 Careful (shard stealing is not implemented yet).&lt;/p&gt;
 &lt;p&gt;Resharding on the producer side is automatically handled by the KCL that will distribute
 the shards among KCL workers.&lt;/p&gt;
@@ -40,55 +40,55 @@ the shards among KCL workers.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AwsRegion&lt;/td&gt;
+&lt;td&gt;AwsRegion&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;us-west-2&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AWS region to connect to&lt;/td&gt;
+&lt;td&gt;AWS region to connect to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Stream&lt;/td&gt;
+&lt;td&gt;Stream&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Name of Kinesis stream&lt;/td&gt;
+&lt;td&gt;Name of Kinesis stream&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AppName&lt;/td&gt;
+&lt;td&gt;AppName&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Used by KCL to allow multiple app to consume the same stream.&lt;/td&gt;
+&lt;td&gt;Used by KCL to allow multiple app to consume the same stream.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;MaxShards&lt;/td&gt;
+&lt;td&gt;MaxShards&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;int&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;32767&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Max shards this Worker can handle at a time&lt;/td&gt;
+&lt;td&gt;Max shards this Worker can handle at a time&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;ShardSync&lt;/td&gt;
+&lt;td&gt;ShardSync&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;60s&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Time between tasks to sync leases and Kinesis shards&lt;/td&gt;
+&lt;td&gt;Time between tasks to sync leases and Kinesis shards&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;InitialPosition&lt;/td&gt;
+&lt;td&gt;InitialPosition&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;LATEST&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Position in the stream where a new application should start from. Values: LATEST or TRIM_HORIZON&lt;/td&gt;
+&lt;td&gt;Position in the stream where a new application should start from. Values: LATEST or TRIM_HORIZON&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -99,7 +99,7 @@ the shards among KCL workers.&lt;/p&gt;
     <item>
       <title>Docs: Kinesis</title>
       <link>https://getbaker.io/docs/components/inputs/kinesis/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/kinesis/</guid>
       <description>
@@ -107,43 +107,43 @@ the shards among KCL workers.&lt;/p&gt;
         
         &lt;h2 id=&#34;input-kinesis&#34;&gt;Input &lt;em&gt;Kinesis&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This input fetches log lines from Kinesis.
+&lt;p&gt;This input fetches log lines from Kinesis.&lt;br&gt;
 It listens on a specified stream, and
-processes all the shards in that stream.
+processes all the shards in that stream.&lt;br&gt;
 It never exits.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[input.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AwsRegion&lt;/td&gt;
+&lt;td&gt;AwsRegion&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;us-west-2&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AWS region to connect to&lt;/td&gt;
+&lt;td&gt;AWS region to connect to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Stream&lt;/td&gt;
+&lt;td&gt;Stream&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Stream name on Kinesis&lt;/td&gt;
+&lt;td&gt;Stream name on Kinesis&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;IdleTime&lt;/td&gt;
+&lt;td&gt;IdleTime&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;100ms&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Time between polls of each shard&lt;/td&gt;
+&lt;td&gt;Time between polls of each shard&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -154,7 +154,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: List</title>
       <link>https://getbaker.io/docs/components/inputs/list/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/list/</guid>
       <description>
@@ -162,77 +162,65 @@ It never exits.&lt;/p&gt;
         
         &lt;h2 id=&#34;input-list&#34;&gt;Input &lt;em&gt;List&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This input fetches logs from a predefined list of local or remote sources.
+&lt;p&gt;This input fetches logs from a predefined list of local or remote sources.&lt;br&gt;
 The &amp;ldquo;Files&amp;rdquo;
-configuration variable is a list of &amp;ldquo;file specifiers&amp;rdquo;.
+configuration variable is a list of &amp;ldquo;file specifiers&amp;rdquo;.&lt;br&gt;
 Each &amp;ldquo;file specifier&amp;rdquo; can be:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;A local file path on the filesystem:
-the log file at that path will be processed&lt;/li&gt;
-&lt;li&gt;A HTTP/HTTPS URL:
-the log file at that URL will be downloaded and processed&lt;/li&gt;
-&lt;li&gt;A S3 URL:
-the log file at that URL that will be downloaded and processed&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a local path pointing to a file:
-the file is expected to be a text file
+&lt;li&gt;A local file path on the filesystem: the log file at that path will be processed&lt;/li&gt;
+&lt;li&gt;A HTTP/HTTPS URL: the log file at that URL will be downloaded and processed&lt;/li&gt;
+&lt;li&gt;A S3 URL: the log file at that URL that will be downloaded and processed&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a local path pointing to a file: the file is expected to be a text file
 and each line will be read and parsed as a &amp;ldquo;file specifier&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a HTTP/HTTPS URL:
-the text file pointed by the URL will be downloaded,
+&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a HTTP/HTTPS URL: the text file pointed by the URL will be downloaded,
 and each line will be read and parsed as a &amp;ldquo;file specifier&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a S3 URL pointing to a file:
-the text file pointed by the URL will be
+&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a S3 URL pointing to a file: the text file pointed by the URL will be
 downloaded, and each line will be read and parsed as a &amp;ldquo;file specifier&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a local path pointing to a directory (must end with a slash):
-the directory will be recursively
+&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a local path pointing to a directory (must end with a slash): the directory will be recursively
 walked, and all files matching the &amp;ldquo;MatchPath&amp;rdquo; option regexp will be processed as logfiles&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a S3 URL pointing to a directory:
-the directory on S3 will be recursively
+&lt;li&gt;&amp;ldquo;@&amp;rdquo; followed by a S3 URL pointing to a directory: the directory on S3 will be recursively
 walked, and all files matching the &amp;ldquo;MatchPath&amp;rdquo; option regexp will be processed as logfiles&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;-&amp;quot;:
-the contents of a log file will be read from stdin and processed&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;@-&amp;quot;:
-each line read from stdin will be parsed as a &amp;ldquo;file specifier&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;-&amp;quot;: the contents of a log file will be read from stdin and processed&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;@-&amp;quot;: each line read from stdin will be parsed as a &amp;ldquo;file specifier&amp;rdquo;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;All records produced by this input contain 2 metadata values:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;url:
-the files that originally contained the record&lt;/li&gt;
-&lt;li&gt;last_modified:
-the last modification datetime of the above file&lt;/li&gt;
+&lt;li&gt;url: the files that originally contained the record&lt;/li&gt;
+&lt;li&gt;last_modified: the last modification datetime of the above file&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[input.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Files&lt;/td&gt;
+&lt;td&gt;Files&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;[&amp;quot;-&amp;quot;]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;List of log-files, directories and/or list-files to process&lt;/td&gt;
+&lt;td&gt;List of log-files, directories and/or list-files to process&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;MatchPath&lt;/td&gt;
+&lt;td&gt;MatchPath&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;.*.log.gz&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;regexp to filter files in specified directories&lt;/td&gt;
+&lt;td&gt;regexp to filter files in specified directories&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Region&lt;/td&gt;
+&lt;td&gt;Region&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;us-west-2&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AWS Region for fetching from S3&lt;/td&gt;
+&lt;td&gt;AWS Region for fetching from S3&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -243,7 +231,7 @@ the last modification datetime of the above file&lt;/li&gt;
     <item>
       <title>Docs: SQS</title>
       <link>https://getbaker.io/docs/components/inputs/sqs/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/sqs/</guid>
       <description>
@@ -259,62 +247,62 @@ on S3; it is meant to be used with SQS queues popoulated by SNS.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AwsRegion&lt;/td&gt;
+&lt;td&gt;AwsRegion&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;us-west-2&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;AWS region to connect to&lt;/td&gt;
+&lt;td&gt;AWS region to connect to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Bucket&lt;/td&gt;
+&lt;td&gt;Bucket&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;S3 Bucket to use for processing&lt;/td&gt;
+&lt;td&gt;S3 Bucket to use for processing&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;QueuePrefixes&lt;/td&gt;
+&lt;td&gt;QueuePrefixes&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Prefixes of the names of the SQS queues to monitor&lt;/td&gt;
+&lt;td&gt;Prefixes of the names of the SQS queues to monitor&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;MessageFormat&lt;/td&gt;
+&lt;td&gt;MessageFormat&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;sns&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;The format of the SQS messages.&lt;/td&gt;
+&lt;td&gt;The format of the SQS messages.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&amp;lsquo;plain&amp;rsquo; the SQS messages received have the S3 file path as a plain string.&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&amp;lsquo;sns&amp;rsquo; the SQS messages were produced by a SNS notification.&lt;/td&gt;
+&lt;td&gt;&amp;lsquo;plain&amp;rsquo; the SQS messages received have the S3 file path as a plain string.&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;FilePathFilter&lt;/td&gt;
+&lt;td&gt;&amp;lsquo;sns&amp;rsquo; the SQS messages were produced by a SNS notification.&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;FilePathFilter&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;If provided, will only use S3 files with the given path.&lt;/td&gt;
+&lt;td&gt;If provided, will only use S3 files with the given path.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -325,7 +313,7 @@ on S3; it is meant to be used with SQS queues popoulated by SNS.&lt;/p&gt;
     <item>
       <title>Docs: TCP</title>
       <link>https://getbaker.io/docs/components/inputs/tcp/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/tcp/</guid>
       <description>
@@ -342,20 +330,20 @@ It never exits.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Listener&lt;/td&gt;
+&lt;td&gt;Listener&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Host:Port to bind to&lt;/td&gt;
+&lt;td&gt;Host:Port to bind to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -366,7 +354,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: ClauseFilter</title>
       <link>https://getbaker.io/docs/components/filters/clausefilter/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clausefilter/</guid>
       <description>
@@ -374,27 +362,79 @@ It never exits.&lt;/p&gt;
         
         &lt;h2 id=&#34;filter-clausefilter&#34;&gt;Filter &lt;em&gt;ClauseFilter&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This filter lets you set a boolean expression (in s-expression format) that will be matched against all records and dropped if they don&amp;rsquo;t match the expression.&lt;/p&gt;
-&lt;p&gt;Check the filter file for documentation what the format looks like.&lt;/p&gt;
+&lt;p&gt;Discard records which do not match a clause given as a boolean S-expression.&lt;br&gt;
+Check the filter documentation for some examples.&lt;/p&gt;
+&lt;h3 id=&#34;clausefilter-boolean-expression-format&#34;&gt;ClauseFilter boolean expression format&lt;/h3&gt;
+&lt;p&gt;This document describes the s-expression format used in ClauseFilter.&lt;/p&gt;
+&lt;p&gt;The format uses s-expressions.&lt;br&gt;
+Empty string matches anything (i.&lt;br&gt;
+e.&lt;br&gt;
+all records
+will pass the expression).&lt;/p&gt;
+&lt;p&gt;There are only three keywords: and, or, not&lt;/p&gt;
+&lt;p&gt;If an s-expression starts with any other name, it is assumed to be the name of
+a field and it should be paired with the desired value to match against.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Must match both X and Y to pass:
+(and X Y)
+
+You can use more than 2 arguments:
+(and X Y Z A B C)
+
+Must match either X or Y to pass:
+(or X Y)
+
+Must NOT match X to pass:
+(not X)
+
+Field must equal value to pass:
+(FIELD VALUE)
+
+e.  
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;g.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;(fieldName somevalue)
+
+Matches anything (because only one argument)
+(and X)
+
+Matches nothing
+(and)
+
+Matches anything
+(or)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;(and (fieldName value1) (anotherFieldName value2))
+
+(or (fieldName value1) (fieldName value2))
+
+(not (or (fieldName value1) (fieldName value2)))
+
+(or
+  (and (fieldName value1)
+       (anotherFieldName value3))
+  (and (fieldName value2)
+       (anotherFieldName value4)))
+&lt;/code&gt;&lt;/pre&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Clause&lt;/td&gt;
+&lt;td&gt;Clause&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Boolean formula describing which events to let through. If empty, let everything through.&lt;/td&gt;
+&lt;td&gt;Boolean formula describing which events to let through. If empty, let everything through.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -405,7 +445,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: ClearFields</title>
       <link>https://getbaker.io/docs/components/filters/clearfields/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clearfields/</guid>
       <description>
@@ -413,26 +453,26 @@ It never exits.&lt;/p&gt;
         
         &lt;h2 id=&#34;filter-clearfields&#34;&gt;Filter &lt;em&gt;ClearFields&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Clear a set of fields of all records passing through&lt;/p&gt;
+&lt;p&gt;Reset a set of fields of all records passing through&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Fields&lt;/td&gt;
+&lt;td&gt;Fields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;set of fields to clear&lt;/td&gt;
+&lt;td&gt;set of fields to clear&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -443,7 +483,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: Concatenate</title>
       <link>https://getbaker.io/docs/components/filters/concatenate/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/concatenate/</guid>
       <description>
@@ -457,34 +497,34 @@ It never exits.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Fields&lt;/td&gt;
+&lt;td&gt;Fields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;The field names to concatenate, in order&lt;/td&gt;
+&lt;td&gt;The field names to concatenate, in order&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Target&lt;/td&gt;
+&lt;td&gt;Target&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;The field name to save the concatenated value to&lt;/td&gt;
+&lt;td&gt;The field name to save the concatenated value to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Separator&lt;/td&gt;
+&lt;td&gt;Separator&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Separator to concatenate the values. Must either be empty or a single ASCII, non-nil char&lt;/td&gt;
+&lt;td&gt;Separator to concatenate the values. Must either be empty or a single ASCII, non-nil char&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -495,7 +535,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: RegexMatch</title>
       <link>https://getbaker.io/docs/components/filters/regexmatch/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/regexmatch/</guid>
       <description>
@@ -509,27 +549,27 @@ It never exits.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Fields&lt;/td&gt;
+&lt;td&gt;Fields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;list of fields to match with the corresponding regular expression in Regexs&lt;/td&gt;
+&lt;td&gt;list of fields to match with the corresponding regular expression in Regexs&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Regexs&lt;/td&gt;
+&lt;td&gt;Regexs&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;list of regular expression to match. Fields[0] must match Regexs[0], Fields[1] Regexs[1] and so on&lt;/td&gt;
+&lt;td&gt;list of regular expression to match. Fields[0] must match Regexs[0], Fields[1] Regexs[1] and so on&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -540,7 +580,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: NotNull</title>
       <link>https://getbaker.io/docs/components/filters/notnull/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/notnull/</guid>
       <description>
@@ -548,27 +588,27 @@ It never exits.&lt;/p&gt;
         
         &lt;h2 id=&#34;filter-notnull&#34;&gt;Filter &lt;em&gt;NotNull&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Discard the records having null (i.
+&lt;p&gt;Discard the records having null (i.&lt;br&gt;
 e empty) fields.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Fields&lt;/td&gt;
+&lt;td&gt;Fields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Fields is the list of fields to check for null/empty values&lt;/td&gt;
+&lt;td&gt;Fields is the list of fields to check for null/empty values&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -579,7 +619,7 @@ e empty) fields.&lt;/p&gt;
     <item>
       <title>Docs: ReplaceFields</title>
       <link>https://getbaker.io/docs/components/filters/replacefields/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/replacefields/</guid>
       <description>
@@ -587,34 +627,34 @@ e empty) fields.&lt;/p&gt;
         
         &lt;h2 id=&#34;filter-replacefields&#34;&gt;Filter &lt;em&gt;ReplaceFields&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Copy a field value or a fixed value to another field.
+&lt;p&gt;Copy a field value or a fixed value to another field.&lt;br&gt;
 Can copy multiple fields.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;CopyFields&lt;/td&gt;
+&lt;td&gt;CopyFields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;List of src, dst field pairs, for example [&amp;ldquo;srcField1&amp;rdquo;, &amp;ldquo;dstField1&amp;rdquo;, &amp;ldquo;srcField2&amp;rdquo;, &amp;ldquo;dstField2&amp;rdquo;]&lt;/td&gt;
+&lt;td&gt;List of src, dst field pairs, for example [&amp;ldquo;srcField1&amp;rdquo;, &amp;ldquo;dstField1&amp;rdquo;, &amp;ldquo;srcField2&amp;rdquo;, &amp;ldquo;dstField2&amp;rdquo;]&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;ReplaceFields&lt;/td&gt;
+&lt;td&gt;ReplaceFields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;List of field, value pairs, for example: [&amp;ldquo;Foo&amp;rdquo;, &amp;ldquo;dstField1&amp;rdquo;, &amp;ldquo;Bar&amp;rdquo;, &amp;ldquo;dstField2&amp;rdquo;]&lt;/td&gt;
+&lt;td&gt;List of field, value pairs, for example: [&amp;ldquo;Foo&amp;rdquo;, &amp;ldquo;dstField1&amp;rdquo;, &amp;ldquo;Bar&amp;rdquo;, &amp;ldquo;dstField2&amp;rdquo;]&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -625,7 +665,7 @@ Can copy multiple fields.&lt;/p&gt;
     <item>
       <title>Docs: SetStringFromURL</title>
       <link>https://getbaker.io/docs/components/filters/setstringfromurl/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/setstringfromurl/</guid>
       <description>
@@ -639,27 +679,27 @@ Can copy multiple fields.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Field&lt;/td&gt;
+&lt;td&gt;Field&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Name of the field to set to&lt;/td&gt;
+&lt;td&gt;Name of the field to set to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Strings&lt;/td&gt;
+&lt;td&gt;Strings&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Strings to look for in the URL. Discard records not containing any of them.&lt;/td&gt;
+&lt;td&gt;Strings to look for in the URL. Discard records not containing any of them.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -670,7 +710,7 @@ Can copy multiple fields.&lt;/p&gt;
     <item>
       <title>Docs: TimestampRange</title>
       <link>https://getbaker.io/docs/components/filters/timestamprange/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamprange/</guid>
       <description>
@@ -678,41 +718,41 @@ Can copy multiple fields.&lt;/p&gt;
         
         &lt;h2 id=&#34;filter-timestamprange&#34;&gt;Filter &lt;em&gt;TimestampRange&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Discard records if the value of a field containing a timestamp is out of the given time range (i.
+&lt;p&gt;Discard records if the value of a field containing a timestamp is out of the given time range (i.&lt;br&gt;
 e StartDateTime &amp;lt;= value &amp;lt; EndDateTime)&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;StartDatetime&lt;/td&gt;
+&lt;td&gt;StartDatetime&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;no bound&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Lower bound of the accepted time interval (inclusive, UTC) format:&amp;lsquo;2006-01-31 15:04:05&amp;rsquo;&lt;/td&gt;
+&lt;td&gt;Lower bound of the accepted time interval (inclusive, UTC) format:&amp;lsquo;2006-01-31 15:04:05&amp;rsquo;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;EndDatetime&lt;/td&gt;
+&lt;td&gt;EndDatetime&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;no bound&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Upper bound of the accepted time interval (exclusive, UTC) format:&amp;lsquo;2006-01-31 15:04:05&amp;rsquo;&lt;/td&gt;
+&lt;td&gt;Upper bound of the accepted time interval (exclusive, UTC) format:&amp;lsquo;2006-01-31 15:04:05&amp;rsquo;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Field&lt;/td&gt;
+&lt;td&gt;Field&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Name of the field containing the Unix EPOCH timestamp&lt;/td&gt;
+&lt;td&gt;Name of the field containing the Unix EPOCH timestamp&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -723,7 +763,7 @@ e StartDateTime &amp;lt;= value &amp;lt; EndDateTime)&lt;/p&gt;
     <item>
       <title>Docs: DynamoDB</title>
       <link>https://getbaker.io/docs/components/outputs/dynamodb/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/dynamodb/</guid>
       <description>
@@ -732,71 +772,69 @@ e StartDateTime &amp;lt;= value &amp;lt; EndDateTime)&lt;/p&gt;
         &lt;h2 id=&#34;output-dynamodb&#34;&gt;Output &lt;em&gt;DynamoDB&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;non-raw&lt;/em&gt; output, it doesn&amp;rsquo;t receive whole records. Instead it receives a list of fields for each record (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;This output writes the filtered log lines to DynamoDB.
+&lt;p&gt;This output writes the filtered log lines to DynamoDB.&lt;br&gt;
 It must be
 configured specifying the region, the table name, and the columns
 to write.&lt;/p&gt;
-&lt;p&gt;Columns are specified using the syntax &amp;ldquo;t:
-name&amp;rdquo; where &amp;ldquo;t&amp;rdquo;
-is the type of the data, and &amp;ldquo;name&amp;rdquo; is the name of column.
+&lt;p&gt;Columns are specified using the syntax &amp;ldquo;t:name&amp;rdquo; where &amp;ldquo;t&amp;rdquo;
+is the type of the data, and &amp;ldquo;name&amp;rdquo; is the name of column.&lt;br&gt;
 Supported
-types are:
-&amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings.&lt;/p&gt;
+types are: &amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings.&lt;/p&gt;
 &lt;p&gt;The first column (and field) must be the primary key.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[output.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Regions&lt;/td&gt;
+&lt;td&gt;Regions&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;us-west-2&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;DynamoDB regions to connect to&lt;/td&gt;
+&lt;td&gt;DynamoDB regions to connect to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Table&lt;/td&gt;
+&lt;td&gt;Table&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Name of the table to modify&lt;/td&gt;
+&lt;td&gt;Name of the table to modify&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Columns&lt;/td&gt;
+&lt;td&gt;Columns&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Table columns that correspond to each of the fields being written&lt;/td&gt;
+&lt;td&gt;Table columns that correspond to each of the fields being written&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;FlushInterval&lt;/td&gt;
+&lt;td&gt;FlushInterval&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;1s&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Interval at which flush the data to DynamoDB even if we have not reached 25 records&lt;/td&gt;
+&lt;td&gt;Interval at which flush the data to DynamoDB even if we have not reached 25 records&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;MaxWritesPerSec&lt;/td&gt;
+&lt;td&gt;MaxWritesPerSec&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;int&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;0&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Maximum number of writes per second that DynamoDB can accept (0 for unlimited)&lt;/td&gt;
+&lt;td&gt;Maximum number of writes per second that DynamoDB can accept (0 for unlimited)&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;MaxBackoff&lt;/td&gt;
+&lt;td&gt;MaxBackoff&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;2m&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Maximum retry/backoff time in case of errors before giving up&lt;/td&gt;
+&lt;td&gt;Maximum retry/backoff time in case of errors before giving up&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -807,7 +845,7 @@ types are:
     <item>
       <title>Docs: FileWriter</title>
       <link>https://getbaker.io/docs/components/outputs/filewriter/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/filewriter/</guid>
       <description>
@@ -819,7 +857,7 @@ types are:
 &lt;p&gt;This output writes the records into compressed files in a directory.&lt;/p&gt;
 &lt;p&gt;Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.&lt;/p&gt;
 &lt;p&gt;The file names can contain placeholders that are populated by the output (see the keys help below).&lt;/p&gt;
-&lt;p&gt;When the special {{.
+&lt;p&gt;When the special {{.&lt;br&gt;
 Field0}} placeholder is used, then the user must specify the field name to
 use for replacement in the fields configuration list.&lt;/p&gt;
 &lt;p&gt;The value of that field, extracted from each record, is used as replacement and, moreover, this
@@ -831,41 +869,41 @@ of the field, and each one of these workers concurrently writes to a different f
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;PathString&lt;/td&gt;
+&lt;td&gt;PathString&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Template to describe location of the output directory: supports .Year, .Month, .Day and .Rotation. Also .Field0 if a field name has been specified in the output&amp;rsquo;s fields list.&lt;/td&gt;
+&lt;td&gt;Template to describe location of the output directory: supports .Year, .Month, .Day and .Rotation. Also .Field0 if a field name has been specified in the output&amp;rsquo;s fields list.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;RotateInterval&lt;/td&gt;
+&lt;td&gt;RotateInterval&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;60s&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Time after which data will be rotated. If -1, it will not rotate until the end.&lt;/td&gt;
+&lt;td&gt;Time after which data will be rotated. If -1, it will not rotate until the end.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;ZstdCompressionLevel&lt;/td&gt;
+&lt;td&gt;ZstdCompressionLevel&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;int&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;3&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;zstd compression level, ranging from 1 (best speed) to 19 (best compression).&lt;/td&gt;
+&lt;td&gt;zstd compression level, ranging from 1 (best speed) to 19 (best compression).&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;ZstdWindowLog&lt;/td&gt;
+&lt;td&gt;ZstdWindowLog&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;int&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;0&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled.&lt;/td&gt;
+&lt;td&gt;Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -876,7 +914,7 @@ of the field, and each one of these workers concurrently writes to a different f
     <item>
       <title>Docs: Nop</title>
       <link>https://getbaker.io/docs/components/outputs/nop/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/nop/</guid>
       <description>
@@ -885,7 +923,7 @@ of the field, and each one of these workers concurrently writes to a different f
         &lt;h2 id=&#34;output-nop&#34;&gt;Output &lt;em&gt;Nop&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;non-raw&lt;/em&gt; output, it doesn&amp;rsquo;t receive whole records. Instead it receives a list of fields for each record (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;No-operation output.
+&lt;p&gt;No-operation output.&lt;br&gt;
 This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;No configuration available&lt;/p&gt;
@@ -896,7 +934,7 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
     <item>
       <title>Docs: OpLog</title>
       <link>https://getbaker.io/docs/components/outputs/oplog/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/oplog/</guid>
       <description>
@@ -915,7 +953,7 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
     <item>
       <title>Docs: Stats</title>
       <link>https://getbaker.io/docs/components/outputs/stats/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/stats/</guid>
       <description>
@@ -924,41 +962,41 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
         &lt;h2 id=&#34;output-stats&#34;&gt;Output &lt;em&gt;Stats&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;raw&lt;/em&gt; output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;Compute various distributions of the records it receives and dumps that to CSV.
+&lt;p&gt;Compute various distributions of the records it receives and dumps that to CSV.&lt;br&gt;
 It computes the distribution of record by size and the distribution of the values of certain fields&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[output.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;CountEmptyFields&lt;/td&gt;
+&lt;td&gt;CountEmptyFields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;bool&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Whether fields with empty values are counted or not&lt;/td&gt;
+&lt;td&gt;Whether fields with empty values are counted or not&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;CSVPath&lt;/td&gt;
+&lt;td&gt;CSVPath&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;stats.csv&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Path of the CSV file to create&lt;/td&gt;
+&lt;td&gt;Path of the CSV file to create&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;TimestampField&lt;/td&gt;
+&lt;td&gt;TimestampField&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Name of a field containing a POSIX timestamp (in seconds) used to build the times stats&lt;/td&gt;
+&lt;td&gt;Name of a field containing a POSIX timestamp (in seconds) used to build the times stats&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -969,7 +1007,7 @@ It computes the distribution of record by size and the distribution of the value
     <item>
       <title>Docs: WebSocket</title>
       <link>https://getbaker.io/docs/components/outputs/websocket/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/websocket/</guid>
       <description>
@@ -988,7 +1026,7 @@ It computes the distribution of record by size and the distribution of the value
     <item>
       <title>Docs: S3</title>
       <link>https://getbaker.io/docs/components/uploads/s3/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/uploads/s3/</guid>
       <description>
@@ -1002,76 +1040,76 @@ It computes the distribution of record by size and the distribution of the value
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;SourceBasePath&lt;/td&gt;
+&lt;td&gt;SourceBasePath&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;/tmp/baker/ologs/&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Base path used to consider the final S3 path.&lt;/td&gt;
+&lt;td&gt;Base path used to consider the final S3 path.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Region&lt;/td&gt;
+&lt;td&gt;Region&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;us-east-1&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;S3 region to upload to&lt;/td&gt;
+&lt;td&gt;S3 region to upload to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Bucket&lt;/td&gt;
+&lt;td&gt;Bucket&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;S3 bucket to upload to&lt;/td&gt;
+&lt;td&gt;S3 bucket to upload to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Prefix&lt;/td&gt;
+&lt;td&gt;Prefix&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;/&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Prefix on the destination bucket&lt;/td&gt;
+&lt;td&gt;Prefix on the destination bucket&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;StagingPath&lt;/td&gt;
+&lt;td&gt;StagingPath&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;/tmp/baker/ologs/staging/&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Local staging area to copy files to before upload.&lt;/td&gt;
+&lt;td&gt;Local staging area to copy files to before upload.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Retries&lt;/td&gt;
+&lt;td&gt;Retries&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;int&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;3&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Number of retries before a failed upload&lt;/td&gt;
+&lt;td&gt;Number of retries before a failed upload&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Concurrency&lt;/td&gt;
+&lt;td&gt;Concurrency&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;int&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;5&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Number of concurrent workers&lt;/td&gt;
+&lt;td&gt;Number of concurrent workers&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Interval&lt;/td&gt;
+&lt;td&gt;Interval&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;15s&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Period at which the source path is scanned&lt;/td&gt;
+&lt;td&gt;Period at which the source path is scanned&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;ExitOnError&lt;/td&gt;
+&lt;td&gt;ExitOnError&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;bool&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Exit at first error, instead of logging all errors&lt;/td&gt;
+&lt;td&gt;Exit at first error, instead of logging all errors&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;

@@ -5,7 +5,7 @@
     <description>Recent content in Filters on Baker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 12 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/filters/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: ClauseFilter</title>
       <link>https://getbaker.io/docs/components/filters/clausefilter/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clausefilter/</guid>
       <description>
@@ -26,27 +26,79 @@
         
         &lt;h2 id=&#34;filter-clausefilter&#34;&gt;Filter &lt;em&gt;ClauseFilter&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This filter lets you set a boolean expression (in s-expression format) that will be matched against all records and dropped if they don&amp;rsquo;t match the expression.&lt;/p&gt;
-&lt;p&gt;Check the filter file for documentation what the format looks like.&lt;/p&gt;
+&lt;p&gt;Discard records which do not match a clause given as a boolean S-expression.&lt;br&gt;
+Check the filter documentation for some examples.&lt;/p&gt;
+&lt;h3 id=&#34;clausefilter-boolean-expression-format&#34;&gt;ClauseFilter boolean expression format&lt;/h3&gt;
+&lt;p&gt;This document describes the s-expression format used in ClauseFilter.&lt;/p&gt;
+&lt;p&gt;The format uses s-expressions.&lt;br&gt;
+Empty string matches anything (i.&lt;br&gt;
+e.&lt;br&gt;
+all records
+will pass the expression).&lt;/p&gt;
+&lt;p&gt;There are only three keywords: and, or, not&lt;/p&gt;
+&lt;p&gt;If an s-expression starts with any other name, it is assumed to be the name of
+a field and it should be paired with the desired value to match against.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Must match both X and Y to pass:
+(and X Y)
+
+You can use more than 2 arguments:
+(and X Y Z A B C)
+
+Must match either X or Y to pass:
+(or X Y)
+
+Must NOT match X to pass:
+(not X)
+
+Field must equal value to pass:
+(FIELD VALUE)
+
+e.  
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;g.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;(fieldName somevalue)
+
+Matches anything (because only one argument)
+(and X)
+
+Matches nothing
+(and)
+
+Matches anything
+(or)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;(and (fieldName value1) (anotherFieldName value2))
+
+(or (fieldName value1) (fieldName value2))
+
+(not (or (fieldName value1) (fieldName value2)))
+
+(or
+  (and (fieldName value1)
+       (anotherFieldName value3))
+  (and (fieldName value2)
+       (anotherFieldName value4)))
+&lt;/code&gt;&lt;/pre&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Clause&lt;/td&gt;
+&lt;td&gt;Clause&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Boolean formula describing which events to let through. If empty, let everything through.&lt;/td&gt;
+&lt;td&gt;Boolean formula describing which events to let through. If empty, let everything through.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -57,7 +109,7 @@
     <item>
       <title>Docs: ClearFields</title>
       <link>https://getbaker.io/docs/components/filters/clearfields/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clearfields/</guid>
       <description>
@@ -65,26 +117,26 @@
         
         &lt;h2 id=&#34;filter-clearfields&#34;&gt;Filter &lt;em&gt;ClearFields&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Clear a set of fields of all records passing through&lt;/p&gt;
+&lt;p&gt;Reset a set of fields of all records passing through&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Fields&lt;/td&gt;
+&lt;td&gt;Fields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;set of fields to clear&lt;/td&gt;
+&lt;td&gt;set of fields to clear&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -95,7 +147,7 @@
     <item>
       <title>Docs: Concatenate</title>
       <link>https://getbaker.io/docs/components/filters/concatenate/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/concatenate/</guid>
       <description>
@@ -109,34 +161,34 @@
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Fields&lt;/td&gt;
+&lt;td&gt;Fields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;The field names to concatenate, in order&lt;/td&gt;
+&lt;td&gt;The field names to concatenate, in order&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Target&lt;/td&gt;
+&lt;td&gt;Target&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;The field name to save the concatenated value to&lt;/td&gt;
+&lt;td&gt;The field name to save the concatenated value to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Separator&lt;/td&gt;
+&lt;td&gt;Separator&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Separator to concatenate the values. Must either be empty or a single ASCII, non-nil char&lt;/td&gt;
+&lt;td&gt;Separator to concatenate the values. Must either be empty or a single ASCII, non-nil char&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -147,7 +199,7 @@
     <item>
       <title>Docs: RegexMatch</title>
       <link>https://getbaker.io/docs/components/filters/regexmatch/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/regexmatch/</guid>
       <description>
@@ -161,27 +213,27 @@
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Fields&lt;/td&gt;
+&lt;td&gt;Fields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;list of fields to match with the corresponding regular expression in Regexs&lt;/td&gt;
+&lt;td&gt;list of fields to match with the corresponding regular expression in Regexs&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Regexs&lt;/td&gt;
+&lt;td&gt;Regexs&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;list of regular expression to match. Fields[0] must match Regexs[0], Fields[1] Regexs[1] and so on&lt;/td&gt;
+&lt;td&gt;list of regular expression to match. Fields[0] must match Regexs[0], Fields[1] Regexs[1] and so on&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -192,7 +244,7 @@
     <item>
       <title>Docs: NotNull</title>
       <link>https://getbaker.io/docs/components/filters/notnull/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/notnull/</guid>
       <description>
@@ -200,27 +252,27 @@
         
         &lt;h2 id=&#34;filter-notnull&#34;&gt;Filter &lt;em&gt;NotNull&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Discard the records having null (i.
+&lt;p&gt;Discard the records having null (i.&lt;br&gt;
 e empty) fields.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Fields&lt;/td&gt;
+&lt;td&gt;Fields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Fields is the list of fields to check for null/empty values&lt;/td&gt;
+&lt;td&gt;Fields is the list of fields to check for null/empty values&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -231,7 +283,7 @@ e empty) fields.&lt;/p&gt;
     <item>
       <title>Docs: ReplaceFields</title>
       <link>https://getbaker.io/docs/components/filters/replacefields/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/replacefields/</guid>
       <description>
@@ -239,34 +291,34 @@ e empty) fields.&lt;/p&gt;
         
         &lt;h2 id=&#34;filter-replacefields&#34;&gt;Filter &lt;em&gt;ReplaceFields&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Copy a field value or a fixed value to another field.
+&lt;p&gt;Copy a field value or a fixed value to another field.&lt;br&gt;
 Can copy multiple fields.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;CopyFields&lt;/td&gt;
+&lt;td&gt;CopyFields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;List of src, dst field pairs, for example [&amp;ldquo;srcField1&amp;rdquo;, &amp;ldquo;dstField1&amp;rdquo;, &amp;ldquo;srcField2&amp;rdquo;, &amp;ldquo;dstField2&amp;rdquo;]&lt;/td&gt;
+&lt;td&gt;List of src, dst field pairs, for example [&amp;ldquo;srcField1&amp;rdquo;, &amp;ldquo;dstField1&amp;rdquo;, &amp;ldquo;srcField2&amp;rdquo;, &amp;ldquo;dstField2&amp;rdquo;]&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;ReplaceFields&lt;/td&gt;
+&lt;td&gt;ReplaceFields&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;List of field, value pairs, for example: [&amp;ldquo;Foo&amp;rdquo;, &amp;ldquo;dstField1&amp;rdquo;, &amp;ldquo;Bar&amp;rdquo;, &amp;ldquo;dstField2&amp;rdquo;]&lt;/td&gt;
+&lt;td&gt;List of field, value pairs, for example: [&amp;ldquo;Foo&amp;rdquo;, &amp;ldquo;dstField1&amp;rdquo;, &amp;ldquo;Bar&amp;rdquo;, &amp;ldquo;dstField2&amp;rdquo;]&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -277,7 +329,7 @@ Can copy multiple fields.&lt;/p&gt;
     <item>
       <title>Docs: SetStringFromURL</title>
       <link>https://getbaker.io/docs/components/filters/setstringfromurl/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/setstringfromurl/</guid>
       <description>
@@ -291,27 +343,27 @@ Can copy multiple fields.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Field&lt;/td&gt;
+&lt;td&gt;Field&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Name of the field to set to&lt;/td&gt;
+&lt;td&gt;Name of the field to set to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Strings&lt;/td&gt;
+&lt;td&gt;Strings&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Strings to look for in the URL. Discard records not containing any of them.&lt;/td&gt;
+&lt;td&gt;Strings to look for in the URL. Discard records not containing any of them.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -322,7 +374,7 @@ Can copy multiple fields.&lt;/p&gt;
     <item>
       <title>Docs: TimestampRange</title>
       <link>https://getbaker.io/docs/components/filters/timestamprange/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamprange/</guid>
       <description>
@@ -330,41 +382,41 @@ Can copy multiple fields.&lt;/p&gt;
         
         &lt;h2 id=&#34;filter-timestamprange&#34;&gt;Filter &lt;em&gt;TimestampRange&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Discard records if the value of a field containing a timestamp is out of the given time range (i.
+&lt;p&gt;Discard records if the value of a field containing a timestamp is out of the given time range (i.&lt;br&gt;
 e StartDateTime &amp;lt;= value &amp;lt; EndDateTime)&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;StartDatetime&lt;/td&gt;
+&lt;td&gt;StartDatetime&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;no bound&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Lower bound of the accepted time interval (inclusive, UTC) format:&amp;lsquo;2006-01-31 15:04:05&amp;rsquo;&lt;/td&gt;
+&lt;td&gt;Lower bound of the accepted time interval (inclusive, UTC) format:&amp;lsquo;2006-01-31 15:04:05&amp;rsquo;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;EndDatetime&lt;/td&gt;
+&lt;td&gt;EndDatetime&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;no bound&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Upper bound of the accepted time interval (exclusive, UTC) format:&amp;lsquo;2006-01-31 15:04:05&amp;rsquo;&lt;/td&gt;
+&lt;td&gt;Upper bound of the accepted time interval (exclusive, UTC) format:&amp;lsquo;2006-01-31 15:04:05&amp;rsquo;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Field&lt;/td&gt;
+&lt;td&gt;Field&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Name of the field containing the Unix EPOCH timestamp&lt;/td&gt;
+&lt;td&gt;Name of the field containing the Unix EPOCH timestamp&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;

@@ -5,7 +5,7 @@
     <description>Recent content in Uploads on Baker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 12 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/uploads/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: S3</title>
       <link>https://getbaker.io/docs/components/uploads/s3/</link>
-      <pubDate>Thu, 12 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/uploads/s3/</guid>
       <description>
@@ -32,76 +32,76 @@
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Name&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
 &lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;Description&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;SourceBasePath&lt;/td&gt;
+&lt;td&gt;SourceBasePath&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;/tmp/baker/ologs/&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Base path used to consider the final S3 path.&lt;/td&gt;
+&lt;td&gt;Base path used to consider the final S3 path.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Region&lt;/td&gt;
+&lt;td&gt;Region&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;us-east-1&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;S3 region to upload to&lt;/td&gt;
+&lt;td&gt;S3 region to upload to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Bucket&lt;/td&gt;
+&lt;td&gt;Bucket&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;S3 bucket to upload to&lt;/td&gt;
+&lt;td&gt;S3 bucket to upload to&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Prefix&lt;/td&gt;
+&lt;td&gt;Prefix&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;/&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Prefix on the destination bucket&lt;/td&gt;
+&lt;td&gt;Prefix on the destination bucket&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;StagingPath&lt;/td&gt;
+&lt;td&gt;StagingPath&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;/tmp/baker/ologs/staging/&amp;rdquo;&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Local staging area to copy files to before upload.&lt;/td&gt;
+&lt;td&gt;Local staging area to copy files to before upload.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Retries&lt;/td&gt;
+&lt;td&gt;Retries&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;int&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;3&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Number of retries before a failed upload&lt;/td&gt;
+&lt;td&gt;Number of retries before a failed upload&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Concurrency&lt;/td&gt;
+&lt;td&gt;Concurrency&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;int&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;5&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Number of concurrent workers&lt;/td&gt;
+&lt;td&gt;Number of concurrent workers&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Interval&lt;/td&gt;
+&lt;td&gt;Interval&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;15s&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Period at which the source path is scanned&lt;/td&gt;
+&lt;td&gt;Period at which the source path is scanned&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;ExitOnError&lt;/td&gt;
+&lt;td&gt;ExitOnError&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;bool&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;Exit at first error, instead of logging all errors&lt;/td&gt;
+&lt;td&gt;Exit at first error, instead of logging all errors&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;

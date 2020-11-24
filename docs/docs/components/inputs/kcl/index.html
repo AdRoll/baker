@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.77.0" />
+<meta name="generator" content="Hugo 0.78.2" />
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
@@ -21,19 +21,25 @@
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
 <title>KCL | Baker</title><meta property="og:title" content="KCL" />
-<meta property="og:description" content="Input KCL Overview This input fetches records from Kinesis with KCL. It consumes a specified stream, and processes all shards in that stream. It never exits.
-Multiple baker instances can consume the same stream, in that case the KCL will take care of balancing the shards between workers. Careful (shard stealing is not implemented yet).
+<meta property="og:description" content="Input KCL Overview This input fetches records from Kinesis with KCL.
+It consumes a specified stream, and processes all shards in that stream.
+It never exits.
+Multiple baker instances can consume the same stream, in that case the KCL will take care of balancing the shards between workers.
+Careful (shard stealing is not implemented yet).
 Resharding on the producer side is automatically handled by the KCL that will distribute the shards among KCL workers." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://getbaker.io/docs/components/inputs/kcl/" />
-<meta property="article:published_time" content="2020-11-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-11-12T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
+<meta property="article:published_time" content="2020-11-24T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-11-24T00:00:00+00:00" /><meta property="og:site_name" content="Baker" />
 <meta itemprop="name" content="KCL">
-<meta itemprop="description" content="Input KCL Overview This input fetches records from Kinesis with KCL. It consumes a specified stream, and processes all shards in that stream. It never exits.
-Multiple baker instances can consume the same stream, in that case the KCL will take care of balancing the shards between workers. Careful (shard stealing is not implemented yet).
+<meta itemprop="description" content="Input KCL Overview This input fetches records from Kinesis with KCL.
+It consumes a specified stream, and processes all shards in that stream.
+It never exits.
+Multiple baker instances can consume the same stream, in that case the KCL will take care of balancing the shards between workers.
+Careful (shard stealing is not implemented yet).
 Resharding on the producer side is automatically handled by the KCL that will distribute the shards among KCL workers.">
-<meta itemprop="datePublished" content="2020-11-12T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-11-12T00:00:00+00:00" />
+<meta itemprop="datePublished" content="2020-11-24T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-11-24T00:00:00+00:00" />
 <meta itemprop="wordCount" content="164">
 
 
@@ -41,16 +47,19 @@ Resharding on the producer side is automatically handled by the KCL that will di
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="KCL"/>
-<meta name="twitter:description" content="Input KCL Overview This input fetches records from Kinesis with KCL. It consumes a specified stream, and processes all shards in that stream. It never exits.
-Multiple baker instances can consume the same stream, in that case the KCL will take care of balancing the shards between workers. Careful (shard stealing is not implemented yet).
+<meta name="twitter:description" content="Input KCL Overview This input fetches records from Kinesis with KCL.
+It consumes a specified stream, and processes all shards in that stream.
+It never exits.
+Multiple baker instances can consume the same stream, in that case the KCL will take care of balancing the shards between workers.
+Careful (shard stealing is not implemented yet).
 Resharding on the producer side is automatically handled by the KCL that will distribute the shards among KCL workers."/>
 
 
 
 
 
-<link rel="preload" href="/scss/main.min.46daf881c4957b9b630ad65eff278180b8a511967c3b84d341b588cf0ca9330c.css" as="style">
-<link href="/scss/main.min.46daf881c4957b9b630ad65eff278180b8a511967c3b84d341b588cf0ca9330c.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.d539e0f3f0b87f0a8a3fcd992f6ea02c567abc8bd34b44ca5fd97538a6a79057.css" as="style">
+<link href="/scss/main.min.d539e0f3f0b87f0a8a3fcd992f6ea02c567abc8bd34b44ca5fd97538a6a79057.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -148,7 +157,7 @@ Resharding on the producer side is automatically handled by the KCL that will di
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.799a3664cb817c9ea47fc225ee79adb78fc6b7771975ff2edf6ee148146bebee4bea4e1d6d9d887161be77fdeac9cc54ddbdd88d91f09964f51f127137d6bc6d.json"
+  data-offline-search-index-json-src="/offline-search-index.9187c6a82162d7c6c90095ccf79aa715e16ab150cb9f3a0755cd3df6b51acd2370c4ff523cf4c28c50a9db0eb6dbd30b8993b6e9f6fb7557851d04caed22ce35.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -179,7 +188,7 @@ Resharding on the producer side is automatically handled by the KCL that will di
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.799a3664cb817c9ea47fc225ee79adb78fc6b7771975ff2edf6ee148146bebee4bea4e1d6d9d887161be77fdeac9cc54ddbdd88d91f09964f51f127137d6bc6d.json"
+  data-offline-search-index-json-src="/offline-search-index.9187c6a82162d7c6c90095ccf79aa715e16ab150cb9f3a0755cd3df6b51acd2370c4ff523cf4c28c50a9db0eb6dbd30b8993b6e9f6fb7557851d04caed22ce35.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -739,12 +748,12 @@ Resharding on the producer side is automatically handled by the KCL that will di
 	       
 	<h2 id="input-kcl">Input <em>KCL</em></h2>
 <h3 id="overview">Overview</h3>
-<p>This input fetches records from Kinesis with KCL.
+<p>This input fetches records from Kinesis with KCL.<br>
 It consumes a specified stream, and
-processes all shards in that stream.
+processes all shards in that stream.<br>
 It never exits.</p>
 <p>Multiple baker instances can consume the same stream, in that case the KCL will take care of
-balancing the shards between workers.
+balancing the shards between workers.<br>
 Careful (shard stealing is not implemented yet).</p>
 <p>Resharding on the producer side is automatically handled by the KCL that will distribute
 the shards among KCL workers.</p>
@@ -753,62 +762,62 @@ the shards among KCL workers.</p>
 <table>
 <thead>
 <tr>
-<th style="text-align:center">Name</th>
+<th>Name</th>
 <th style="text-align:center">Type</th>
 <th style="text-align:center">Default</th>
 <th style="text-align:center">Required</th>
-<th style="text-align:center">Description</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:center">AwsRegion</td>
+<td>AwsRegion</td>
 <td style="text-align:center">string</td>
 <td style="text-align:center">&ldquo;us-west-2&rdquo;</td>
 <td style="text-align:center">false</td>
-<td style="text-align:center">AWS region to connect to</td>
+<td>AWS region to connect to</td>
 </tr>
 <tr>
-<td style="text-align:center">Stream</td>
+<td>Stream</td>
 <td style="text-align:center">string</td>
 <td style="text-align:center">&quot;&quot;</td>
 <td style="text-align:center">true</td>
-<td style="text-align:center">Name of Kinesis stream</td>
+<td>Name of Kinesis stream</td>
 </tr>
 <tr>
-<td style="text-align:center">AppName</td>
+<td>AppName</td>
 <td style="text-align:center">string</td>
 <td style="text-align:center">&quot;&quot;</td>
 <td style="text-align:center">true</td>
-<td style="text-align:center">Used by KCL to allow multiple app to consume the same stream.</td>
+<td>Used by KCL to allow multiple app to consume the same stream.</td>
 </tr>
 <tr>
-<td style="text-align:center">MaxShards</td>
+<td>MaxShards</td>
 <td style="text-align:center">int</td>
 <td style="text-align:center">32767</td>
 <td style="text-align:center">false</td>
-<td style="text-align:center">Max shards this Worker can handle at a time</td>
+<td>Max shards this Worker can handle at a time</td>
 </tr>
 <tr>
-<td style="text-align:center">ShardSync</td>
+<td>ShardSync</td>
 <td style="text-align:center">duration</td>
 <td style="text-align:center">60s</td>
 <td style="text-align:center">false</td>
-<td style="text-align:center">Time between tasks to sync leases and Kinesis shards</td>
+<td>Time between tasks to sync leases and Kinesis shards</td>
 </tr>
 <tr>
-<td style="text-align:center">InitialPosition</td>
+<td>InitialPosition</td>
 <td style="text-align:center">string</td>
 <td style="text-align:center">&ldquo;LATEST&rdquo;</td>
 <td style="text-align:center">false</td>
-<td style="text-align:center">Position in the stream where a new application should start from. Values: LATEST or TRIM_HORIZON</td>
+<td>Position in the stream where a new application should start from. Values: LATEST or TRIM_HORIZON</td>
 </tr>
 </tbody>
 </table>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 12, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified November 24, 2020
 </div>
 </div>
 
