@@ -1,7 +1,7 @@
 ---
 title: "WebSocket"
 weight: 22
-date: 2020-11-12
+date: 2020-11-24
 ---
 ## Output *WebSocket*
 
@@ -9,7 +9,7 @@ date: 2020-11-12
 This is a *non-raw* output, it doesn't receive whole records. Instead it receives a list of fields for each record (`output.fields` in TOML).
 
 
-This output writes the filtered log lines into any connected WebSocket client.
+This output writes the filtered log lines into any connected WebSocket client.  
 
 
 

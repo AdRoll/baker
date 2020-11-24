@@ -6,5 +6,6 @@ that is able to export components' documentation in Markdown format.
 The simplest use of this tool is:
 
 ```go
+go get -u github.com/AdRoll/baker
 go run . ../../content/en/docs/Components
 ```
