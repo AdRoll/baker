@@ -15,36 +15,46 @@ linkTitle = "Baker"
 </div>
 {{< /blocks/cover >}}
 
-{{% blocks/lead color="light" %}}
-<div style="display:flex;justify-content:space-around;align-items:center;align-content:center;">
-<div style="padding-right:1em;">
-    <img src="/baker.png" style="width:400px;" />
-</div>
-<div style="padding-left:1em;">
-<p>Baker pipelines can fetch, transform and store records in a flash <i class="fa fa-bolt"></i>
-thanks to a high-performant and fully-parallel implementation.
-</p>
-<p>
-Baker is open-source and written in <a href="https://golang.org/" target="_blank">Go</a> by <a href="https://www.nextroll.com/" target="_blank">NextRoll, inc.</a>
-</p>
-<img src="./images/nextroll-logo-2x.png" alt="NextRoll, inc." />
-</div>
-</div>
-{{% /blocks/lead %}}
+<section class="row td-box td-box--light position-relative td-box--gradient td-box--height-auto">
+    <div class="container-fluid text-center td-arrow-down">
+    <span class="h4 mb-0">
+        <div class="col">
+            <div class="row align-items-center">
+                <div class="offset-lg-3 col-lg-3 mb-5 mb-lg-0 text-center">
+                    <img src="/baker.png" class="responsive-img" />
+                </div>
+                <div class="col-lg-4 mb-5 mb-lg-0 text-center">
+                    <p>Baker pipelines can fetch, transform and store records in a flash <i class="fa fa-bolt"></i>
+                    thanks to a high-performant and fully-parallel implementation.
+                    </p>
+                    <p>
+                    Baker is open-source and written in <a href="https://golang.org/" target="_blank">Go</a> by <a href="https://www.nextroll.com/" target="_blank">NextRoll, inc.</a>
+                    </p>
+                    <img src="./images/nextroll-logo-2x.png" alt="NextRoll, inc." />
+                </div>
+            </div>
+        </div>
+    </span>
+    </div>
+</section>
 
 {{< blocks/section color="primary" >}}
 {{% blocks/feature icon="fas fa-link" title="Modular pipeline" %}}
 
-Baker pipelines are assembled using up to 4 kinds of components: inputs, filters, outputs and uploads.
+<a href="/docs/core-concepts/#pipeline">Baker pipelines</a> are assembled using up to 4 kinds of
+components: inputs, filters, outputs and uploads.
 
-They are fully modular: any component can be replaced with another of the same kind.
+They are fully modular: any component can be replaced
+with another of the same kind.
 
+Available components include many AWS services (S3, Kinesis, DynamoDB, SQS) as well as websocket,
+TCP, local disk, etc.<br /><a href="/docs/components">Check out the full list &raquo;</a>
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fas fa-shipping-fast" title="High performances" %}}
 Baker is fully parallel and maximizes usage of both CPU-bound and I/O bound pipelines.
 
-<img src="/speed.png" style="width:400px" />
+<img src="/speed.png" class="responsive-img" />
 
 More examples of <a href="/docs/performance/">Baker performances &raquo;</a>
 

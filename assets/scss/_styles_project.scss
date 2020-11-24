@@ -1,0 +1,29 @@
+.highlight pre {
+    padding: 2em;
+}
+
+.navbar-brand {
+    display: none;
+}
+
+.td-box--primary p > a {
+    color: #ffe181;
+}
+.td-box--primary p > a:hover {
+    text-decoration: underline;
+}
+
+@media (min-width: 768px) {
+    .td-default main section:first-of-type {
+        padding-top: 4rem;
+    }
+
+    .td-block-padding, .td-default main section {
+        padding-bottom: 3rem;
+    }
+}
+
+img.responsive-img {
+    width:100%;
+    max-width:400px;
+}
