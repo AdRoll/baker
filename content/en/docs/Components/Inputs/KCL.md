@@ -1,22 +1,22 @@
 ---
 title: "KCL"
 weight: 2
-date: 2020-11-12
+date: 2020-11-24
 ---
 ## Input *KCL*
 
 ### Overview
-This input fetches records from Kinesis with KCL.
+This input fetches records from Kinesis with KCL.  
  It consumes a specified stream, and
-processes all shards in that stream.
- It never exits.
+processes all shards in that stream.  
+ It never exits.  
 
 Multiple baker instances can consume the same stream, in that case the KCL will take care of
-balancing the shards between workers.
- Careful (shard stealing is not implemented yet).
+balancing the shards between workers.  
+ Careful (shard stealing is not implemented yet).  
 
 Resharding on the producer side is automatically handled by the KCL that will distribute
-the shards among KCL workers.
+the shards among KCL workers.  
 
 
 ### Configuration
@@ -24,7 +24,7 @@ the shards among KCL workers.
 Keys available in the `[input.config]` section:
 
 |Name|Type|Default|Required|Description|
-|:--:|:--:|:-----:|:------:|:---------:|
+|----|:--:|:-----:|:------:|-----------|
 | AwsRegion| string| "us-west-2"| false| AWS region to connect to|
 | Stream| string| ""| true| Name of Kinesis stream|
 | AppName| string| ""| true| Used by KCL to allow multiple app to consume the same stream.|

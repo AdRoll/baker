@@ -1,7 +1,7 @@
 ---
 title: "Nop"
 weight: 19
-date: 2020-11-12
+date: 2020-11-24
 ---
 ## Output *Nop*
 
@@ -9,8 +9,8 @@ date: 2020-11-12
 This is a *non-raw* output, it doesn't receive whole records. Instead it receives a list of fields for each record (`output.fields` in TOML).
 
 
-No-operation output.
- This output simply drops all lines and does not write them anywhere.
+No-operation output.  
+ This output simply drops all lines and does not write them anywhere.  
 
 
 ### Configuration
