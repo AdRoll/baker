@@ -12,9 +12,9 @@ dev: ## Run local server to check you content while writing
 	hugo server
 
 build: ## Build the static files of the website
-	hugo
+	HUGO_ENV=production hugo
 
-docker-base: 
+docker-base:
 	docker build -t baker-docs:base .
 
 docker-dev: docker-base ## Use docker for baker website development
