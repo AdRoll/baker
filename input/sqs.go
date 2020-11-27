@@ -231,9 +231,8 @@ func (s *SQS) Run(inch chan<- *baker.Data) error {
 		for _, url := range resp.QueueUrls {
 			wg.Add(1)
 			go func(url string) {
-				defer func() {
-					wg.Done()
-				}()
+				defer wg.Done()
+
 				s.pollQueue(ctx, url)
 			}(*url)
 		}
