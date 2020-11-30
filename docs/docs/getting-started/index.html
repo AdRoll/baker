@@ -137,7 +137,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.69b9d2a09c643dc60c2f6b79f4db4e53e1fe8570c3fa277a51607d6dec83445df0dd597f64195f13d36a650598bf57df5ebd801d611d6e9d468936b610822717.json"
+  data-offline-search-index-json-src="/offline-search-index.29a30d2dab0abe73989f38e39becab73215b888f8976c075da9864729a6efbaab86f399a3970ccc45e62da6830f952fd5db29de8c7eee29b9d9cb5d8ffcbb779.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -168,7 +168,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.69b9d2a09c643dc60c2f6b79f4db4e53e1fe8570c3fa277a51607d6dec83445df0dd597f64195f13d36a650598bf57df5ebd801d611d6e9d468936b610822717.json"
+  data-offline-search-index-json-src="/offline-search-index.29a30d2dab0abe73989f38e39becab73215b888f8976c075da9864729a6efbaab86f399a3970ccc45e62da6830f952fd5db29de8c7eee29b9d9cb5d8ffcbb779.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -659,6 +659,24 @@
 
 
 
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#add-baker">Add Baker&hellip;</a>
+      <ul>
+        <li><a href="#to-a-brand-new-project">&hellip;to a brand-new project</a></li>
+        <li><a href="#to-an-existing-project">&hellip;to an existing project</a></li>
+      </ul>
+    </li>
+    <li><a href="#build-and-run-baker">Build and run Baker</a>
+      <ul>
+        <li><a href="#configuration">Configuration</a></li>
+        <li><a href="#run-the-program">Run the program</a></li>
+      </ul>
+    </li>
+    <li><a href="#next-steps">Next steps</a></li>
+  </ul>
+</nav>
+
 
 
           </div>
@@ -695,17 +713,105 @@
 	<h1>Getting started</h1>
         <div class="lead">Quick Baker setup instructions</div>
 	
-	<p>Baker is a Go library and it must be included into your Go program.</p>
-<p>To create a new Go project using Go modules and adding Baker:</p>
+	<p>Looking to use Baker and start building pipelines now? Great, let&rsquo;s see what you need.</p>
+<p>Baker is written in Go. To use it you need to import the Baker module into your program.<br>
+In this page we describe the simplest way to use Baker. At the end of it, we recommend reading the
+<a href="/docs/core-concepts/">Baker Core Concepts</a> and then have a deep dive in the
+<a href="/docs/how-tos/">How-to pages</a>.</p>
+<h2 id="add-baker">Add Baker&hellip;</h2>
+<h3 id="to-a-brand-new-project">&hellip;to a brand-new project</h3>
+<p>To create a new Go project (using Go modules) and add Baker, these are the suggested steps:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mkdir myProject
 <span style="color:#8be9fd;font-style:italic">cd</span> myProject
 go mod init github.com/myUser/myProject
-go get github.com/adroll/baker
-</code></pre></div><p>If you are adding Baker to a project already configured to use Go modules, just type:</p>
+go get github.com/AdRoll/baker
+</code></pre></div><h3 id="to-an-existing-project">&hellip;to an existing project</h3>
+<p>If you are adding Baker to a project already configured to use Go modules, just type:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#8be9fd;font-style:italic">cd</span> myProject
-go get github.com/adroll/baker
-</code></pre></div><p>Read <a href="/docs/core-concepts/">Baker Core concepts</a> to know how Baker works or go to the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker">API reference</a> to learn how to use it in your code.</p>
+go get github.com/AdRoll/baker
+</code></pre></div><h2 id="build-and-run-baker">Build and run Baker</h2>
+<p>Once Baker has been added to the project, let&rsquo;s see how to use it, with a minimalistic example.</p>
+<p>This code comes from the <a href="https://github.com/AdRoll/baker/tree/main/examples/cli">cli</a>
+example. You can find more examples in the
+<a href="(https://github.com/AdRoll/baker/tree/main/examples/cli)"><code>examples/</code> folder</a> of the project.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#ff79c6">package</span> main
+
+<span style="color:#ff79c6">import</span> (
+    <span style="color:#f1fa8c">&#34;log&#34;</span>
+
+    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
+    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/filter&#34;</span>
+    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/input&#34;</span>
+    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/output&#34;</span>
+    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/upload&#34;</span>
+)
+
+<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">main</span>() {
+    <span style="color:#6272a4">// Add all available components
+</span><span style="color:#6272a4"></span>    comp <span style="color:#ff79c6">:=</span> baker.Components{
+        Inputs:  input.All,
+        Filters: filter.All,
+        Outputs: output.All,
+        Uploads: upload.All,
+    }
+
+    <span style="color:#6272a4">// run Baker
+</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">:=</span> baker.<span style="color:#50fa7b">MainCLI</span>(comp); err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
+        log.<span style="color:#50fa7b">Fatal</span>(err)
+    }
+}
+</code></pre></div><p>To create the binary, just build it:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#8be9fd;font-style:italic">cd</span> myProject
+go build -o baker-example .
+</code></pre></div><h3 id="configuration">Configuration</h3>
+<p>In the example above we use <a href="https://pkg.go.dev/github.com/AdRoll/baker#MainCLI"><code>baker.MainCLI</code></a>,
+an utility function that hides a lot of commonly used setup and requires a
+<a href="https://github.com/toml-lang/toml">TOML file</a> as first command line parameter.</p>
+<p>The TOML file should the Baker configuration that suits your needs.<br>
+For details about how to configure Baker,
+<a href="http://localhost:1313/docs/how-tos/pipeline_configuration/">read the dedicated page</a>.</p>
+<p>A simple example, in this case coming from the
+<a href="https://github.com/AdRoll/baker/tree/main/examples/basic/main.go">basic</a> example, is the following:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[fields]
+names=[<span style="color:#f1fa8c">&#34;timestamp&#34;</span>, <span style="color:#f1fa8c">&#34;source&#34;</span>, <span style="color:#f1fa8c">&#34;target&#34;</span>]
+
+[input]
+name = <span style="color:#f1fa8c">&#34;List&#34;</span>
+
+	[input.config]
+	files=[<span style="color:#f1fa8c">&#34;testdata/input.csv.gz&#34;</span>]
+
+[[filter]]
+name=<span style="color:#f1fa8c">&#34;ReplaceFields&#34;</span>
+
+	[filter.config]
+	ReplaceFields=[<span style="color:#f1fa8c">&#34;replaced&#34;</span>, <span style="color:#f1fa8c">&#34;timestamp&#34;</span>]
+
+[output]
+name = <span style="color:#f1fa8c">&#34;FileWriter&#34;</span>
+procs=<span style="color:#bd93f9">1</span>
+
+	[output.config]
+	PathString=<span style="color:#f1fa8c">&#34;./_out/output.csv.gz&#34;</span>
+</code></pre></div><h3 id="run-the-program">Run the program</h3>
+<p>Running the program is as simple as it sounds, at this point:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ ./baker-example /path/to/configuration.toml
+
+INFO<span style="color:#ff79c6">[</span>0000<span style="color:#ff79c6">]</span> Initializing                                  <span style="color:#8be9fd;font-style:italic">fn</span><span style="color:#ff79c6">=</span>NewFileWriter <span style="color:#8be9fd;font-style:italic">idx</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">0</span>
+INFO<span style="color:#ff79c6">[</span>0000<span style="color:#ff79c6">]</span> FileWriter ready to log                       <span style="color:#8be9fd;font-style:italic">idx</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">0</span>
+INFO<span style="color:#ff79c6">[</span>0000<span style="color:#ff79c6">]</span> begin reading                                 <span style="color:#8be9fd;font-style:italic">f</span><span style="color:#ff79c6">=</span>compressedInput.parseFile <span style="color:#8be9fd;font-style:italic">fn</span><span style="color:#ff79c6">=</span>testdata/input.csv.gz
+INFO<span style="color:#ff79c6">[</span>0000<span style="color:#ff79c6">]</span> end                                           <span style="color:#8be9fd;font-style:italic">f</span><span style="color:#ff79c6">=</span>compressedInput.parseFile <span style="color:#8be9fd;font-style:italic">fn</span><span style="color:#ff79c6">=</span>testdata/input.csv.gz
+INFO<span style="color:#ff79c6">[</span>0000<span style="color:#ff79c6">]</span> terminating                                   <span style="color:#8be9fd;font-style:italic">f</span><span style="color:#ff79c6">=</span>List.Run
+INFO<span style="color:#ff79c6">[</span>0000<span style="color:#ff79c6">]</span> Rotating                                      <span style="color:#8be9fd;font-style:italic">current</span><span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">idx</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">0</span>
+INFO<span style="color:#ff79c6">[</span>0000<span style="color:#ff79c6">]</span> Rotated                                       <span style="color:#8be9fd;font-style:italic">current</span><span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">idx</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">0</span>
+INFO<span style="color:#ff79c6">[</span>0000<span style="color:#ff79c6">]</span> FileWriter Terminating                        <span style="color:#8be9fd;font-style:italic">idx</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">0</span>
+INFO<span style="color:#ff79c6">[</span>0000<span style="color:#ff79c6">]</span> fileWorker closing                            <span style="color:#8be9fd;font-style:italic">idx</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">0</span>
+</code></pre></div><h2 id="next-steps">Next steps</h2>
+<p>Do you want to know more about Baker?<br>
+You can read <a href="/docs/core-concepts/">Baker Core concepts</a> or, if you prefer to jump straight into
+the code, you can browse the <a href="https://pkg.go.dev/github.com/AdRoll/baker">API reference</a>.</p>
+<p>More detailed examples can be found in the <a href="/docs/how-tos/">How-tos section</a> and the available
+components are documented in the <a href="/docs/components/">components pages</a>.</p>
 
         <div class="section-index">
     
