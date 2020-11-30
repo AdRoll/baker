@@ -7,7 +7,7 @@ description: Quick Baker setup instructions
 
 Looking to use Baker and start building pipelines now? Great, let's see what you need.
 
-Baker is a Go library and, to be used, it needs to be included into a Go program.  
+Baker is written in Go. To use it you need to import the Baker module into your program.  
 In this page we describe the simplest way to use Baker. At the end of it, we recommend reading the
 [Baker Core Concepts](/docs/core-concepts/) and then have a deep dive in the
 [How-to pages](/docs/how-tos/).
