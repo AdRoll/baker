@@ -40,7 +40,7 @@ Once Baker has been added to the project, let's see how to use it, with a minima
 
 This code comes from the [cli](https://github.com/AdRoll/baker/tree/main/examples/cli)
 example. You can find more examples in the
-[`examples/` folder]((https://github.com/AdRoll/baker/tree/main/examples/cli)) of the project.
+[`examples/` folder](https://github.com/AdRoll/baker/tree/main/examples/) of the project.
 
 ```go
 package main
@@ -82,9 +82,7 @@ go build -o baker-example .
 
 In the example above we use [`baker.MainCLI`](https://pkg.go.dev/github.com/AdRoll/baker#MainCLI),
 an utility function that hides a lot of commonly used setup and requires a
-[TOML file](https://github.com/toml-lang/toml) as first command line parameter.
-
-The TOML file should the Baker configuration that suits your needs.  
+[TOML file](https://github.com/toml-lang/toml) as first command line parameter.  
 For details about how to configure Baker,
 [read the dedicated page](http://localhost:1313/docs/how-tos/pipeline_configuration/).
 
