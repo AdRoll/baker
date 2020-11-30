@@ -5,7 +5,7 @@ weight: 100
 description: Quick Baker setup instructions
 ---
 
-Do you think Baker suits your needs? Good! Now let's see together how to start using it.
+Looking to use Baker and start building pipelines now? Great, let's see what you need.
 
 Baker is a Go library and, to be used, it needs to be included into a Go program.  
 In this page we describe the simplest way to use Baker. At the end of it, we recommend reading the
