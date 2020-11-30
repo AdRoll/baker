@@ -1,6 +1,7 @@
 package input
 
 import (
+	"context"
 	"encoding/json"
 	"net/url"
 	"regexp"
@@ -52,11 +53,13 @@ func (cfg *SQSConfig) fillDefaults() {
 }
 
 type SQS struct {
-	*inpututils.S3Input
+	s3Input *inpututils.S3Input
 
 	Cfg            *SQSConfig
 	FilePathRegexp *regexp.Regexp
 	svc            *sqs.SQS
+	wg             sync.WaitGroup
+	done           chan bool
 
 	minSnsTimestamp time.Time
 }
@@ -83,19 +86,21 @@ func NewSQS(cfg baker.InputParams) (baker.Input, error) {
 	}
 
 	return &SQS{
-		S3Input:         inpututils.NewS3Input(dcfg.AwsRegion, dcfg.Bucket),
+		s3Input:         inpututils.NewS3Input(dcfg.AwsRegion, dcfg.Bucket),
 		Cfg:             dcfg,
 		svc:             svc,
 		FilePathRegexp:  filePathRegexp,
 		minSnsTimestamp: time.Time{},
+		done:            make(chan bool),
 	}, nil
 }
 
-func (s *SQS) pollQueue(sqsurl string) {
+// pollQueue polls the given queue as long as the given context is alive.
+func (s *SQS) pollQueue(ctx context.Context, sqsurl string) {
 	ctxLog := log.WithFields(log.Fields{"f": "SQS.pollQueue", "url": sqsurl})
 	backoff := awsutils.DefaultBackoff
 	for {
-		resp, err := s.svc.ReceiveMessage(&sqs.ReceiveMessageInput{
+		resp, err := s.svc.ReceiveMessageWithContext(ctx, &sqs.ReceiveMessageInput{
 			QueueUrl:        aws.String(sqsurl),
 			WaitTimeSeconds: aws.Int64(20),
 			// We ask only for 1 message at a time, because the
@@ -104,6 +109,10 @@ func (s *SQS) pollQueue(sqsurl string) {
 			// or they could get rescheduled to other readers.
 			MaxNumberOfMessages: aws.Int64(1),
 		})
+		if ctx.Err() == context.Canceled || ctx.Err() == context.DeadlineExceeded {
+			return
+		}
+
 		if err != nil {
 			ctxLog.WithError(err).Error("error from ReceiveMessage")
 			time.Sleep(backoff.Duration())
@@ -140,13 +149,16 @@ func (s *SQS) pollQueue(sqsurl string) {
 			if s.FilePathRegexp == nil || s.FilePathRegexp.MatchString(s3FilePath) {
 				// FIXME: we should check if the bucket matches what was configured
 				// or even better, change s3Input to not be limited to a single bucket
-				s.S3Input.ParseFile(s3FilePath)
+				s.s3Input.ParseFile(s3FilePath)
 			}
 
-			_, err = s.svc.DeleteMessage(&sqs.DeleteMessageInput{
+			_, err = s.svc.DeleteMessageWithContext(ctx, &sqs.DeleteMessageInput{
 				QueueUrl:      aws.String(sqsurl),
 				ReceiptHandle: msg.ReceiptHandle,
 			})
+			if ctx.Err() == context.Canceled || ctx.Err() == context.DeadlineExceeded {
+				return
+			}
 			if err != nil {
 				ctxLog.WithError(err).Error("error from DeleteMessage")
 			}
@@ -201,12 +213,15 @@ func (s *SQS) parseMessage(Body *string, ctxLog *log.Entry) (string, string, err
 }
 
 func (s *SQS) Run(inch chan<- *baker.Data) error {
-	s.SetOutputChannel(inch)
+	s.s3Input.SetOutputChannel(inch)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	var wg sync.WaitGroup
 	for _, prefix := range s.Cfg.QueuePrefixes {
 
-		resp, err := s.svc.ListQueues(&sqs.ListQueuesInput{
+		resp, err := s.svc.ListQueuesWithContext(ctx, &sqs.ListQueuesInput{
 			QueueNamePrefix: aws.String(prefix),
 		})
 		if err != nil {
@@ -217,22 +232,34 @@ func (s *SQS) Run(inch chan<- *baker.Data) error {
 			wg.Add(1)
 			go func(url string) {
 				defer wg.Done()
-				s.pollQueue(url)
+
+				s.pollQueue(ctx, url)
 			}(*url)
 		}
 	}
 
-	go func() {
-		// pollQueue() never exits for now, but in case we decide that it should,
-		// the correct thing to do is to notify the gzipInput that we're done with
-		// file processing, so that the input will shut down and brings down the
-		// whole topology.
-		wg.Wait()
-		s.NoMoreFiles()
-	}()
-
-	<-s.Done
+	// The correct order of operation to cleanly stop the whole pipeline is the
+	// following:
+	//  - first we close the 'done' channel, this in turns cancel polling via
+	//    context cancellation
+	//  - we then wait for all the polling goroutines to end.
+	//  - After this point we are guaranteed to not receive any more files so
+	//    we notify the embedded S3input.
+	//  - now we ask S3Input to stop as soon as it has finished processing files
+	//  - finally Run exits after being signaled from S3Input that we can
+	<-s.done
+	cancel()
+	wg.Wait()
+	s.s3Input.NoMoreFiles()
+	s.s3Input.Stop()
+	<-s.s3Input.Done
 	return nil
+}
+
+func (s *SQS) Stop() {
+	// See the comment at the end of the Run method for details about
+	// how this brings the whole topology down cleanly.
+	close(s.done)
 }
 
 func (s *SQS) Stats() baker.InputStats {
@@ -246,7 +273,11 @@ func (s *SQS) Stats() baker.InputStats {
 		s.minSnsTimestamp = time.Time{}
 	}
 
-	stats := s.S3Input.Stats()
+	stats := s.s3Input.Stats()
 	stats.Metrics = bag
 	return stats
+}
+
+func (s *SQS) FreeMem(data *baker.Data) {
+	s.s3Input.FreeMem(data)
 }
