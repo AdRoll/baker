@@ -34,7 +34,7 @@ cd myProject
 go get github.com/AdRoll/baker
 ```
 
-## Use Baker
+## Build and run Baker
 
 Once Baker has been added to the project, let's see how to use it, with a minimalistic example.
 
@@ -88,18 +88,24 @@ The TOML file should the Baker configuration that suits your needs.
 For details about how to configure Baker,
 [read the dedicated page](http://localhost:1313/docs/how-tos/pipeline_configuration/).
 
-A simple example, still coming from the [cli](https://github.com/AdRoll/baker/tree/main/examples/cli)
-example, is the following:
+A simple example, in this case coming from the
+[basic](https://github.com/AdRoll/baker/tree/main/examples/basic/main.go) example, is the following:
 
 ```toml
 [fields]
-names = ["timestamp", "source", "target"]
+names=["timestamp", "source", "target"]
 
 [input]
 name = "List"
 
 	[input.config]
-	files=["testdata/input.csv.zst"]
+	files=["testdata/input.csv.gz"]
+
+[[filter]]
+name="ReplaceFields"
+
+	[filter.config]
+	ReplaceFields=["replaced", "timestamp"]
 
 [output]
 name = "FileWriter"
@@ -114,13 +120,24 @@ procs=1
 Running the program is as simple as it sounds, at this point:
 
 ```sh
-./baker-example /path/to/configuration.toml
+$ ./baker-example /path/to/configuration.toml
+
+INFO[0000] Initializing                                  fn=NewFileWriter idx=0
+INFO[0000] FileWriter ready to log                       idx=0
+INFO[0000] begin reading                                 f=compressedInput.parseFile fn=testdata/input.csv.gz
+INFO[0000] end                                           f=compressedInput.parseFile fn=testdata/input.csv.gz
+INFO[0000] terminating                                   f=List.Run
+INFO[0000] Rotating                                      current= idx=0
+INFO[0000] Rotated                                       current= idx=0
+INFO[0000] FileWriter Terminating                        idx=0
+INFO[0000] fileWorker closing                            idx=0
 ```
 
 ## Next steps
 
-Start reading [Baker Core concepts](/docs/core-concepts/) and then browse the
-[API reference](https://pkg.go.dev/github.com/AdRoll/baker) to learn how to use it in your code.
+Do you want to know more about Baker?  
+You can read [Baker Core concepts](/docs/core-concepts/) or, if you prefer to jump straight into
+the code, you can browse the [API reference](https://pkg.go.dev/github.com/AdRoll/baker).
 
 More detailed examples can be found in the [How-tos section](/docs/how-tos/) and the available
 components are documented in the [components pages](/docs/components/).
