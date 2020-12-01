@@ -40,11 +40,8 @@ linkTitle = "Baker"
 {{< blocks/section color="primary" >}}
 {{% blocks/feature icon="fas fa-link" title="Modular pipeline" %}}
 
-<span class="subtitle"><a href="/docs/core-concepts/#pipeline">Baker pipelines</a> are assembled using up to 4 kinds of
-components: inputs, filters, outputs and uploads.</span>
-
-They are fully modular: any component can be replaced with another of the same kind.
-Available components include many AWS services (S3, Kinesis, DynamoDB, SQS) as well as websocket, TCP, local disk, etc.
+<span class="subtitle"><a href="/docs/core-concepts/#pipeline">Baker pipelines</a> are assembled using fully modular components,
+including many AWS services, websocket, TCP, local disk, etc.</span>
 
 <h4 class="h3"><a href="/docs/components">Check out the full list &raquo;</a></h4>
 {{% /blocks/feature %}}
@@ -52,21 +49,14 @@ Available components include many AWS services (S3, Kinesis, DynamoDB, SQS) as w
 {{% blocks/feature icon="fas fa-shipping-fast" title="High performances" %}}
 <span class="subtitle">Baker is fully parallel and maximizes the usage of both CPU-bound and I/O bound pipelines.</span>
 
-On an AWS EC2 instance of size c5.2xlarge, Baker can process compressed records read from S3 and written to local disk,
-with basic filtering, using ~90% of CPU and ~3.5GB of RAM, for an <strong>average R/W speed of 700MB/sec</strong>.
-
-<h4 class="h3"><a href="/docs/performance/">More performances examples &raquo;</a></h4>
+<h4 class="h3"><a href="/docs/performance/">Performance examples &raquo;</a></h4>
 
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fas fa-puzzle-piece" title="Extendable" %}}
 <span class="subtitle">With Baker it is super easy to write your own components and process any kind of structured data.</span>
 
-Baker processes <a href="/docs/how-tos/record_and_logline/">records of structured data</a> that can be read, filtered and written using
-many available <a href="/docs/components/">components</a> written in Go. If you can't find a component that suits
-your needs, it's very easy to create a new one.
-
-<h4 class="h3"><a href="/docs/how-tos/" alt="How-tos" />Read Baker how-tos &raquo;</a></h4>
+<h4 class="h3"><a href="/docs/how-tos/" alt="How-tos" />How to do it &raquo;</a></h4>
 {{% /blocks/feature %}}
 
 {{< /blocks/section >}}
@@ -74,22 +64,17 @@ your needs, it's very easy to create a new one.
 {{< blocks/section color="FAFAFA" >}}
 {{% blocks/feature icon="fa fa-hands-helping" title="Contributions welcome!" %}}
 
-We encourage all users to contribute to the project by adding new components, improve the core or the documentation.
-
-<strong><a href="https://github.com/AdRoll/baker/pulls">Open a Pull-Request &raquo;</a></strong>
+New components, Baker core or documentation. Please
+<a href="https://github.com/AdRoll/baker/pulls">open a Pull-Request &raquo;</a>
 {{% /blocks/feature %}}
 
-{{% blocks/feature icon="fas fa-bug" title="Bug found?" %}}
-If you think you found a bug, please create a new issue on GitHub.
-
-<strong><a href="https://github.com/AdRoll/baker/issues/new?labels=bug">File a new issue &raquo;</a></strong>
+{{% blocks/feature icon="fas fa-bug" title="Found a bug?" %}}
+If you think you have found a problem, <a href="https://github.com/AdRoll/baker/issues/new?labels=bug">create a new issue &raquo;</a>
 
 {{% /blocks/feature %}}
 
-{{% blocks/feature icon="fab fa-slack" title="Get in touch!" %}}
-Do you have any question? Get in touch with the Baker team.
-
-<strong><a href="ttps://gophers.slack.com/app_redirect?channel=baker" alt="How-tos" />Join our Slack channel &raquo;</a></strong>
+{{% blocks/feature icon="fab fa-slack" title="Questions?" %}}
+Get in touch with the Baker team, <a href="ttps://gophers.slack.com/app_redirect?channel=baker" alt="How-tos" />join our Slack channel &raquo;</a></strong>
 {{% /blocks/feature %}}
 
 {{< /blocks/section >}}
