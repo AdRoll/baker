@@ -12,7 +12,7 @@ Records are never copied, and a particular attention has been given to reduce th
 memory allocations as much as possible, so as to keep the garbage collector cost to a minimum.
 
 Baker is also battle-tested, since 2016 NextRoll has been running hundreds if not thousands
-of Baker pipelines, daily.
+of Baker pipelines, processing petabytes, daily.
 
 We report in this page some practical examples of Baker performances we could measure in the
 NextRoll production environment.
