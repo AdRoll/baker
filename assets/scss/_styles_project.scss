@@ -1,16 +1,51 @@
+$yellow: #FFE181;
+$orange: #F79E24;
+
 .highlight pre {
     padding: 2em;
 }
 
-.navbar-brand {
-    display: none;
+.navbar {
+    .navbar-brand {
+        display: none;
+    }
+    a#menu_gh {
+        color: $orange;
+    }
 }
 
-.td-box--primary p > a {
-    color: #ffe181;
+.first-row {
+    color: #2c2c2c;
+    h3 {
+        font-weight: bold;
+        padding-bottom: 1rem;
+    }
 }
-.td-box--primary p > a:hover {
-    text-decoration: underline;
+
+.td-box--primary {
+    a, p > a {
+        color: #FFF;
+        text-decoration: underline;
+        &:hover {
+            color: rgba(255,255,255,0.6);
+        }
+    }
+    .subtitle {
+        font-size: 1.1rem;
+    }
+    h4 a {
+        color: $orange;
+        text-decoration: none;
+        &:hover {
+            color: $orange;
+            text-decoration: underline;
+        }
+    }
+}
+
+.td-box--FAFAFA {
+    background: #FAFAFA;
+    color: #2C4B69;
 }
 
 @media (min-width: 768px) {
@@ -26,4 +61,20 @@
 img.responsive-img {
     width:100%;
     max-width:400px;
+}
+
+.navbar-bg-onscroll {
+    background: #2c4b69 !important;
+}
+
+.td-box .row {
+    padding:0;
+}
+
+img.nextroll-logo {
+    padding-top: 1.5rem;
+}
+
+#menu_gc {
+    color: $orange;
 }

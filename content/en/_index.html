@@ -15,56 +15,66 @@ linkTitle = "Baker"
 </div>
 {{< /blocks/cover >}}
 
-<section class="row td-box td-box--light position-relative td-box--gradient td-box--height-auto">
-    <div class="container-fluid text-center td-arrow-down">
-    <span class="h4 mb-0">
-        <div class="col">
-            <div class="row align-items-center">
-                <div class="offset-lg-3 col-lg-3 mb-5 mb-lg-0 text-center">
-                    <img src="/baker.png" class="responsive-img" />
-                </div>
-                <div class="col-lg-4 mb-5 mb-lg-0 text-center">
-                    <p>Baker pipelines can fetch, transform and store records in a flash <i class="fa fa-bolt"></i>
-                    thanks to a high-performant and fully-parallel implementation.
+<section class="row td-box td-box--light position-relative td-box--gradient td-box--height-auto first-row">
+    <div class="col">
+        <div class="row align-items-center">
+            <div class="offset-lg-3 col-lg-3 mb-5 mb-lg-0 text-center">
+                <img src="/baker.png" class="responsive-img" />
+            </div>
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <h3 class="h2">Blazing fast and open-source data processor</h3>
+                <span class="h5 mb-0">
+                    <p>
+                    Baker pipelines can fetch, transform and store records in a flash <i class="fa fa-bolt"></i> thanks to a high-performant and fully-parallel implementation.
                     </p>
                     <p>
                     Baker is open-source and written in <a href="https://golang.org/" target="_blank">Go</a> by <a href="https://www.nextroll.com/" target="_blank">NextRoll, inc.</a>
                     </p>
-                    <img src="./images/nextroll-logo-2x.png" alt="NextRoll, inc." />
-                </div>
+                <img src="./images/nextroll-logo-2x.png" alt="NextRoll, inc." class="nextroll-logo" />
+            </span>
             </div>
         </div>
-    </span>
     </div>
 </section>
 
 {{< blocks/section color="primary" >}}
 {{% blocks/feature icon="fas fa-link" title="Modular pipeline" %}}
 
-<a href="/docs/core-concepts/#pipeline">Baker pipelines</a> are assembled using up to 4 kinds of
-components: inputs, filters, outputs and uploads.
+<span class="subtitle"><a href="/docs/core-concepts/#pipeline">Baker pipelines</a> are assembled using fully modular components,
+including many AWS services, websocket, TCP, local disk, etc.</span>
 
-They are fully modular: any component can be replaced
-with another of the same kind.
-
-Available components include many AWS services (S3, Kinesis, DynamoDB, SQS) as well as websocket,
-TCP, local disk, etc.<br /><a href="/docs/components">Check out the full list &raquo;</a>
+<h4 class="h3"><a href="/docs/components">Check out the full list &raquo;</a></h4>
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fas fa-shipping-fast" title="High performances" %}}
-Baker is fully parallel and maximizes usage of both CPU-bound and I/O bound pipelines.
+<span class="subtitle">Baker is fully parallel and maximizes the usage of both CPU-bound and I/O bound pipelines.</span>
 
-<img src="/speed.png" class="responsive-img" />
-
-More examples of <a href="/docs/performance/">Baker performances &raquo;</a>
+<h4 class="h3"><a href="/docs/performance/">Performance examples &raquo;</a></h4>
 
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fas fa-puzzle-piece" title="Extendable" %}}
-With Baker it is super easy to write your own components and process any kind of structured data.
+<span class="subtitle">With Baker it is super easy to write your own components and process any kind of structured data.</span>
 
-Read the <a href="/docs/how-tos/" alt="How-tos" />How-tos</a> pages in the documentation
-to learn how to do it.
+<h4 class="h3"><a href="/docs/how-tos/" alt="How-tos" />How to do it &raquo;</a></h4>
+{{% /blocks/feature %}}
+
+{{< /blocks/section >}}
+
+{{< blocks/section color="FAFAFA" >}}
+{{% blocks/feature icon="fa fa-hands-helping" title="Contributions welcome!" %}}
+
+New components, Baker core or documentation. Please
+<a href="https://github.com/AdRoll/baker/pulls">open a Pull-Request &raquo;</a>
+{{% /blocks/feature %}}
+
+{{% blocks/feature icon="fas fa-bug" title="Found a bug?" %}}
+If you think you have found a problem, <a href="https://github.com/AdRoll/baker/issues/new?labels=bug">create a new issue &raquo;</a>
+
+{{% /blocks/feature %}}
+
+{{% blocks/feature icon="fab fa-slack" title="Questions?" %}}
+Get in touch with the Baker team, <a href="ttps://gophers.slack.com/app_redirect?channel=baker" alt="How-tos" />join our Slack channel &raquo;</a></strong>
 {{% /blocks/feature %}}
 
 {{< /blocks/section >}}
