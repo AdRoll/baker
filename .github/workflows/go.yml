@@ -46,3 +46,5 @@ jobs:
     steps:
       - name: Codecov
         run:  curl -s https://codecov.io/bash | bash
+        env:
+          CODECOV_TOKEN: 863a635e-5c68-4b66-9f81-b41cb835de2e
