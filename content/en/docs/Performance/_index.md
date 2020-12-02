@@ -19,7 +19,7 @@ NextRoll production environment.
 
 Within NextRoll, Baker is often executed on AWS EC2 instances, and thus you find in this page
 many references to
-[EC2 instance types](https://aws.amazon.com/ec2/instance-types/) (`c5.2xlarge`, `c5.2xlarge`, etc.).
+[EC2 instance types](https://aws.amazon.com/ec2/instance-types/) (`c5.2xlarge`, `m5.12xlarge`, etc.).
 
 ### Read from S3 and write to local disk
 
