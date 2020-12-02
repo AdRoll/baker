@@ -1,6 +1,6 @@
 baseURL = "https://getbaker.io/"
 languageCode = "en-us"
-title = "Baker"
+title = "Baker, high performance modular pipelines for the Big Data era"
 theme = "docsy"
 enableRobotsTXT = true
 publishDir = "docs/"
@@ -48,7 +48,7 @@ anchor = "smart"
 
 [languages]
 [languages.en]
-title = "Baker"
+title = "Baker, high performance modular pipelines for the Big Data era"
 description = "A high performance, composable and extendable data-processing pipeline for the big data era"
 languageName ="English"
 # Weight used for sorting.
