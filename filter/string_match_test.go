@@ -73,9 +73,9 @@ func TestStringMatch(t *testing.T) {
 				ComponentParams: baker.ComponentParams{
 					FieldByName: fieldByName,
 					DecodedConfig: &StringMatchConfig{
-						Field:   tt.field,
-						Strings: tt.strings,
-						Invert:  tt.invert,
+						Field:       tt.field,
+						Strings:     tt.strings,
+						InvertMatch: tt.invert,
 					},
 				},
 			})

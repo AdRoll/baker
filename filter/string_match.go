@@ -18,9 +18,9 @@ var StringMatchDesc = baker.FilterDesc{
 
 // StringMatchConfig holds config parameters of the StringMatch filter.
 type StringMatchConfig struct {
-	Field   string   `help:"name of the field which value is used for string comparison" required:"true"`
-	Strings []string `help:"list of strings to match." required:"true"`
-	Invert  bool     `help:"Invert the outcome, so that records are discarded if they don't match any of the strings" default:"false"`
+	Field       string   `help:"name of the field which value is used for string comparison" required:"true"`
+	Strings     []string `help:"list of strings to match." required:"true"`
+	InvertMatch bool     `help:"Invert the match outcome, so that records are discarded if they don't match any of the strings" default:"false"`
 }
 
 // StringMatch filter clears (i.e set to the empty string) a set of fields.
@@ -54,7 +54,7 @@ func NewStringMatch(cfg baker.FilterParams) (baker.Filter, error) {
 		strings = append(strings, []byte(dcfg.Strings[i]))
 	}
 
-	return &StringMatch{field: fidx, strings: strings, invert: dcfg.Invert}, nil
+	return &StringMatch{field: fidx, strings: strings, invert: dcfg.InvertMatch}, nil
 }
 
 // Stats returns filter statistics.
