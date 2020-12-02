@@ -9,6 +9,9 @@ test-short: ## Run tests with -short flag
 test: ## Run tests
 	go test -timeout 30s -race ./...
 
+--ci-test-cover:
+	go test -timeout 30s -race -coverprofile=coverage.txt -covermode=atomic
+
 cover: ## Run tests and open coverage report in browser
 	go test -cover -coverprofile cover.out ./...
 	go tool cover -html cover.out
