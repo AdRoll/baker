@@ -5,14 +5,23 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Go 1.15
+      - name: Set up Go 1.15.x
         uses: actions/setup-go@v2
         with:
-          go-version: '^1.15.0'
+          go-version: 1.15.x
         id: go
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/go/pkg/mod              # Module download cache
+            ~/.cache/go-build         # Build cache (Linux)
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
       - name: gofmt
         run: make gofmt
@@ -28,8 +37,12 @@ jobs:
             go get golang.org/x/tools/cmd/goimports
             test -z "$(goimports -d . | tee /dev/stderr)"
 
-      - name: Test
-        run: make test
+      - name: Test/Coverage
+        env:
+          CODECOV_TOKEN: 863a635e-5c68-4b66-9f81-b41cb835de2e
+        run: |
+            make -- --ci-test-cover
+            curl -s https://codecov.io/bash | bash
 
       - name: Compile tests/benchmarks
         run: make compile-tests

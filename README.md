@@ -1,6 +1,8 @@
 # Baker
 
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/AdRoll/baker)](https://pkg.go.dev/github.com/AdRoll/baker) ![Go](https://github.com/AdRoll/baker/workflows/Go/badge.svg)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/AdRoll/baker)](https://pkg.go.dev/github.com/AdRoll/baker)
+![Go](https://github.com/AdRoll/baker/workflows/Go/badge.svg)
+[![codecov](https://codecov.io/gh/AdRoll/baker/branch/main/graph/badge.svg?token=43MJQETWAV)](https://codecov.io/gh/AdRoll/baker)
 
 Baker is a high performance, composable and extendable data-processing pipeline
 for the big data era. It shines at converting, processing, extracting or storing
