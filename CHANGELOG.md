@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `baker.MainCLI` [#73](https://github.com/AdRoll/baker/pull/73)
 - Implement markdown rendering of component help/configuration [#80](https://github.com/AdRoll/baker/pull/80)
 - Add `[fields]` section in TOML in which use can define field indexes <-> names mapping [#84](https://github.com/AdRoll/baker/pull/84)
+- Add StringMatch filter which discards/keeps records based on the result of string comparisons  [#102](https://github.com/AdRoll/baker/pull/102)
 
 ### Changed
 
