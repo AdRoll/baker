@@ -29,7 +29,7 @@ jobs:
             test -z "$(goimports -d . | tee /dev/stderr)"
 
       - name: Test
-        run: make test
+        run: make -- --ci-test-cover
 
       - name: Compile tests/benchmarks
         run: make compile-tests
@@ -39,3 +39,10 @@ jobs:
 
       - name: Build with extras
         run: CGO_ENABLED=1 go build -tags cgo_sqlite ./examples/advanced/
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Codecov
+        run:  curl -s https://codecov.io/bash | bash
