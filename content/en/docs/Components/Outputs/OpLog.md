@@ -1,7 +1,7 @@
 ---
 title: "OpLog"
-weight: 20
-date: 2020-11-24
+weight: 22
+date: 2020-12-03
 ---
 ## Output *OpLog*
 

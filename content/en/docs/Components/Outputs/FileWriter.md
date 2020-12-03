@@ -1,7 +1,7 @@
 ---
 title: "FileWriter"
-weight: 18
-date: 2020-11-24
+weight: 20
+date: 2020-12-03
 ---
 ## Output *FileWriter*
 

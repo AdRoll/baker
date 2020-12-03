@@ -1,7 +1,7 @@
 ---
 title: "List"
 weight: 4
-date: 2020-11-24
+date: 2020-12-03
 ---
 ## Input *List*
 

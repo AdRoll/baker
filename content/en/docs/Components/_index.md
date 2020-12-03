@@ -21,6 +21,8 @@ description: "All Baker components: inputs, filters, outputs and uploads"
 * [NotNull](/docs/components/filters/notnull)
 * [ReplaceFields](/docs/components/filters/replacefields)
 * [SetStringFromURL](/docs/components/filters/setstringfromurl)
+* [StringMatch](/docs/components/filters/stringmatch)
+* [Timestamp](/docs/components/filters/timestamp)
 * [TimestampRange](/docs/components/filters/timestamprange)
 
 ### **Outputs**
