@@ -1,3 +1,6 @@
+[fields]
+names = ["timestamp", "source", "target"]
+
 [input]
 name = "List"
 

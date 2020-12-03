@@ -12,34 +12,16 @@ import (
 	"github.com/AdRoll/baker/output"
 )
 
-// Some example fields
-const (
-	Timestamp baker.FieldIndex = 0
-	Source    baker.FieldIndex = 1
-	Target    baker.FieldIndex = 2
-)
-
-var fields = map[string]baker.FieldIndex{
-	"timestamp": Timestamp,
-	"source":    Source,
-	"target":    Target,
-}
-
-func fieldByName(key string) (baker.FieldIndex, bool) {
-	idx, ok := fields[key]
-	return idx, ok
-}
-
 func main() {
 	toml := `
+[fields]
+	names=["timestamp", "source", "target"]
+
 [input]
 name = "List"
 
 	[input.config]
 	files=["testdata/input.csv.zst"]
-
-[fields]
-names=["timestamp", "source", "target"]
 
 [[filter]]
 name="ReplaceFields"
@@ -51,7 +33,7 @@ name = "FileWriter"
 procs=1
 
 	[output.config]
-	PathString="./_out/output.csv.gz"
+	PathString="/tmp/_out/output.csv.gz"
 `
 	c := baker.Components{
 		Inputs:  input.All,
