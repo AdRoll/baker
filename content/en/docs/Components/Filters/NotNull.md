@@ -5,7 +5,7 @@ date: 2020-12-03
 ---
 {{% pageinfo color="primary" %}}
 
-**Read the [API documentation &raquo;](https://pkg.go.dev/github.com/AdRoll/baker/filter)**
+**Read the [API documentation &raquo;](https://pkg.go.dev/github.com/AdRoll/baker/filter#NotNull)**
 {{% /pageinfo %}}
 
 ## Filter *NotNull*
