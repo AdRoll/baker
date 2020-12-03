@@ -3,6 +3,11 @@ title: "ReplaceFields"
 weight: 13
 date: 2020-12-03
 ---
+{{% pageinfo color="primary" %}}
+
+**Read the [API documentation &raquo;](https://pkg.go.dev/github.com/AdRoll/baker/filter)**
+{{% /pageinfo %}}
+
 ## Filter *ReplaceFields*
 
 ### Overview

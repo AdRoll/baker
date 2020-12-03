@@ -3,6 +3,11 @@ title: "FileWriter"
 weight: 20
 date: 2020-12-03
 ---
+{{% pageinfo color="primary" %}}
+
+**Read the [API documentation &raquo;](https://pkg.go.dev/github.com/AdRoll/baker/output)**
+{{% /pageinfo %}}
+
 ## Output *FileWriter*
 
 ### Overview
