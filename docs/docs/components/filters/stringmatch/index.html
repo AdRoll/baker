@@ -20,33 +20,30 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Create a custom upload component | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="Create a custom upload component" />
-<meta property="og:description" content="The last (optional) component of a Baker pipeline is the Upload, whose job is to, precisely, upload local files produced by the output component.
-To create an upload component and make it available to Baker, one must:
- Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  At the moment Baker only proposes a single Upload component, S3.
-The Upload interface New Upload components need to implement the Upload interface." />
+<title>StringMatch | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="StringMatch" />
+<meta property="og:description" content="Filter StringMatch Overview Discard records if a field matches any of the provided strings
+Configuration Keys available in the [filter.config] section:
+   Name Type Default Required Description     Field string &quot;&quot; true name of the field which value is used for string comparison   Strings array of strings [] true list of strings to match.   InvertMatch bool false false Invert the match outcome, so that records are discarded if they don&rsquo;t match any of the strings    " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://getbaker.io/docs/how-tos/create_upload/" />
-<meta property="article:published_time" content="2020-11-11T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-11-11T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
-<meta itemprop="name" content="Create a custom upload component">
-<meta itemprop="description" content="The last (optional) component of a Baker pipeline is the Upload, whose job is to, precisely, upload local files produced by the output component.
-To create an upload component and make it available to Baker, one must:
- Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  At the moment Baker only proposes a single Upload component, S3.
-The Upload interface New Upload components need to implement the Upload interface.">
-<meta itemprop="datePublished" content="2020-11-11T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-11-11T00:00:00+00:00" />
-<meta itemprop="wordCount" content="524">
+<meta property="og:url" content="https://getbaker.io/docs/components/filters/stringmatch/" />
+<meta property="article:published_time" content="2020-12-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-12-03T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
+<meta itemprop="name" content="StringMatch">
+<meta itemprop="description" content="Filter StringMatch Overview Discard records if a field matches any of the provided strings
+Configuration Keys available in the [filter.config] section:
+   Name Type Default Required Description     Field string &quot;&quot; true name of the field which value is used for string comparison   Strings array of strings [] true list of strings to match.   InvertMatch bool false false Invert the match outcome, so that records are discarded if they don&rsquo;t match any of the strings    ">
+<meta itemprop="datePublished" content="2020-12-03T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-12-03T00:00:00+00:00" />
+<meta itemprop="wordCount" content="73">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Create a custom upload component"/>
-<meta name="twitter:description" content="The last (optional) component of a Baker pipeline is the Upload, whose job is to, precisely, upload local files produced by the output component.
-To create an upload component and make it available to Baker, one must:
- Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  At the moment Baker only proposes a single Upload component, S3.
-The Upload interface New Upload components need to implement the Upload interface."/>
+<meta name="twitter:title" content="StringMatch"/>
+<meta name="twitter:description" content="Filter StringMatch Overview Discard records if a field matches any of the provided strings
+Configuration Keys available in the [filter.config] section:
+   Name Type Default Required Description     Field string &quot;&quot; true name of the field which value is used for string comparison   Strings array of strings [] true list of strings to match.   InvertMatch bool false false Invert the match outcome, so that records are discarded if they don&rsquo;t match any of the strings    "/>
 
 
 
@@ -291,10 +288,10 @@ The Upload interface New Upload components need to implement the Upload interfac
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Components</a>
+    <a  href="/docs/components/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Components</a>
   </li>
   <ul>
-    <li class="collapse " id="docscomponents">
+    <li class="collapse show" id="docscomponents">
       
       
       
@@ -361,10 +358,10 @@ The Upload interface New Upload components need to implement the Upload interfac
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/filters/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Filters</a>
+    <a  href="/docs/components/filters/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Filters</a>
   </li>
   <ul>
-    <li class="collapse " id="docscomponentsfilters">
+    <li class="collapse show" id="docscomponentsfilters">
       
       
       
@@ -413,7 +410,7 @@ The Upload interface New Upload components need to implement the Upload interfac
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersstringmatch" href="/docs/components/filters/stringmatch/">StringMatch</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscomponentsfiltersstringmatch" href="/docs/components/filters/stringmatch/">StringMatch</a>
       
       
       
@@ -538,10 +535,10 @@ The Upload interface New Upload components need to implement the Upload interfac
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-Tos</a>
+    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">How-Tos</a>
   </li>
   <ul>
-    <li class="collapse show" id="docshow-tos">
+    <li class="collapse " id="docshow-tos">
       
       
       
@@ -590,7 +587,7 @@ The Upload interface New Upload components need to implement the Upload interfac
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-toscreate_upload" href="/docs/how-tos/create_upload/">Create a custom upload component</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-toscreate_upload" href="/docs/how-tos/create_upload/">Create a custom upload component</a>
       
       
       
@@ -677,8 +674,8 @@ The Upload interface New Upload components need to implement the Upload interfac
 
 
 
-<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/How%20Tos/create_upload.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Create%20a%20custom%20upload%20component" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/Components/Filters/StringMatch.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=StringMatch" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -689,15 +686,12 @@ The Upload interface New Upload components need to implement the Upload interfac
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#the-upload-interface">The Upload interface</a></li>
-    <li><a href="#uploaddesc">UploadDesc</a>
+    <li><a href="#filter-stringmatch">Filter <em>StringMatch</em></a>
       <ul>
-        <li><a href="#the-new-function">The <code>New</code> function</a></li>
-        <li><a href="#upload-configuration-and-help">Upload configuration and help</a></li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#configuration">Configuration</a></li>
       </ul>
     </li>
-    <li><a href="#the-files-to-upload">The files to upload</a></li>
-    <li><a href="#write-tests">Write tests</a></li>
   </ul>
 </nav>
 
@@ -721,6 +715,9 @@ The Upload interface New Upload components need to implement the Upload interfac
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/">Documentation</a>
 </li>
@@ -729,14 +726,21 @@ The Upload interface New Upload components need to implement the Upload interfac
 
 
 <li class="breadcrumb-item" >
-	<a href="https://getbaker.io/docs/how-tos/">How-Tos</a>
+	<a href="https://getbaker.io/docs/components/">Components</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://getbaker.io/docs/components/filters/">Filters</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/how-tos/create_upload/">Create a custom upload component</a>
+	<a href="https://getbaker.io/docs/components/filters/stringmatch/">StringMatch</a>
 </li>
 
 	</ol>
@@ -744,80 +748,52 @@ The Upload interface New Upload components need to implement the Upload interfac
 
             
 <div class="td-content">
-	<h1>Create a custom upload component</h1>
+	<h1>StringMatch</h1>
     
 	       
-	<p>The last (optional) component of a Baker pipeline is the Upload, whose job is to, precisely,
-upload local files produced by the output component.</p>
-<p>To create an upload component and make it available to Baker, one must:</p>
-<ul>
-<li>Implement the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Upload">Upload</a> interface</li>
-<li>Fill an <a href="https://pkg.go.dev/github.com/AdRoll/baker#UploadDesc"><code>UploadDesc</code></a> structure and
-register it within Baker via <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>Components</code></a>.</li>
-</ul>
-<p>At the moment Baker only proposes a single <code>Upload</code> component, <a href="https://github.com/AdRoll/baker/blob/main/upload/s3.go">S3</a>.</p>
-<h2 id="the-upload-interface">The Upload interface</h2>
-<p>New <code>Upload</code> components need to implement the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Upload">Upload interface</a>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> Upload <span style="color:#8be9fd;font-style:italic">interface</span> {
-	<span style="color:#50fa7b">Run</span>(upch <span style="color:#ff79c6">&lt;-</span><span style="color:#8be9fd;font-style:italic">chan</span> <span style="color:#8be9fd">string</span>) <span style="color:#8be9fd">error</span>
-	<span style="color:#50fa7b">Stop</span>()
-	<span style="color:#50fa7b">Stats</span>() UploadStats
-}
-</code></pre></div><p>The <code>Run</code> function implements the component logic, it is passed a channel from which the upload
-receives absolute paths of the files to upload. These files are produced by the Output component.</p>
-<h2 id="uploaddesc">UploadDesc</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> MyUploadDesc = baker.UploadDesc{
-	Name:   <span style="color:#f1fa8c">&#34;MyUpload&#34;</span>,
-	New:    NewMyUpload,
-	Config: <span style="color:#ff79c6">&amp;</span>MyUploadConfig{},
-	Help:   <span style="color:#f1fa8c">&#34;High-level description of MyUpload&#34;</span>,
-}
-</code></pre></div><p>This object has a <code>Name</code>, that is used in the Baker configuration file to identify the upload,
-a constructor-like function (<code>New</code>), a config object (where the parsed upload configuration from the
-TOML file is stored) and a help text that must help the users to use the component and its
-configuration parameters.</p>
-<h3 id="the-new-function">The <code>New</code> function</h3>
-<p>The <code>New</code> field in the <code>UploadDesc</code> object should be to assigned to a function that returns a new <code>Upload</code>.</p>
-<p>The function receives an <a href="https://pkg.go.dev/github.com/AdRoll/baker#UploadParams">UploadParams</a>
-object and returns an instance of <a href="https://pkg.go.dev/github.com/AdRoll/baker#Upload">Upload</a>.</p>
-<p>It should verify the configuration, accessed via <code>UploadParams.DecodedConfig</code> and initialize
-the component accordingly.</p>
-<h3 id="upload-configuration-and-help">Upload configuration and help</h3>
-<p>The upload configuration object (<code>MyUploadConfig</code> in the previous example) must export all
-configuration parameters that the user can set in the TOML topology file.</p>
-<p>Each field in the struct must include a <code>help</code> string tag (mandatory) and a <code>required</code> boolean tag
-(default to <code>false</code>).</p>
-<p>All these parameters appear in the generated help. <code>help</code> should describe the parameter role and/or
-its possible values, <code>required</code> informs Baker it should refuse configurations in which that field
-is not defined.</p>
-<h2 id="the-files-to-upload">The files to upload</h2>
-<p>Through the channel, the upload receives from the output paths to local files that it must upload.</p>
-<p>The only Upload component implemented at the moment, S3, removes those files once uploaded, but there isn&rsquo;t a
-golden rule for what to do with them. This is up to the upload component and should be chosen
-wisely and documented extensively.</p>
-<h2 id="write-tests">Write tests</h2>
-<p>Since, by definition, an upload component involves external resources, you either have to mock those
-resources or use them directly.<br>
-See an example of how to mock an external resource in the
-<a href="https://github.com/AdRoll/baker/blob/main/upload/s3_test.go">S3 upload</a>.</p>
-<p>However writing a test that uses the actual external resource (a.k.a end-to-end testing) is out of
-the scope of this how-to.<br>
-We thereby provide some general suggestions to test the uploads:</p>
-<ul>
-<li>do not unit-test external libraries when possible, they should be already tested in their packages</li>
-<li>test the <code>New()</code> (constructor-like) function, to check that it is able to correctly
-instantiate the component with valid configurations and intercept wrong ones</li>
-<li>create small and isolated functions where possible and unit-test them</li>
-<li>test the whole component at integration level, either mocking the external resources or using a
-replica testing environment</li>
-</ul>
-<p>The <code>S3</code> upload component has good examples for both
-<a href="https://github.com/AdRoll/baker/blob/main/upload/s3_test.go">unit tests</a> and
-<a href="https://github.com/AdRoll/baker/blob/main/upload/s3_integration_test.go">integration tests</a>.</p>
+	<h2 id="filter-stringmatch">Filter <em>StringMatch</em></h2>
+<h3 id="overview">Overview</h3>
+<p>Discard records if a field matches any of the provided strings</p>
+<h3 id="configuration">Configuration</h3>
+<p>Keys available in the <code>[filter.config]</code> section:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th style="text-align:center">Type</th>
+<th style="text-align:center">Default</th>
+<th style="text-align:center">Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Field</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">&quot;&quot;</td>
+<td style="text-align:center">true</td>
+<td>name of the field which value is used for string comparison</td>
+</tr>
+<tr>
+<td>Strings</td>
+<td style="text-align:center">array of strings</td>
+<td style="text-align:center">[]</td>
+<td style="text-align:center">true</td>
+<td>list of strings to match.</td>
+</tr>
+<tr>
+<td>InvertMatch</td>
+<td style="text-align:center">bool</td>
+<td style="text-align:center">false</td>
+<td style="text-align:center">false</td>
+<td>Invert the match outcome, so that records are discarded if they don&rsquo;t match any of the strings</td>
+</tr>
+</tbody>
+</table>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 11, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified December 3, 2020
 </div>
 </div>
 
