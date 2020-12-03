@@ -14,5 +14,7 @@ var All = []baker.FilterDesc{
 	NotNullDesc,
 	ReplaceFieldsDesc,
 	SetStringFromURLDesc,
+	StringMatchDesc,
+	TimestampDesc,
 	TimestampRangeDesc,
 }

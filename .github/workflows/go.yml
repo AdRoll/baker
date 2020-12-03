@@ -37,7 +37,10 @@ jobs:
             go get golang.org/x/tools/cmd/goimports
             test -z "$(goimports -d . | tee /dev/stderr)"
 
-      - name: Test/Coverage
+      - name: Test
+        run: make test
+
+      - name: Coverage
         env:
           CODECOV_TOKEN: 863a635e-5c68-4b66-9f81-b41cb835de2e
         run: |
