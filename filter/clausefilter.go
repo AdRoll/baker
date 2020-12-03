@@ -41,7 +41,7 @@ a field and it should be paired with the desired value to match against.
     Field must equal value to pass:
     (FIELD VALUE)
 
-    e.g.
+    example:
     (fieldName somevalue)
 
     Matches anything (because only one argument)
