@@ -144,7 +144,7 @@ func writeCompFile(dest, comp string, count int) error {
 		return err
 	}
 
-	if err := writeAPILinks(w, dest); err != nil {
+	if err := writeAPILinks(w, dest, comp); err != nil {
 		return err
 	}
 
@@ -161,7 +161,7 @@ func writeMarkdownHeader(w *bufio.Writer, title string, count int) error {
 	return err
 }
 
-func writeAPILinks(w *bufio.Writer, dest string) error {
+func writeAPILinks(w *bufio.Writer, dest, comp string) error {
 	var c string
 	switch {
 	case strings.Contains(dest, "Inputs/"):
@@ -177,7 +177,7 @@ func writeAPILinks(w *bufio.Writer, dest string) error {
 	}
 
 	s := fmt.Sprintf("{{%% pageinfo color=\"primary\" %%}}")
-	s = fmt.Sprintf("%s\n\n**Read the [API documentation &raquo;](https://pkg.go.dev/github.com/AdRoll/baker/%s)**\n", s, c)
+	s = fmt.Sprintf("%s\n\n**Read the [API documentation &raquo;](https://pkg.go.dev/github.com/AdRoll/baker/%s#%s)**\n", s, c, comp)
 	s = fmt.Sprintf("%s{{%% /pageinfo %%}}\n\n", s)
 
 	_, err := w.WriteString(s)
