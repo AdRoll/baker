@@ -11,18 +11,18 @@ import (
 
 var WebSocketDesc = baker.OutputDesc{
 	Name:   "WebSocket",
-	New:    NewWebSocketWriter,
-	Config: &WebSocketWriterConfig{},
+	New:    NewWebSocket,
+	Config: &WebSocketConfig{},
 	Raw:    false,
 	Help:   "This output writes the filtered log lines into any connected WebSocket client.\n",
 }
 
-type WebSocketWriterConfig struct{}
+type WebSocketConfig struct{}
 
-func (cfg *WebSocketWriterConfig) fillDefaults() {}
+func (cfg *WebSocketConfig) fillDefaults() {}
 
-type WebSocketWriter struct {
-	Cfg *WebSocketWriterConfig
+type WebSocket struct {
+	Cfg *WebSocketConfig
 
 	Fields []baker.FieldIndex
 
@@ -30,16 +30,16 @@ type WebSocketWriter struct {
 	totaln      int64
 }
 
-func NewWebSocketWriter(cfg baker.OutputParams) (baker.Output, error) {
-	log.WithFields(log.Fields{"fn": "NewWebSocketWriter", "idx": cfg.Index}).Info("Initializing")
+func NewWebSocket(cfg baker.OutputParams) (baker.Output, error) {
+	log.WithFields(log.Fields{"fn": "NewWebSocket", "idx": cfg.Index}).Info("Initializing")
 
 	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &WebSocketWriterConfig{}
+		cfg.DecodedConfig = &WebSocketConfig{}
 	}
-	dcfg := cfg.DecodedConfig.(*WebSocketWriterConfig)
+	dcfg := cfg.DecodedConfig.(*WebSocketConfig)
 	dcfg.fillDefaults()
 
-	return &WebSocketWriter{
+	return &WebSocket{
 		Cfg:         dcfg,
 		Fields:      cfg.Fields,
 		fieldByName: cfg.FieldByName,
@@ -48,7 +48,7 @@ func NewWebSocketWriter(cfg baker.OutputParams) (baker.Output, error) {
 
 // websocket server
 
-func (w *WebSocketWriter) Run(input <-chan baker.OutputRecord, _ chan<- string) error {
+func (w *WebSocket) Run(input <-chan baker.OutputRecord, _ chan<- string) error {
 	cfg := websocket.Conf{
 		Fields:      w.Fields,
 		FieldByName: w.fieldByName,
@@ -69,12 +69,12 @@ func (w *WebSocketWriter) Run(input <-chan baker.OutputRecord, _ chan<- string) 
 	return nil
 }
 
-func (w *WebSocketWriter) Stats() baker.OutputStats {
+func (w *WebSocket) Stats() baker.OutputStats {
 	return baker.OutputStats{
 		NumProcessedLines: atomic.LoadInt64(&w.totaln),
 	}
 }
 
-func (b *WebSocketWriter) CanShard() bool {
+func (b *WebSocket) CanShard() bool {
 	return false
 }

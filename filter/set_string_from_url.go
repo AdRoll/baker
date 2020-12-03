@@ -14,17 +14,17 @@ import (
 // SetStringFromURLDesc describes the SetStringFromURL filter.
 var SetStringFromURLDesc = baker.FilterDesc{
 	Name:   "SetStringFromURL",
-	New:    newSetStringFromURL,
-	Config: &setStringFromURLConfig{},
+	New:    NewSetStringFromURL,
+	Config: &SetStringFromURLConfig{},
 	Help:   `Extract some strings from metadata url and sets a field with it.`,
 }
 
-type setStringFromURLConfig struct {
+type SetStringFromURLConfig struct {
 	Field   string   `help:"Name of the field to set to" required:"true"`
 	Strings []string `help:"Strings to look for in the URL. Discard records not containing any of them." required:"true"`
 }
 
-type setStringFromURL struct {
+type SetStringFromURL struct {
 	numProcessedLines int64
 	numFilteredLines  int64
 
@@ -32,11 +32,11 @@ type setStringFromURL struct {
 	strings [][]byte
 }
 
-func newSetStringFromURL(cfg baker.FilterParams) (baker.Filter, error) {
+func NewSetStringFromURL(cfg baker.FilterParams) (baker.Filter, error) {
 	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &setStringFromURLConfig{}
+		cfg.DecodedConfig = &SetStringFromURLConfig{}
 	}
-	dcfg := cfg.DecodedConfig.(*setStringFromURLConfig)
+	dcfg := cfg.DecodedConfig.(*SetStringFromURLConfig)
 
 	f, ok := cfg.FieldByName(dcfg.Field)
 	if !ok {
@@ -48,17 +48,17 @@ func newSetStringFromURL(cfg baker.FilterParams) (baker.Filter, error) {
 		strings = append(strings, []byte(s))
 	}
 
-	return &setStringFromURL{field: f, strings: strings}, nil
+	return &SetStringFromURL{field: f, strings: strings}, nil
 }
 
-func (f *setStringFromURL) Stats() baker.FilterStats {
+func (f *SetStringFromURL) Stats() baker.FilterStats {
 	return baker.FilterStats{
 		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
 		NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
 	}
 }
 
-func (f *setStringFromURL) Process(l baker.Record, next func(baker.Record)) {
+func (f *SetStringFromURL) Process(l baker.Record, next func(baker.Record)) {
 	atomic.AddInt64(&f.numProcessedLines, 1)
 
 	iurl, ok := l.Meta(inpututils.MetadataURL)
