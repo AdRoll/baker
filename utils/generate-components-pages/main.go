@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/AdRoll/baker"
@@ -143,13 +144,41 @@ func writeCompFile(dest, comp string, count int) error {
 		return err
 	}
 
+	if err := writeAPILinks(w, dest); err != nil {
+		return err
+	}
+
 	return baker.PrintHelp(w, comp, components, baker.HelpFormatMarkdown)
+
 }
 
 func writeMarkdownHeader(w *bufio.Writer, title string, count int) error {
 	d := time.Now().Format("2006-01-02")
 
 	s := fmt.Sprintf("---\ntitle: \"%s\"\nweight: %d\ndate: %s\n---\n", title, count, d)
+
+	_, err := w.WriteString(s)
+	return err
+}
+
+func writeAPILinks(w *bufio.Writer, dest string) error {
+	var c string
+	switch {
+	case strings.Contains(dest, "Inputs/"):
+		c = "input"
+	case strings.Contains(dest, "Filters/"):
+		c = "filter"
+	case strings.Contains(dest, "Outputs/"):
+		c = "output"
+	case strings.Contains(dest, "Uploads/"):
+		c = "upload"
+	default:
+		return fmt.Errorf("unexpected component path %s", dest)
+	}
+
+	s := fmt.Sprintf("{{%% pageinfo color=\"primary\" %%}}")
+	s = fmt.Sprintf("%s\n\n**Read the [API documentation &raquo;](https://pkg.go.dev/github.com/AdRoll/baker/%s)**\n", s, c)
+	s = fmt.Sprintf("%s{{%% /pageinfo %%}}\n\n", s)
 
 	_, err := w.WriteString(s)
 	return err
