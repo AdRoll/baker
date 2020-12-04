@@ -49,6 +49,7 @@ type PartialClone struct {
 	matches            map[baker.FieldIndex][][]byte
 	discardNotMatching bool
 	fieldIdx           []baker.FieldIndex
+	createRecord       func() baker.Record
 }
 
 func NewPartialClone(cfg baker.FilterParams) (baker.Filter, error) {
@@ -81,6 +82,7 @@ func NewPartialClone(cfg baker.FilterParams) (baker.Filter, error) {
 		fieldIdx:           fieldIdx,
 		discardNotMatching: dcfg.DiscardNotMatching,
 		matches:            matches,
+		createRecord:       cfg.CreateRecord,
 	}
 	return ut, nil
 }
@@ -104,11 +106,11 @@ func (s *PartialClone) Process(r baker.Record, next func(baker.Record)) {
 		return
 	}
 
-	var l2 baker.LogLine
+	l2 := s.createRecord()
 	for _, idx := range s.fieldIdx {
 		l2.Set(idx, r.Get(idx))
 	}
-	next(&l2)
+	next(l2)
 }
 
 func (s *PartialClone) recordMatch(r baker.Record) bool {
