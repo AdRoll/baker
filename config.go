@@ -165,7 +165,9 @@ func (c *Config) fillDefaults() error {
 }
 
 func (c *Config) fillCreateRecordDefault() error {
-	if c.createRecord == nil {
+	// For now a custom field separator will have precedence over the
+	// default createRecord function.
+	if c.createRecord == nil || c.CSV.FieldSeparator != "" {
 		fieldSeparator := DefaultLogLineFieldSeparator
 		if c.CSV.FieldSeparator != "" {
 			sep := []rune(c.CSV.FieldSeparator)
