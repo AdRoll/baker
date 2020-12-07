@@ -3,6 +3,11 @@ title: "List"
 weight: 4
 date: 2020-12-03
 ---
+{{% pageinfo color="primary" %}}
+
+**Read the [API documentation &raquo;](https://pkg.go.dev/github.com/AdRoll/baker/input#List)**
+{{% /pageinfo %}}
+
 ## Input *List*
 
 ### Overview
