@@ -17,21 +17,21 @@ import (
 	"github.com/AdRoll/baker/pkg/awsutils"
 )
 
-var KTailDesc = baker.InputDesc{
+var KinesisDesc = baker.InputDesc{
 	Name:   "Kinesis",
-	New:    NewKTail,
-	Config: &KTailConfig{},
+	New:    NewKinesis,
+	Config: &KinesisConfig{},
 	Help: "This input fetches log lines from Kinesis. It listens on a specified stream, and\n" +
 		"processes all the shards in that stream. It never exits.\n",
 }
 
-type KTailConfig struct {
+type KinesisConfig struct {
 	AwsRegion string        `help:"AWS region to connect to" default:"us-west-2"`
 	Stream    string        `help:"Stream name on Kinesis" required:"true"`
 	IdleTime  time.Duration `help:"Time between polls of each shard" default:"100ms"`
 }
 
-func (cfg *KTailConfig) fillDefaults() error {
+func (cfg *KinesisConfig) fillDefaults() error {
 	if cfg.AwsRegion == "" {
 		cfg.AwsRegion = "us-west-2"
 	}
@@ -43,8 +43,8 @@ func (cfg *KTailConfig) fillDefaults() error {
 	return nil
 }
 
-type KTail struct {
-	Cfg  *KTailConfig
+type Kinesis struct {
+	Cfg  *KinesisConfig
 	Data chan<- *baker.Data
 
 	stop     int64
@@ -53,14 +53,14 @@ type KTail struct {
 	numLines int64
 }
 
-// NewKTail creates a Kinesis tail, and immediately do a first connection to
+// NewKinesis creates a Kinesis tail, and immediately do a first connection to
 // get the current shard list.
-func NewKTail(cfg baker.InputParams) (baker.Input, error) {
+func NewKinesis(cfg baker.InputParams) (baker.Input, error) {
 	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &KTailConfig{}
+		cfg.DecodedConfig = &KinesisConfig{}
 	}
 
-	dcfg := cfg.DecodedConfig.(*KTailConfig)
+	dcfg := cfg.DecodedConfig.(*KinesisConfig)
 	if err := dcfg.fillDefaults(); err != nil {
 		return nil, fmt.Errorf("Kinesis: %s", err)
 	}
@@ -68,7 +68,7 @@ func NewKTail(cfg baker.InputParams) (baker.Input, error) {
 	sess := session.New(&aws.Config{Region: aws.String(dcfg.AwsRegion)})
 	kin := kinesis.New(sess)
 
-	s := &KTail{
+	s := &Kinesis{
 		Cfg: dcfg,
 		svc: kin,
 	}
@@ -78,7 +78,7 @@ func NewKTail(cfg baker.InputParams) (baker.Input, error) {
 	return s, nil
 }
 
-func (s *KTail) refreshShards() error {
+func (s *Kinesis) refreshShards() error {
 	ctxLog := log.WithFields(log.Fields{
 		"f":    "RefreshShards",
 		"name": s.Cfg.Stream,
@@ -105,7 +105,7 @@ func (s *KTail) refreshShards() error {
 	return nil
 }
 
-func (s *KTail) ProcessRecords(shard *kinesis.Shard) error {
+func (s *Kinesis) ProcessRecords(shard *kinesis.Shard) error {
 	ctxLog := log.WithFields(log.Fields{
 		"f":      "ProcessRecords",
 		"stream": s.Cfg.Stream,
@@ -187,11 +187,11 @@ func (s *KTail) ProcessRecords(shard *kinesis.Shard) error {
 	return err
 }
 
-func (s *KTail) Stop() {
+func (s *Kinesis) Stop() {
 	atomic.StoreInt64(&s.stop, 1)
 }
 
-func (s *KTail) Run(data chan<- *baker.Data) error {
+func (s *Kinesis) Run(data chan<- *baker.Data) error {
 	s.Data = data
 
 	var wg sync.WaitGroup
@@ -211,13 +211,13 @@ func (s *KTail) Run(data chan<- *baker.Data) error {
 	return nil
 }
 
-func (s *KTail) Stats() baker.InputStats {
+func (s *Kinesis) Stats() baker.InputStats {
 	return baker.InputStats{
 		NumProcessedLines: atomic.LoadInt64(&s.numLines),
 	}
 }
 
-func (s *KTail) FreeMem(data *baker.Data) {
+func (s *Kinesis) FreeMem(data *baker.Data) {
 	// Because of the way the AWS SDK works, we can't reuse
 	// the buffer for a furhter call, as each call to GetRecords()
 	// will return freshly allocated memory anyway.

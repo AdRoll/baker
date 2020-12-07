@@ -15,8 +15,8 @@ import (
 // SQLiteDesc declares the standard (non-raw) SQLite output.
 var SQLiteDesc = baker.OutputDesc{
 	Name:   "SQLite",
-	New:    newSQLiteWriter(false),
-	Config: &SQLiteWriterConfig{},
+	New:    NewSQLite(false),
+	Config: &SQLiteConfig{},
 	Help:   "Writes a chosen set of fields as table columns into a local SQLite database file",
 	Raw:    false,
 }
@@ -24,15 +24,15 @@ var SQLiteDesc = baker.OutputDesc{
 // SQLiteRawDesc declares the raw SQLite output.
 var SQLiteRawDesc = baker.OutputDesc{
 	Name:   "SQLiteRaw",
-	New:    newSQLiteWriter(true),
+	New:    NewSQLite(true),
 	Config: &SQLiteRawWriterConfig{},
 	Help:   "Writes a chosen set of fields, plus the raw record, as table columns into a local SQLite database file",
 	Raw:    true,
 }
 
-// SQLiteWriterConfig holds the configuration parameters for the
+// SQLiteConfig holds the configuration parameters for the
 // standard SQLite baker output.
-type SQLiteWriterConfig struct {
+type SQLiteConfig struct {
 	PathString string   `help:"Path to local SQLite file to write the results to. Will be created if it does not exist. Can contain {{.ShardId}} and {{.Field}} for replacement" required:"true"`
 	TableName  string   `help:"Table name to which to write the records to." required:"true"`
 	PreRun     []string `help:"List of SQL statements to run at startup (before table creation)."`
@@ -45,7 +45,7 @@ type SQLiteWriterConfig struct {
 
 // convert to raw config, which is a superset, so that the sqlite output can
 // always use one type only
-func (cfg *SQLiteWriterConfig) convert() *SQLiteRawWriterConfig {
+func (cfg *SQLiteConfig) convert() *SQLiteRawWriterConfig {
 	return &SQLiteRawWriterConfig{
 		PathString: cfg.PathString,
 		TableName:  cfg.TableName,
@@ -72,7 +72,7 @@ type SQLiteRawWriterConfig struct {
 	RecordBlobName string   `help:"Name of the column in which the whole raw record should be put." required:"true"`
 }
 
-type SQLiteWriter struct {
+type SQLite struct {
 	cfg        *SQLiteRawWriterConfig
 	pathString string
 	fieldNames []string
@@ -123,7 +123,7 @@ func runSQLCommands(tx *sql.Tx, commands []string) error {
 	return nil
 }
 
-func newSQLiteWriter(isRaw bool) func(baker.OutputParams) (baker.Output, error) {
+func NewSQLite(isRaw bool) func(baker.OutputParams) (baker.Output, error) {
 	return func(cfg baker.OutputParams) (baker.Output, error) {
 		if cfg.DecodedConfig == nil {
 			return nil, fmt.Errorf("no config provided")
@@ -134,7 +134,7 @@ func newSQLiteWriter(isRaw bool) func(baker.OutputParams) (baker.Output, error) 
 		if isRaw {
 			dcfg = cfg.DecodedConfig.(*SQLiteRawWriterConfig)
 		} else {
-			dcfg = cfg.DecodedConfig.(*SQLiteWriterConfig).convert()
+			dcfg = cfg.DecodedConfig.(*SQLiteConfig).convert()
 		}
 
 		path, err := renderSQLitePathString(dcfg.PathString, cfg.Index, "")
@@ -149,7 +149,7 @@ func newSQLiteWriter(isRaw bool) func(baker.OutputParams) (baker.Output, error) 
 			fieldNames = append(fieldNames, cfg.FieldName(fidx))
 		}
 
-		sqlw := &SQLiteWriter{
+		sqlw := &SQLite{
 			cfg:        dcfg,
 			pathString: path,
 			fieldNames: fieldNames,
@@ -164,7 +164,7 @@ func newSQLiteWriter(isRaw bool) func(baker.OutputParams) (baker.Output, error) 
 	}
 }
 
-func (c *SQLiteWriter) setup() error {
+func (c *SQLite) setup() error {
 	var err error
 
 	defer func() {
@@ -218,7 +218,7 @@ func isPrintable(str string) bool {
 
 // vetIdentifiers checks all identifiers respect some rule so that we can use
 // them safely in queries.
-func (c *SQLiteWriter) vetIdentifiers() error {
+func (c *SQLite) vetIdentifiers() error {
 	ids := map[string]string{
 		"TableName":      c.cfg.TableName,
 		"RecordBlobName": c.cfg.RecordBlobName,
@@ -237,7 +237,7 @@ func (c *SQLiteWriter) vetIdentifiers() error {
 	return nil
 }
 
-func (c *SQLiteWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) error {
+func (c *SQLite) Run(input <-chan baker.OutputRecord, upch chan<- string) error {
 	err := c.doRun(input)
 	if err != nil {
 		return fmt.Errorf("SQLite writer failed: %v", err)
@@ -259,7 +259,7 @@ func sqliteQuote(str string) string {
 }
 
 // prepInsertStatement prepares and returns the statement inserting records.
-func (c *SQLiteWriter) prepInsertStatement(tx *sql.Tx) (*sql.Stmt, error) {
+func (c *SQLite) prepInsertStatement(tx *sql.Tx) (*sql.Stmt, error) {
 	var qmarks []string
 	for range c.fieldNames {
 		qmarks = append(qmarks, "?")
@@ -272,7 +272,7 @@ func (c *SQLiteWriter) prepInsertStatement(tx *sql.Tx) (*sql.Stmt, error) {
 	return tx.Prepare(stmt)
 }
 
-func (c *SQLiteWriter) setDBSettings(conn *sql.DB) error {
+func (c *SQLite) setDBSettings(conn *sql.DB) error {
 	if c.cfg.PageSize > 0 {
 		if _, err := conn.Exec(fmt.Sprintf("PRAGMA page_size=%d", c.cfg.PageSize)); err != nil {
 			return fmt.Errorf("PRAGMA page_size=%d failed: %s", c.cfg.PageSize, err)
@@ -289,7 +289,7 @@ func (c *SQLiteWriter) setDBSettings(conn *sql.DB) error {
 }
 
 // maybeTruncate truncates the table (if configured to do so)
-func (c *SQLiteWriter) maybeTruncate(tx *sql.Tx) error {
+func (c *SQLite) maybeTruncate(tx *sql.Tx) error {
 	if c.cfg.Clear {
 		stmt, err := tx.Prepare("DELETE FROM " + sqliteQuote(c.cfg.TableName))
 		if err != nil {
@@ -307,7 +307,7 @@ func (c *SQLiteWriter) maybeTruncate(tx *sql.Tx) error {
 
 // setupTable either creates the table or, in case it already exists and the
 // config has Clear=true, we truncate the table.
-func (c *SQLiteWriter) setupTable(tx *sql.Tx) error {
+func (c *SQLite) setupTable(tx *sql.Tx) error {
 	// Build the SQL statement that creates the table.
 	// CREATE TABLE IF NOT EXISTS ? ( ?, ?, ... )
 	var fields []string
@@ -335,7 +335,7 @@ func (c *SQLiteWriter) setupTable(tx *sql.Tx) error {
 	return c.maybeTruncate(tx)
 }
 
-func (c *SQLiteWriter) doRun(input <-chan baker.OutputRecord) error {
+func (c *SQLite) doRun(input <-chan baker.OutputRecord) error {
 	// Install a deferred rollback; if something errors out, we execute
 	// tx.Rollback().
 	//
@@ -401,12 +401,12 @@ func (c *SQLiteWriter) doRun(input <-chan baker.OutputRecord) error {
 	return nil
 }
 
-func (c *SQLiteWriter) Stats() baker.OutputStats {
+func (c *SQLite) Stats() baker.OutputStats {
 	return baker.OutputStats{
 		NumProcessedLines: c.nEvents,
 	}
 }
 
-func (c *SQLiteWriter) CanShard() bool {
+func (c *SQLite) CanShard() bool {
 	return true
 }
