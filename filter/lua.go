@@ -22,8 +22,8 @@ type LUAConfig struct {
 }
 
 type LUA struct {
-	l        *lua.LState
-	funcName string
+	l       *lua.LState
+	luaFunc lua.LValue
 }
 
 func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
@@ -34,10 +34,12 @@ func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 		return nil, fmt.Errorf("can't compile lua script %q: %v", dcfg.Script, err)
 	}
 	registerLUARecordType(l)
+	// TODO: check function exists
+	luaFunc := l.GetGlobal(dcfg.FilterName)
 
 	f := &LUA{
-		funcName: dcfg.FilterName,
-		l:        l,
+		luaFunc: luaFunc,
+		l:       l,
 	}
 
 	runtime.SetFinalizer(f, func(f *LUA) { f.l.Close() })
@@ -49,13 +51,13 @@ func (t *LUA) Stats() baker.FilterStats { return baker.FilterStats{} }
 
 func (t *LUA) Process(rec baker.Record, next func(baker.Record)) {
 	luaNext := t.l.NewFunction(func(L *lua.LState) int {
-		recordArg := checkLuaRecord(L, 1)
+		recordArg := fastcheckLuaRecord(L, 1)
 		next(recordArg.r)
 		return 0
 	})
 
 	err := t.l.CallByParam(lua.P{
-		Fn:      t.l.GetGlobal(t.funcName),
+		Fn:      t.luaFunc,
 		NRet:    0,
 		Protect: true,
 	}, recordToLua(t.l, rec),
@@ -99,9 +101,13 @@ func checkLuaRecord(L *lua.LState, n int) *luaRecord {
 	return nil
 }
 
+func fastcheckLuaRecord(L *lua.LState, n int) *luaRecord {
+	return L.Get(n).(*lua.LUserData).Value.(*luaRecord)
+}
+
 // record:get(int) returns string
 func luaRecordGet(L *lua.LState) int {
-	luar := checkLuaRecord(L, 1)
+	luar := fastcheckLuaRecord(L, 1)
 	fidx := L.CheckInt(2)
 
 	buf := luar.r.Get(baker.FieldIndex(fidx))
@@ -112,7 +118,7 @@ func luaRecordGet(L *lua.LState) int {
 
 // record:set(int, string)
 func luaRecordSet(L *lua.LState) int {
-	luar := checkLuaRecord(L, 1)
+	luar := fastcheckLuaRecord(L, 1)
 	fidx := L.CheckInt(2)
 	val := L.CheckString(3)
 
