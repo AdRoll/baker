@@ -25,6 +25,8 @@ type LUA struct {
 	l       *lua.LState
 	ud      *lua.LUserData
 	luaFunc lua.LValue
+	luaNext *lua.LFunction
+	next    func(baker.Record)
 }
 
 func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
@@ -48,6 +50,12 @@ func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 		ud:      ud,
 	}
 
+	// Preallocate the lua next function passed to the filter
+	f.luaNext = l.NewFunction(func(L *lua.LState) int {
+		f.next(fastcheckLuaRecord(L, 1).r)
+		return 0
+	})
+
 	runtime.SetFinalizer(f, func(f *LUA) { f.l.Close() })
 
 	return f, nil
@@ -56,21 +64,18 @@ func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 func (t *LUA) Stats() baker.FilterStats { return baker.FilterStats{} }
 
 func (t *LUA) Process(rec baker.Record, next func(baker.Record)) {
-	luaNext := t.l.NewFunction(func(L *lua.LState) int {
-		recordArg := fastcheckLuaRecord(L, 1)
-		next(recordArg.r)
-		return 0
-	})
-
 	// Modify the record inside the pre-allocated user value
 	t.ud.Value = &luaRecord{r: rec}
+
+	// Set the next function which is called by the lua filter to the one
+	// we just received.
+	t.next = next
 
 	err := t.l.CallByParam(lua.P{
 		Fn:      t.luaFunc,
 		NRet:    0,
 		Protect: true,
-	}, t.ud,
-		luaNext)
+	}, t.ud, t.luaNext)
 
 	if err != nil {
 		panic(err)
