@@ -23,6 +23,7 @@ type LUAConfig struct {
 
 type LUA struct {
 	l       *lua.LState
+	ud      *lua.LUserData
 	luaFunc lua.LValue
 }
 
@@ -37,9 +38,14 @@ func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 	// TODO: check function exists
 	luaFunc := l.GetGlobal(dcfg.FilterName)
 
+	// Preallocate the userdata we use to wrap the record passed to the filter.
+	ud := l.NewUserData()
+	l.SetMetatable(ud, l.GetTypeMetatable(luaRecordTypeName))
+
 	f := &LUA{
 		luaFunc: luaFunc,
 		l:       l,
+		ud:      ud,
 	}
 
 	runtime.SetFinalizer(f, func(f *LUA) { f.l.Close() })
@@ -56,11 +62,14 @@ func (t *LUA) Process(rec baker.Record, next func(baker.Record)) {
 		return 0
 	})
 
+	// Modify the record inside the pre-allocated user value
+	t.ud.Value = &luaRecord{r: rec}
+
 	err := t.l.CallByParam(lua.P{
 		Fn:      t.luaFunc,
 		NRet:    0,
 		Protect: true,
-	}, recordToLua(t.l, rec),
+	}, t.ud,
 		luaNext)
 
 	if err != nil {
