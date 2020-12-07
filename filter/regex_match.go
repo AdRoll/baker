@@ -8,8 +8,8 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-// MatchRegexDesc describes the RegexMatch filter
-var MatchRegexDesc = baker.FilterDesc{
+// RegexMatchDesc describes the RegexMatch filter
+var RegexMatchDesc = baker.FilterDesc{
 	Name:   "RegexMatch",
 	New:    NewRegexMatch,
 	Config: &RegexMatchConfig{},

@@ -137,7 +137,7 @@ func TestS3Upload(t *testing.T) {
 			},
 		},
 	}
-	iu, err := newS3(cfg)
+	iu, err := NewS3(cfg)
 	if err != nil {
 		t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
 	}
@@ -211,7 +211,7 @@ func TestS3_uploadDirectory(t *testing.T) {
 			},
 		},
 	}
-	iu, err := newS3(cfg)
+	iu, err := NewS3(cfg)
 	if err != nil {
 		t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
 	}
@@ -253,7 +253,7 @@ func TestS3_uploadDirectoryError(t *testing.T) {
 				},
 			},
 		}
-		iu, err := newS3(cfg)
+		iu, err := NewS3(cfg)
 		if err != nil {
 			t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
 		}
@@ -286,7 +286,7 @@ func TestS3_uploadDirectoryError(t *testing.T) {
 				},
 			},
 		}
-		iu, err := newS3(cfg)
+		iu, err := NewS3(cfg)
 		if err != nil {
 			t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
 		}
@@ -324,7 +324,7 @@ func TestS3RunExitOnError(t *testing.T) {
 			},
 		},
 	}
-	iu, err := newS3(cfg)
+	iu, err := NewS3(cfg)
 	if err != nil {
 		t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
 	}
@@ -373,7 +373,7 @@ func TestS3RunNotExitOnError(t *testing.T) {
 			},
 		},
 	}
-	iu, err := newS3(cfg)
+	iu, err := NewS3(cfg)
 	if err != nil {
 		t.Fatalf("NewS3Upload(%+v) = %q", cfg, err)
 	}

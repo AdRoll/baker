@@ -21,7 +21,7 @@ import (
 
 var S3Desc = baker.UploadDesc{
 	Name:   "S3",
-	New:    newS3,
+	New:    NewS3,
 	Config: &S3Config{},
 	Help:   "S3Uploader uploads files to a destination on S3 that is relative to SourceBasePath",
 }
@@ -103,7 +103,7 @@ type S3 struct {
 	queuedn  int64
 }
 
-func newS3(cfg baker.UploadParams) (baker.Upload, error) {
+func NewS3(cfg baker.UploadParams) (baker.Upload, error) {
 	if cfg.DecodedConfig == nil {
 		cfg.DecodedConfig = &S3Config{}
 	}

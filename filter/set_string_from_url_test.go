@@ -56,7 +56,7 @@ func TestSetStringFromURL(t *testing.T) {
 			}
 
 			nextCount := 0
-			f := &setStringFromURL{field: 0, strings: strings}
+			f := &SetStringFromURL{field: 0, strings: strings}
 			f.Process(ll, func(baker.Record) { nextCount++ })
 
 			if nextCount == 0 != tt.wantDiscard {

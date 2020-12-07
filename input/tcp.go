@@ -15,7 +15,6 @@ import (
 )
 
 var TCPDesc = baker.InputDesc{
-
 	Name:   "TCP",
 	New:    NewTCP,
 	Config: &TCPConfig{},
