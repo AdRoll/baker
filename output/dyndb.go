@@ -19,8 +19,8 @@ import (
 
 var DynamoDBDesc = baker.OutputDesc{
 	Name:   "DynamoDB",
-	New:    NewDynamoWriter,
-	Config: &DynamoWriterConfig{},
+	New:    NewDynamoDB,
+	Config: &DynamoDBConfig{},
 	Raw:    false,
 	Help: "This output writes the filtered log lines to DynamoDB. It must be\n" +
 		"configured specifying the region, the table name, and the columns\n" +
@@ -161,7 +161,7 @@ func (dp *dynamoProcess) Wait() bool {
 	return <-dp.out
 }
 
-type DynamoWriterConfig struct {
+type DynamoDBConfig struct {
 	Regions         []string      `help:"DynamoDB regions to connect to" default:"us-west-2"`
 	Table           string        `help:"Name of the table to modify" required:"true"`
 	Columns         []string      `help:"Table columns that correspond to each of the fields being written"`
@@ -172,7 +172,7 @@ type DynamoWriterConfig struct {
 	limiter *ratelimit.Bucket
 }
 
-func (cfg *DynamoWriterConfig) fillDefaults() {
+func (cfg *DynamoDBConfig) fillDefaults() {
 	if cfg.Regions == nil {
 		cfg.Regions = []string{"us-west-2"}
 	}
@@ -191,13 +191,13 @@ func (cfg *DynamoWriterConfig) fillDefaults() {
 	}
 }
 
-// DynamoWriter is a class to do optimized batched writes to a single DynamoDB table
+// DynamoDB is a class to do optimized batched writes to a single DynamoDB table
 // with a fixed schema (same number of columns for all records).
-type DynamoWriter struct {
+type DynamoDB struct {
 	TableName string
 	Fields    []baker.FieldIndex
 	Columns   []string
-	Cfg       *DynamoWriterConfig
+	Cfg       *DynamoDBConfig
 
 	limiter  *ratelimit.Bucket
 	lock     sync.Mutex
@@ -211,16 +211,16 @@ type DynamoWriter struct {
 	errn     int64 // number of lines that were skipped because of errors
 }
 
-// NewDynamoWriter create a new DynamoWriter output.
+// NewDynamoDB create a new DynamoDB output.
 //
 // TableName is the name of the DynamoDB table to be written.
 // Columns is a slice listing the columns that will be written; the first item in the slice
 // *MUST* be the primary key of the table.
-func NewDynamoWriter(cfg baker.OutputParams) (baker.Output, error) {
+func NewDynamoDB(cfg baker.OutputParams) (baker.Output, error) {
 	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &DynamoWriterConfig{}
+		cfg.DecodedConfig = &DynamoDBConfig{}
 	}
-	dcfg := cfg.DecodedConfig.(*DynamoWriterConfig)
+	dcfg := cfg.DecodedConfig.(*DynamoDBConfig)
 	dcfg.fillDefaults()
 
 	if len(cfg.Fields) == 0 {
@@ -241,7 +241,7 @@ func NewDynamoWriter(cfg baker.OutputParams) (baker.Output, error) {
 		}
 	}
 
-	b := &DynamoWriter{
+	b := &DynamoDB{
 		TableName: dcfg.Table,
 		Fields:    cfg.Fields,
 		Columns:   dcfg.Columns,
@@ -285,13 +285,13 @@ func NewDynamoWriter(cfg baker.OutputParams) (baker.Output, error) {
 	return b, nil
 }
 
-func (b *DynamoWriter) Flush() {
+func (b *DynamoDB) Flush() {
 	b.lock.Lock()
 	b.flush()
 	b.lock.Unlock()
 }
 
-func (b *DynamoWriter) NumProcessedRecords() int64 {
+func (b *DynamoDB) NumProcessedRecords() int64 {
 	return atomic.LoadInt64(&b.totaln)
 }
 
@@ -299,8 +299,8 @@ func (b *DynamoWriter) NumProcessedRecords() int64 {
 // when the batch limit (25) is reached, it is actually written to DyanmoDB.
 // So Push() might or might not perform a blocking network request.
 // The record is a slice of objects, whose order matches the column orderd that
-// was specified when creating the instance in NewDynamoWriter().
-func (b *DynamoWriter) push(record []string) {
+// was specified when creating the instance in NewDynamoDB().
+func (b *DynamoDB) push(record []string) {
 
 	b.lock.Lock()
 	defer b.lock.Unlock()
@@ -359,7 +359,7 @@ func (b *DynamoWriter) push(record []string) {
 	}
 }
 
-func (b *DynamoWriter) flush() {
+func (b *DynamoDB) flush() {
 	if b.reqn == 0 {
 		return
 	}
@@ -384,7 +384,7 @@ func (b *DynamoWriter) flush() {
 	b.reqn = 0
 }
 
-func (b *DynamoWriter) Run(input <-chan baker.OutputRecord, _ chan<- string) error {
+func (b *DynamoDB) Run(input <-chan baker.OutputRecord, _ chan<- string) error {
 	for lldata := range input {
 		b.push(lldata.Fields)
 	}
@@ -393,7 +393,7 @@ func (b *DynamoWriter) Run(input <-chan baker.OutputRecord, _ chan<- string) err
 	return nil
 }
 
-func (b *DynamoWriter) Stats() baker.OutputStats {
+func (b *DynamoDB) Stats() baker.OutputStats {
 
 	bag := make(baker.MetricsBag)
 	for _, dbproc := range b.dbprocs {
@@ -409,6 +409,6 @@ func (b *DynamoWriter) Stats() baker.OutputStats {
 	}
 }
 
-func (b *DynamoWriter) CanShard() bool {
+func (b *DynamoDB) CanShard() bool {
 	return false
 }

@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove datadog-specific code from [general] section. Instead add [metrics] which can be extended with baker.MetricsClient interfaces. [#34](https://github.com/AdRoll/baker/pull/34)
 - Remove duration parameter from baker.Main [#62](https://github.com/AdRoll/baker/pull/62)
 - TimestampRange filter accepts 'now' as range [#106](https://github.com/AdRoll/baker/pull/106)
+- standardize the components' structs names [#105](https://github.com/AdRoll/baker/pull/105)
 
 ### Removed
 
