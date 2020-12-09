@@ -19,8 +19,8 @@ var TimestampRangeDesc = baker.FilterDesc{
 
 // TimestampRangeConfig holds configuration paramters for the TimestampRange filter.
 type TimestampRangeConfig struct {
-	StartDatetime string `help:"Lower bound of the accepted time interval (inclusive, UTC) format:'2006-01-31 15:04:05'" default:"no bound" required:"true"`
-	EndDatetime   string `help:"Upper bound of the accepted time interval (exclusive, UTC) format:'2006-01-31 15:04:05'" default:"no bound" required:"true"`
+	StartDatetime string `help:"Lower bound of the accepted time interval (inclusive, UTC) format:'2006-01-31 15:04:05'. Also accepts 'now'" default:"no bound" required:"true"`
+	EndDatetime   string `help:"Upper bound of the accepted time interval (exclusive, UTC) format:'2006-01-31 15:04:05'. Also accepts 'now'" default:"no bound" required:"true"`
 	Field         string `help:"Name of the field containing the Unix EPOCH timestamp" required:"true"`
 }
 
@@ -47,25 +47,40 @@ func NewTimestampRange(cfg baker.FilterParams) (baker.Filter, error) {
 		return nil, fmt.Errorf("unknown field %q", dcfg.Field)
 	}
 
-	const timeLayout = "2006-01-02 15:04:05"
-
-	s, err := time.Parse(timeLayout, dcfg.StartDatetime)
-	if err != nil {
-		return nil, fmt.Errorf("StartDateTime is invalid: %s", err)
-	}
-
-	e, err := time.Parse(timeLayout, dcfg.EndDatetime)
-	if err != nil {
-		return nil, fmt.Errorf("EndDatetime is invalid: %s", err)
-	}
-
 	f := &TimestampRange{
-		startDate: s.Unix(),
-		endDate:   e.Unix(),
-		fidx:      fidx,
+		fidx: fidx,
+	}
+	if err := f.setTimes(dcfg.StartDatetime, dcfg.EndDatetime); err != nil {
+		return nil, err
 	}
 
 	return f, nil
+}
+
+func (f *TimestampRange) setTimes(start, end string) error {
+	const timeLayout = "2006-01-02 15:04:05"
+
+	if start == "now" {
+		f.startDate = time.Now().Unix()
+	} else {
+		t, err := time.Parse(timeLayout, start)
+		if err != nil {
+			return fmt.Errorf("start time is invalid: %s", err)
+		}
+		f.startDate = t.Unix()
+	}
+
+	if end == "now" {
+		f.endDate = time.Now().Unix()
+	} else {
+		t, err := time.Parse(timeLayout, end)
+		if err != nil {
+			return fmt.Errorf("end time is invalid: %s", err)
+		}
+		f.endDate = t.Unix()
+	}
+
+	return nil
 }
 
 // Stats implements baker.Filter.

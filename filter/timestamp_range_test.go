@@ -3,6 +3,7 @@ package filter
 import (
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/AdRoll/baker"
 )
@@ -48,6 +49,27 @@ func TestTimestampRange(t *testing.T) {
 			ts:        1517909641, // 2018-02-06 09:34:01
 			startDate: "2017-02-06 09:34:01",
 			endDate:   "2018-02-06 09:34:01",
+			want:      false,
+		},
+		{
+			name:      "start now",
+			ts:        int(time.Now().Unix()),
+			startDate: "now",
+			endDate:   "2122-02-06 09:34:01",
+			want:      true,
+		},
+		{
+			name:      "end now",
+			ts:        int(time.Now().Unix()),
+			startDate: "2018-02-06 09:34:01",
+			endDate:   "now",
+			want:      false,
+		},
+		{
+			name:      "start and end now",
+			ts:        int(time.Now().Unix()),
+			startDate: "now",
+			endDate:   "now",
 			want:      false,
 		},
 	}
