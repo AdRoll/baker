@@ -40,7 +40,7 @@ func NewPartialClone(cfg baker.FilterParams) (baker.Filter, error) {
 	for _, f := range dcfg.Fields {
 		idx, ok := cfg.FieldByName(f)
 		if !ok {
-			return nil, fmt.Errorf("Can't resolve field name %s", f)
+			return nil, fmt.Errorf("can't resolve field name %s", f)
 		}
 		fieldIdx = append(fieldIdx, idx)
 	}
