@@ -9,10 +9,10 @@ description: >
 A Baker [pipeline](/docs/core-concepts/#pipeline) is declared in a configuration
 file in [TOML format](https://toml.io/en/).
 We use this file to:
- * define the topology (i.e the list of components) of the pipeline we want to run
- * configure each component
- * setup general elements such as metrics
 
+* define the topology (i.e the list of components) of the pipeline we want to run
+* configure each component
+* setup general elements such as metrics
 
 ### Configuration file
 
@@ -21,15 +21,18 @@ Baker is configured using a [TOML](https://toml.io/en/) file, which content is p
 
 The file has several sections, described below:
 
-| Section       | Required   | Content                                 |
-|---------------|------------|-----------------------------------------|
-| `[general]`   | false      | General configuration                   |
-| `[metrics]`   | false      | Metrics service configuration           |
-| `[[user]]`    | false      | Array of user-defined configurations    |
-| `[input]`     | true       | Input component configuration           |
-| `[[filter]]`  | false      | Array of filters configuration          |
-| `[output]`    | true       | Output component configuration          |
-| `[upload]`    | false      | Upload component configuration          |
+| Section         | Required   | Content                                 |
+|-----------------|------------|-----------------------------------------|
+| `[general]`     | false      | General configuration                   |
+| `[metrics]`     | false      | Metrics service configuration           |
+| `[fields]`      | false      | Array of record fields names            |
+| `[csv]`         | false      | CSV specific configuration              |
+| `[[user]]`      | false      | Array of user-defined configurations    |
+| `[input]`       | true       | Input component configuration           |
+| `[filterchain]` | false      | Filter chain global configuration       |
+| `[[filter]]`    | false      | Array of filters configuration          |
+| `[output]`      | true       | Output component configuration          |
+| `[upload]`      | false      | Upload component configuration          |
 
 #### General configuration
 
@@ -38,6 +41,32 @@ The `[general]` section is used to configure the general behaviour of Baker.
 | Key                    | Type   | Effect |
 |------------------------|--------|--------|
 | dont_validate_fields   | bool   | Reports whether records validation is skipped (by not calling Components.Validate) |
+
+#### Fields configuration
+
+The `name` configuration in the `[fields]` section provides a declarative way to define the
+structure of the records processed by Baker, without asking the user to define the `FieldByName`
+and `FieldName` functions.
+
+`names` is a list of strings declaring the names of the fields and their position in the record
+(that is inherited by the position of the name in the list).
+
+So, to make an example:
+
+```toml
+[fields]
+names = ["foo", "bar"]
+```
+
+defines a structure of the records with two fields: `foo` as first element and `bar` as second.
+
+#### CSV configuration
+
+The `[csv]` section is used to configure the CSV records.
+
+| Key                    | Type   | Effect |
+|------------------------|--------|--------|
+| field_separator        | string   | A single-byte char used as separator for the records' fields | 
 
 #### Components configuration
 
@@ -63,8 +92,8 @@ name="TimestampRange"
 
     [filter.config]
     StartDatetime = "2020-10-30 15:00:00"
-	EndDatetime = "2020-11-01 00:00:00"
-	Field = "timestamp"
+    EndDatetime = "2020-11-01 00:00:00"
+    Field = "timestamp"
 
 [output]
 name="DynamoDB"
@@ -82,6 +111,10 @@ a list of local or remote paths/URLs. `[input.config]` is where component-specif
 can be specified, and in this case we simply provide the files option to List.  
 Notice that List would accept http:// or even s3:// URLs there in addition to local paths,  
 and some more (run ./Baker-bin -help List in the help example for more details).
+
+`[filterchain]` defines the configuration for the whole filter chain. Filter-specific configuration
+are provided by `[[filter]]` (see below). The only accepted configuration is `procs = <int>` that
+defines the number of concurrent filter chains. The default value is 16.
 
 `[[filter]]` In TOML syntax, the double brackets indicates an array of sections.  
 This is where you declare the list of filters (i.e filter chain) to sequentially apply to your
