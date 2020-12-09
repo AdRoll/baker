@@ -47,32 +47,40 @@ func NewTimestampRange(cfg baker.FilterParams) (baker.Filter, error) {
 		return nil, fmt.Errorf("unknown field %q", dcfg.Field)
 	}
 
-	s, err := dcfg.getTime(dcfg.StartDatetime)
-	if err != nil {
-		return nil, fmt.Errorf("StartDatetime is invalid: %s", err)
-	}
-
-	e, err := dcfg.getTime(dcfg.EndDatetime)
-	if err != nil {
-		return nil, fmt.Errorf("EndDatetime is invalid: %s", err)
-	}
-
 	f := &TimestampRange{
-		startDate: s.Unix(),
-		endDate:   e.Unix(),
-		fidx:      fidx,
+		fidx: fidx,
+	}
+	if err := f.setTimes(dcfg.StartDatetime, dcfg.EndDatetime); err != nil {
+		return nil, err
 	}
 
 	return f, nil
 }
 
-func (c *TimestampRangeConfig) getTime(s string) (time.Time, error) {
-	if s == "now" {
-		return time.Now(), nil
+func (f *TimestampRange) setTimes(start, end string) error {
+	const timeLayout = "2006-01-02 15:04:05"
+
+	if start == "now" {
+		f.startDate = time.Now().Unix()
+	} else {
+		t, err := time.Parse(timeLayout, start)
+		if err != nil {
+			return fmt.Errorf("start time is invalid: %s", err)
+		}
+		f.startDate = t.Unix()
 	}
 
-	const timeLayout = "2006-01-02 15:04:05"
-	return time.Parse(timeLayout, s)
+	if end == "now" {
+		f.endDate = time.Now().Unix()
+	} else {
+		t, err := time.Parse(timeLayout, end)
+		if err != nil {
+			return fmt.Errorf("end time is invalid: %s", err)
+		}
+		f.endDate = t.Unix()
+	}
+
+	return nil
 }
 
 // Stats implements baker.Filter.

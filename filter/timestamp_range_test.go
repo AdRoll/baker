@@ -20,14 +20,14 @@ func TestTimestampRange(t *testing.T) {
 			name:      "valid",
 			ts:        1580981641, // 2020-02-06 09:34:01
 			startDate: "2019-02-06 09:34:01",
-			endDate:   "2122-02-06 09:34:01",
+			endDate:   "2022-02-06 09:34:01",
 			want:      true,
 		},
 		{
 			name:      "past lower bound",
 			ts:        1528277641, // 2018-06-06 09:34:01
 			startDate: "2019-02-06 09:34:01",
-			endDate:   "2122-02-06 09:34:01",
+			endDate:   "2022-02-06 09:34:01",
 			want:      false,
 		},
 		{
@@ -62,6 +62,13 @@ func TestTimestampRange(t *testing.T) {
 			name:      "end now",
 			ts:        int(time.Now().Unix()),
 			startDate: "2018-02-06 09:34:01",
+			endDate:   "now",
+			want:      false,
+		},
+		{
+			name:      "start and end now",
+			ts:        int(time.Now().Unix()),
+			startDate: "now",
 			endDate:   "now",
 			want:      false,
 		},
