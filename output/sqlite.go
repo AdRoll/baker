@@ -146,7 +146,7 @@ func NewSQLite(isRaw bool) func(baker.OutputParams) (baker.Output, error) {
 		// an SQL table in the SQLite file.
 		var fieldNames []string
 		for _, fidx := range cfg.Fields {
-			fieldNames = append(fieldNames, cfg.FieldName(fidx))
+			fieldNames = append(fieldNames, cfg.FieldNames[fidx])
 		}
 
 		sqlw := &SQLite{
