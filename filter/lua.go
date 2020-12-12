@@ -38,8 +38,10 @@ func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 
 	registerLUATypes(l, cfg.ComponentParams)
 
-	// TODO: check function exists
 	luaFunc := l.GetGlobal(dcfg.FilterName)
+	if luaFunc.Type() == lua.LTNil {
+		return nil, fmt.Errorf("can't find lua filter %q in script %q", dcfg.FilterName, dcfg.Script)
+	}
 
 	// Preallocate the userdata we use to wrap the record passed to the filter.
 	ud := l.NewUserData()
