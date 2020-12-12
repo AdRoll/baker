@@ -113,7 +113,23 @@ func TestLUAFilter(t *testing.T) {
 			record: "ciao,,",
 			want: [][3]string{
 				{"good", "", ""},
-			}},
+			},
+		},
+		{
+			name:   "clearRecord",
+			record: "foo,bar,baz",
+			want: [][3]string{
+				{"", "", ""},
+			},
+		},
+		{
+			name:   "copyRecord",
+			record: "foo,bar,baz",
+			want: [][3]string{
+				{"foo", "bar", "1"},
+				{"foo", "bar", "2"},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -109,6 +109,8 @@ func (t *LUA) Process(rec baker.Record, next func(baker.Record)) {
 	}
 }
 
+// lua record methods
+
 const luaRecordTypeName = "record"
 
 func registerLUARecordType(L *lua.LState) {
@@ -124,15 +126,6 @@ func recordToLua(L *lua.LState, r baker.Record) *lua.LUserData {
 	return ud
 }
 
-var luaRecordMethods = map[string]lua.LGFunction{
-	"get": luaRecordGet,
-	"set": luaRecordSet,
-}
-
-type luaRecord struct {
-	r baker.Record
-}
-
 func checkLuaRecord(L *lua.LState, n int) *luaRecord {
 	ud := L.CheckUserData(n)
 	if v, ok := ud.Value.(*luaRecord); ok {
@@ -144,6 +137,17 @@ func checkLuaRecord(L *lua.LState, n int) *luaRecord {
 
 func fastcheckLuaRecord(L *lua.LState, n int) *luaRecord {
 	return L.Get(n).(*lua.LUserData).Value.(*luaRecord)
+}
+
+var luaRecordMethods = map[string]lua.LGFunction{
+	"get":   luaRecordGet,
+	"set":   luaRecordSet,
+	"copy":  luaRecordCopy,
+	"clear": luaRecordClear,
+}
+
+type luaRecord struct {
+	r baker.Record
 }
 
 // record:get(int) returns string
@@ -164,6 +168,25 @@ func luaRecordSet(L *lua.LState) int {
 	val := L.CheckString(3)
 
 	luar.r.Set(baker.FieldIndex(fidx), []byte(val))
+
+	return 0
+}
+
+// record:copy() record
+func luaRecordCopy(L *lua.LState) int {
+	luar := fastcheckLuaRecord(L, 1)
+
+	cpy := luar.r.Copy()
+	ud := recordToLua(L, cpy)
+	L.Push(ud)
+
+	return 1
+}
+
+// record:clear()
+func luaRecordClear(L *lua.LState) int {
+	luar := fastcheckLuaRecord(L, 1)
+	luar.r.Clear()
 
 	return 0
 }

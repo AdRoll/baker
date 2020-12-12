@@ -32,3 +32,17 @@ function _validateRecord(rec, next)
     end
     next(rec)
 end
+
+function clearRecord(rec, next)
+    rec:clear()
+    next(rec)
+end
+
+function copyRecord(rec, next)
+    rec:set(2, "1")
+    cpy = rec:copy()
+    next(rec)
+
+    cpy:set(2, "2")
+    next(cpy)
+end
