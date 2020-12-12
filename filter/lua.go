@@ -22,15 +22,16 @@ type LUAConfig struct {
 }
 
 type LUA struct {
-	l       *lua.LState
-	ud      *lua.LUserData
-	luaFunc lua.LValue
-	luaNext *lua.LFunction
+	l       *lua.LState    // lua state used during all the baker filter lifetime
+	ud      *lua.LUserData // pre-allocated (reused) userdata for the processed record
+	luaFunc lua.LValue     // lua filter function
+	luaNext *lua.LFunction // lua next function (reused)
 	next    func(baker.Record)
 }
 
 func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 	dcfg := cfg.DecodedConfig.(*LUAConfig)
+
 	l := lua.NewState()
 	if err := l.DoFile(dcfg.Script); err != nil {
 		return nil, fmt.Errorf("can't compile lua script %q: %v", dcfg.Script, err)
@@ -44,20 +45,24 @@ func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 	}
 
 	// Preallocate the userdata we use to wrap the record passed to the filter.
+	// We can do this since a single instance of a baker filter is only ever
+	// processing a single record at a time, so we can reuse the lua userdata
+	// structure for it. This reduces allocations.
 	ud := l.NewUserData()
 	l.SetMetatable(ud, l.GetTypeMetatable(luaRecordTypeName))
 
-	f := &LUA{
-		luaFunc: luaFunc,
-		l:       l,
-		ud:      ud,
-	}
+	f := &LUA{}
 
-	// Preallocate the lua next function passed to the filter
-	f.luaNext = l.NewFunction(func(L *lua.LState) int {
+	// Preallocate the lua next function passed to the filter.
+	luaNext := l.NewFunction(func(L *lua.LState) int {
 		f.next(fastcheckLuaRecord(L, 1).r)
 		return 0
 	})
+
+	f.l = l
+	f.ud = ud
+	f.luaNext = luaNext
+	f.luaFunc = luaFunc
 
 	runtime.SetFinalizer(f, func(f *LUA) { f.l.Close() })
 
