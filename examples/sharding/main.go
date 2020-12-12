@@ -30,7 +30,8 @@ const (
 	Dollar    baker.FieldIndex = 6
 )
 
-var fieldNames = [...]string{
+// And their respective names
+var fieldNames = []string{
 	"id",
 	"first_name",
 	"last_name",
@@ -50,16 +51,12 @@ func fieldByName(name string) (baker.FieldIndex, bool) {
 	return 0, false
 }
 
-func fieldName(idx baker.FieldIndex) string {
-	return fieldNames[idx]
-}
-
 var components = baker.Components{
 	Inputs:        input.All,
 	Outputs:       []baker.OutputDesc{ShardableDesc},
 	ShardingFuncs: shardingFuncs,
 	FieldByName:   fieldByName,
-	FieldName:     fieldName,
+	FieldNames:    fieldNames,
 }
 
 func main() {
