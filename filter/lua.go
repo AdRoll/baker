@@ -31,12 +31,13 @@ type LUA struct {
 
 func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 	dcfg := cfg.DecodedConfig.(*LUAConfig)
-
 	l := lua.NewState()
 	if err := l.DoFile(dcfg.Script); err != nil {
 		return nil, fmt.Errorf("can't compile lua script %q: %v", dcfg.Script, err)
 	}
-	registerLUARecordType(l)
+
+	registerLUATypes(l, cfg.ComponentParams)
+
 	// TODO: check function exists
 	luaFunc := l.GetGlobal(dcfg.FilterName)
 
@@ -59,6 +60,32 @@ func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 	runtime.SetFinalizer(f, func(f *LUA) { f.l.Close() })
 
 	return f, nil
+}
+
+func registerLUATypes(l *lua.LState, comp baker.ComponentParams) {
+	registerLUARecordType(l)
+
+	l.SetGlobal("createRecord", l.NewFunction(func(L *lua.LState) int {
+		rec := comp.CreateRecord()
+		ud := recordToLua(l, rec)
+		L.Push(ud)
+		return 1
+	}))
+
+	l.SetGlobal("validateRecord", l.NewFunction(func(L *lua.LState) int {
+		luar := fastcheckLuaRecord(l, 1)
+		ok, fidx := comp.ValidateRecord(luar.r)
+		l.Push(lua.LBool(ok))
+		l.Push(lua.LNumber(fidx))
+		return 2
+	}))
+
+	// Create the fields table.
+	fields := l.NewTable()
+	for i, n := range comp.FieldNames {
+		fields.RawSetString(n, lua.LNumber(i))
+	}
+	l.SetGlobal("fieldNames", fields)
 }
 
 func (t *LUA) Stats() baker.FilterStats { return baker.FilterStats{} }
