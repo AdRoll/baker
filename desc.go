@@ -16,7 +16,7 @@ type Components struct {
 	CreateRecord  func() Record               // CreateRecord creates a new record
 
 	FieldByName func(string) (FieldIndex, bool) // FieldByName gets a field index by its name
-	FieldName   func(FieldIndex) string         // FieldName gets a field name by its index
+	FieldNames  []string                        // FieldNames holds field names, indexed by their FieldIndex
 }
 
 // ComponentParams holds the common configuration parameters passed to components of all kinds.
@@ -24,7 +24,7 @@ type ComponentParams struct {
 	DecodedConfig  interface{}                     // decoded component-specific struct (from configuration file)
 	CreateRecord   func() Record                   // factory function to create new empty records
 	FieldByName    func(string) (FieldIndex, bool) // translates field names to Record indexes
-	FieldName      func(FieldIndex) string         // returns the name of a field given its index in the Record
+	FieldNames     []string                        // FieldNames holds field names, indexed by their FieldIndex
 	ValidateRecord ValidationFunc                  // function to validate a record
 	Metrics        MetricsClient                   // Metrics allows components to add code instrumentation and have metrics exported to the configured backend, if any?
 }

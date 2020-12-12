@@ -131,7 +131,7 @@ func (sd *StatsDumper) dumpNow() {
 		m := make(map[string]int64)
 		for f := range t.invalid {
 			if t.invalid[f] > 0 {
-				name := sd.t.fieldName(FieldIndex(f))
+				name := sd.t.fieldNames[f]
 				value := t.invalid[f]
 				m[name] = value
 				sd.metrics.RawCount("error_lines."+name, int64(value))
