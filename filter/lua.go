@@ -13,12 +13,12 @@ var LUADesc = baker.FilterDesc{
 	Name:   "LUA",
 	New:    NewLUA,
 	Config: &LUAConfig{},
-	Help:   `TBD`,
+	Help:   `Run a baker filter defined in a lua script`,
 }
 
 type LUAConfig struct {
-	Script     string
-	FilterName string
+	Script     string `help:"Path to the lua script where the baker filter is defined" required:"true"`
+	FilterName string `help:"Name of the lua function to run as baker filter" required:"true"`
 }
 
 type LUA struct {
