@@ -87,10 +87,21 @@ func registerLUATypes(l *lua.LState, comp baker.ComponentParams) {
 		return 2
 	}))
 
-	// Create the fields table.
+	l.SetGlobal("fieldByName", l.NewFunction(func(L *lua.LState) int {
+		fname := L.CheckString(1)
+		fidx, ok := comp.FieldByName(fname)
+		if !ok {
+			l.Push(lua.LNil)
+		} else {
+			l.Push(lua.LNumber(fidx))
+		}
+		return 1
+	}))
+
+	// Create the fieldNaames table.
 	fields := l.NewTable()
-	for i, n := range comp.FieldNames {
-		fields.RawSetString(n, lua.LNumber(i))
+	for fidx, fname := range comp.FieldNames {
+		fields.RawSet(lua.LNumber(fidx), lua.LString(fname))
 	}
 	l.SetGlobal("fieldNames", fields)
 }

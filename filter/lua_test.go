@@ -87,17 +87,24 @@ func TestLUAFilter(t *testing.T) {
 		want    [][3]string // contains non discarded records with, for each of them, the 3 fields we want
 	}{
 		{
-			name:   "swapFieldsWithIndex",
+			name:   "swapFields",
 			record: "abc,def,ghi",
 			want: [][3]string{
 				{"abc", "ghi", "def"},
 			},
 		},
 		{
-			name:   "swapFieldsWithNames",
+			name:   "_fieldByName",
 			record: "abc,def,ghi",
 			want: [][3]string{
 				{"abc", "ghi", "def"},
+			},
+		},
+		{
+			name:   "_fieldNames",
+			record: "abc,def,ghi",
+			want: [][3]string{
+				{"foo", "bar", "baz"},
 			},
 		},
 		{

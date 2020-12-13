@@ -1,4 +1,4 @@
-function swapFieldsWithIndex(rec, next)
+function swapFields(rec, next)
     local f1, f2
     f1 = rec:get(1)
     rec:set(1, rec:get(2))
@@ -6,11 +6,19 @@ function swapFieldsWithIndex(rec, next)
     next(rec)
 end
 
-function swapFieldsWithNames(rec, next)
+function _fieldByName(rec, next)
     local f1, f2
-    f1 = rec:get(fieldNames["bar"])
-    rec:set(1, rec:get(fieldNames["baz"]))
+    f1 = rec:get(fieldByName("bar"))
+    rec:set(1, rec:get(fieldByName("baz")))
     rec:set(2, f1)
+    next(rec)
+end
+
+function _fieldNames(rec, next)
+    -- set each field to its name
+    rec:set(0, fieldNames[0])
+    rec:set(1, fieldNames[1])
+    rec:set(2, fieldNames[2])
     next(rec)
 end
 
