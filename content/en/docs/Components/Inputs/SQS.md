@@ -1,7 +1,7 @@
 ---
 title: "SQS"
 weight: 5
-date: 2020-12-03
+date: 2020-12-14
 ---
 {{% pageinfo color="primary" %}}
 

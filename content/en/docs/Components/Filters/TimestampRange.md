@@ -1,7 +1,7 @@
 ---
 title: "TimestampRange"
-weight: 17
-date: 2020-12-03
+weight: 18
+date: 2020-12-14
 ---
 {{% pageinfo color="primary" %}}
 
@@ -20,7 +20,7 @@ Keys available in the `[filter.config]` section:
 
 |Name|Type|Default|Required|Description|
 |----|:--:|:-----:|:------:|-----------|
-| StartDatetime| string| "no bound"| true| Lower bound of the accepted time interval (inclusive, UTC) format:'2006-01-31 15:04:05'|
-| EndDatetime| string| "no bound"| true| Upper bound of the accepted time interval (exclusive, UTC) format:'2006-01-31 15:04:05'|
+| StartDatetime| string| "no bound"| true| Lower bound of the accepted time interval (inclusive, UTC) format:'2006-01-31 15:04:05'. Also accepts 'now'|
+| EndDatetime| string| "no bound"| true| Upper bound of the accepted time interval (exclusive, UTC) format:'2006-01-31 15:04:05'. Also accepts 'now'|
 | Field| string| ""| true| Name of the field containing the Unix EPOCH timestamp|
 

@@ -1,7 +1,7 @@
 ---
 title: "ClauseFilter"
 weight: 8
-date: 2020-12-03
+date: 2020-12-14
 ---
 {{% pageinfo color="primary" %}}
 
@@ -49,9 +49,7 @@ a field and it should be paired with the desired value to match against.
     Field must equal value to pass:
     (FIELD VALUE)
 
-    e.  
-g.  
-
+    example:
     (fieldName somevalue)
 
     Matches anything (because only one argument)

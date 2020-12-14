@@ -1,7 +1,7 @@
 ---
 title: "NotNull"
-weight: 12
-date: 2020-12-03
+weight: 11
+date: 2020-12-14
 ---
 {{% pageinfo color="primary" %}}
 
