@@ -5,7 +5,7 @@
     <description>Recent content in Uploads on Baker, high performance modular pipelines for the Big Data era</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 03 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 14 Dec 2020 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/uploads/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,13 +18,20 @@
     <item>
       <title>Docs: S3</title>
       <link>https://getbaker.io/docs/components/uploads/s3/</link>
-      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/uploads/s3/</guid>
       <description>
         
         
-        &lt;h2 id=&#34;upload-s3&#34;&gt;Upload &lt;em&gt;S3&lt;/em&gt;&lt;/h2&gt;
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/upload#S3&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;upload-s3&#34;&gt;Upload &lt;em&gt;S3&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;S3Uploader uploads files to a destination on S3 that is relative to SourceBasePath&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;

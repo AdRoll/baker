@@ -21,29 +21,32 @@
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
 <title>FileWriter | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="FileWriter" />
-<meta property="og:description" content="Output FileWriter Overview This is a raw output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (output.fields in TOML).
+<meta property="og:description" content="Read the API documentation »
+ Output FileWriter Overview This is a raw output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (output.fields in TOML).
 This output writes the records into compressed files in a directory.
 Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.
 The file names can contain placeholders that are populated by the output (see the keys help below)." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://getbaker.io/docs/components/outputs/filewriter/" />
-<meta property="article:published_time" content="2020-12-03T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-12-03T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
+<meta property="article:published_time" content="2020-12-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-12-14T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
 <meta itemprop="name" content="FileWriter">
-<meta itemprop="description" content="Output FileWriter Overview This is a raw output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (output.fields in TOML).
+<meta itemprop="description" content="Read the API documentation »
+ Output FileWriter Overview This is a raw output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (output.fields in TOML).
 This output writes the records into compressed files in a directory.
 Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.
 The file names can contain placeholders that are populated by the output (see the keys help below).">
-<meta itemprop="datePublished" content="2020-12-03T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-12-03T00:00:00+00:00" />
-<meta itemprop="wordCount" content="266">
+<meta itemprop="datePublished" content="2020-12-14T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-12-14T00:00:00+00:00" />
+<meta itemprop="wordCount" content="271">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="FileWriter"/>
-<meta name="twitter:description" content="Output FileWriter Overview This is a raw output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (output.fields in TOML).
+<meta name="twitter:description" content="Read the API documentation »
+ Output FileWriter Overview This is a raw output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (output.fields in TOML).
 This output writes the records into compressed files in a directory.
 Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.
 The file names can contain placeholders that are populated by the output (see the keys help below)."/>
@@ -153,7 +156,7 @@ The file names can contain placeholders that are populated by the output (see th
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.ba84e7ddbe008d82357945aad5e352d5744cb83419b6500ce1d35daab9d6b0ed1a7f40b936f7ba27abcdae844ef36bce3a749b240347a9c534b838715ade846e.json"
+  data-offline-search-index-json-src="/offline-search-index.6eb8ee9cf0550319383f12f994f527721d187fb0c7113ef8a189500e4ba90cd740c362faeb6050173a426cb81e9ab9337e7857d269aa1c087d7e75f40bd5501b.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -184,7 +187,7 @@ The file names can contain placeholders that are populated by the output (see th
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.ba84e7ddbe008d82357945aad5e352d5744cb83419b6500ce1d35daab9d6b0ed1a7f40b936f7ba27abcdae844ef36bce3a749b240347a9c534b838715ade846e.json"
+  data-offline-search-index-json-src="/offline-search-index.6eb8ee9cf0550319383f12f994f527721d187fb0c7113ef8a189500e4ba90cd740c362faeb6050173a426cb81e9ab9337e7857d269aa1c087d7e75f40bd5501b.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -389,13 +392,19 @@ The file names can contain placeholders that are populated by the output (see th
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersregexmatch" href="/docs/components/filters/regexmatch/">RegexMatch</a>
-      
-      
-      
-      
-      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersnotnull" href="/docs/components/filters/notnull/">NotNull</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterspartialclone" href="/docs/components/filters/partialclone/">PartialClone</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersregexmatch" href="/docs/components/filters/regexmatch/">RegexMatch</a>
       
       
       
@@ -754,7 +763,14 @@ The file names can contain placeholders that are populated by the output (see th
 	<h1>FileWriter</h1>
     
 	       
-	<h2 id="output-filewriter">Output <em>FileWriter</em></h2>
+	
+
+<div class="pageinfo pageinfo-primary">
+<p><strong>Read the <a href="https://pkg.go.dev/github.com/AdRoll/baker/output#FileWriter">API documentation »</a></strong></p>
+
+</div>
+
+<h2 id="output-filewriter">Output <em>FileWriter</em></h2>
 <h3 id="overview">Overview</h3>
 <p>This is a <em>raw</em> output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (<code>output.fields</code> in TOML).</p>
 <p>This output writes the records into compressed files in a directory.</p>
@@ -813,7 +829,7 @@ of the field, and each one of these workers concurrently writes to a different f
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified December 3, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified December 14, 2020
 </div>
 </div>
 

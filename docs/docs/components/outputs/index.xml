@@ -5,7 +5,7 @@
     <description>Recent content in Outputs on Baker, high performance modular pipelines for the Big Data era</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 03 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 14 Dec 2020 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/outputs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,13 +18,20 @@
     <item>
       <title>Docs: DynamoDB</title>
       <link>https://getbaker.io/docs/components/outputs/dynamodb/</link>
-      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/dynamodb/</guid>
       <description>
         
         
-        &lt;h2 id=&#34;output-dynamodb&#34;&gt;Output &lt;em&gt;DynamoDB&lt;/em&gt;&lt;/h2&gt;
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/output#DynamoDB&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;output-dynamodb&#34;&gt;Output &lt;em&gt;DynamoDB&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;non-raw&lt;/em&gt; output, it doesn&amp;rsquo;t receive whole records. Instead it receives a list of fields for each record (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
 &lt;p&gt;This output writes the filtered log lines to DynamoDB.&lt;br&gt;
@@ -100,13 +107,20 @@ types are: &amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings
     <item>
       <title>Docs: FileWriter</title>
       <link>https://getbaker.io/docs/components/outputs/filewriter/</link>
-      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/filewriter/</guid>
       <description>
         
         
-        &lt;h2 id=&#34;output-filewriter&#34;&gt;Output &lt;em&gt;FileWriter&lt;/em&gt;&lt;/h2&gt;
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/output#FileWriter&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;output-filewriter&#34;&gt;Output &lt;em&gt;FileWriter&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;raw&lt;/em&gt; output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
 &lt;p&gt;This output writes the records into compressed files in a directory.&lt;/p&gt;
@@ -169,13 +183,20 @@ of the field, and each one of these workers concurrently writes to a different f
     <item>
       <title>Docs: Nop</title>
       <link>https://getbaker.io/docs/components/outputs/nop/</link>
-      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/nop/</guid>
       <description>
         
         
-        &lt;h2 id=&#34;output-nop&#34;&gt;Output &lt;em&gt;Nop&lt;/em&gt;&lt;/h2&gt;
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/output#Nop&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;output-nop&#34;&gt;Output &lt;em&gt;Nop&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;non-raw&lt;/em&gt; output, it doesn&amp;rsquo;t receive whole records. Instead it receives a list of fields for each record (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
 &lt;p&gt;No-operation output.&lt;br&gt;
@@ -189,13 +210,20 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
     <item>
       <title>Docs: OpLog</title>
       <link>https://getbaker.io/docs/components/outputs/oplog/</link>
-      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/oplog/</guid>
       <description>
         
         
-        &lt;h2 id=&#34;output-oplog&#34;&gt;Output &lt;em&gt;OpLog&lt;/em&gt;&lt;/h2&gt;
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/output#OpLog&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;output-oplog&#34;&gt;Output &lt;em&gt;OpLog&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;non-raw&lt;/em&gt; output, it doesn&amp;rsquo;t receive whole records. Instead it receives a list of fields for each record (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
 &lt;p&gt;This output writes the filtered log lines into the current baker log, purely for development purpose.&lt;/p&gt;
@@ -208,13 +236,20 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
     <item>
       <title>Docs: Stats</title>
       <link>https://getbaker.io/docs/components/outputs/stats/</link>
-      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/stats/</guid>
       <description>
         
         
-        &lt;h2 id=&#34;output-stats&#34;&gt;Output &lt;em&gt;Stats&lt;/em&gt;&lt;/h2&gt;
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/output#Stats&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;output-stats&#34;&gt;Output &lt;em&gt;Stats&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;raw&lt;/em&gt; output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
 &lt;p&gt;Compute various distributions of the records it receives and dumps that to CSV.&lt;br&gt;
@@ -262,13 +297,20 @@ It computes the distribution of record by size and the distribution of the value
     <item>
       <title>Docs: WebSocket</title>
       <link>https://getbaker.io/docs/components/outputs/websocket/</link>
-      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/websocket/</guid>
       <description>
         
         
-        &lt;h2 id=&#34;output-websocket&#34;&gt;Output &lt;em&gt;WebSocket&lt;/em&gt;&lt;/h2&gt;
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/output#WebSocket&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;output-websocket&#34;&gt;Output &lt;em&gt;WebSocket&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;non-raw&lt;/em&gt; output, it doesn&amp;rsquo;t receive whole records. Instead it receives a list of fields for each record (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
 &lt;p&gt;This output writes the filtered log lines into any connected WebSocket client.&lt;/p&gt;
