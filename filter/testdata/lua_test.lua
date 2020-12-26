@@ -1,7 +1,7 @@
+-- use record:get and record:set to swap 2 fields
 function swapFields(rec, next)
-    local f1, f2
-    f1 = rec:get(1)
-    rec:set(1, rec:get(2))
+    local f1, f2 = rec:get(1), rec:get(2)
+    rec:set(1, f2)
     rec:set(2, f1)
     next(rec)
 end

@@ -25,7 +25,7 @@ end
 	if err != nil {
 		b.Fatal(err)
 	}
-	// fname := filepath.Join(b.TempDir(), "filters.lua")
+
 	fname := filepath.Join(dir, "filters.lua")
 	if err := ioutil.WriteFile(fname, []byte(script), os.ModePerm); err != nil {
 		b.Fatalf("can't write lua script: %v", err)
