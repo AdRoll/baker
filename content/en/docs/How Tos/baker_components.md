@@ -210,7 +210,7 @@ comp := baker.Components{
 
 `FieldNames` is the slice holding the record field names.
 
-Record fields are 0-based indices, and thus the role of the `FieldNames` slice is twofold, first it allows 
+Record fields are 0-based indices, and thus the role of the `FieldNames` slice is twofold: first it allows 
 Baker components to refer to a record field by its name rather than its index. It also set an upper-bound on
 the number of declared fields a Record can have, which is useful in some cases. That's why `FieldNames` is
 provided for components to use in case they need it.
