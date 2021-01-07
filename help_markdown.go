@@ -4,10 +4,7 @@ import (
 	"fmt"
 	"io"
 	"reflect"
-	"runtime"
 	"strings"
-	"syscall"
-	"unsafe"
 
 	"github.com/charmbracelet/glamour"
 )
@@ -30,44 +27,6 @@ func RenderHelpMarkdown(w io.Writer, name string, comp Components) error {
 	r.Close()
 	_, err := io.Copy(w, r)
 	return err
-}
-
-func terminalWidth() uint {
-	const (
-		maxWidth     = 140 // don't go over 140 chars anyway
-		defaultWidth = 110 // in case we can't get the terminal width
-	)
-
-	var w uint
-
-	defer func() {
-		if err := recover(); err != nil {
-			w = defaultWidth
-		}
-	}()
-
-	if runtime.GOOS == "windows" {
-		// On windows assume 120 character wide terminal since the subsequent
-		// method only works on nix systems.
-		return 120
-	}
-
-	ws := &struct{ Row, Col, Xpixel, Ypixel uint16 }{}
-	retCode, _, errno := syscall.Syscall(syscall.SYS_IOCTL,
-		uintptr(syscall.Stdout),
-		uintptr(syscall.TIOCGWINSZ),
-		uintptr(unsafe.Pointer(ws)))
-
-	if int(retCode) == -1 {
-		panic(errno)
-	}
-
-	if ws.Col > maxWidth {
-		return maxWidth
-	}
-
-	w = uint(ws.Col)
-	return w
 }
 
 // GenerateMarkdownHelp generates markdown-formatted textual help for a Baker
