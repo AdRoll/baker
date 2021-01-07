@@ -26,7 +26,6 @@ The file has several sections, described below:
 | `[general]`     | false      | General configuration                   |
 | `[metrics]`     | false      | Metrics service configuration           |
 | `[fields]`      | false      | Array of record fields names            |
-| `[csv]`         | false      | CSV specific configuration              |
 | `[[user]]`      | false      | Array of user-defined configurations    |
 | `[input]`       | true       | Input component configuration           |
 | `[filterchain]` | false      | Filter chain global configuration       |
@@ -59,14 +58,6 @@ names = ["foo", "bar"]
 ```
 
 defines a structure of the records with two fields: `foo` as first element and `bar` as second.
-
-#### CSV configuration
-
-The `[csv]` section is used to configure the CSV records.
-
-| Key                    | Type   | Effect |
-|------------------------|--------|--------|
-| field_separator        | string   | A single-byte char used as separator for the records' fields | 
 
 #### Components configuration
 
