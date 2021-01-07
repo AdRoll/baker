@@ -185,7 +185,7 @@ comp := baker.Components{
 
 `FieldByName` returns the index of a field given its name.
 
-Internally Baker refers to fields by their indexes, but it's simpler for users to refer to fields
+Internally Baker refers to fields by their indices, but it's simpler for users to refer to fields
 with their names. This function exists to convert a field name to its index, it also controls
 if the name is valid. 
 
@@ -194,21 +194,27 @@ index of a field they need for filtering or processing, but it is also used inte
 Baker when sending fields to the output (when at least one field is selected in the output
 TOML configuration).
 
-## FieldName
+## FieldNames
 
 ```go
 import "github.com/AdRoll/baker"
 
-func fieldName(idx baker.FieldIndex) string {
-	// ...
-}
+fieldNames := []string{"field0", "field1", "field2", "field3"}
 
 comp := baker.Components{
-	FieldName: fieldName,
+	FieldNames: fieldNames,
 
-	// Other fields now shown here.
+	// Other fields not shown here.
 }
 ```
-`FieldName` returns a field name from its index.
 
-The function is provided for components to use in case they need it.
+`FieldNames` is the slice holding the record field names.
+
+Record fields are 0-based indices, and thus the role of the `FieldNames` slice is twofold, first it allows 
+Baker components to refer to a record field by its name rather than its index. It also set an upper-bound on
+the number of declared fields a Record can have, which is useful in some cases. That's why `FieldNames` is
+provided for components to use in case they need it.
+
+If the `FieldNames` slice has not been set, Baker generates it automatically from the `[fields]` section in 
+Baker TOML configuration file. However Baker will refuse to start if field names are neither set in 
+`baker.Components` nor in the configuration file.
