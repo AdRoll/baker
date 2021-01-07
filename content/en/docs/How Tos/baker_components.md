@@ -57,7 +57,7 @@ comp := baker.Components{
 	Outputs:       append(output.All, MyCustomOutputDesc...),
 	Uploads:       upload.All,
 
-	// Other fields now shown here.
+	// Other fields not shown here.
 }
 ```
 
@@ -74,7 +74,7 @@ import (
 comp := baker.Components{
     Metrics: metrics.All,
 
-	// Other fields now shown here.
+	// Other fields not shown here.
 }
 ```
 
@@ -92,7 +92,7 @@ import "github.com/AdRoll/baker"
 comp := baker.Components{
 	User:    []baker.UserDesc{ /* list of user-specific structs */},
 
-	// Other fields now shown here.
+	// Other fields not shown here.
 }
 ```
 
@@ -114,7 +114,7 @@ shardingFuncs := make(map[baker.FieldIndex]baker.ShardingFunc)
 comp := baker.Components{
 	ShardingFuncs: shardingFuncs,
 
-	// Other fields now shown here.
+	// Other fields not shown here.
 }
 ```
 
@@ -133,7 +133,7 @@ func validate(baker.Record) (bool, baker.FieldIndex) {
 comp := baker.Components{
 	Validate: validate,
 
-	// Other fields now shown here.
+	// Other fields not shown here.
 }
 ```
 
@@ -155,7 +155,7 @@ func create() baker.Record {
 comp := baker.Components{
 	CreateRecord: create,
 
-	// Other fields now shown here.
+	// Other fields not shown here.
 }
 ```
 
@@ -179,7 +179,7 @@ func fieldByName(name string) (baker.FieldIndex, bool) {
 comp := baker.Components{
 	FieldByName: fieldByName,
 
-	// Other fields now shown here.
+	// Other fields not shown here.
 }
 ```
 
