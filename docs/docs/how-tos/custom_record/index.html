@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.78.2" />
+<meta name="generator" content="Hugo 0.80.0" />
 
 <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
 
@@ -32,7 +32,7 @@
 ">
 <meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
-<meta itemprop="wordCount" content="395">
+<meta itemprop="wordCount" content="398">
 
 
 
@@ -82,7 +82,7 @@
 				
 				
 				
-				<a  class="nav-link" href="/" ><span>Home</span></a>
+				<a class="nav-link" href="/" ><span>Home</span></a>
 			</li>
 			
 			<li class="nav-item mr-4 mb-2 mb-lg-0">
@@ -90,7 +90,7 @@
 				
 				
 				
-				<a  class="nav-link" href="/docs/getting-started/" ><span>Getting Started</span></a>
+				<a class="nav-link" href="/docs/getting-started/" ><span>Getting Started</span></a>
 			</li>
 			
 			<li class="nav-item mr-4 mb-2 mb-lg-0">
@@ -98,7 +98,7 @@
 				
 				
 				
-				<a  class="nav-link" href="/docs/core-concepts/" ><span>Core Concepts</span></a>
+				<a class="nav-link" href="/docs/core-concepts/" ><span>Core Concepts</span></a>
 			</li>
 			
 			<li class="nav-item mr-4 mb-2 mb-lg-0">
@@ -106,7 +106,7 @@
 				
 				
 				
-				<a  class="nav-link" href="/docs/components/" ><span>Components</span></a>
+				<a class="nav-link" href="/docs/components/" ><span>Components</span></a>
 			</li>
 			
 			<li class="nav-item mr-4 mb-2 mb-lg-0">
@@ -114,7 +114,7 @@
 				
 				
 				
-				<a  class="nav-link" href="/docs/how-tos/" ><span>How-tos</span></a>
+				<a class="nav-link" href="/docs/how-tos/" ><span>How-tos</span></a>
 			</li>
 			
 			<li class="nav-item mr-4 mb-2 mb-lg-0">
@@ -122,7 +122,7 @@
 				
 				
 				
-				<a  class="nav-link" href="https://pkg.go.dev/github.com/AdRoll/baker" target="_blank" ><span>API</span></a>
+				<a class="nav-link" href="https://pkg.go.dev/github.com/AdRoll/baker" target="_blank" ><span>API</span></a>
 			</li>
 			
 			<li class="nav-item mr-4 mb-2 mb-lg-0">
@@ -130,7 +130,7 @@
 				
 				
 				
-				<a id="menu_gh" class="nav-link" href="https://github.com/adroll/baker" target="_blank" ><span>GitHub</span></a>
+				<a class="nav-link" href="https://github.com/adroll/baker" target="_blank" ><span>GitHub</span></a>
 			</li>
 			
 			
@@ -147,7 +147,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.d03e78db5e33fa8b0c056cb0fa5d57dc73edd7d34cb1ba1f13c0cb1b813bb575800533f85d6e49ed09a2dee84c826dded9e9bc059ea2e01e8211715823dc62eb.json"
+  data-offline-search-index-json-src="/offline-search-index.317a6f6b1937cba65ecc340a4a5e7a3890d24c70de4794e6732da04741eb8e91fa655123f038829e52295bceab2704155959cdabd888c0cbe84c88f0629e49da.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -178,7 +178,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.d03e78db5e33fa8b0c056cb0fa5d57dc73edd7d34cb1ba1f13c0cb1b813bb575800533f85d6e49ed09a2dee84c826dded9e9bc059ea2e01e8211715823dc62eb.json"
+  data-offline-search-index-json-src="/offline-search-index.317a6f6b1937cba65ecc340a4a5e7a3890d24c70de4794e6732da04741eb8e91fa655123f038829e52295bceab2704155959cdabd888c0cbe84c88f0629e49da.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -694,7 +694,7 @@
         <li><a href="#validate">Validate</a></li>
         <li><a href="#createrecord"><code>CreateRecord</code></a></li>
         <li><a href="#fieldbyname"><code>FieldByName</code></a></li>
-        <li><a href="#fieldname"><code>FieldName</code></a></li>
+        <li><a href="#fieldnames"><code>FieldNames</code></a></li>
       </ul>
     </li>
     <li><a href="#record-conformance-test">Record conformance test</a></li>
@@ -755,14 +755,14 @@ where columns of fields are indexed through integers.</p>
 version, implementing the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Record"><code>Record</code> inteface</a>.</p>
 <h2 id="how-to-use-a-custom-version-of-the-record">How to use a custom version of the Record</h2>
 <p>Once your Record version is ready, you need to use it in your code.</p>
-<p>In order to do so, some functions may be implemented while instantiating
-<a href="/docs/how-tos/baker_components/"><code>baker.Components</code></a>:</p>
+<p>In order to do so, you must create and fill a <a href="/docs/how-tos/baker_components/"><code>baker.Components</code></a> struct.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> Components <span style="color:#8be9fd;font-style:italic">struct</span> {
-	Validate      ValidationFunc
-    CreateRecord  <span style="color:#8be9fd;font-style:italic">func</span>() Record
-    FieldByName <span style="color:#8be9fd;font-style:italic">func</span>(<span style="color:#8be9fd">string</span>) (FieldIndex, <span style="color:#8be9fd">bool</span>)
-    FieldName   <span style="color:#8be9fd;font-style:italic">func</span>(FieldIndex) <span style="color:#8be9fd">string</span>
-    <span style="color:#6272a4">//... other functions
+	Validate     ValidationFunc
+	CreateRecord <span style="color:#8be9fd;font-style:italic">func</span>() Record
+	FieldByName  <span style="color:#8be9fd;font-style:italic">func</span>(<span style="color:#8be9fd">string</span>) (FieldIndex, <span style="color:#8be9fd">bool</span>)
+	FieldNames   []<span style="color:#8be9fd">string</span>
+
+	<span style="color:#6272a4">// ... other fields
 </span><span style="color:#6272a4"></span>}
 </code></pre></div><h3 id="validate">Validate</h3>
 <p><code>Validate</code> is the function used to validate a record. It is called for each processed record
@@ -781,9 +781,9 @@ the input.</p>
 (that receive it during setup) to retrieve the index of a field they need for filtering or
 processing, but it is also used internally by Baker when sending fields to the output
 (when at least one field is selected in the output TOML configuration).</p>
-<h3 id="fieldname"><code>FieldName</code></h3>
-<p><code>FieldName</code> gets a field name by its index. The function is passed to components that can use
-it for their internal logic.</p>
+<h3 id="fieldnames"><code>FieldNames</code></h3>
+<p><code>FieldNames []string</code> lists the names of the fields a <code>Record</code> can have. Since it&rsquo;s a slice, its
+length also indicates the maximum number of fields.</p>
 <h2 id="record-conformance-test">Record conformance test</h2>
 <p><a href="https://github.com/AdRoll/baker/blob/23938bc743100373379403dd25618c25f0822231/test_helper.go#L11"><code>test_helper.go</code></a>
 provides a test helper, <code>RecordConformanceTest</code>, one can and should use to verify their
@@ -842,7 +842,7 @@ be executed against all custom implementations of the Record.
         
       </div>
       <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
-        <small class="text-white">&copy; 2020 NextRoll, Inc. All Rights Reserved</small>
+        <small class="text-white">&copy; 2021 NextRoll, Inc. All Rights Reserved</small>
         <small class="ml-1"><a href="https://www.nextroll.com/privacy" target="_blank">Privacy Policy</a></small>
 	
 		

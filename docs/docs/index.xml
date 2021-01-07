@@ -1656,14 +1656,14 @@ where columns of fields are indexed through integers.&lt;/p&gt;
 version, implementing the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Record&#34;&gt;&lt;code&gt;Record&lt;/code&gt; inteface&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;how-to-use-a-custom-version-of-the-record&#34;&gt;How to use a custom version of the Record&lt;/h2&gt;
 &lt;p&gt;Once your Record version is ready, you need to use it in your code.&lt;/p&gt;
-&lt;p&gt;In order to do so, some functions may be implemented while instantiating
-&lt;a href=&#34;https://getbaker.io/docs/how-tos/baker_components/&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;In order to do so, you must create and fill a &lt;a href=&#34;https://getbaker.io/docs/how-tos/baker_components/&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt; struct.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Components &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
-	Validate      ValidationFunc
-    CreateRecord  &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() Record
-    FieldByName &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) (FieldIndex, &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;)
-    FieldName   &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(FieldIndex) &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;
-    &lt;span style=&#34;color:#6272a4&#34;&gt;//... other functions
+	Validate     ValidationFunc
+	CreateRecord &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() Record
+	FieldByName  &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) (FieldIndex, &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;)
+	FieldNames   []&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;
+
+	&lt;span style=&#34;color:#6272a4&#34;&gt;// ... other fields
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;validate&#34;&gt;Validate&lt;/h3&gt;
 &lt;p&gt;&lt;code&gt;Validate&lt;/code&gt; is the function used to validate a record. It is called for each processed record
@@ -1682,9 +1682,9 @@ the input.&lt;/p&gt;
 (that receive it during setup) to retrieve the index of a field they need for filtering or
 processing, but it is also used internally by Baker when sending fields to the output
 (when at least one field is selected in the output TOML configuration).&lt;/p&gt;
-&lt;h3 id=&#34;fieldname&#34;&gt;&lt;code&gt;FieldName&lt;/code&gt;&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;FieldName&lt;/code&gt; gets a field name by its index. The function is passed to components that can use
-it for their internal logic.&lt;/p&gt;
+&lt;h3 id=&#34;fieldnames&#34;&gt;&lt;code&gt;FieldNames&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;FieldNames []string&lt;/code&gt; lists the names of the fields a &lt;code&gt;Record&lt;/code&gt; can have. Since it&amp;rsquo;s a slice, its
+length also indicates the maximum number of fields.&lt;/p&gt;
 &lt;h2 id=&#34;record-conformance-test&#34;&gt;Record conformance test&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&#34;https://github.com/AdRoll/baker/blob/23938bc743100373379403dd25618c25f0822231/test_helper.go#L11&#34;&gt;&lt;code&gt;test_helper.go&lt;/code&gt;&lt;/a&gt;
 provides a test helper, &lt;code&gt;RecordConformanceTest&lt;/code&gt;, one can and should use to verify their
@@ -1946,7 +1946,7 @@ comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 	Outputs:       &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;append&lt;/span&gt;(output.All, MyCustomOutputDesc&lt;span style=&#34;color:#ff79c6&#34;&gt;...&lt;/span&gt;),
 	Uploads:       upload.All,
 
-	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields now shown here.
+	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields not shown here.
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;metrics&#34;&gt;Metrics&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;Metrics&lt;/code&gt; lists the metrics clients available when creating topologies.&lt;/p&gt;
@@ -1958,7 +1958,7 @@ comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
     Metrics: metrics.All,
 
-	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields now shown here.
+	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields not shown here.
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This list can contain a metric backend already included into Baker or a custom implementation
 of the &lt;code&gt;baker.MetricsClient&lt;/code&gt; interface.&lt;/p&gt;
@@ -1969,7 +1969,7 @@ of the &lt;code&gt;baker.MetricsClient&lt;/code&gt; interface.&lt;/p&gt;
 comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 	User:    []baker.UserDesc{ &lt;span style=&#34;color:#6272a4&#34;&gt;/* list of user-specific structs */&lt;/span&gt;},
 
-	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields now shown here.
+	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields not shown here.
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Baker users might want to use Baker TOML files to store application-specific configuration.
 The &lt;code&gt;User&lt;/code&gt; field lists user-defined configurations structures which aren&amp;rsquo;t strictly
@@ -1985,7 +1985,7 @@ shardingFuncs &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span
 comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 	ShardingFuncs: shardingFuncs,
 
-	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields now shown here.
+	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields not shown here.
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;ShardingFuncs&lt;/code&gt; holds a dictionary associating field indexes to hash functions. When sharding
 is enabled, these hash functions are used to determine which shard a record is sent to.&lt;/p&gt;
@@ -1999,7 +1999,7 @@ is enabled, these hash functions are used to determine which shard a record is s
 comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 	Validate: validate,
 
-	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields now shown here.
+	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields not shown here.
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;Validate&lt;/code&gt; is the function used to validate a record. It is called for each processed record
 unless &lt;code&gt;nil&lt;/code&gt; or when &lt;code&gt;dont_validate_fields&lt;/code&gt; is set to &lt;code&gt;true&lt;/code&gt; in TOML&amp;rsquo;s &lt;code&gt;[general]&lt;/code&gt; section.&lt;/p&gt;
@@ -2015,7 +2015,7 @@ to all components so that they can use it at their will.&lt;/p&gt;
 comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 	CreateRecord: create,
 
-	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields now shown here.
+	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields not shown here.
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;CreateRecord&lt;/code&gt; is a factory function returning new &lt;code&gt;Record&lt;/code&gt; instances. If not set, a default function is
 used that creates a &lt;code&gt;LogLine&lt;/code&gt; with the &lt;strong&gt;comma&lt;/strong&gt; field separator.&lt;/p&gt;
@@ -2032,30 +2032,34 @@ happens when blobs of raw serialized data, provided by the &lt;code&gt;Input&lt;
 comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 	FieldByName: fieldByName,
 
-	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields now shown here.
+	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields not shown here.
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;FieldByName&lt;/code&gt; returns the index of a field given its name.&lt;/p&gt;
-&lt;p&gt;Internally Baker refers to fields by their indexes, but it&amp;rsquo;s simpler for users to refer to fields
+&lt;p&gt;Internally Baker refers to fields by their indices, but it&amp;rsquo;s simpler for users to refer to fields
 with their names. This function exists to convert a field name to its index, it also controls
 if the name is valid.&lt;/p&gt;
 &lt;p&gt;The function is mainly used by the components (that receive it during setup) to retrieve the
 index of a field they need for filtering or processing, but it is also used internally by
 Baker when sending fields to the output (when at least one field is selected in the output
 TOML configuration).&lt;/p&gt;
-&lt;h2 id=&#34;fieldname&#34;&gt;FieldName&lt;/h2&gt;
+&lt;h2 id=&#34;fieldnames&#34;&gt;FieldNames&lt;/h2&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
 
-&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;fieldName&lt;/span&gt;(idx baker.FieldIndex) &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt; {
-	&lt;span style=&#34;color:#6272a4&#34;&gt;// ...
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
+fieldNames &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; []&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;{&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;field0&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;field1&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;field2&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;field3&amp;#34;&lt;/span&gt;}
 
 comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
-	FieldName: fieldName,
+	FieldNames: fieldNames,
 
-	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields now shown here.
+	&lt;span style=&#34;color:#6272a4&#34;&gt;// Other fields not shown here.
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;FieldName&lt;/code&gt; returns a field name from its index.&lt;/p&gt;
-&lt;p&gt;The function is provided for components to use in case they need it.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;FieldNames&lt;/code&gt; is the slice holding the record field names.&lt;/p&gt;
+&lt;p&gt;Record fields are 0-based indices, and thus the role of the &lt;code&gt;FieldNames&lt;/code&gt; slice is twofold: first it allows
+Baker components to refer to a record field by its name rather than its index. It also set an upper-bound on
+the number of declared fields a Record can have, which is useful in some cases. That&amp;rsquo;s why &lt;code&gt;FieldNames&lt;/code&gt; is
+provided for components to use in case they need it.&lt;/p&gt;
+&lt;p&gt;If the &lt;code&gt;FieldNames&lt;/code&gt; slice has not been set, Baker generates it automatically from the &lt;code&gt;[fields]&lt;/code&gt; section in
+Baker TOML configuration file. However Baker will refuse to start if field names are neither set in
+&lt;code&gt;baker.Components&lt;/code&gt; nor in the configuration file.&lt;/p&gt;
 
       </description>
     </item>
