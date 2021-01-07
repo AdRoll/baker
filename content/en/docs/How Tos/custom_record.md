@@ -19,16 +19,16 @@ version, implementing the [`Record` inteface](https://pkg.go.dev/github.com/AdRo
 
 Once your Record version is ready, you need to use it in your code.
 
-In order to do so, some functions may be implemented while instantiating
-[`baker.Components`](/docs/how-tos/baker_components/):
+In order to do so, you must create and fill a [`baker.Components`](/docs/how-tos/baker_components/) struct.
 
 ```go
 type Components struct {
-	Validate      ValidationFunc
-    CreateRecord  func() Record
-    FieldByName func(string) (FieldIndex, bool)
-    FieldName   func(FieldIndex) string
-    //... other functions
+	Validate     ValidationFunc
+	CreateRecord func() Record
+	FieldByName  func(string) (FieldIndex, bool)
+	FieldNames   []string
+
+	// ... other fields
 }
 ```
 
@@ -58,10 +58,10 @@ The function is also passed to components that can use it to create new records 
 processing, but it is also used internally by Baker when sending fields to the output
 (when at least one field is selected in the output TOML configuration).
 
-### `FieldName`
+### `FieldNames`
 
-`FieldName` gets a field name by its index. The function is passed to components that can use
-it for their internal logic.
+`FieldNames []string` lists the names of the fields a `Record` can have. Since it's a slice, its
+length also indicates the maximum number of fields.
 
 ## Record conformance test
 
