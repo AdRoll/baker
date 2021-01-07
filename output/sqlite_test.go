@@ -45,17 +45,7 @@ func makeWriter(t *testing.T, raw bool, path string, truncate bool) baker.Output
 		return 0, false
 	}
 
-	fieldName := func(i baker.FieldIndex) string {
-		switch i {
-		case 0:
-			return "field0"
-		case 1:
-			return "field1"
-		case 2:
-			return "field2"
-		}
-		return ""
-	}
+	fieldNames := []string{"field0", "field1", "field2"}
 
 	params := baker.OutputParams{
 		Fields: []baker.FieldIndex{0, 1, 2},
@@ -63,7 +53,7 @@ func makeWriter(t *testing.T, raw bool, path string, truncate bool) baker.Output
 		ComponentParams: baker.ComponentParams{
 			DecodedConfig: cfg,
 			FieldByName:   fieldByName,
-			FieldName:     fieldName,
+			FieldNames:    fieldNames,
 		},
 	}
 	writer, err := newSQLiteWriter(raw)(params)
@@ -278,17 +268,7 @@ func TestSQLitePrePostCommands(t *testing.T) {
 		return 0, false
 	}
 
-	fieldName := func(i baker.FieldIndex) string {
-		switch i {
-		case 0:
-			return "field0"
-		case 1:
-			return "field1"
-		case 2:
-			return "field2"
-		}
-		return ""
-	}
+	fieldNames := []string{"field0", "field1", "field2"}
 
 	cfg := baker.OutputParams{
 		Fields: []baker.FieldIndex{0, 1, 2},
@@ -296,7 +276,7 @@ func TestSQLitePrePostCommands(t *testing.T) {
 		ComponentParams: baker.ComponentParams{
 			DecodedConfig: &config,
 			FieldByName:   fieldByName,
-			FieldName:     fieldName,
+			FieldNames:    fieldNames,
 		},
 	}
 	writer, err := newSQLiteWriter(false)(cfg)

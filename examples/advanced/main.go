@@ -25,6 +25,9 @@ const (
 	Target    baker.FieldIndex = 2
 )
 
+// And their respective names
+var fieldNames = []string{"timestamp", "source", "target"}
+
 var components = baker.Components{
 	Inputs:        input.All,
 	Filters:       filter.All,
@@ -33,13 +36,7 @@ var components = baker.Components{
 	ShardingFuncs: shardingFuncs,
 	Validate:      validateLogLine,
 	FieldByName:   fieldByName,
-	FieldName:     fieldName,
-}
-
-var fields = map[string]baker.FieldIndex{
-	"timestamp": Timestamp,
-	"source":    Source,
-	"target":    Target,
+	FieldNames:    fieldNames,
 }
 
 var shardingFuncs = map[baker.FieldIndex]baker.ShardingFunc{
@@ -71,16 +68,12 @@ func validateLogLine(baker.Record) (bool, baker.FieldIndex) {
 	return true, 0
 }
 
-func fieldByName(key string) (baker.FieldIndex, bool) {
-	idx, ok := fields[key]
-	return idx, ok
-}
-
-func fieldName(idx baker.FieldIndex) string {
-	for k, v := range fields {
-		if v == idx {
-			return k
+func fieldByName(name string) (baker.FieldIndex, bool) {
+	for idx, n := range fieldNames {
+		if n == name {
+			return baker.FieldIndex(idx), true
 		}
 	}
-	return ""
+
+	return 0, false
 }

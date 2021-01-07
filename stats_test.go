@@ -139,15 +139,7 @@ fields=["field0"]
 			}
 			return 0, false
 		},
-		FieldName: func(f baker.FieldIndex) string {
-			switch f {
-			case 0:
-				return "field0"
-			case 1:
-				return "field1"
-			}
-			return ""
-		},
+		FieldNames: []string{"field0", "field1"},
 		Validate: func(r baker.Record) (bool, baker.FieldIndex) {
 			// field at index 0 must be "value0"
 			// field at index 1 must be "value1"

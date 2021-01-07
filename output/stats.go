@@ -116,7 +116,7 @@ func (s *fieldStats) add(ll baker.Record) {
 	s.m[string(b)]++
 }
 
-func (s *fieldStats) print(w io.Writer, fieldName func(baker.FieldIndex) string) error {
+func (s *fieldStats) print(w io.Writer, fieldNames []string) error {
 	var smallest, biggest uint = math.MaxUint32, 0
 
 	qt := quantile.NewTargeted(0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 0.90, 0.95, 0.99)
@@ -135,7 +135,7 @@ func (s *fieldStats) print(w io.Writer, fieldName func(baker.FieldIndex) string)
 	csvw := csv.NewWriter(w)
 	if err := csvw.Write(
 		[]string{fmt.Sprintf(
-			"num samples (%s)", fieldName(s.field)),
+			"num samples (%s)", fieldNames[s.field]),
 			"smallest",
 			"1st %%ile", "5th %%ile", "10th %%ile", "25th %%ile", "50th %%ile", "75th %%ile", "90th %%ile", "95th %%ile", "99th %%ile",
 			"biggest"}); err != nil {
@@ -330,9 +330,9 @@ func (s *Stats) createStatsCSV() error {
 		(&s.times).print(buf)
 	}
 	for i := range s.fields {
-		fname := s.cfg.FieldName(s.fields[i].field)
+		fname := s.cfg.FieldNames[s.fields[i].field]
 		fmt.Fprintf(buf, "section,%s,distribution of number of log lines per distinct %s value\n", fname, fname)
-		s.fields[i].print(buf, s.cfg.FieldName)
+		s.fields[i].print(buf, s.cfg.FieldNames)
 	}
 	return ioutil.WriteFile(s.csvPath, buf.Bytes(), os.ModePerm)
 

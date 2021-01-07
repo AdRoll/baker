@@ -138,7 +138,7 @@ type Config struct {
 	createRecord  func() Record
 
 	fieldByName func(string) (FieldIndex, bool)
-	fieldName   func(FieldIndex) string
+	fieldNames  []string
 }
 
 // String returns a string representation of the exported fields of c.
@@ -423,9 +423,9 @@ func hasConfig(cfg interface{}) bool {
 // sets both fieldByName and fieldName in cfg.
 func assignFieldMapping(cfg *Config, comp Components) error {
 	cfgOk := len(cfg.Fields.Names) != 0
-	compOk := comp.FieldByName != nil && comp.FieldName != nil
+	compOk := comp.FieldByName != nil && comp.FieldNames != nil
 
-	if (comp.FieldByName == nil) != (comp.FieldName == nil) {
+	if (comp.FieldByName == nil) != (comp.FieldNames == nil) {
 		return fmt.Errorf("FieldByName and FieldName must be either both set or both unset")
 	}
 
@@ -441,7 +441,7 @@ func assignFieldMapping(cfg *Config, comp Components) error {
 	if compOk {
 		// Ok, mapping has been set from Components.
 		cfg.fieldByName = comp.FieldByName
-		cfg.fieldName = comp.FieldName
+		cfg.fieldNames = comp.FieldNames
 		return nil
 	}
 
@@ -455,12 +455,10 @@ func assignFieldMapping(cfg *Config, comp Components) error {
 		m[s] = FieldIndex(f)
 	}
 
+	cfg.fieldNames = cfg.Fields.Names
 	cfg.fieldByName = func(name string) (FieldIndex, bool) {
 		f, ok := m[name]
 		return f, ok
-	}
-	cfg.fieldName = func(fidx FieldIndex) string {
-		return cfg.Fields.Names[fidx]
 	}
 
 	return nil

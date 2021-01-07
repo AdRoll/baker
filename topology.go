@@ -43,8 +43,8 @@ type Topology struct {
 	wgout sync.WaitGroup
 	wgupl sync.WaitGroup
 
-	validate  ValidationFunc
-	fieldName func(FieldIndex) string // Used by StatsDumper
+	validate   ValidationFunc
+	fieldNames []string // Used by StatsDumper
 }
 
 // NewTopologyFromConfig gets a baker configuration and returns a Topology
@@ -55,7 +55,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 		filterProcs: cfg.FilterChain.Procs,
 		rawOutput:   cfg.Output.desc.Raw,
 		validate:    cfg.validate,
-		fieldName:   cfg.fieldName,
+		fieldNames:  cfg.fieldNames,
 		linePool: sync.Pool{
 			New: func() interface{} {
 				return cfg.createRecord()
@@ -82,7 +82,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 		ComponentParams{
 			DecodedConfig:  cfg.Input.DecodedConfig,
 			FieldByName:    cfg.fieldByName,
-			FieldName:      cfg.fieldName,
+			FieldNames:     cfg.fieldNames,
 			CreateRecord:   cfg.createRecord,
 			ValidateRecord: cfg.validate,
 			Metrics:        tp.metrics,
@@ -99,7 +99,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 			ComponentParams{
 				DecodedConfig:  cfg.Filter[idx].DecodedConfig,
 				FieldByName:    cfg.fieldByName,
-				FieldName:      cfg.fieldName,
+				FieldNames:     cfg.fieldNames,
 				CreateRecord:   cfg.createRecord,
 				ValidateRecord: cfg.validate,
 				Metrics:        tp.metrics,
@@ -130,7 +130,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 			ComponentParams: ComponentParams{
 				DecodedConfig:  cfg.Output.DecodedConfig,
 				FieldByName:    cfg.fieldByName,
-				FieldName:      cfg.fieldName,
+				FieldNames:     cfg.fieldNames,
 				CreateRecord:   cfg.createRecord,
 				ValidateRecord: cfg.validate,
 				Metrics:        tp.metrics,
@@ -182,7 +182,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 			ComponentParams{
 				DecodedConfig:  cfg.Upload.DecodedConfig,
 				FieldByName:    cfg.fieldByName,
-				FieldName:      cfg.fieldName,
+				FieldNames:     cfg.fieldNames,
 				CreateRecord:   cfg.createRecord,
 				ValidateRecord: cfg.validate,
 				Metrics:        tp.metrics,

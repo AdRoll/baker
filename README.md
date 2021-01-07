@@ -84,21 +84,21 @@ parsing a toml file with `baker.NewConfigFromToml()`. This function requires a
 This is an example of this struct:
 
 ```go
-baker.Components{
-    Inputs:        input.AllInputs(),
-    Filters:       MyCustomFilters(),
-    // merge available outputs with user custom outputs
-    Outputs:       append(output.AllOutputs(), MyCustomOutputs()...),
-    Uploads:       MyCustomUploads(),
-    // optional: custom extra config
-    User:          MyCustomConfigs(),
-    // optional: used if sharding is enabled
-    ShardingFuncs: MyRecordShardingFuncs,
-    // optional: used if records must be validated. Not used if [general.dont_validate_fields] is used in TOML
-    Validate:      MyRecordValidationFunc,
-    // optional: functions to get fields indexes by name and vice-versa
-    FieldByName:   MyFieldByNameFunc,
-    FieldName:     MyFieldNameFunc,
+comp := baker.Components{
+	Inputs:  input.AllInputs(),
+	Filters: MyCustomFilters(),
+	// merge available outputs with user custom outputs
+	Outputs: append(output.AllOutputs(), MyCustomOutputs()...),
+	Uploads: MyCustomUploads(),
+	// optional: custom extra config
+	User: MyCustomConfigs(),
+	// optional: used if sharding is enabled
+	ShardingFuncs: MyRecordShardingFuncs,
+	// optional: used if records must be validated. Not used if [general.dont_validate_fields] is used in TOML
+	Validate: MyRecordValidationFunc,
+	// optional: functions to get fields indexes by name and vice-versa
+	FieldByName: MyFieldByNameFunc,
+	FieldNames:  []string{"field0", "field1", "field2"},
 }
 ```
 

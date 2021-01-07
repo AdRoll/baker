@@ -103,23 +103,14 @@ func TestEnvVarBaseReplace(t *testing.T) {
 }
 
 func Test_assignFieldMapping(t *testing.T) {
-	fieldName := func(f FieldIndex) string {
-		switch f {
-		case 0:
-			return "name0"
-		case 1:
-			return "name1"
-		}
-		return ""
-	}
-
+	fieldNames := []string{"name0", "name1"}
 	fieldByName := func(n string) (FieldIndex, bool) {
-		switch n {
-		case "name0":
-			return 0, true
-		case "name1":
-			return 1, true
+		for idx, name := range fieldNames {
+			if n == name {
+				return FieldIndex(idx), true
+			}
 		}
+
 		return 0, false
 	}
 
@@ -144,7 +135,7 @@ func Test_assignFieldMapping(t *testing.T) {
 			cfg:  &Config{},
 			comp: Components{
 				FieldByName: fieldByName,
-				FieldName:   fieldName,
+				FieldNames:  fieldNames,
 			},
 		},
 
@@ -166,7 +157,7 @@ func Test_assignFieldMapping(t *testing.T) {
 			name: "FieldName but not FieldByName",
 			cfg:  &Config{},
 			comp: Components{
-				FieldName: fieldName,
+				FieldNames: fieldNames,
 			},
 			wantErr: true,
 		},
@@ -177,7 +168,7 @@ func Test_assignFieldMapping(t *testing.T) {
 			},
 			comp: Components{
 				FieldByName: fieldByName,
-				FieldName:   fieldName,
+				FieldNames:  fieldNames,
 			},
 			wantErr: true,
 		},
@@ -190,7 +181,7 @@ func Test_assignFieldMapping(t *testing.T) {
 			},
 			comp: Components{
 				FieldByName: fieldByName,
-				FieldName:   fieldName,
+				FieldNames:  fieldNames,
 			},
 			wantErr: true,
 		},
@@ -217,11 +208,11 @@ func Test_assignFieldMapping(t *testing.T) {
 			}
 
 			// Now we check that fieldName has been set correctly.
-			if name := tt.cfg.fieldName(0); name != "name0" {
-				t.Errorf(`cfg.fieldName(0) = %q, want %q`, name, "name0")
+			if name := tt.cfg.fieldNames[0]; name != "name0" {
+				t.Errorf(`cfg.fieldNames[0] = %q, want %q`, name, "name0")
 			}
-			if name := tt.cfg.fieldName(1); name != "name1" {
-				t.Errorf(`cfg.fieldName(1) = %q, want %q`, name, "name1")
+			if name := tt.cfg.fieldNames[1]; name != "name1" {
+				t.Errorf(`cfg.fieldNames[1] = %q, want %q`, name, "name1")
 			}
 		})
 	}
