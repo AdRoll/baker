@@ -32,7 +32,7 @@
 ">
 <meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
-<meta itemprop="wordCount" content="807">
+<meta itemprop="wordCount" content="951">
 
 
 
@@ -147,7 +147,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.317a6f6b1937cba65ecc340a4a5e7a3890d24c70de4794e6732da04741eb8e91fa655123f038829e52295bceab2704155959cdabd888c0cbe84c88f0629e49da.json"
+  data-offline-search-index-json-src="/offline-search-index.195d1145f8a0b705bbb9444ccad85c3b1cba9c9be8a30e8af58be11dfaea3603b2ab7247622943a9c324e37a421be2c7b39175802e1c94670d61a8cd36c4dc44.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -178,7 +178,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.317a6f6b1937cba65ecc340a4a5e7a3890d24c70de4794e6732da04741eb8e91fa655123f038829e52295bceab2704155959cdabd888c0cbe84c88f0629e49da.json"
+  data-offline-search-index-json-src="/offline-search-index.195d1145f8a0b705bbb9444ccad85c3b1cba9c9be8a30e8af58be11dfaea3603b2ab7247622943a9c324e37a421be2c7b39175802e1c94670d61a8cd36c4dc44.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -776,6 +776,11 @@ We use this file to:</p>
 <td>Metrics service configuration</td>
 </tr>
 <tr>
+<td><code>[fields]</code></td>
+<td>false</td>
+<td>Array of record fields names</td>
+</tr>
+<tr>
 <td><code>[[user]]</code></td>
 <td>false</td>
 <td>Array of user-defined configurations</td>
@@ -784,6 +789,11 @@ We use this file to:</p>
 <td><code>[input]</code></td>
 <td>true</td>
 <td>Input component configuration</td>
+</tr>
+<tr>
+<td><code>[filterchain]</code></td>
+<td>false</td>
+<td>Filter chain global configuration</td>
 </tr>
 <tr>
 <td><code>[[filter]]</code></td>
@@ -820,6 +830,16 @@ We use this file to:</p>
 </tr>
 </tbody>
 </table>
+<h4 id="fields-configuration">Fields configuration</h4>
+<p>The <code>name</code> configuration in the <code>[fields]</code> section provides a declarative way to define the
+structure of the records processed by Baker, without asking the user to define the <code>FieldByName</code>
+and <code>FieldName</code> functions.</p>
+<p><code>names</code> is a list of strings declaring the names of the fields and their position in the record
+(that is inherited by the position of the name in the list).</p>
+<p>So, to make an example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[fields]
+names = [<span style="color:#f1fa8c">&#34;foo&#34;</span>, <span style="color:#f1fa8c">&#34;bar&#34;</span>]
+</code></pre></div><p>defines a structure of the records with two fields: <code>foo</code> as first element and <code>bar</code> as second.</p>
 <h4 id="components-configuration">Components configuration</h4>
 <p>Components sections are <code>[input]</code>, <code>[[filter]]</code>, <code>[output]</code> and <code>[upload]</code> and contain a
 <code>name = &quot;&lt;component name&gt;&quot;</code> line and an optional <code>config</code> subsection (like <code>[input.config]</code>)
@@ -839,8 +859,8 @@ name=<span style="color:#f1fa8c">&#34;TimestampRange&#34;</span>
 
     [filter.config]
     StartDatetime = <span style="color:#f1fa8c">&#34;2020-10-30 15:00:00&#34;</span>
-	EndDatetime = <span style="color:#f1fa8c">&#34;2020-11-01 00:00:00&#34;</span>
-	Field = <span style="color:#f1fa8c">&#34;timestamp&#34;</span>
+    EndDatetime = <span style="color:#f1fa8c">&#34;2020-11-01 00:00:00&#34;</span>
+    Field = <span style="color:#f1fa8c">&#34;timestamp&#34;</span>
 
 [output]
 name=<span style="color:#f1fa8c">&#34;DynamoDB&#34;</span>
@@ -856,6 +876,9 @@ a list of local or remote paths/URLs. <code>[input.config]</code> is where compo
 can be specified, and in this case we simply provide the files option to List.<br>
 Notice that List would accept http:// or even s3:// URLs there in addition to local paths,<br>
 and some more (run ./Baker-bin -help List in the help example for more details).</p>
+<p><code>[filterchain]</code> defines the configuration for the whole filter chain. Filter-specific configurations
+are provided by <code>[[filter]]</code> (see below). The only accepted configuration in <code>[filterchain]</code> is
+<code>procs = &lt;int&gt;</code> that defines the number of concurrent filter chains. The default value is 16.</p>
 <p><code>[[filter]]</code> In TOML syntax, the double brackets indicates an array of sections.<br>
 This is where you declare the list of filters (i.e filter chain) to sequentially apply to your
 records. As other components, each filter may be followed by a <code>[filter.config]</code> section.</p>

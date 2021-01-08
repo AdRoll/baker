@@ -1445,6 +1445,11 @@ We use this file to:&lt;/p&gt;
 &lt;td&gt;Metrics service configuration&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
+&lt;td&gt;&lt;code&gt;[fields]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;false&lt;/td&gt;
+&lt;td&gt;Array of record fields names&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
 &lt;td&gt;&lt;code&gt;[[user]]&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;false&lt;/td&gt;
 &lt;td&gt;Array of user-defined configurations&lt;/td&gt;
@@ -1453,6 +1458,11 @@ We use this file to:&lt;/p&gt;
 &lt;td&gt;&lt;code&gt;[input]&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;true&lt;/td&gt;
 &lt;td&gt;Input component configuration&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;[filterchain]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;false&lt;/td&gt;
+&lt;td&gt;Filter chain global configuration&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;[[filter]]&lt;/code&gt;&lt;/td&gt;
@@ -1489,6 +1499,16 @@ We use this file to:&lt;/p&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;h4 id=&#34;fields-configuration&#34;&gt;Fields configuration&lt;/h4&gt;
+&lt;p&gt;The &lt;code&gt;name&lt;/code&gt; configuration in the &lt;code&gt;[fields]&lt;/code&gt; section provides a declarative way to define the
+structure of the records processed by Baker, without asking the user to define the &lt;code&gt;FieldByName&lt;/code&gt;
+and &lt;code&gt;FieldName&lt;/code&gt; functions.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;names&lt;/code&gt; is a list of strings declaring the names of the fields and their position in the record
+(that is inherited by the position of the name in the list).&lt;/p&gt;
+&lt;p&gt;So, to make an example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[fields]
+names = [&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;foo&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;bar&amp;#34;&lt;/span&gt;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;defines a structure of the records with two fields: &lt;code&gt;foo&lt;/code&gt; as first element and &lt;code&gt;bar&lt;/code&gt; as second.&lt;/p&gt;
 &lt;h4 id=&#34;components-configuration&#34;&gt;Components configuration&lt;/h4&gt;
 &lt;p&gt;Components sections are &lt;code&gt;[input]&lt;/code&gt;, &lt;code&gt;[[filter]]&lt;/code&gt;, &lt;code&gt;[output]&lt;/code&gt; and &lt;code&gt;[upload]&lt;/code&gt; and contain a
 &lt;code&gt;name = &amp;quot;&amp;lt;component name&amp;gt;&amp;quot;&lt;/code&gt; line and an optional &lt;code&gt;config&lt;/code&gt; subsection (like &lt;code&gt;[input.config]&lt;/code&gt;)
@@ -1508,8 +1528,8 @@ name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;TimestampRange&amp;#34;&
 
     [filter.config]
     StartDatetime = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;2020-10-30 15:00:00&amp;#34;&lt;/span&gt;
-	EndDatetime = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;2020-11-01 00:00:00&amp;#34;&lt;/span&gt;
-	Field = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;timestamp&amp;#34;&lt;/span&gt;
+    EndDatetime = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;2020-11-01 00:00:00&amp;#34;&lt;/span&gt;
+    Field = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;timestamp&amp;#34;&lt;/span&gt;
 
 [output]
 name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;DynamoDB&amp;#34;&lt;/span&gt;
@@ -1525,6 +1545,9 @@ a list of local or remote paths/URLs. &lt;code&gt;[input.config]&lt;/code&gt; is
 can be specified, and in this case we simply provide the files option to List.&lt;br&gt;
 Notice that List would accept http:// or even s3:// URLs there in addition to local paths,&lt;br&gt;
 and some more (run ./Baker-bin -help List in the help example for more details).&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;[filterchain]&lt;/code&gt; defines the configuration for the whole filter chain. Filter-specific configurations
+are provided by &lt;code&gt;[[filter]]&lt;/code&gt; (see below). The only accepted configuration in &lt;code&gt;[filterchain]&lt;/code&gt; is
+&lt;code&gt;procs = &amp;lt;int&amp;gt;&lt;/code&gt; that defines the number of concurrent filter chains. The default value is 16.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;[[filter]]&lt;/code&gt; In TOML syntax, the double brackets indicates an array of sections.&lt;br&gt;
 This is where you declare the list of filters (i.e filter chain) to sequentially apply to your
 records. As other components, each filter may be followed by a &lt;code&gt;[filter.config]&lt;/code&gt; section.&lt;/p&gt;
