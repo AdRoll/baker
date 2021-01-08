@@ -103,9 +103,9 @@ can be specified, and in this case we simply provide the files option to List.
 Notice that List would accept http:// or even s3:// URLs there in addition to local paths,  
 and some more (run ./Baker-bin -help List in the help example for more details).
 
-`[filterchain]` defines the configuration for the whole filter chain. Filter-specific configuration
-are provided by `[[filter]]` (see below). The only accepted configuration is `procs = <int>` that
-defines the number of concurrent filter chains. The default value is 16.
+`[filterchain]` defines the configuration for the whole filter chain. Filter-specific configurations
+are provided by `[[filter]]` (see below). The only accepted configuration in `[filterchain]` is
+`procs = <int>` that defines the number of concurrent filter chains. The default value is 16.
 
 `[[filter]]` In TOML syntax, the double brackets indicates an array of sections.  
 This is where you declare the list of filters (i.e filter chain) to sequentially apply to your
