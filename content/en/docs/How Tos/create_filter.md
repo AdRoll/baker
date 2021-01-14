@@ -40,12 +40,12 @@ type MyFilter struct{
     numProcessedLines int64
 }
 
-func (f *MyFilter) Process(r Record, next func(Record)) {
+func (f *MyFilter) Process(r baker.Record, next func(baker.Record)) {
     atomic.AddInt64(&f.numProcessedLines, 1)
     next(r)
 }
 
-func (f *MyFilter) Stats() FilterStats { 
+func (f *MyFilter) Stats() baker.FilterStats { 
     return baker.FilterStats{
 		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
     }
@@ -87,7 +87,7 @@ Each filter must have a constructor function that receives a
 [Filter interface](https://pkg.go.dev/github.com/AdRoll/baker#Filter) implemented by the filter:
 
 ```go
-func MyFilter(cfg baker.FilterParams) (baker.Filter, error) {
+func NewMyFilter(cfg baker.FilterParams) (baker.Filter, error) {
 	return &MyFilter{}, nil
 }
 ```
@@ -106,6 +106,8 @@ type ClauseFilterConfig struct {
 	Clause string `help:"Boolean formula describing which events to let through. If empty, let everything through."`
 }
 ```
+
+Other available tags are `required:"true|false"` and `default:"<value>"`.
 
 ## Modify record fields
 
