@@ -55,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix a bug in `logline.Copy` [#64](https://github.com/AdRoll/baker/pull/64)
+- Fix building on windows [#115](https://github.com/AdRoll/baker/issues/115)
 - Fix `list_test` with file URI to be compatible with windows paths [#117](https://github.com/AdRoll/baker/pull/117)
 
 ### Maintenance
