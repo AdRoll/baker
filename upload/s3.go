@@ -302,7 +302,7 @@ func s3UploadFile(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath
 	ctx.WithFields(log.Fields{"key": filepath.Join(prefix, rel)}).Info("Uploading")
 	result, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: &bucket,
-		Key:    aws.String(filepath.Join(prefix, rel)),
+		Key:    aws.String(path.Join(prefix, rel)), // force forwarding slash path as AWS key
 		Body:   file,
 	})
 	if err != nil {
