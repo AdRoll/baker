@@ -299,7 +299,7 @@ func s3UploadFile(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath
 		return err
 	}
 
-	ctx.WithFields(log.Fields{"key": filepath.Join(prefix, rel)}).Info("Uploading")
+	ctx.WithFields(log.Fields{"key": path.Join(prefix, rel)}).Info("Uploading")
 	result, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: &bucket,
 		Key:    aws.String(path.Join(prefix, rel)), // force forwarding slash path as AWS key
@@ -312,9 +312,7 @@ func s3UploadFile(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath
 	}
 
 	// We should really check that what we uploaded is correct before removing
-	if err := file.Close(); err != nil {
-		return err
-	}
+	file.Close() // ignore error: close required on windows to successfully remove the file
 	if err := os.Remove(fpath); err != nil {
 		return err
 	}
