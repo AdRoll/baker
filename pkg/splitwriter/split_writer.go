@@ -87,9 +87,8 @@ func (w *splitWriter) Close() error {
 		return err
 	}
 
-	var f *os.File
-	orgf := w.f
 	cursize := stat.Size()
+	fname := w.fname
 
 	for {
 		if cursize <= w.maxsize {
@@ -98,7 +97,7 @@ func (w *splitWriter) Close() error {
 		}
 
 		// Split needed, reopen the file and look for the split point.
-		f, err = os.OpenFile(w.fname, os.O_RDWR, 0)
+		f, err := os.OpenFile(fname, os.O_RDWR, 0)
 		if err != nil {
 			return err
 		}
@@ -109,27 +108,22 @@ func (w *splitWriter) Close() error {
 		}
 		if off == 0 {
 			// Nothing to do since f can't be split.
+			f.Close()
 			break
 		}
 
-		f, err := doSplit(f, off)
+		f, err = doSplit(f, off)
 		if err != nil {
 			return fmt.Errorf("splitWriter: doSplit: %v", err)
 		}
 
-		// State update for next writes
-		w.fname = f.Name()
-		w.f = f
-
-		// In case the current file still requires splitting.
+		// Update for the next iteration
+		fname = f.Name()
 		cursize -= off
+		if err := f.Close(); err != nil {
+			return err
+		}
 	}
-
-	if orgf != w.f {
-		// Current file pointer is not the one we started with so we must close it
-		return w.f.Close()
-	}
-
 	return nil
 }
 
