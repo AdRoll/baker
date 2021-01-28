@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -273,6 +274,10 @@ func TestSplitWriterErr(t *testing.T) {
 	})
 
 	t.Run("doFirstSplit error on remove", func(t *testing.T) {
+		if "windows" != runtime.GOOS {
+			t.Skip("Cannot produce an error on file remove on a not windows platform")
+		}
+
 		dir := t.TempDir()
 
 		cfg := swConf{
