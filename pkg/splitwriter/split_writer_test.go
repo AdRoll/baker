@@ -1,9 +1,13 @@
 package splitwriter
 
 import (
+	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -178,12 +182,12 @@ func TestSplitWriter(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for f, data := range tt.previous {
-				if err := ioutil.WriteFile(path.Join(dir, f), []byte(data), 0666); err != nil {
+				if err := ioutil.WriteFile(filepath.Join(dir, f), []byte(data), 0666); err != nil {
 					t.Fatal(err)
 				}
 			}
 
-			path := path.Join(dir, tt.fname)
+			path := filepath.Join(dir, tt.fname)
 			w, err := New(path, int64(tt.maxsize), int64(tt.bufsize))
 			if err != nil {
 				t.Fatal(err)
@@ -197,6 +201,211 @@ func TestSplitWriter(t *testing.T) {
 			}
 
 			expectSplits(t, dir, tt.want)
+		})
+	}
+}
+
+func TestSplitWriterErr(t *testing.T) {
+	type swConf struct {
+		path             string // path to file
+		maxsize, bufsize int    // splitWriter parameters
+		data             string // data to write in fname
+	}
+	initSplitWriter := func(t *testing.T, cf swConf) io.WriteCloser {
+		w, err := New(cf.path, int64(cf.maxsize), int64(cf.bufsize))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := w.Write([]byte(cf.data)); err != nil {
+			t.Fatal(err)
+		}
+		return w
+	}
+
+	t.Run("doFirstSplit f1 error ", func(t *testing.T) {
+		dir := t.TempDir()
+
+		cfg := swConf{
+			path:    filepath.Join(dir, "big-file-1-split"),
+			maxsize: 12,
+			bufsize: 4,
+			data:    "012\n34567890123",
+		}
+		w := initSplitWriter(t, cfg)
+
+		// Create the first part whitout write permission
+		f1, _ := os.OpenFile(cfg.path+"-part-1", os.O_CREATE, 0444)
+		f1.Close()
+
+		if err := w.Close(); err == nil {
+			t.Errorf("get nil, want error")
+		}
+
+		// Check that all files where closed
+		if err := os.RemoveAll(dir); err != nil {
+			t.Fatal(err)
+		}
+	})
+
+	t.Run("doFirstSplit f2 err", func(t *testing.T) {
+		dir := t.TempDir()
+
+		cfg := swConf{
+			path:    filepath.Join(dir, "big-file-1-split"),
+			maxsize: 12,
+			bufsize: 4,
+			data:    "012\n34567890123",
+		}
+		w := initSplitWriter(t, cfg)
+
+		// Create the second part whitout write permission
+		f2, _ := os.OpenFile(cfg.path+"-part-2", os.O_CREATE, 0444)
+		f2.Close()
+
+		if err := w.Close(); err == nil {
+			t.Errorf("get nil, want error")
+		}
+
+		// Check that all files where closed
+		if err := os.RemoveAll(dir); err != nil {
+			t.Fatal(err)
+		}
+	})
+
+	t.Run("doFirstSplit error on remove", func(t *testing.T) {
+		dir := t.TempDir()
+
+		cfg := swConf{
+			path:    filepath.Join(dir, "big-file-1-split"),
+			maxsize: 12,
+			bufsize: 4,
+			data:    "012\n34567890123",
+		}
+		w := initSplitWriter(t, cfg)
+
+		// Open the log file to prevent cancellation during w.Close()
+		f, _ := os.OpenFile(cfg.path, os.O_CREATE|os.O_RDWR, 0)
+
+		if err := w.Close(); err == nil {
+			t.Errorf("get nil, want error")
+		}
+
+		// Check that all files where closed
+		f.Close()
+		if err := os.RemoveAll(dir); err != nil {
+			t.Fatal(err)
+		}
+	})
+
+	t.Run("doNextSplit f error", func(t *testing.T) {
+		dir := t.TempDir()
+
+		cfg := swConf{
+			path:    filepath.Join(dir, "big-file-ext-2-split"),
+			maxsize: 6,
+			bufsize: 4,
+			data:    "012\n3456\n7890123",
+		}
+		w := initSplitWriter(t, cfg)
+
+		// Create the third part whitout write permission
+		f2, _ := os.OpenFile(cfg.path+"-part-3", os.O_CREATE, 0444)
+		f2.Close()
+
+		if err := w.Close(); err == nil {
+			t.Errorf("get nil, want error")
+		}
+
+		// Check that all files where closed
+		if err := os.RemoveAll(dir); err != nil {
+			t.Fatal(err)
+		}
+	})
+
+}
+
+func TestCloseFiles(t *testing.T) {
+	tests := []struct {
+		name   string   // test name
+		fnames []string // fname to create
+		close  []int    // indeces of file to close
+	}{
+		{
+			name:   "good 1",
+			fnames: []string{"test0"},
+			close:  []int{}, // want no error
+		},
+		{
+			name:   "good 2",
+			fnames: []string{"test0", "test1"},
+		},
+		{
+			name:   "good 3",
+			fnames: []string{"test0", "test1", "test2"},
+		},
+		{
+			name:   "bad 1",
+			fnames: []string{"test0", "test1", "test2"},
+			close:  []int{0}, // want error
+		},
+		{
+			name:   "bad 2",
+			fnames: []string{"test0", "test1", "test2"},
+			close:  []int{1},
+		},
+		{
+			name:   "bad 3",
+			fnames: []string{"test0", "test1", "test2"},
+			close:  []int{2},
+		},
+		{
+			name:   "bad 1,3",
+			fnames: []string{"test0", "test1", "test2"},
+			close:  []int{1, 2},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dir := t.TempDir()
+
+			files := make([]*os.File, 0, 3)
+			for _, fname := range tt.fnames {
+				f, _ := os.OpenFile(filepath.Join(dir, fname), os.O_CREATE|os.O_RDWR, 0)
+				files = append(files, f)
+			}
+
+			for _, i := range tt.close {
+				files[i].Close()
+			}
+
+			err := closeFiles(files...)
+
+			// Check returned error
+			if len(tt.close) == 0 {
+				// Want no error
+				if err != nil {
+					t.Errorf("get %v, want nil", err)
+				}
+			} else {
+				// Want error
+				if err == nil {
+					t.Errorf("get nil, want error")
+				} else {
+					// Check we return the first error
+					fname := fmt.Sprintf("test%d", tt.close[0])
+					if !strings.Contains(err.Error(), fname) {
+						t.Errorf("error %v not contains %q", err, fname)
+					}
+				}
+			}
+
+			// Check that all files were closed
+			for _, f := range files {
+				err := f.Close()
+				if err == nil {
+					t.Errorf("file %q not close", f.Name())
+				}
+			}
 		})
 	}
 }

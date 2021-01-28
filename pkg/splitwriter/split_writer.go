@@ -191,23 +191,31 @@ func doNextSplit(f *os.File, dir, next string, off int64) (*os.File, error) {
 	nextpath := filepath.Join(dir, next)
 	nextf, err := open(nextpath)
 	if err != nil {
+		closeFiles(f)
 		return nil, err
 	}
 
 	if _, err := f.Seek(off, io.SeekStart); err != nil {
+		closeFiles(f, nextf)
 		return nil, err
 	}
 
 	if _, err := io.Copy(nextf, f); err != nil {
+		closeFiles(f, nextf)
 		return nil, err
 	}
 
 	// Conclude the current split
 	if err := f.Truncate(off); err != nil {
+		closeFiles(f, nextf)
 		return nil, err
 	}
 
-	return nextf, f.Close()
+	if err := f.Close(); err != nil {
+		closeFiles(nextf)
+		return nil, err
+	}
+	return nextf, nil
 }
 
 // doFirstSplit creates the first splits of f, at offset off.
@@ -222,36 +230,45 @@ func doFirstSplit(f *os.File, dir, fname, next1 string, off int64) (*os.File, er
 	// Open the 2 first parts
 	f1, err := open(next1path)
 	if err != nil {
+		closeFiles(f)
 		return nil, err
 	}
 	f2, err := open(next2path)
 	if err != nil {
+		closeFiles(f, f1)
 		return nil, err
 	}
 
 	// Split the original file into 2 parts
 	if _, err := f.Seek(0, io.SeekStart); err != nil {
+		closeFiles(f, f1, f2)
 		return nil, err
 	}
 
 	if _, err := io.CopyN(f1, f, off); err != nil {
+		closeFiles(f, f1, f2)
 		return nil, err
 	}
 
 	if _, err := io.Copy(f2, f); err != nil {
+		closeFiles(f, f1, f2)
 		return nil, err
 	}
 
 	// Close the 2 parts and remove the original file
 	if err := f.Close(); err != nil {
+		closeFiles(f1, f2)
 		return nil, err
 	}
-
 	if err := f1.Close(); err != nil {
+		closeFiles(f2)
 		return nil, err
 	}
-
-	return f2, os.Remove(filepath.Join(dir, fname))
+	if err := os.Remove(filepath.Join(dir, fname)); err != nil {
+		closeFiles(f2)
+		return nil, err
+	}
+	return f2, nil
 }
 
 var splitFnameRx = regexp.MustCompile(`(\S+)-part-(\d+)(.*)`)
@@ -297,4 +314,14 @@ func fileExists(fname string) bool {
 		return false
 	}
 	return !info.IsDir()
+}
+
+// closeFiles closes a list of files and returns the first error (if any).
+func closeFiles(fs ...*os.File) (cerr error) {
+	for _, f := range fs {
+		if err := f.Close(); err != nil && cerr == nil {
+			cerr = err
+		}
+	}
+	return
 }
