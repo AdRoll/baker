@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"reflect"
+	"regexp"
 	"strings"
 	"unicode"
 
@@ -119,6 +120,9 @@ type ConfigFields struct {
 	Names []string
 }
 
+// ConfigValidation specifies a validation regex for each field name.
+type ConfigValidation map[string]string
+
 // A Config specifies the configuration for a topology.
 type Config struct {
 	Input       ConfigInput
@@ -127,11 +131,12 @@ type Config struct {
 	Output      ConfigOutput
 	Upload      ConfigUpload
 
-	General ConfigGeneral
-	Fields  ConfigFields
-	Metrics ConfigMetrics
-	CSV     ConfigCSV
-	User    []ConfigUser
+	General    ConfigGeneral
+	Fields     ConfigFields
+	Validation ConfigValidation
+	Metrics    ConfigMetrics
+	CSV        ConfigCSV
+	User       []ConfigUser
 
 	shardingFuncs map[FieldIndex]ShardingFunc
 	validate      ValidationFunc
@@ -403,9 +408,12 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		return nil, err
 	}
 
+	if err := assignValidationMapping(&cfg, comp); err != nil {
+		return nil, err
+	}
+
 	// Copy pluggable functions
 	cfg.shardingFuncs = comp.ShardingFuncs
-	cfg.validate = comp.Validate
 	cfg.createRecord = comp.CreateRecord
 
 	// Fill-in with missing defaults
@@ -459,6 +467,49 @@ func assignFieldMapping(cfg *Config, comp Components) error {
 	cfg.fieldByName = func(name string) (FieldIndex, bool) {
 		f, ok := m[name]
 		return f, ok
+	}
+
+	return nil
+}
+
+// assignValidationMapping verifies that field validation has been either set once (cfg/comp) or
+// not set at all. Then if that is the case, assignValidationMapping sets validate in cfg.
+// This functions require that the fieldByName function of cfg is set.
+func assignValidationMapping(cfg *Config, comp Components) error {
+	cfgOk := len(cfg.Validation) != 0
+	compOk := comp.Validate != nil
+
+	if cfgOk && compOk {
+		return fmt.Errorf("field validation can't both be set in TOML and in Components")
+	}
+
+	if compOk || !cfgOk {
+		// Ok, validation has either not set or set from Components.
+		cfg.validate = comp.Validate
+		return nil
+	}
+
+	// Field validation has been set from Config, check errors and create the closures.
+	val := make(map[FieldIndex]*regexp.Regexp, len(cfg.Validation))
+	for k, v := range cfg.Validation {
+		i, ok := cfg.fieldByName(k)
+		if !ok {
+			return fmt.Errorf("field %q not exists in fields", k)
+		}
+		reg, err := regexp.Compile(v)
+		if err != nil {
+			return fmt.Errorf("validation regex %q for field %q: %v", v, k, err)
+		}
+		val[i] = reg
+	}
+
+	cfg.validate = func(r Record) (bool, FieldIndex) {
+		for i, reg := range val {
+			if !reg.Match(r.Get(i)) {
+				return false, i
+			}
+		}
+		return true, 0
 	}
 
 	return nil
