@@ -1,5 +1,5 @@
-FROM node:alpine3.10
+FROM klakegg/hugo:ext-alpine
 
-RUN apk add hugo git
 RUN npm install -g postcss-cli autoprefixer postcss
+
 EXPOSE 1313

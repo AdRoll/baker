@@ -18,7 +18,7 @@ docker-base:
 	docker build -t baker-docs:base .
 
 docker-dev: docker-base ## Use docker for baker website development
-	docker run -w /baker -v $$PWD:/baker -p 1313:1313 -it baker-docs:base hugo server --bind=0.0.0.0
+	docker run -w /baker -v $$PWD:/baker -p 1313:1313 -it baker-docs:base server --bind=0.0.0.0
 
 .PHONY: build docker-base
 
