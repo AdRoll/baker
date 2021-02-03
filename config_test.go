@@ -179,10 +179,7 @@ func Test_assignFieldMapping(t *testing.T) {
 					Names: []string{"foo", "bar", "baz", "baz"},
 				},
 			},
-			comp: Components{
-				FieldByName: fieldByName,
-				FieldNames:  fieldNames,
-			},
+			comp:    Components{},
 			wantErr: true,
 		},
 	}
