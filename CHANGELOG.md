@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `[fields]` section in TOML in which use can define field indexes <-> names mapping [#84](https://github.com/AdRoll/baker/pull/84)
 - Add StringMatch filter which discards/keeps records based on the result of string comparisons  [#102](https://github.com/AdRoll/baker/pull/102)
 - Add PartialClone filter [#107](https://github.com/AdRoll/baker/pull/107)
+- Add `[validation]` section in TOML in which users can define record validation through regex [#122](https://github.com/AdRoll/baker/pull/122)
 
 ### Changed
 
