@@ -218,34 +218,34 @@ func Test_assignFieldMapping(t *testing.T) {
 	}
 }
 
-type DummyRecord map[FieldIndex]string
+type dummyRecord map[FieldIndex]string
 
-func (r DummyRecord) Parse([]byte, Metadata) error {
+func (r dummyRecord) Parse([]byte, Metadata) error {
 	return nil
 }
-func (r DummyRecord) ToText(buf []byte) []byte {
+func (r dummyRecord) ToText(buf []byte) []byte {
 	return []byte("")
 }
-func (r DummyRecord) Copy() Record {
+func (r dummyRecord) Copy() Record {
 	return Record(r.Copy())
 }
-func (r DummyRecord) Clear() {
+func (r dummyRecord) Clear() {
 	r.Clear()
 }
-func (r DummyRecord) Get(i FieldIndex) []byte {
+func (r dummyRecord) Get(i FieldIndex) []byte {
 	v, ok := r[i]
 	if !ok {
 		return make([]byte, 0)
 	}
 	return []byte(v)
 }
-func (r DummyRecord) Set(i FieldIndex, b []byte) {
+func (r dummyRecord) Set(i FieldIndex, b []byte) {
 	r[i] = string(b)
 }
-func (r DummyRecord) Meta(key string) (v interface{}, ok bool) {
+func (r dummyRecord) Meta(key string) (v interface{}, ok bool) {
 	return r, true
 }
-func (r DummyRecord) Cache() *Cache {
+func (r dummyRecord) Cache() *Cache {
 	return &Cache{}
 }
 
@@ -273,10 +273,11 @@ func Test_assignValidationMapping(t *testing.T) {
 	}
 
 	tests := []struct {
-		name    string
-		cfg     *Config
-		comp    Components
-		wantErr bool
+		name      string
+		cfg       *Config
+		comp      Components
+		wantErr   bool
+		skipCheck bool
 	}{
 		{
 			name: "only in Config",
@@ -294,6 +295,12 @@ func Test_assignValidationMapping(t *testing.T) {
 			comp: Components{
 				Validate: validate,
 			},
+		},
+		{
+			name:      "nothing set",
+			cfg:       &Config{},
+			comp:      Components{},
+			skipCheck: true, // check only that cfg.validate is not nil
 		},
 
 		// error cases
@@ -332,21 +339,27 @@ func Test_assignValidationMapping(t *testing.T) {
 			if err := assignValidationMapping(tt.cfg, tt.comp); (err != nil) != tt.wantErr {
 				t.Errorf("assignValidationMapping() error = %v, wantErr %v", err, tt.wantErr)
 			}
-
 			if tt.wantErr {
 				return
 			}
 
+			if tt.cfg.validate == nil {
+				t.Errorf("cfg.validate should always be set")
+			}
+			if tt.skipCheck {
+				return
+			}
+
 			// Now we check that validate has been set correctly.
-			rec := DummyRecord{0: "val", 1: "val"}
+			rec := dummyRecord{0: "val", 1: "val"}
 			if ok, field := tt.cfg.validate(rec); !ok || field != 0 {
 				t.Errorf(`cfg.validate("%v") = %v,%v, want %v,%v`, rec, ok, field, true, 0)
 			}
-			rec = DummyRecord{0: "badval", 1: "val"}
+			rec = dummyRecord{0: "badval", 1: "val"}
 			if ok, field := tt.cfg.validate(rec); ok && field != 0 {
 				t.Errorf(`cfg.validate("%v") = %v,%v, want %v,%v`, rec, ok, field, false, 0)
 			}
-			rec = DummyRecord{0: "val", 1: "badval"}
+			rec = dummyRecord{0: "val", 1: "badval"}
 			if ok, field := tt.cfg.validate(rec); ok && field != 1 {
 				t.Errorf(`cfg.validate("%v") = %v,%v, want %v,%v`, rec, ok, field, false, 1)
 			}

@@ -472,41 +472,53 @@ func assignFieldMapping(cfg *Config, comp Components) error {
 	return nil
 }
 
-// assignValidationMapping verifies that field validation has been either set once (cfg/comp) or
-// not set at all. Then if that is the case, assignValidationMapping sets validate in cfg.
-// This functions require that the fieldByName function of cfg is set.
+// assignValidationMapping verifies that validation has been set once either in comp or in cfg.
+// If validation has not been set assignValidationMapping generates a dummy function.
+// Finally, assignValidationMapping sets validate in cfg.
+// assignValidationMapping requires that the fieldByName function in cfg has been set.
 func assignValidationMapping(cfg *Config, comp Components) error {
 	cfgOk := len(cfg.Validation) != 0
 	compOk := comp.Validate != nil
 
 	if cfgOk && compOk {
-		return fmt.Errorf("field validation can't both be set in TOML and in Components")
+		return fmt.Errorf("validation can't both be set in TOML and in Components")
 	}
 
-	if compOk || !cfgOk {
-		// Ok, validation has either not set or set from Components.
+	if !cfgOk && !compOk {
+		// Ok, validation not present, set a dummy funcition.
+		cfg.validate = func(r Record) (bool, FieldIndex) {
+			return true, 0
+		}
+		return nil
+	}
+
+	if compOk {
+		// Ok, validation has been set from Components.
 		cfg.validate = comp.Validate
 		return nil
 	}
 
 	// Field validation has been set from Config, check errors and create the closures.
-	val := make(map[FieldIndex]*regexp.Regexp, len(cfg.Validation))
+	idxs := make([]FieldIndex, 0, len(cfg.Validation))
+	regs := make([]*regexp.Regexp, 0, len(cfg.Validation))
 	for k, v := range cfg.Validation {
 		i, ok := cfg.fieldByName(k)
 		if !ok {
-			return fmt.Errorf("field %q not exists in fields", k)
+			return fmt.Errorf("validation field %q not exists", k)
 		}
 		reg, err := regexp.Compile(v)
 		if err != nil {
-			return fmt.Errorf("validation regex %q for field %q: %v", v, k, err)
+			return fmt.Errorf("validation regex %q of field %q: %v", v, k, err)
 		}
-		val[i] = reg
+		idxs = append(idxs, i)
+		regs = append(regs, reg)
 	}
 
 	cfg.validate = func(r Record) (bool, FieldIndex) {
-		for i, reg := range val {
-			if !reg.Match(r.Get(i)) {
-				return false, i
+		for i, idx := range idxs {
+			reg := regs[i]
+			if !reg.Match(r.Get(idx)) {
+				return false, idx
 			}
 		}
 		return true, 0
