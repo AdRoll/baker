@@ -120,7 +120,8 @@ type ConfigFields struct {
 	Names []string
 }
 
-// ConfigValidation specifies a validation regex for each field name.
+// ConfigValidation specifies regular expressions for field names, used to generate
+// the Record validation function.
 type ConfigValidation map[string]string
 
 // A Config specifies the configuration for a topology.

@@ -1,5 +1,6 @@
-// basic example illustrates how to build a very simple baker-based program with just
-// input and output components
+// validation example illustrates how to specifies the record validation properties in
+// the Baker TOML. The example validates the input records and thrown away all the inputs
+// that do not match one or more regular expressions.
 package main
 
 import (
