@@ -32,7 +32,7 @@ name = "FileWriter"
 procs=1
 
 	[output.config]
-	PathString="/tmp/_out/output.csv.gz"
+	PathString="_out/output.csv.gz"
 `
 	c := baker.Components{
 		Inputs:  input.All,
