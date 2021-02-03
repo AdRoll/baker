@@ -143,6 +143,10 @@ unless `nil` or when `dont_validate_fields` is set to `true` in TOML's `[general
 Regardless of the `dont_validate_fields` value, the `Validate` function is made accessible
 to all components so that they can use it at their will.
 
+A simple validation function based on regular expression could be enabled from the 
+[`[validation]`](/docs/how-tos/pipeline_configuration/#validation-configuration) section of the TOML.
+Anyways, the user should specify the validation either in the Components or in the TOML.
+
 ## CreateRecord
 
 ```go
