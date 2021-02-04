@@ -15,10 +15,16 @@ The website is made with [Hugo](https://gohugo.io/) and the [Docsy theme](https:
 
 ### Install theme before starting
 
+To install all the needed dependency locally, which also require `npm` run:
+
 ```sh
-git submodule add --force https://github.com/google/docsy.git themes/docsy
-git submodule update --init --recursive
-npm install postcss-cli autoprefixer postcss
+make setup
+```
+
+Instead, If you want to use Docker run:
+
+```sh
+make docker-setup
 ```
 
 ### Local server
@@ -44,7 +50,7 @@ make build
 Or, with docker, use the following command to build the production version:
 
 ```sh
-make docker-build-prod
+make docker-build
 ```
 
 And finally, this starts the server locally inside of Docker, with the website bound to host port 80::
