@@ -65,7 +65,7 @@ defines a structure of the records with two fields: `foo` as first element and `
 The `[validation]` section is an optional configuration that contains one or more field names each 
 of which is associated with a regular expression. 
 If the validation section is specified Baker automatically generates a validation function, 
-which checks that each input record satisfy the provided regular expression. 
+which checks that each input record satisfies the provided regular expression. 
 In the case, one or more field does not match the whole record is discarded. 
 The user could choose to not provide record validation at all or to implements a more sophisticated 
 validation function using a go function specified in the [Components](/docs/how-tos/baker_components/#validate).
