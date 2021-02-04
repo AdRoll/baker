@@ -15,7 +15,7 @@ The website is made with [Hugo](https://gohugo.io/) and the [Docsy theme](https:
 
 ### Install theme before starting
 
-To install all the needed dependency locally, which also require `npm` run:
+To install all the needed dependency locally, which also require `npm`, run:
 
 ```sh
 make setup
