@@ -68,7 +68,7 @@ If the validation section is specified Baker automatically generates a validatio
 which checks that each input record satisfies the provided regular expression. 
 The record is discarded at the first field that doesn't match its associated regular expression. 
 The user could choose to not provide record validation at all or to implement a more sophisticated 
-validation function using a go function specified in the [Components](/docs/how-tos/baker_components/#validate).
+validation function using a Go function specified in the [Components](/docs/how-tos/baker_components/#validate) struct.
 However, the validation could not be present both in the TOML and in the Components. 
 
 To make an example:
