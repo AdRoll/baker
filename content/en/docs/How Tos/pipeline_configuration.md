@@ -26,6 +26,7 @@ The file has several sections, described below:
 | `[general]`     | false      | General configuration                   |
 | `[metrics]`     | false      | Metrics service configuration           |
 | `[fields]`      | false      | Array of record fields names            |
+| `[validation]`  | false      | Input record field validation           |
 | `[[user]]`      | false      | Array of user-defined configurations    |
 | `[input]`       | true       | Input component configuration           |
 | `[filterchain]` | false      | Filter chain global configuration       |
@@ -58,6 +59,34 @@ names = ["foo", "bar"]
 ```
 
 defines a structure of the records with two fields: `foo` as first element and `bar` as second.
+
+#### Validation configuration
+
+The `[validation]` section is an optional configuration that contains one or more field names each 
+of which is associated with a regular expression. 
+If the validation section is specified Baker automatically generates a validation function, 
+which checks that each input record satisfies the provided regular expression. 
+The record is discarded at the first field that doesn't match its associated regular expression. 
+The user could choose to not provide record validation at all or to implement a more sophisticated 
+validation function using a Go function specified in the [Components](/docs/how-tos/baker_components/#validate) struct.
+However, the validation could not be present both in the TOML and in the Components. 
+
+To make an example:
+
+```toml
+[validation]
+foo = "^\w+$"
+bar = "[0-9]+"
+```
+
+defines that `foo` field must be a not empty word and `bar` field must contain a number. 
+In this case, a valid record could be:
+
+| foo           | bar       |
+|:-------------:|:---------:|
+| `hello_world` | `hello23` |
+
+The regular expression reference could be found at [golang.org/s/re2syntax](https://golang.org/s/re2syntax)
 
 #### Components configuration
 
