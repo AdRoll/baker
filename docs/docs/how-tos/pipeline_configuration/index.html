@@ -32,7 +32,7 @@
 ">
 <meta itemprop="datePublished" content="2020-10-29T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-10-29T00:00:00+00:00" />
-<meta itemprop="wordCount" content="951">
+<meta itemprop="wordCount" content="1112">
 
 
 
@@ -48,8 +48,8 @@
 
 
 
-<link rel="preload" href="/scss/main.min.9d34e3780fc5cedc126d2b7119dab49edcd9bbd278950a37bd95010d752addec.css" as="style">
-<link href="/scss/main.min.9d34e3780fc5cedc126d2b7119dab49edcd9bbd278950a37bd95010d752addec.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.27266cf9018ad0baf8db530684a7d13689bb535c762646e304c9242831197712.css" as="style">
+<link href="/scss/main.min.27266cf9018ad0baf8db530684a7d13689bb535c762646e304c9242831197712.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -147,7 +147,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.195d1145f8a0b705bbb9444ccad85c3b1cba9c9be8a30e8af58be11dfaea3603b2ab7247622943a9c324e37a421be2c7b39175802e1c94670d61a8cd36c4dc44.json"
+  data-offline-search-index-json-src="/offline-search-index.5dd9eff11f8f398558ca34b59492c2c6f1148f567049c41b03faa264ddb5239fe5280edf16e4e76538e1120a858ea9fc6bfc6671cc6e7f76a0655d4ce681b840.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -178,7 +178,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.195d1145f8a0b705bbb9444ccad85c3b1cba9c9be8a30e8af58be11dfaea3603b2ab7247622943a9c324e37a421be2c7b39175802e1c94670d61a8cd36c4dc44.json"
+  data-offline-search-index-json-src="/offline-search-index.5dd9eff11f8f398558ca34b59492c2c6f1148f567049c41b03faa264ddb5239fe5280edf16e4e76538e1120a858ea9fc6bfc6671cc6e7f76a0655d4ce681b840.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -781,6 +781,11 @@ We use this file to:</p>
 <td>Array of record fields names</td>
 </tr>
 <tr>
+<td><code>[validation]</code></td>
+<td>false</td>
+<td>Input record field validation</td>
+</tr>
+<tr>
 <td><code>[[user]]</code></td>
 <td>false</td>
 <td>Array of user-defined configurations</td>
@@ -840,6 +845,36 @@ and <code>FieldName</code> functions.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[fields]
 names = [<span style="color:#f1fa8c">&#34;foo&#34;</span>, <span style="color:#f1fa8c">&#34;bar&#34;</span>]
 </code></pre></div><p>defines a structure of the records with two fields: <code>foo</code> as first element and <code>bar</code> as second.</p>
+<h4 id="validation-configuration">Validation configuration</h4>
+<p>The <code>[validation]</code> section is an optional configuration that contains one or more field names each
+of which is associated with a regular expression.
+If the validation section is specified Baker automatically generates a validation function,
+which checks that each input record satisfies the provided regular expression.
+The record is discarded at the first field that doesn&rsquo;t match its associated regular expression.
+The user could choose to not provide record validation at all or to implement a more sophisticated
+validation function using a Go function specified in the <a href="/docs/how-tos/baker_components/#validate">Components</a> struct.
+However, the validation could not be present both in the TOML and in the Components.</p>
+<p>To make an example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[validation]
+foo = <span style="color:#f1fa8c">&#34;^\w+$&#34;</span>
+bar = <span style="color:#f1fa8c">&#34;[0-9]+&#34;</span>
+</code></pre></div><p>defines that <code>foo</code> field must be a not empty word and <code>bar</code> field must contain a number.
+In this case, a valid record could be:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">foo</th>
+<th style="text-align:center">bar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>hello_world</code></td>
+<td style="text-align:center"><code>hello23</code></td>
+</tr>
+</tbody>
+</table>
+<p>The regular expression reference could be found at <a href="https://golang.org/s/re2syntax">golang.org/s/re2syntax</a></p>
 <h4 id="components-configuration">Components configuration</h4>
 <p>Components sections are <code>[input]</code>, <code>[[filter]]</code>, <code>[output]</code> and <code>[upload]</code> and contain a
 <code>name = &quot;&lt;component name&gt;&quot;</code> line and an optional <code>config</code> subsection (like <code>[input.config]</code>)

@@ -1450,6 +1450,11 @@ We use this file to:&lt;/p&gt;
 &lt;td&gt;Array of record fields names&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
+&lt;td&gt;&lt;code&gt;[validation]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;false&lt;/td&gt;
+&lt;td&gt;Input record field validation&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
 &lt;td&gt;&lt;code&gt;[[user]]&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;false&lt;/td&gt;
 &lt;td&gt;Array of user-defined configurations&lt;/td&gt;
@@ -1509,6 +1514,36 @@ and &lt;code&gt;FieldName&lt;/code&gt; functions.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[fields]
 names = [&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;foo&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;bar&amp;#34;&lt;/span&gt;]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;defines a structure of the records with two fields: &lt;code&gt;foo&lt;/code&gt; as first element and &lt;code&gt;bar&lt;/code&gt; as second.&lt;/p&gt;
+&lt;h4 id=&#34;validation-configuration&#34;&gt;Validation configuration&lt;/h4&gt;
+&lt;p&gt;The &lt;code&gt;[validation]&lt;/code&gt; section is an optional configuration that contains one or more field names each
+of which is associated with a regular expression.
+If the validation section is specified Baker automatically generates a validation function,
+which checks that each input record satisfies the provided regular expression.
+The record is discarded at the first field that doesn&amp;rsquo;t match its associated regular expression.
+The user could choose to not provide record validation at all or to implement a more sophisticated
+validation function using a Go function specified in the &lt;a href=&#34;https://getbaker.io/docs/how-tos/baker_components/#validate&#34;&gt;Components&lt;/a&gt; struct.
+However, the validation could not be present both in the TOML and in the Components.&lt;/p&gt;
+&lt;p&gt;To make an example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[validation]
+foo = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;^\w+$&amp;#34;&lt;/span&gt;
+bar = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;[0-9]+&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;defines that &lt;code&gt;foo&lt;/code&gt; field must be a not empty word and &lt;code&gt;bar&lt;/code&gt; field must contain a number.
+In this case, a valid record could be:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;foo&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;bar&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;code&gt;hello_world&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;code&gt;hello23&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The regular expression reference could be found at &lt;a href=&#34;https://golang.org/s/re2syntax&#34;&gt;golang.org/s/re2syntax&lt;/a&gt;&lt;/p&gt;
 &lt;h4 id=&#34;components-configuration&#34;&gt;Components configuration&lt;/h4&gt;
 &lt;p&gt;Components sections are &lt;code&gt;[input]&lt;/code&gt;, &lt;code&gt;[[filter]]&lt;/code&gt;, &lt;code&gt;[output]&lt;/code&gt; and &lt;code&gt;[upload]&lt;/code&gt; and contain a
 &lt;code&gt;name = &amp;quot;&amp;lt;component name&amp;gt;&amp;quot;&lt;/code&gt; line and an optional &lt;code&gt;config&lt;/code&gt; subsection (like &lt;code&gt;[input.config]&lt;/code&gt;)
@@ -2028,6 +2063,9 @@ comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 unless &lt;code&gt;nil&lt;/code&gt; or when &lt;code&gt;dont_validate_fields&lt;/code&gt; is set to &lt;code&gt;true&lt;/code&gt; in TOML&amp;rsquo;s &lt;code&gt;[general]&lt;/code&gt; section.&lt;/p&gt;
 &lt;p&gt;Regardless of the &lt;code&gt;dont_validate_fields&lt;/code&gt; value, the &lt;code&gt;Validate&lt;/code&gt; function is made accessible
 to all components so that they can use it at their will.&lt;/p&gt;
+&lt;p&gt;A simple validation function based on regular expression could be enabled from the
+&lt;a href=&#34;https://getbaker.io/docs/how-tos/pipeline_configuration/#validation-configuration&#34;&gt;&lt;code&gt;[validation]&lt;/code&gt;&lt;/a&gt; section of the TOML.
+Anyways, the user should specify the validation either in the Components or in the TOML.&lt;/p&gt;
 &lt;h2 id=&#34;createrecord&#34;&gt;CreateRecord&lt;/h2&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
 
@@ -2297,12 +2335,12 @@ the available filters in &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/ba
     numProcessedLines &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
 }
 
-&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
+&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r baker.Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(baker.Record)) {
     atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.numProcessedLines, &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;)
     &lt;span style=&#34;color:#50fa7b&#34;&gt;next&lt;/span&gt;(r)
 }
 
-&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() FilterStats { 
+&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() baker.FilterStats { 
     &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; baker.FilterStats{
 		NumProcessedLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.numProcessedLines),
     }
@@ -2328,7 +2366,7 @@ name = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyFilter&amp;#34;&lt;/
 &lt;p&gt;Each filter must have a constructor function that receives a
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FilterParams&#34;&gt;FilterParams&lt;/a&gt; and returns the
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Filter&#34;&gt;Filter interface&lt;/a&gt; implemented by the filter:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;MyFilter&lt;/span&gt;(cfg baker.FilterParams) (baker.Filter, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;) {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;NewMyFilter&lt;/span&gt;(cfg baker.FilterParams) (baker.Filter, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;) {
 	&lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;MyFilter{}, &lt;span style=&#34;color:#ff79c6&#34;&gt;nil&lt;/span&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/examples/filtering/filter.go&#34;&gt;filtering example&lt;/a&gt;
@@ -2340,7 +2378,8 @@ which values set for it:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; ClauseFilterConfig &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
 	Clause &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;`help:&amp;#34;Boolean formula describing which events to let through. If empty, let everything through.&amp;#34;`&lt;/span&gt;
 }
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;modify-record-fields&#34;&gt;Modify record fields&lt;/h2&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Other available tags are &lt;code&gt;required:&amp;quot;true|false&amp;quot;&lt;/code&gt; and &lt;code&gt;default:&amp;quot;&amp;lt;value&amp;gt;&amp;quot;&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;modify-record-fields&#34;&gt;Modify record fields&lt;/h2&gt;
 &lt;p&gt;A filter can change the value of the record fields before calling &lt;code&gt;next()&lt;/code&gt;:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
     &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; src FieldIndex = &lt;span style=&#34;color:#bd93f9&#34;&gt;10&lt;/span&gt;
