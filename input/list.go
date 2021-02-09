@@ -84,6 +84,8 @@ type List struct {
 	stopOnce  sync.Once
 }
 
+// Open a file and return the io Reader, the size, the last modification, and the path as URL.
+// If the sizeOnly parameter is true no io Reader will be returned.
 func (s *List) openFile(fn string, sizeOnly bool) (io.ReadCloser, int64, time.Time, *url.URL, error) {
 	if fn == "-" {
 		return stdin, 0, time.Unix(0, 0), nil, nil
@@ -98,17 +100,20 @@ func (s *List) openFile(fn string, sizeOnly bool) (io.ReadCloser, int64, time.Ti
 
 	switch u.Scheme {
 	case "", "file":
-		if fi, err := os.Stat(u.Path); err != nil {
+		fi, err := os.Stat(u.Path)
+		if err != nil {
 			s.setFatalErr(err)
 			return nil, 0, time.Unix(0, 0), u, err
-		} else {
-			f, err := os.Open(u.Path)
-			if err != nil {
-				s.setFatalErr(err)
-				return nil, fi.Size(), fi.ModTime(), u, err
-			}
-			return f, fi.Size(), fi.ModTime(), u, err
 		}
+		if sizeOnly {
+			return nil, fi.Size(), fi.ModTime(), u, nil
+		}
+		f, err := os.Open(u.Path)
+		if err != nil {
+			s.setFatalErr(err)
+			return nil, fi.Size(), fi.ModTime(), u, err
+		}
+		return f, fi.Size(), fi.ModTime(), u, err
 	case "s3":
 		if sizeOnly {
 			resp, err := s.svc.HeadObject(&s3.HeadObjectInput{
@@ -144,6 +149,10 @@ func (s *List) openFile(fn string, sizeOnly bool) (io.ReadCloser, int64, time.Ti
 		sLastModified := resp.Header.Get("Last-Modified")
 		lastModified, _ := time.Parse("Mon, 02 Jan 2006 15:04:05 GMT", sLastModified)
 
+		if sizeOnly {
+			resp.Body.Close()
+			return nil, size, lastModified, u, nil
+		}
 		return resp.Body, size, lastModified, u, nil
 
 	default:
@@ -203,7 +212,7 @@ func (s *List) setFatalErr(err error) {
 	})
 }
 
-func (s *List) processListFile(f io.ReadCloser) {
+func (s *List) processListFile(f io.Reader) {
 
 	// Parse the list file line by line, in a way that allows
 	// us to also check the status of the s.ci.Done channel
@@ -278,6 +287,7 @@ func (s *List) processList(fn string) error {
 				return err
 			}
 			s.processListFile(f)
+			f.Close()
 			return nil
 		}
 
