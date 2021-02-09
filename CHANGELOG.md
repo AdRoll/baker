@@ -55,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix a bug in `logline.Copy` [#64](https://github.com/AdRoll/baker/pull/64)
-- Fix `List` input, some io Readers were leave opened
+- Fix `List` input, some `io.Reader`'s were left opened [#118](https://github.com/AdRoll/baker/pull/118)
 
 ### Maintenance
 
