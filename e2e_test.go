@@ -25,6 +25,12 @@ func TestE2EFullTopology(t *testing.T) {
 		"./examples/basic/", "", "", "",
 	))
 
+	t.Run("validation", testE2EFullTopology(
+		"./examples/validation/", "",
+		"_out/output.csv.gz",
+		"testdata/validation.csv.gz.golden",
+	))
+
 	t.Run("sharding", testE2EFullTopology(
 		"./examples/sharding/", "", "", "",
 	))
