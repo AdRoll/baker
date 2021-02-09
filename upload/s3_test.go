@@ -110,7 +110,7 @@ func prepareUploadS3TestFolder(t *testing.T, numFiles int) (string, []string) {
 
 func TestS3Upload(t *testing.T) {
 	// Through the use of a mocked S3 service, this test verifies that sending
-	// 10000 files to an S3Upload results in 10000 S3 Upload API calls.
+	// 3000 files to an S3Upload results in 3000 S3 Upload API calls.
 	// It's always important to run tests with the race detector enabled but
 	// specially this one since there's a lot of concurrency involved.
 	if testing.Short() {
@@ -119,7 +119,7 @@ func TestS3Upload(t *testing.T) {
 	defer testutil.DisableLogging()()
 
 	// Create many files.
-	const nfiles = 10000
+	const nfiles = 3000
 	srcDir, paths := prepareUploadS3TestFolder(t, nfiles)
 
 	stagingDir := t.TempDir()

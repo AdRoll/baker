@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `[fields]` section in TOML in which use can define field indexes <-> names mapping [#84](https://github.com/AdRoll/baker/pull/84)
 - Add StringMatch filter which discards/keeps records based on the result of string comparisons  [#102](https://github.com/AdRoll/baker/pull/102)
 - Add PartialClone filter [#107](https://github.com/AdRoll/baker/pull/107)
+- Add `[validation]` section in TOML in which users can define record validation through regex [#122](https://github.com/AdRoll/baker/pull/122)
 
 ### Changed
 
@@ -55,7 +56,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix a bug in `logline.Copy` [#64](https://github.com/AdRoll/baker/pull/64)
+- Fix building on windows [#115](https://github.com/AdRoll/baker/issues/115)
+- Fix `list_test` with file URI to be compatible with windows paths [#117](https://github.com/AdRoll/baker/pull/117)
 - Fix `List` input, some `io.Reader`'s were left opened [#118](https://github.com/AdRoll/baker/pull/118)
+- `split_writer.Close` leaves some file descriptor open [#119](https://github.com/AdRoll/baker/pull/119)
+- Fix some bugs in `s3.s3UploadFile` [#120](https://github.com/AdRoll/baker/pull/120)
 
 ### Maintenance
 

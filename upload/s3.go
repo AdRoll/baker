@@ -298,24 +298,21 @@ func s3UploadFile(uploader *s3manager.Uploader, bucket, prefix, localPath, fpath
 	if err != nil {
 		return err
 	}
-	defer func() {
-		if err := file.Close(); err != nil {
-			log.Error(err)
-		}
-	}()
 
-	ctx.WithFields(log.Fields{"key": filepath.Join(prefix, rel)}).Info("Uploading")
+	ctx.WithFields(log.Fields{"key": path.Join(prefix, rel)}).Info("Uploading")
 	result, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: &bucket,
-		Key:    aws.String(filepath.Join(prefix, rel)),
+		Key:    aws.String(path.Join(prefix, rel)), // force forwarding slash path as AWS key
 		Body:   file,
 	})
 	if err != nil {
+		file.Close()
 		actualS3Path := fmt.Sprintf("s3://%s/%s/%s", bucket, prefix, rel)
 		return fmt.Errorf("error uploading %s to %s: %s", fpath, actualS3Path, err)
 	}
 
 	// We should really check that what we uploaded is correct before removing
+	file.Close() // ignore error: close required on windows to successfully remove the file
 	if err := os.Remove(fpath); err != nil {
 		return err
 	}
