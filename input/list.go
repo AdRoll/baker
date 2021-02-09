@@ -212,7 +212,7 @@ func (s *List) setFatalErr(err error) {
 	})
 }
 
-func (s *List) processListFile(f io.ReadCloser) {
+func (s *List) processListFile(f io.Reader) {
 
 	// Parse the list file line by line, in a way that allows
 	// us to also check the status of the s.ci.Done channel
@@ -224,7 +224,6 @@ func (s *List) processListFile(f io.ReadCloser) {
 
 	go func() {
 		scanner := bufio.NewScanner(f)
-		defer f.Close()
 		for scanner.Scan() {
 			line := scanner.Text()
 			if line == "" {
@@ -288,6 +287,7 @@ func (s *List) processList(fn string) error {
 				return err
 			}
 			s.processListFile(f)
+			f.Close()
 			return nil
 		}
 
