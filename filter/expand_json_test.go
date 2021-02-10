@@ -131,23 +131,65 @@ func TestExpandJSON(t *testing.T) {
 				return
 			}
 
-			l := &baker.LogLine{FieldSeparator: ';'}
+			rec := &baker.LogLine{FieldSeparator: ';'}
 			i, _ := fieldByName("j")
-			l.Set(i, []byte(tt.json))
+			rec.Set(i, []byte(tt.json))
 
-			filter.Process(l, func(line baker.Record) {
+			filter.Process(rec, func(rec2 baker.Record) {
 				for k, v := range tt.want {
 					i, _ := fieldByName(k)
-					if !bytes.Equal(line.Get(i), []byte(v)) {
-						t.Errorf("got %q, want %q", line.Get(i), v)
+					if !bytes.Equal(rec2.Get(i), []byte(v)) {
+						t.Errorf("got %q, want %q", rec2.Get(i), v)
 					}
 				}
 				// check that the json field is untouched
 				i, _ := fieldByName("j")
-				if !bytes.Equal(line.Get(i), []byte(tt.json)) {
-					t.Errorf("got %q, want %q", line.Get(i), tt.json)
+				if !bytes.Equal(rec2.Get(i), []byte(tt.json)) {
+					t.Errorf("got %q, want %q", rec2.Get(i), tt.json)
 				}
 			})
+		})
+	}
+}
+
+func BenchmarkExpandJSON(b *testing.B) {
+	fieldByName := func(name string) (baker.FieldIndex, bool) {
+		switch name {
+		case "f1":
+			return 0, true
+		case "f2":
+			return 1, true
+		case "f3":
+			return 2, true
+		case "j":
+			return 3, true
+		}
+		return 0, false
+	}
+	cfg := baker.FilterParams{
+		ComponentParams: baker.ComponentParams{
+			FieldByName: fieldByName,
+			DecodedConfig: &ExpandJSONConfig{
+				Fields: map[string]string{
+					"j1": "f1",
+					"j2": "f2",
+					"j3": "f3",
+				},
+				Source: "j",
+			},
+		},
+	}
+	filter, err := NewExpandJSON(cfg)
+	if err != nil {
+		b.Fatal(err)
+	}
+	rec := &baker.LogLine{FieldSeparator: ';'}
+	i, _ := fieldByName("j")
+	rec.Set(i, []byte(`{"j1": "value1", "j2": "value 2", "j3": "value3"}`))
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		filter.Process(rec, func(rec2 baker.Record) {
 		})
 	}
 }
