@@ -14,12 +14,12 @@ var ExpandJSONDesc = baker.FilterDesc{
 	Name:   "ExpandJSON",
 	New:    NewExpandJSON,
 	Config: &ExpandJSONConfig{},
-	Help:   "Explodes json objects to other fields.",
+	Help:   `Extract JSON values with JMESPath and copy them to configurable Record fields.`,
 }
 
 type ExpandJSONConfig struct {
-	Fields          map[string]string `help:"<JMESPath -> record field> map, the rest will be ignored"`
-	Source          string            `help:"record field that contains the json"`
+	Source          string            `help:"record field that contains the json" required:"true"`
+	Fields          map[string]string `help:"<JMESPath -> record field> map, the rest will be ignored" required:"true"`
 	TrueFalseValues []string          `help:"bind the json boolean values to correstponding strings" default:"[\"true\", \"false\"]"`
 }
 
@@ -48,14 +48,15 @@ func NewExpandJSON(cfg baker.FilterParams) (baker.Filter, error) {
 	}
 	dcfg := cfg.DecodedConfig.(*ExpandJSONConfig)
 	dcfg.fillDefaults()
+
 	ut := &ExpandJSON{cfg: dcfg}
-	// Source
+
 	val, ok := cfg.FieldByName(dcfg.Source)
 	if !ok {
-		return nil, fmt.Errorf("field %s unknown, can't expand it", dcfg.Source)
+		return nil, fmt.Errorf("field %q unknown, can't expand it", dcfg.Source)
 	}
 	ut.source = val
-	// Fields
+
 	for j, f := range dcfg.Fields {
 		i, ok := cfg.FieldByName(f)
 		if !ok {
@@ -63,14 +64,14 @@ func NewExpandJSON(cfg baker.FilterParams) (baker.Filter, error) {
 		}
 		c, err := jmespath.Compile(j)
 		if err != nil {
-			return nil, fmt.Errorf("can't compile JMESPath expression %q for field %q", j, f)
+			return nil, fmt.Errorf("malformed JMESPath expression %q for field %q", j, f)
 		}
 		ut.fields = append(ut.fields, i)
 		ut.jexp = append(ut.jexp, c)
 	}
-	// TrueFalseValues
+
 	if l := len(dcfg.TrueFalseValues); l != 2 {
-		return nil, fmt.Errorf("only two True False values allowed, %v given", l)
+		return nil, fmt.Errorf("only two 'true' 'false' values allowed, %v given", l)
 	}
 	ut.trueFalseValues = [2][]byte{
 		[]byte(dcfg.TrueFalseValues[trueIdx]),
@@ -114,20 +115,20 @@ func (f *ExpandJSON) processJSON(data []byte) interface{} {
 	return x
 }
 
-func (f *ExpandJSON) postProcessJSON(r interface{}) (val []byte) {
+func (f *ExpandJSON) postProcessJSON(r interface{}) []byte {
 	switch typedValue := r.(type) {
 	case json.Number:
-		val = []byte(typedValue)
+		return []byte(typedValue)
 	case string:
-		val = []byte(typedValue)
+		return []byte(typedValue)
 	case bool:
 		if typedValue {
-			val = f.trueFalseValues[trueIdx]
+			return f.trueFalseValues[trueIdx]
 		} else {
-			val = f.trueFalseValues[falseIdx]
+			return f.trueFalseValues[falseIdx]
 		}
 	default:
-		val, _ = json.Marshal(typedValue)
+		val, _ := json.Marshal(typedValue)
+		return val
 	}
-	return
 }
