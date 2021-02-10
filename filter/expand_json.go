@@ -31,10 +31,13 @@ func (cfg *ExpandJSONConfig) fillDefaults() {
 const trueIdx, falseIdx = 0, 1
 
 type ExpandJSON struct {
-	cfg               *ExpandJSONConfig
-	Fields            map[string]baker.FieldIndex
-	Source            baker.FieldIndex
-	TrueFalseValues   [2][]byte
+	cfg *ExpandJSONConfig
+
+	fields          []baker.FieldIndex
+	jsonKey         []string
+	source          baker.FieldIndex
+	trueFalseValues [2][]byte
+
 	numProcessedLines int64
 }
 
@@ -50,21 +53,21 @@ func NewExpandJSON(cfg baker.FilterParams) (baker.Filter, error) {
 	if !ok {
 		return nil, fmt.Errorf("field %s unknown, can't expand it", dcfg.Source)
 	}
-	ut.Source = val
+	ut.source = val
 	// Fields
-	ut.Fields = make(map[string]baker.FieldIndex)
 	for k, v := range dcfg.Fields {
 		val, ok := cfg.FieldByName(v)
 		if !ok {
 			return nil, fmt.Errorf("field %s unknown, can't expand %s into it", v, k)
 		}
-		ut.Fields[k] = val
+		ut.fields = append(ut.fields, val)
+		ut.jsonKey = append(ut.jsonKey, k)
 	}
 	// TrueFalseValues
 	if l := len(dcfg.TrueFalseValues); l != 2 {
 		return nil, fmt.Errorf("only two True False values allowed, %v given", l)
 	}
-	ut.TrueFalseValues = [2][]byte{
+	ut.trueFalseValues = [2][]byte{
 		[]byte(dcfg.TrueFalseValues[trueIdx]),
 		[]byte(dcfg.TrueFalseValues[falseIdx]),
 	}
@@ -81,15 +84,15 @@ func (f *ExpandJSON) Stats() baker.FilterStats {
 func (f *ExpandJSON) Process(l baker.Record, next func(baker.Record)) {
 	// custom json decoder to get all json value types as strings
 	// really we just want string -> bytes map
-	gm := f.processJSON(l.Get(f.Source))
+	gm := f.processJSON(l.Get(f.source))
 
 	if gm != nil {
-		for k, i := range f.Fields {
+		for i, k := range f.jsonKey {
 			v, ok := gm[k]
 			if !ok {
 				continue
 			}
-			l.Set(i, v)
+			l.Set(f.fields[i], v)
 		}
 	}
 	atomic.AddInt64(&f.numProcessedLines, 1)
@@ -115,9 +118,9 @@ func (f *ExpandJSON) processJSON(data []byte) map[string][]byte {
 			gm[k] = []byte(typedValue)
 		case bool:
 			if typedValue {
-				gm[k] = f.TrueFalseValues[trueIdx]
+				gm[k] = f.trueFalseValues[trueIdx]
 			} else {
-				gm[k] = f.TrueFalseValues[falseIdx]
+				gm[k] = f.trueFalseValues[falseIdx]
 			}
 		default:
 			// skip other values, including nested json
