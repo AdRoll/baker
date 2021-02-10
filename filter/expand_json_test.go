@@ -44,9 +44,9 @@ func TestExpandJSON(t *testing.T) {
 			trueFalse: []string{"t", "f"},
 		},
 		{
-			name: "skip other json types",
+			name: "other json types",
 			json: `{"j1": null, "j2": [1,2,3,4], "j3": {"j1":"a", "j2":false}}`,
-			want: map[string]string{"f1": "", "f2": "", "f3": ""},
+			want: map[string]string{"f1": "", "f2": "[1,2,3,4]", "f3": `{"j1":"a","j2":false}`},
 		},
 		{
 			name: "empty json",
