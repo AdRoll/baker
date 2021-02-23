@@ -8,6 +8,7 @@ require (
 	github.com/bmizerany/perks v0.0.0-20141205001514-d9a9656a3a4b
 	github.com/charmbracelet/glamour v0.2.0
 	github.com/google/uuid v1.1.2-0.20190416172445-c2e93f3ae59f
+	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 	github.com/jpillora/backoff v0.0.0-20160301230512-f85df8d02bdf
 	github.com/juju/ratelimit v0.0.0-20151125201925-77ed1c8a0121
 	github.com/klauspost/compress v0.0.0-20160229075208-2d3d403f37d2
