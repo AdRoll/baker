@@ -1,0 +1,2 @@
+# Force Git to write the .golden files with the Unix newline also on Windows
+*.golden text eol=lf
