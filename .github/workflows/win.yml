@@ -1,4 +1,4 @@
-name: Go
+name: Windows CI
 on: [push, pull_request]
 jobs:
   build:
@@ -14,5 +14,22 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
-      - name: build
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/go/pkg/mod              # Module download cache
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+            
+      - name: Build
         run: go build
+        
+      - name: Test
+        run: make -- --ci-test
+        
+      - name: Compile tests/benchmarks
+        run: make compile-tests
+        
+      - name: Build all examples
+        run: go build ./examples/...

@@ -9,6 +9,9 @@ test-short: ## Run tests with -short flag
 test: ## Run tests
 	go test -timeout 30s -race ./...
 
+--ci-test:
+	go test -timeout 2m -race ./...
+
 --ci-test-cover:
 	go test -timeout 5m -race -coverprofile=coverage.txt -covermode=atomic ./...
 
