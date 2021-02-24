@@ -9,22 +9,32 @@ import (
 )
 
 func TestMetadataLastModified(t *testing.T) {
+	ptr := func(t time.Time) *time.Time {
+		return &t
+	}
+
 	tests := []struct {
 		name         string
-		lastmodified time.Time
+		lastmodified *time.Time
 		dst          string
 		want         string
 		wantErr      bool
 	}{
 		{
 			name:         "time set",
-			lastmodified: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
+			lastmodified: ptr(time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)),
 			dst:          "f2",
 			want:         "1257894000",
 		},
 		{
-			name:         "time empty",
-			lastmodified: time.Time{},
+			name:         "time set at zero",
+			lastmodified: &time.Time{},
+			dst:          "f2",
+			want:         "",
+		},
+		{
+			name:         "time not set",
+			lastmodified: nil,
 			dst:          "f2",
 			want:         "",
 		},
@@ -70,8 +80,8 @@ func TestMetadataLastModified(t *testing.T) {
 
 			rec1 := &baker.LogLine{FieldSeparator: ','}
 			var bakerMetadata baker.Metadata
-			if !tt.lastmodified.IsZero() {
-				bakerMetadata = baker.Metadata{inpututils.MetadataLastModified: tt.lastmodified}
+			if tt.lastmodified != nil {
+				bakerMetadata = baker.Metadata{inpututils.MetadataLastModified: *tt.lastmodified}
 			}
 			if err := rec1.Parse([]byte{}, bakerMetadata); err != nil {
 				t.Fatalf("parse error: %q", err)
