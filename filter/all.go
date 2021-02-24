@@ -10,6 +10,7 @@ var All = []baker.FilterDesc{
 	ClauseFilterDesc,
 	ClearFieldsDesc,
 	ConcatenateDesc,
+	MetadataLastModifiedDesc,
 	NotNullDesc,
 	PartialCloneDesc,
 	RegexMatchDesc,
