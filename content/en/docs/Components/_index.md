@@ -19,6 +19,7 @@ description: "All Baker components: inputs, filters, outputs and uploads"
 * [ClauseFilter](/docs/components/filters/clausefilter)
 * [ClearFields](/docs/components/filters/clearfields)
 * [Concatenate](/docs/components/filters/concatenate)
+* [ExpandJSON](/docs/components/filters/expandjson)
 * [NotNull](/docs/components/filters/notnull)
 * [PartialClone](/docs/components/filters/partialclone)
 * [RegexMatch](/docs/components/filters/regexmatch)
