@@ -70,18 +70,14 @@ func NewHash(cfg baker.FilterParams) (baker.Filter, error) {
 
 	switch dcfg.Function {
 	case "md5":
-		hf := md5.New()
 		h.hash = func(b []byte) ([]byte, error) {
-			hf.Reset()
-			hf.Write(b)
-			return hf.Sum(nil), nil
+			sum := md5.Sum(b)
+			return sum[:], nil
 		}
 	case "sha256":
-		hf := sha256.New()
 		h.hash = func(b []byte) ([]byte, error) {
-			hf.Reset()
-			hf.Write(b)
-			return hf.Sum(nil), nil
+			sum := sha256.Sum256(b)
+			return sum[:], nil
 		}
 	default:
 		return nil, fmt.Errorf("unsupported hash function %s", dcfg.Function)
