@@ -26,7 +26,7 @@ jobs:
         run: go build
         
       - name: Test
-        run: make -- --ci-test
+        run: go test -timeout 2m -race ./...
         
       - name: Compile tests/benchmarks
         run: make compile-tests

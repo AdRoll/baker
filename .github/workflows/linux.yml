@@ -1,4 +1,4 @@
-name: Unix CI
+name: Linux CI
 on: [push, pull_request]
 jobs:
   build:
@@ -36,7 +36,7 @@ jobs:
             go get golang.org/x/tools/cmd/goimports
             test -z "$(goimports -d . | tee /dev/stderr)"
       - name: Test
-        run: make -- --ci-test
+        run: make test
 
       - name: Coverage
         env:
