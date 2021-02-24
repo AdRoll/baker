@@ -22,12 +22,12 @@ func TestMetadataLastModified(t *testing.T) {
 	}{
 		{
 			name:         "time set",
-			lastmodified: ptr(time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)),
+			lastmodified: ptr(time.Unix(1257894000, 0)),
 			dst:          "f2",
 			want:         "1257894000",
 		},
 		{
-			name:         "time set at zero",
+			name:         "time zero-value",
 			lastmodified: &time.Time{},
 			dst:          "f2",
 			want:         "",
