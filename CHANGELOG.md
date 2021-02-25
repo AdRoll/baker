@@ -37,6 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add PartialClone filter [#107](https://github.com/AdRoll/baker/pull/107)
 - Add `[validation]` section in TOML in which users can define record validation through regex [#122](https://github.com/AdRoll/baker/pull/122)
 - Add ExpandJSON filter [#128](https://github.com/AdRoll/baker/pull/128)
+- Add Hash filter with the support of md5 and sha256 algorithms [#130](https://github.com/AdRoll/baker/pull/130)
+- Add MetadataLastModified filter [#133](https://github.com/AdRoll/baker/pull/133)
 
 ### Changed
 
@@ -63,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix some bugs in `s3.s3UploadFile` [#120](https://github.com/AdRoll/baker/pull/120)
 - `SplitWriter` leaves some file descriptors open [#119](https://github.com/AdRoll/baker/pull/119) and [#121](https://github.com/AdRoll/baker/pull/121)
 - `PrintHelper()` now supports map type as configuration parameter of a Baker component [#138](https://github.com/AdRoll/baker/pull/138)
+- `List` input did not consider drive letter on Windows paths [#139](https://github.com/AdRoll/baker/pull/139)
 
 ### Maintenance
 
