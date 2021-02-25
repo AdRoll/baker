@@ -65,7 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix some bugs in `s3.s3UploadFile` [#120](https://github.com/AdRoll/baker/pull/120)
 - `SplitWriter` leaves some file descriptors open [#119](https://github.com/AdRoll/baker/pull/119) and [#121](https://github.com/AdRoll/baker/pull/121)
 - `List` input did not consider drive letter on Windows paths [#139](https://github.com/AdRoll/baker/pull/139)
-- `PrintHelp()` wrongly insert newline after dots [#140](https://github.com/AdRoll/baker/pull/140)
+- Stop to insert newline after dots in generated help markdown [#140](https://github.com/AdRoll/baker/pull/140)
 
 ### Maintenance
 
