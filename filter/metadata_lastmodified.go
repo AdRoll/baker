@@ -14,12 +14,11 @@ var MetadataLastModifiedDesc = baker.FilterDesc{
 	Name:   "MetadataLastModified",
 	New:    NewMetadataLastModified,
 	Config: &MetadataLastModifiedConfig{},
-	Help: `Set the last modified timestamp of the underlaying data source of the log line
-into a connfigurable Field.`,
+	Help:   `Extract the "last modified" timestamp from the record Metadata and write it to the selected field.`,
 }
 
 type MetadataLastModifiedConfig struct {
-	DstField string `help:"Name of the field into which write the timestamp" required:"true"`
+	DstField string `help:"Name of the field into which write the timestamp to" required:"true"`
 }
 
 type MetadataLastModified struct {
