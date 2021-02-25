@@ -10,11 +10,48 @@ import (
 	"github.com/jmespath/go-jmespath"
 )
 
+const help = `
+The filter copies the values of a set of JSON keys to corresponding record fields.
+It supports [JMESpath](https://jmespath.org/tutorial.html) to select the values to copy inside the JSON.
+
+It is suggested to avoid using the default CSV delimiter (` + "`,`" + `) as it could cause clashes with the JSON format. 
+Change the CSV delimiter with the ` + "`field_separator`" + ` configuration of the ` + "`[csv]`" + ` section. For instance:
+
+	[csv]
+		field_separator=";"
+
+### Example
+
+A possible filter configuration is:
+
+	[[filter]]
+	name="ExpandJSON"
+		[filter.config]
+		Source = "json_data"
+		[filter.config.Fields]
+		jfield1  = "field1"
+		jfield2  = "field2"
+
+The filter will transform the following input in the corresponding output:
+
+**Input:**
+
+| field1 | field2 |              json_data                 |
+| :----: | :----: | :------------------------------------: |
+|        |        | ` + "`{\"jfield1\":\"value1\", \"jfield2\":\"value2\"}`" + ` |
+
+**Output:**
+
+| field1 | field2 |              json_data                 |
+| :----: | :----: | :------------------------------------: |
+| value1 | value2 | ` + "`{\"jfield1\":\"value1\", \"jfield2\":\"value2\"}`" + ` |
+`
+
 var ExpandJSONDesc = baker.FilterDesc{
 	Name:   "ExpandJSON",
 	New:    NewExpandJSON,
 	Config: &ExpandJSONConfig{},
-	Help:   `Extract JSON values with JMESPath and copy them to configurable Record fields.`,
+	Help:   help,
 }
 
 type ExpandJSONConfig struct {
