@@ -100,8 +100,7 @@ func (s *List) openFile(fn string, sizeOnly bool) (io.ReadCloser, int64, time.Ti
 
 	switch u.Scheme {
 	case "", "file":
-		path := filepath.Join(u.Host, u.Path) // On Windows Host contains the drive letter
-		fi, err := os.Stat(path)
+		fi, err := os.Stat(u.Path)
 		if err != nil {
 			s.setFatalErr(err)
 			return nil, 0, time.Unix(0, 0), u, err
@@ -109,7 +108,7 @@ func (s *List) openFile(fn string, sizeOnly bool) (io.ReadCloser, int64, time.Ti
 		if sizeOnly {
 			return nil, fi.Size(), fi.ModTime(), u, nil
 		}
-		f, err := os.Open(path)
+		f, err := os.Open(u.Path)
 		if err != nil {
 			s.setFatalErr(err)
 			return nil, fi.Size(), fi.ModTime(), u, err
@@ -273,18 +272,17 @@ func (s *List) processList(fn string) error {
 	case "", "file":
 		// A list file on the local disk can be either a real file
 		// or a directory (whose contents will be processed)
-		path := filepath.Join(u.Host, u.Path) // On Windows Host contains the drive letter
-		if fi, err := os.Stat(path); err != nil {
+		if fi, err := os.Stat(u.Path); err != nil {
 			return err
 		} else if fi.IsDir() {
-			return filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
-				if err == nil && s.matchPath.MatchString(p) {
-					s.ci.ProcessFile(p)
+			return filepath.Walk(u.Path, func(path string, info os.FileInfo, err error) error {
+				if err == nil && s.matchPath.MatchString(path) {
+					s.ci.ProcessFile(path)
 				}
 				return nil
 			})
 		} else {
-			f, err := os.Open(path)
+			f, err := os.Open(u.Path)
 			if err != nil {
 				return err
 			}
