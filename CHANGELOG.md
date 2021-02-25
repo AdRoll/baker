@@ -66,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `SplitWriter` leaves some file descriptors open [#119](https://github.com/AdRoll/baker/pull/119) and [#121](https://github.com/AdRoll/baker/pull/121)
 - `PrintHelper()` now supports map type as configuration parameter of a Baker component [#138](https://github.com/AdRoll/baker/pull/138)
 - `List` input did not consider drive letter on Windows paths [#139](https://github.com/AdRoll/baker/pull/139)
-- Stop to insert newline after dots in generated help markdown [#140](https://github.com/AdRoll/baker/pull/140)
+- Do not insert newline after dots in generated help markdown [#140](https://github.com/AdRoll/baker/pull/140)
 
 ### Maintenance
 
