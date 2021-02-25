@@ -167,7 +167,7 @@ func newHelpConfigKeyFromField(f reflect.StructField) (helpConfigKey, error) {
 		case reflect.Int:
 			h.typ = "array of ints"
 		default:
-			return h, fmt.Errorf("config key %q: unsupported type array of %s", f.Type.Name(), f.Type.Elem())
+			return h, fmt.Errorf("config key %q: unsupported type array of %s", f.Name, f.Type.Elem())
 		}
 	case reflect.Int64:
 		if f.Type.Name() == "Duration" {
@@ -177,8 +177,22 @@ func newHelpConfigKeyFromField(f reflect.StructField) (helpConfigKey, error) {
 		}
 	case reflect.Bool:
 		h.typ = "bool"
+	case reflect.Map:
+		switch f.Type.Key().Kind() {
+		case reflect.String:
+			switch f.Type.Elem().Kind() {
+			case reflect.String:
+				h.typ = "table of strings"
+			case reflect.Int:
+				h.typ = "table of ints"
+			default:
+				return h, fmt.Errorf("config key %q: unsupported type table of %s", f.Name, f.Type.Elem())
+			}
+		default:
+			return h, fmt.Errorf("config key %q: unsupported map with key type %s", f.Name, f.Type.Key())
+		}
 	default:
-		return h, fmt.Errorf("config key %q: unsupported type", f.Type.Name())
+		return h, fmt.Errorf("config key %q: unsupported type %s", f.Name, f.Type)
 	}
 
 	return h, nil

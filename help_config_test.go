@@ -8,13 +8,15 @@ import (
 )
 
 type dummyConfig struct {
-	IntField            int           `help:"int field" required:"true" default:"0"`
-	Int64Field          int64         `help:"int64 field" required:"false" default:"1"`
-	DurationField       time.Duration `help:"duration field" required:"true" default:"2s"`
-	StringField         string        `help:"string field" required:"true" default:"4"`
-	BoolField           bool          `help:"bool field" required:"true" default:"true"`
-	SliceOfStringsField []string      `help:"strings field" required:"true" default:"[\"a\", \"b\", \"c\"]"`
-	SliceOfIntsField    []int         `help:"ints field" required:"true" default:"[0, 1, 2, 3]"`
+	IntField            int               `help:"int field" required:"true" default:"0"`
+	Int64Field          int64             `help:"int64 field" required:"false" default:"1"`
+	DurationField       time.Duration     `help:"duration field" required:"true" default:"2s"`
+	StringField         string            `help:"string field" required:"true" default:"4"`
+	BoolField           bool              `help:"bool field" required:"true" default:"true"`
+	SliceOfStringsField []string          `help:"strings field" required:"true" default:"[\"a\", \"b\", \"c\"]"`
+	SliceOfIntsField    []int             `help:"ints field" required:"true" default:"[0, 1, 2, 3]"`
+	TableOfString       map[string]string `help:"table of strings" required:"true" default:"{foo=\"bar\", bar=\"foo\"}"`
+	TableOfInt          map[string]int    `help:"table of ints" required:"true" default:"{foo=12, bar=2}"`
 }
 
 var dummyKeys = []helpConfigKey{
@@ -67,6 +69,20 @@ var dummyKeys = []helpConfigKey{
 		required: true,
 		desc:     "ints field",
 	},
+	{
+		name:     "TableOfString",
+		typ:      "table of strings",
+		def:      `{foo="bar", bar="foo"}`,
+		required: true,
+		desc:     "table of strings",
+	},
+	{
+		name:     "TableOfInt",
+		typ:      "table of ints",
+		def:      `{foo=12, bar=2}`,
+		required: true,
+		desc:     "table of ints",
+	},
 }
 
 func TestGenerateHelp(t *testing.T) {
@@ -95,6 +111,8 @@ func TestGenerateHelp(t *testing.T) {
 				BoolField:           false,
 				SliceOfStringsField: []string{"foo", "bar"},
 				SliceOfIntsField:    []int{0, 1, 2, 3, 4, 5},
+				TableOfString:       map[string]string{"foo": "bar", "bar": "foo"},
+				TableOfInt:          map[string]int{"foo": 12, "bar": 5},
 			}},
 		},
 	}

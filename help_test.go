@@ -2,8 +2,10 @@ package baker_test
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 
+	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/filter"
 	"github.com/AdRoll/baker/input"
 	"github.com/AdRoll/baker/output"
@@ -52,5 +54,18 @@ func TestAllOutputsHaveConfigHelp(t *testing.T) {
 func TestAllUploadsHaveConfigHelp(t *testing.T) {
 	for _, upload := range upload.All {
 		assertValidConfigHelp(t, upload.Name, upload.Config)
+	}
+}
+
+func TestPrintHelp(t *testing.T) {
+	comp := baker.Components{
+		Inputs:  input.All,
+		Filters: filter.All,
+		Outputs: output.All,
+		Uploads: upload.All,
+	}
+	err := baker.PrintHelp(&strings.Builder{}, "*", comp, baker.HelpFormatMarkdown)
+	if err != nil {
+		t.Fatalf("PrintHelp return err: %v, want nil", err)
 	}
 }
