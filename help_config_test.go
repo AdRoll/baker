@@ -8,15 +8,15 @@ import (
 )
 
 type dummyConfig struct {
-	IntField            int               `help:"int field" required:"true" default:"0"`
-	Int64Field          int64             `help:"int64 field" required:"false" default:"1"`
-	DurationField       time.Duration     `help:"duration field" required:"true" default:"2s"`
-	StringField         string            `help:"string field" required:"true" default:"4"`
-	BoolField           bool              `help:"bool field" required:"true" default:"true"`
-	SliceOfStringsField []string          `help:"strings field" required:"true" default:"[\"a\", \"b\", \"c\"]"`
-	SliceOfIntsField    []int             `help:"ints field" required:"true" default:"[0, 1, 2, 3]"`
-	TableOfString       map[string]string `help:"table of strings" required:"true" default:"{foo=\"bar\", bar=\"foo\"}"`
-	TableOfInt          map[string]int    `help:"table of ints" required:"true" default:"{foo=12, bar=2}"`
+	IntField              int               `help:"int field" required:"true" default:"0"`
+	Int64Field            int64             `help:"int64 field" required:"false" default:"1"`
+	DurationField         time.Duration     `help:"duration field" required:"true" default:"2s"`
+	StringField           string            `help:"string field" required:"true" default:"4"`
+	BoolField             bool              `help:"bool field" required:"true" default:"true"`
+	SliceOfStringsField   []string          `help:"strings field" required:"true" default:"[\"a\", \"b\", \"c\"]"`
+	SliceOfIntsField      []int             `help:"ints field" required:"true" default:"[0, 1, 2, 3]"`
+	MapOfStringsToStrings map[string]string `help:"map of strings to strings field" required:"true" default:"{foo=\"bar\", bar=\"foo\"}"`
+	MapOfStringsToInt     map[string]int    `help:"map of strings to ints field" required:"true" default:"{foo=12, bar=2}"`
 }
 
 var dummyKeys = []helpConfigKey{
@@ -70,18 +70,18 @@ var dummyKeys = []helpConfigKey{
 		desc:     "ints field",
 	},
 	{
-		name:     "TableOfString",
-		typ:      "table of strings",
+		name:     "MapOfStringsToStrings",
+		typ:      "map of strings to strings",
 		def:      `{foo="bar", bar="foo"}`,
 		required: true,
-		desc:     "table of strings",
+		desc:     "map of strings to strings field",
 	},
 	{
-		name:     "TableOfInt",
-		typ:      "table of ints",
+		name:     "MapOfStringsToInt",
+		typ:      "map of strings to ints",
 		def:      `{foo=12, bar=2}`,
 		required: true,
-		desc:     "table of ints",
+		desc:     "map of strings to ints field",
 	},
 }
 
@@ -104,15 +104,15 @@ func TestGenerateHelp(t *testing.T) {
 		{
 			name: "supported configuration",
 			desc: InputDesc{Name: "name", Config: &dummyConfig{
-				IntField:            1,
-				Int64Field:          2,
-				DurationField:       3,
-				StringField:         "5",
-				BoolField:           false,
-				SliceOfStringsField: []string{"foo", "bar"},
-				SliceOfIntsField:    []int{0, 1, 2, 3, 4, 5},
-				TableOfString:       map[string]string{"foo": "bar", "bar": "foo"},
-				TableOfInt:          map[string]int{"foo": 12, "bar": 5},
+				IntField:              1,
+				Int64Field:            2,
+				DurationField:         3,
+				StringField:           "5",
+				BoolField:             false,
+				SliceOfStringsField:   []string{"foo", "bar"},
+				SliceOfIntsField:      []int{0, 1, 2, 3, 4, 5},
+				MapOfStringsToStrings: map[string]string{"foo": "bar", "bar": "foo"},
+				MapOfStringsToInt:     map[string]int{"foo": 12, "bar": 5},
 			}},
 		},
 	}

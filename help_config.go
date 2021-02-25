@@ -182,9 +182,9 @@ func newHelpConfigKeyFromField(f reflect.StructField) (helpConfigKey, error) {
 		case reflect.String:
 			switch f.Type.Elem().Kind() {
 			case reflect.String:
-				h.typ = "table of strings"
+				h.typ = "map of strings to strings"
 			case reflect.Int:
-				h.typ = "table of ints"
+				h.typ = "map of strings to ints"
 			default:
 				return h, fmt.Errorf("config key %q: unsupported type table of %s", f.Name, f.Type.Elem())
 			}
