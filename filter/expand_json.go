@@ -10,11 +10,32 @@ import (
 	"github.com/jmespath/go-jmespath"
 )
 
+const expandJSONhelp = `
+ExpandJSON extracts values from a JSON formatted record field and writes them into other fields of the same record.
+It supports [JMESPath](https://jmespath.org/tutorial.html) to select the values to copy inside the JSON.
+
+### Example
+
+A possible filter configuration is:
+
+	[[filter]]
+	name="ExpandJSON"
+		[filter.config]
+		Source = "json_data"
+		[filter.config.Fields]
+		jfield1  = "field1"
+		jfield2  = "field2"
+		
+In this example, the filter extracts values of the ` + "`jfield1`" + ` and ` + "`jfield2`" + ` keys of the JSON 
+object present in field ` + "`json_data`" + `of the record. Then, the values of that keys will be written into the field 
+` + "`field1`" + ` and ` + "`field2`" + ` of the same record.
+`
+
 var ExpandJSONDesc = baker.FilterDesc{
 	Name:   "ExpandJSON",
 	New:    NewExpandJSON,
 	Config: &ExpandJSONConfig{},
-	Help:   `Extract JSON values with JMESPath and copy them to configurable Record fields.`,
+	Help:   expandJSONhelp,
 }
 
 type ExpandJSONConfig struct {
