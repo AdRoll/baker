@@ -1,7 +1,7 @@
 ---
 title: "ClauseFilter"
 weight: 8
-date: 2020-12-14
+date: 2021-03-01
 ---
 {{% pageinfo color="primary" %}}
 
@@ -12,27 +12,19 @@ date: 2020-12-14
 
 ### Overview
 
-Discard records which do not match a clause given as a boolean S-expression.  
- Check the filter documentation for some examples.  
-
+Discard records which do not match a clause given as a boolean S-expression. Check the filter documentation for some examples.
 
 ### ClauseFilter boolean expression format
 
-This document describes the s-expression format used in ClauseFilter.  
+This document describes the s-expression format used in ClauseFilter.
 
-
-The format uses s-expressions.  
- Empty string matches anything (i.  
-e.  
- all records
-will pass the expression).  
-
+The format uses s-expressions. Empty string matches anything (i.e. all records
+will pass the expression).
 
 There are only three keywords: and, or, not
 
 If an s-expression starts with any other name, it is assumed to be the name of
-a field and it should be paired with the desired value to match against.  
-
+a field and it should be paired with the desired value to match against.
 
     Must match both X and Y to pass:
     (and X Y)

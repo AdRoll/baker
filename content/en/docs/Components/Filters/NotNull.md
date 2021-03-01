@@ -1,7 +1,7 @@
 ---
 title: "NotNull"
-weight: 11
-date: 2020-12-14
+weight: 14
+date: 2021-03-01
 ---
 {{% pageinfo color="primary" %}}
 
@@ -11,9 +11,7 @@ date: 2020-12-14
 ## Filter *NotNull*
 
 ### Overview
-Discard the records having null (i.  
-e empty) fields.  
-
+Discard the records having null (i.e empty) fields.
 
 
 ### Configuration

@@ -1,7 +1,7 @@
 ---
 title: "SQS"
 weight: 5
-date: 2020-12-14
+date: 2021-03-01
 ---
 {{% pageinfo color="primary" %}}
 
@@ -12,10 +12,8 @@ date: 2020-12-14
 
 ### Overview
 This input listens on multiple SQS queues for new incoming log files
-on S3; it is meant to be used with SQS queues popoulated by SNS.  
-
-It never exits.  
-
+on S3; it is meant to be used with SQS queues popoulated by SNS.
+It never exits.
 
 
 ### Configuration
