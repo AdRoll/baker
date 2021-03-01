@@ -26,7 +26,7 @@ A possible filter configuration is:
 		jfield1  = "field1"
 		jfield2  = "field2"
 		
-In this example, the filter will extract the value of the key ` + "`jfield1`" + ` and ` + "`jfield2`" + ` of the JSON 
+In this example, the filter extracts values of the ` + "`jfield1`" + ` and ` + "`jfield2`" + ` keys of the JSON 
 object present in field ` + "`json_data`" + `of the record. Then, the values of that keys will be written into the field 
 ` + "`field1`" + ` and ` + "`field2`" + ` of the same record.
 `
