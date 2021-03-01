@@ -6,7 +6,7 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-func TestIncDedup(t *testing.T) {
+func TestDedup(t *testing.T) {
 	tests := []struct {
 		name    string
 		records []string
@@ -83,12 +83,12 @@ func TestIncDedup(t *testing.T) {
 			params := baker.FilterParams{
 				ComponentParams: baker.ComponentParams{
 					FieldByName: fieldByName,
-					DecodedConfig: &IncDedupConfig{
+					DecodedConfig: &DedupConfig{
 						Fields: tt.fields,
 					},
 				},
 			}
-			f1, err := NewIncDedup(params)
+			f1, err := NewDedup(params)
 			if (err != nil) != (tt.wantErr) {
 				t.Fatalf("got error = %v, want error = %v", err, tt.wantErr)
 			}

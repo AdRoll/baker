@@ -9,29 +9,29 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-const help = `
+const dedupHelp = `
 Removes record with identical value using a set of provided fields as key.
 
 The deduplication procedure internally uses a shared set, concurrently used between all the filter replicas for storing the encountered record key.
 Indeed, the use of this filter could introduce performance degradation and possible unbounded memory consumption.
 
-The user is responsible to properly chouse the set of fields to construct a bounded combination of possible inputs and thus maintaining the
+The user is responsible to properly choose the set of fields to construct a bounded combination of possible inputs and thus maintaining the
 memory consumption under control.
 `
 
-var IncDedupDesc = baker.FilterDesc{
-	Name:   "IncDedup",
-	New:    NewIncDedup,
-	Config: &IncDedupConfig{},
-	Help:   help,
+var DedupDesc = baker.FilterDesc{
+	Name:   "Dedup",
+	New:    NewDedup,
+	Config: &DedupConfig{},
+	Help:   dedupHelp,
 }
 
-type IncDedupConfig struct {
+type DedupConfig struct {
 	Fields []string `help:"fields that needs to be unique" required:"true"`
 }
 
-type IncDedup struct {
-	cfg *IncDedupConfig
+type Dedup struct {
+	cfg *DedupConfig
 
 	fields []baker.FieldIndex
 
@@ -41,13 +41,13 @@ type IncDedup struct {
 	numFilteredLines  int64
 }
 
-func NewIncDedup(cfg baker.FilterParams) (baker.Filter, error) {
+func NewDedup(cfg baker.FilterParams) (baker.Filter, error) {
 	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &IncDedupConfig{}
+		cfg.DecodedConfig = &DedupConfig{}
 	}
-	dcfg := cfg.DecodedConfig.(*IncDedupConfig)
+	dcfg := cfg.DecodedConfig.(*DedupConfig)
 
-	f := &IncDedup{
+	f := &Dedup{
 		cfg: dcfg,
 	}
 	for _, field := range dcfg.Fields {
@@ -60,14 +60,14 @@ func NewIncDedup(cfg baker.FilterParams) (baker.Filter, error) {
 	return f, nil
 }
 
-func (f *IncDedup) Stats() baker.FilterStats {
+func (f *Dedup) Stats() baker.FilterStats {
 	return baker.FilterStats{
 		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
 		NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
 	}
 }
 
-func (f *IncDedup) Process(l baker.Record, next func(baker.Record)) {
+func (f *Dedup) Process(l baker.Record, next func(baker.Record)) {
 	atomic.AddInt64(&f.numProcessedLines, 1)
 
 	key := f.constructKey(l)
@@ -81,7 +81,7 @@ func (f *IncDedup) Process(l baker.Record, next func(baker.Record)) {
 }
 
 // constructKey build a key with the concatenation of the fields
-func (f *IncDedup) constructKey(l baker.Record) string {
+func (f *Dedup) constructKey(l baker.Record) string {
 	var sb strings.Builder
 	for _, i := range f.fields {
 		sb.Write(l.Get(i))
