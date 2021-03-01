@@ -10,15 +10,9 @@ import (
 	"github.com/jmespath/go-jmespath"
 )
 
-const help = `
-The filter copies the values of a set of JSON keys to corresponding record fields.
-It supports [JMESpath](https://jmespath.org/tutorial.html) to select the values to copy inside the JSON.
-
-It is suggested to avoid using the default CSV delimiter (` + "`,`" + `) as it could cause clashes with the JSON format. 
-Change the CSV delimiter with the ` + "`field_separator`" + ` configuration of the ` + "`[csv]`" + ` section. For instance:
-
-	[csv]
-		field_separator=";"
+const expandJSONhelp = `
+ExpandJSON extracts values from a JSON formatted record field and writes them into other fields of the same record.
+It supports [JMESPath](https://jmespath.org/tutorial.html) to select the values to copy inside the JSON.
 
 ### Example
 
@@ -31,27 +25,17 @@ A possible filter configuration is:
 		[filter.config.Fields]
 		jfield1  = "field1"
 		jfield2  = "field2"
-
-The filter will transform the following input in the corresponding output:
-
-**Input:**
-
-| field1 | field2 |              json_data                 |
-| :----: | :----: | :------------------------------------: |
-|        |        | ` + "`{\"jfield1\":\"value1\", \"jfield2\":\"value2\"}`" + ` |
-
-**Output:**
-
-| field1 | field2 |              json_data                 |
-| :----: | :----: | :------------------------------------: |
-| value1 | value2 | ` + "`{\"jfield1\":\"value1\", \"jfield2\":\"value2\"}`" + ` |
+		
+In this example, the filter will extract the value of the key ` + "`jfield1`" + ` and ` + "`jfield2`" + ` of the JSON 
+object present in field ` + "`json_data`" + `of the record. Then, the valus of that keys will be written into the field 
+` + "`field1`" + ` and ` + "`field2`" + ` of the same record.
 `
 
 var ExpandJSONDesc = baker.FilterDesc{
 	Name:   "ExpandJSON",
 	New:    NewExpandJSON,
 	Config: &ExpandJSONConfig{},
-	Help:   help,
+	Help:   expandJSONhelp,
 }
 
 type ExpandJSONConfig struct {
