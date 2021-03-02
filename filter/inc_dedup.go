@@ -53,7 +53,7 @@ func NewDedup(cfg baker.FilterParams) (baker.Filter, error) {
 	for _, field := range dcfg.Fields {
 		i, ok := cfg.FieldByName(field)
 		if !ok {
-			return nil, fmt.Errorf("unrecognized deduplication field %q", field)
+			return nil, fmt.Errorf("unknown field %q", field)
 		}
 		f.fields = append(f.fields, i)
 	}
@@ -71,13 +71,12 @@ func (f *Dedup) Process(l baker.Record, next func(baker.Record)) {
 	atomic.AddInt64(&f.numProcessedLines, 1)
 
 	key := f.constructKey(l)
-	_, found := f.dedupSet.LoadOrStore(key, struct{}{})
-
-	if found {
+	if _, found := f.dedupSet.LoadOrStore(key, struct{}{}); found {
 		atomic.AddInt64(&f.numFilteredLines, 1)
-	} else {
-		next(l)
+		return
 	}
+
+	next(l)
 }
 
 // constructKey builds a key by concatenating field values
