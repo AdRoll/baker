@@ -2,7 +2,6 @@ package baker_test
 
 import (
 	"bytes"
-	"flag"
 	"io/ioutil"
 	"math"
 	"os"
@@ -103,7 +102,6 @@ func TestStatsDumper(t *testing.T) {
 	time.Sleep(1050 * time.Millisecond)
 	stop()
 
-	flag.Parse()
 	golden := filepath.Join("testdata", t.Name()+".golden")
 	if *testutil.UpdateGolden {
 		ioutil.WriteFile(golden, buf.Bytes(), os.ModePerm)
