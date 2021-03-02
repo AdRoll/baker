@@ -10,13 +10,11 @@ import (
 )
 
 const dedupHelp = `
-Removes record with identical value using a set of provided fields as key.
+This filter removes duplicate records. A record is considered a duplicate, and is thus removed by this filter, 
+if another record with the same values has already been _seen_. The comparison is performed on a user-provided list of fields (Fields setting).
 
-The deduplication procedure internally uses a shared set, concurrently used between all the filter replicas for storing the encountered record key.
-Indeed, the use of this filter could introduce performance degradation and possible unbounded memory consumption.
-
-The user is responsible to properly choose the set of fields to construct a bounded combination of possible inputs and thus maintaining the
-memory consumption under control.
+WARNING: to remove duplicates, this filter stores one key per unique record in memory, this means that the overall memory grows linearly with the number of unique records in your data set. Depending on your data set, this might 
+lead to OOM (i.e out of memory) errors.
 `
 
 var DedupDesc = baker.FilterDesc{
@@ -27,7 +25,7 @@ var DedupDesc = baker.FilterDesc{
 }
 
 type DedupConfig struct {
-	Fields []string `help:"fields that needs to be unique" required:"true"`
+	Fields []string `help:"fields to consider when comparing records" required:"true"`
 }
 
 type Dedup struct {
@@ -80,7 +78,7 @@ func (f *Dedup) Process(l baker.Record, next func(baker.Record)) {
 	}
 }
 
-// constructKey build a key with the concatenation of the fields
+// constructKey builds a key by concatenating field values
 func (f *Dedup) constructKey(l baker.Record) string {
 	var sb strings.Builder
 	for _, i := range f.fields {
