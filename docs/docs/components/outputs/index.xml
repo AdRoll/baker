@@ -5,7 +5,7 @@
     <description>Recent content in Outputs on Baker, high performance modular pipelines for the Big Data era</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 14 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 01 Mar 2021 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/outputs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: DynamoDB</title>
       <link>https://getbaker.io/docs/components/outputs/dynamodb/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/dynamodb/</guid>
       <description>
@@ -34,15 +34,13 @@
 &lt;h2 id=&#34;output-dynamodb&#34;&gt;Output &lt;em&gt;DynamoDB&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;non-raw&lt;/em&gt; output, it doesn&amp;rsquo;t receive whole records. Instead it receives a list of fields for each record (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;This output writes the filtered log lines to DynamoDB.&lt;br&gt;
-It must be
+&lt;p&gt;This output writes the filtered log lines to DynamoDB. It must be
 configured specifying the region, the table name, and the columns
-to write.&lt;/p&gt;
-&lt;p&gt;Columns are specified using the syntax &amp;ldquo;t:name&amp;rdquo; where &amp;ldquo;t&amp;rdquo;
-is the type of the data, and &amp;ldquo;name&amp;rdquo; is the name of column.&lt;br&gt;
-Supported
-types are: &amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings.&lt;/p&gt;
-&lt;p&gt;The first column (and field) must be the primary key.&lt;/p&gt;
+to write.
+Columns are specified using the syntax &amp;ldquo;t:name&amp;rdquo; where &amp;ldquo;t&amp;rdquo;
+is the type of the data, and &amp;ldquo;name&amp;rdquo; is the name of column. Supported
+types are: &amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings.
+The first column (and field) must be the primary key.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[output.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
@@ -107,7 +105,7 @@ types are: &amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings
     <item>
       <title>Docs: FileWriter</title>
       <link>https://getbaker.io/docs/components/outputs/filewriter/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/filewriter/</guid>
       <description>
@@ -123,15 +121,14 @@ types are: &amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings
 &lt;h2 id=&#34;output-filewriter&#34;&gt;Output &lt;em&gt;FileWriter&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;raw&lt;/em&gt; output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;This output writes the records into compressed files in a directory.&lt;/p&gt;
-&lt;p&gt;Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.&lt;/p&gt;
-&lt;p&gt;The file names can contain placeholders that are populated by the output (see the keys help below).&lt;/p&gt;
-&lt;p&gt;When the special {{.&lt;br&gt;
-Field0}} placeholder is used, then the user must specify the field name to
-use for replacement in the fields configuration list.&lt;/p&gt;
-&lt;p&gt;The value of that field, extracted from each record, is used as replacement and, moreover, this
-also means that each created file will contain only records with that same value for the field.&lt;/p&gt;
-&lt;p&gt;Note that, with this option, the FileWriter creates as many workers as the different values
+&lt;p&gt;This output writes the records into compressed files in a directory.
+Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.
+The file names can contain placeholders that are populated by the output (see the keys help below).
+When the special {{.Field0}} placeholder is used, then the user must specify the field name to
+use for replacement in the fields configuration list.
+The value of that field, extracted from each record, is used as replacement and, moreover, this
+also means that each created file will contain only records with that same value for the field.
+Note that, with this option, the FileWriter creates as many workers as the different values
 of the field, and each one of these workers concurrently writes to a different file.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[output.config]&lt;/code&gt; section:&lt;/p&gt;
@@ -183,7 +180,7 @@ of the field, and each one of these workers concurrently writes to a different f
     <item>
       <title>Docs: Nop</title>
       <link>https://getbaker.io/docs/components/outputs/nop/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/nop/</guid>
       <description>
@@ -199,8 +196,7 @@ of the field, and each one of these workers concurrently writes to a different f
 &lt;h2 id=&#34;output-nop&#34;&gt;Output &lt;em&gt;Nop&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;non-raw&lt;/em&gt; output, it doesn&amp;rsquo;t receive whole records. Instead it receives a list of fields for each record (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;No-operation output.&lt;br&gt;
-This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
+&lt;p&gt;No-operation output. This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;No configuration available&lt;/p&gt;
 
@@ -210,7 +206,7 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
     <item>
       <title>Docs: OpLog</title>
       <link>https://getbaker.io/docs/components/outputs/oplog/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/oplog/</guid>
       <description>
@@ -236,7 +232,7 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
     <item>
       <title>Docs: Stats</title>
       <link>https://getbaker.io/docs/components/outputs/stats/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/stats/</guid>
       <description>
@@ -252,8 +248,7 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
 &lt;h2 id=&#34;output-stats&#34;&gt;Output &lt;em&gt;Stats&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;raw&lt;/em&gt; output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;Compute various distributions of the records it receives and dumps that to CSV.&lt;br&gt;
-It computes the distribution of record by size and the distribution of the values of certain fields&lt;/p&gt;
+&lt;p&gt;Compute various distributions of the records it receives and dumps that to CSV. It computes the distribution of record by size and the distribution of the values of certain fields&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[output.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
@@ -297,7 +292,7 @@ It computes the distribution of record by size and the distribution of the value
     <item>
       <title>Docs: WebSocket</title>
       <link>https://getbaker.io/docs/components/outputs/websocket/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/websocket/</guid>
       <description>

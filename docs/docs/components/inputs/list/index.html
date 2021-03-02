@@ -22,22 +22,18 @@
 
 <title>List | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="List" />
 <meta property="og:description" content="Read the API documentation »
- Input List Overview This input fetches logs from a predefined list of local or remote sources.
-The &ldquo;Files&rdquo; configuration variable is a list of &ldquo;file specifiers&rdquo;.
-Each &ldquo;file specifier&rdquo; can be:
+ Input List Overview This input fetches logs from a predefined list of local or remote sources. The &ldquo;Files&rdquo; configuration variable is a list of &ldquo;file specifiers&rdquo;. Each &ldquo;file specifier&rdquo; can be:
  A local file path on the filesystem: the log file at that path will be processed A HTTP/HTTPS URL: the log file at that URL will be downloaded and processed A S3 URL: the log file at that URL that will be downloaded and processed &ldquo;@&rdquo; followed by a local path pointing to a file: the file is expected to be a text file and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a HTTP/HTTPS URL: the text file pointed by the URL will be downloaded, and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a S3 URL pointing to a file: the text file pointed by the URL will be downloaded, and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a local path pointing to a directory (must end with a slash): the directory will be recursively walked, and all files matching the &ldquo;MatchPath&rdquo; option regexp will be processed as logfiles &ldquo;@&rdquo; followed by a S3 URL pointing to a directory: the directory on S3 will be recursively walked, and all files matching the &ldquo;MatchPath&rdquo; option regexp will be processed as logfiles &ldquo;-&quot;: the contents of a log file will be read from stdin and processed &ldquo;@-&quot;: each line read from stdin will be parsed as a &ldquo;file specifier&rdquo;  All records produced by this input contain 2 metadata values:" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://getbaker.io/docs/components/inputs/list/" />
-<meta property="article:published_time" content="2020-12-14T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-12-14T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
+<meta property="article:published_time" content="2021-03-01T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-03-01T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
 <meta itemprop="name" content="List">
 <meta itemprop="description" content="Read the API documentation »
- Input List Overview This input fetches logs from a predefined list of local or remote sources.
-The &ldquo;Files&rdquo; configuration variable is a list of &ldquo;file specifiers&rdquo;.
-Each &ldquo;file specifier&rdquo; can be:
+ Input List Overview This input fetches logs from a predefined list of local or remote sources. The &ldquo;Files&rdquo; configuration variable is a list of &ldquo;file specifiers&rdquo;. Each &ldquo;file specifier&rdquo; can be:
  A local file path on the filesystem: the log file at that path will be processed A HTTP/HTTPS URL: the log file at that URL will be downloaded and processed A S3 URL: the log file at that URL that will be downloaded and processed &ldquo;@&rdquo; followed by a local path pointing to a file: the file is expected to be a text file and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a HTTP/HTTPS URL: the text file pointed by the URL will be downloaded, and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a S3 URL pointing to a file: the text file pointed by the URL will be downloaded, and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a local path pointing to a directory (must end with a slash): the directory will be recursively walked, and all files matching the &ldquo;MatchPath&rdquo; option regexp will be processed as logfiles &ldquo;@&rdquo; followed by a S3 URL pointing to a directory: the directory on S3 will be recursively walked, and all files matching the &ldquo;MatchPath&rdquo; option regexp will be processed as logfiles &ldquo;-&quot;: the contents of a log file will be read from stdin and processed &ldquo;@-&quot;: each line read from stdin will be parsed as a &ldquo;file specifier&rdquo;  All records produced by this input contain 2 metadata values:">
-<meta itemprop="datePublished" content="2020-12-14T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-12-14T00:00:00+00:00" />
+<meta itemprop="datePublished" content="2021-03-01T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-03-01T00:00:00+00:00" />
 <meta itemprop="wordCount" content="338">
 
 
@@ -46,9 +42,7 @@ Each &ldquo;file specifier&rdquo; can be:
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="List"/>
 <meta name="twitter:description" content="Read the API documentation »
- Input List Overview This input fetches logs from a predefined list of local or remote sources.
-The &ldquo;Files&rdquo; configuration variable is a list of &ldquo;file specifiers&rdquo;.
-Each &ldquo;file specifier&rdquo; can be:
+ Input List Overview This input fetches logs from a predefined list of local or remote sources. The &ldquo;Files&rdquo; configuration variable is a list of &ldquo;file specifiers&rdquo;. Each &ldquo;file specifier&rdquo; can be:
  A local file path on the filesystem: the log file at that path will be processed A HTTP/HTTPS URL: the log file at that URL will be downloaded and processed A S3 URL: the log file at that URL that will be downloaded and processed &ldquo;@&rdquo; followed by a local path pointing to a file: the file is expected to be a text file and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a HTTP/HTTPS URL: the text file pointed by the URL will be downloaded, and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a S3 URL pointing to a file: the text file pointed by the URL will be downloaded, and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a local path pointing to a directory (must end with a slash): the directory will be recursively walked, and all files matching the &ldquo;MatchPath&rdquo; option regexp will be processed as logfiles &ldquo;@&rdquo; followed by a S3 URL pointing to a directory: the directory on S3 will be recursively walked, and all files matching the &ldquo;MatchPath&rdquo; option regexp will be processed as logfiles &ldquo;-&quot;: the contents of a log file will be read from stdin and processed &ldquo;@-&quot;: each line read from stdin will be parsed as a &ldquo;file specifier&rdquo;  All records produced by this input contain 2 metadata values:"/>
 
 
@@ -156,7 +150,7 @@ Each &ldquo;file specifier&rdquo; can be:
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.5dd9eff11f8f398558ca34b59492c2c6f1148f567049c41b03faa264ddb5239fe5280edf16e4e76538e1120a858ea9fc6bfc6671cc6e7f76a0655d4ce681b840.json"
+  data-offline-search-index-json-src="/offline-search-index.0ed3614bb82ff239cb27338885c82111508634433a0f5469b8776bbc5b7b4dfa94b530eeed5bfd0e508ca4a5f1983c9692246d05dca5a17be5a5c220f7cfb823.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -187,7 +181,7 @@ Each &ldquo;file specifier&rdquo; can be:
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.5dd9eff11f8f398558ca34b59492c2c6f1148f567049c41b03faa264ddb5239fe5280edf16e4e76538e1120a858ea9fc6bfc6671cc6e7f76a0655d4ce681b840.json"
+  data-offline-search-index-json-src="/offline-search-index.0ed3614bb82ff239cb27338885c82111508634433a0f5469b8776bbc5b7b4dfa94b530eeed5bfd0e508ca4a5f1983c9692246d05dca5a17be5a5c220f7cfb823.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -387,6 +381,24 @@ Each &ldquo;file specifier&rdquo; can be:
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersconcatenate" href="/docs/components/filters/concatenate/">Concatenate</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersexpandjson" href="/docs/components/filters/expandjson/">ExpandJSON</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltershash" href="/docs/components/filters/hash/">Hash</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersmetadatalastmodified" href="/docs/components/filters/metadatalastmodified/">MetadataLastModified</a>
       
       
       
@@ -772,10 +784,8 @@ Each &ldquo;file specifier&rdquo; can be:
 
 <h2 id="input-list">Input <em>List</em></h2>
 <h3 id="overview">Overview</h3>
-<p>This input fetches logs from a predefined list of local or remote sources.<br>
-The &ldquo;Files&rdquo;
-configuration variable is a list of &ldquo;file specifiers&rdquo;.<br>
-Each &ldquo;file specifier&rdquo; can be:</p>
+<p>This input fetches logs from a predefined list of local or remote sources. The &ldquo;Files&rdquo;
+configuration variable is a list of &ldquo;file specifiers&rdquo;. Each &ldquo;file specifier&rdquo; can be:</p>
 <ul>
 <li>A local file path on the filesystem: the log file at that path will be processed</li>
 <li>A HTTP/HTTPS URL: the log file at that URL will be downloaded and processed</li>
@@ -837,7 +847,7 @@ walked, and all files matching the &ldquo;MatchPath&rdquo; option regexp will be
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified December 14, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified March 1, 2021
 </div>
 </div>
 

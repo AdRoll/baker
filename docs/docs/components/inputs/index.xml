@@ -5,7 +5,7 @@
     <description>Recent content in Inputs on Baker, high performance modular pipelines for the Big Data era</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 14 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 01 Mar 2021 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/inputs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: KCL</title>
       <link>https://getbaker.io/docs/components/inputs/kcl/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/kcl/</guid>
       <description>
@@ -33,14 +33,11 @@
 
 &lt;h2 id=&#34;input-kcl&#34;&gt;Input &lt;em&gt;KCL&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This input fetches records from Kinesis with KCL.&lt;br&gt;
-It consumes a specified stream, and
-processes all shards in that stream.&lt;br&gt;
-It never exits.&lt;/p&gt;
-&lt;p&gt;Multiple baker instances can consume the same stream, in that case the KCL will take care of
-balancing the shards between workers.&lt;br&gt;
-Careful (shard stealing is not implemented yet).&lt;/p&gt;
-&lt;p&gt;Resharding on the producer side is automatically handled by the KCL that will distribute
+&lt;p&gt;This input fetches records from Kinesis with KCL. It consumes a specified stream, and
+processes all shards in that stream. It never exits.
+Multiple baker instances can consume the same stream, in that case the KCL will take care of
+balancing the shards between workers. Careful (shard stealing is not implemented yet).
+Resharding on the producer side is automatically handled by the KCL that will distribute
 the shards among KCL workers.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[input.config]&lt;/code&gt; section:&lt;/p&gt;
@@ -106,7 +103,7 @@ the shards among KCL workers.&lt;/p&gt;
     <item>
       <title>Docs: Kinesis</title>
       <link>https://getbaker.io/docs/components/inputs/kinesis/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/kinesis/</guid>
       <description>
@@ -121,10 +118,8 @@ the shards among KCL workers.&lt;/p&gt;
 
 &lt;h2 id=&#34;input-kinesis&#34;&gt;Input &lt;em&gt;Kinesis&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This input fetches log lines from Kinesis.&lt;br&gt;
-It listens on a specified stream, and
-processes all the shards in that stream.&lt;br&gt;
-It never exits.&lt;/p&gt;
+&lt;p&gt;This input fetches log lines from Kinesis. It listens on a specified stream, and
+processes all the shards in that stream. It never exits.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[input.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
@@ -168,7 +163,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: List</title>
       <link>https://getbaker.io/docs/components/inputs/list/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/list/</guid>
       <description>
@@ -183,10 +178,8 @@ It never exits.&lt;/p&gt;
 
 &lt;h2 id=&#34;input-list&#34;&gt;Input &lt;em&gt;List&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This input fetches logs from a predefined list of local or remote sources.&lt;br&gt;
-The &amp;ldquo;Files&amp;rdquo;
-configuration variable is a list of &amp;ldquo;file specifiers&amp;rdquo;.&lt;br&gt;
-Each &amp;ldquo;file specifier&amp;rdquo; can be:&lt;/p&gt;
+&lt;p&gt;This input fetches logs from a predefined list of local or remote sources. The &amp;ldquo;Files&amp;rdquo;
+configuration variable is a list of &amp;ldquo;file specifiers&amp;rdquo;. Each &amp;ldquo;file specifier&amp;rdquo; can be:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;A local file path on the filesystem: the log file at that path will be processed&lt;/li&gt;
 &lt;li&gt;A HTTP/HTTPS URL: the log file at that URL will be downloaded and processed&lt;/li&gt;
@@ -252,7 +245,7 @@ walked, and all files matching the &amp;ldquo;MatchPath&amp;rdquo; option regexp
     <item>
       <title>Docs: SQS</title>
       <link>https://getbaker.io/docs/components/inputs/sqs/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/sqs/</guid>
       <description>
@@ -268,8 +261,8 @@ walked, and all files matching the &amp;ldquo;MatchPath&amp;rdquo; option regexp
 &lt;h2 id=&#34;input-sqs&#34;&gt;Input &lt;em&gt;SQS&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This input listens on multiple SQS queues for new incoming log files
-on S3; it is meant to be used with SQS queues popoulated by SNS.&lt;/p&gt;
-&lt;p&gt;It never exits.&lt;/p&gt;
+on S3; it is meant to be used with SQS queues popoulated by SNS.
+It never exits.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[input.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
@@ -341,7 +334,7 @@ on S3; it is meant to be used with SQS queues popoulated by SNS.&lt;/p&gt;
     <item>
       <title>Docs: TCP</title>
       <link>https://getbaker.io/docs/components/inputs/tcp/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/tcp/</guid>
       <description>
@@ -357,8 +350,8 @@ on S3; it is meant to be used with SQS queues popoulated by SNS.&lt;/p&gt;
 &lt;h2 id=&#34;input-tcp&#34;&gt;Input &lt;em&gt;TCP&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This input relies on a TCP connection to receive records in the usual format
-Configure it with a host and port that you want to accept connection from.&lt;/p&gt;
-&lt;p&gt;By default it listens on port 6000 for any connection
+Configure it with a host and port that you want to accept connection from.
+By default it listens on port 6000 for any connection
 It never exits.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[input.config]&lt;/code&gt; section:&lt;/p&gt;
