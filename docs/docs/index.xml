@@ -5,7 +5,7 @@
     <description>Recent content in Documentation on Baker, high performance modular pipelines for the Big Data era</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 14 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 01 Mar 2021 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: KCL</title>
       <link>https://getbaker.io/docs/components/inputs/kcl/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/kcl/</guid>
       <description>
@@ -33,14 +33,11 @@
 
 &lt;h2 id=&#34;input-kcl&#34;&gt;Input &lt;em&gt;KCL&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This input fetches records from Kinesis with KCL.&lt;br&gt;
-It consumes a specified stream, and
-processes all shards in that stream.&lt;br&gt;
-It never exits.&lt;/p&gt;
-&lt;p&gt;Multiple baker instances can consume the same stream, in that case the KCL will take care of
-balancing the shards between workers.&lt;br&gt;
-Careful (shard stealing is not implemented yet).&lt;/p&gt;
-&lt;p&gt;Resharding on the producer side is automatically handled by the KCL that will distribute
+&lt;p&gt;This input fetches records from Kinesis with KCL. It consumes a specified stream, and
+processes all shards in that stream. It never exits.
+Multiple baker instances can consume the same stream, in that case the KCL will take care of
+balancing the shards between workers. Careful (shard stealing is not implemented yet).
+Resharding on the producer side is automatically handled by the KCL that will distribute
 the shards among KCL workers.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[input.config]&lt;/code&gt; section:&lt;/p&gt;
@@ -106,7 +103,7 @@ the shards among KCL workers.&lt;/p&gt;
     <item>
       <title>Docs: Kinesis</title>
       <link>https://getbaker.io/docs/components/inputs/kinesis/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/kinesis/</guid>
       <description>
@@ -121,10 +118,8 @@ the shards among KCL workers.&lt;/p&gt;
 
 &lt;h2 id=&#34;input-kinesis&#34;&gt;Input &lt;em&gt;Kinesis&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This input fetches log lines from Kinesis.&lt;br&gt;
-It listens on a specified stream, and
-processes all the shards in that stream.&lt;br&gt;
-It never exits.&lt;/p&gt;
+&lt;p&gt;This input fetches log lines from Kinesis. It listens on a specified stream, and
+processes all the shards in that stream. It never exits.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[input.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
@@ -168,7 +163,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: List</title>
       <link>https://getbaker.io/docs/components/inputs/list/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/list/</guid>
       <description>
@@ -183,10 +178,8 @@ It never exits.&lt;/p&gt;
 
 &lt;h2 id=&#34;input-list&#34;&gt;Input &lt;em&gt;List&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;This input fetches logs from a predefined list of local or remote sources.&lt;br&gt;
-The &amp;ldquo;Files&amp;rdquo;
-configuration variable is a list of &amp;ldquo;file specifiers&amp;rdquo;.&lt;br&gt;
-Each &amp;ldquo;file specifier&amp;rdquo; can be:&lt;/p&gt;
+&lt;p&gt;This input fetches logs from a predefined list of local or remote sources. The &amp;ldquo;Files&amp;rdquo;
+configuration variable is a list of &amp;ldquo;file specifiers&amp;rdquo;. Each &amp;ldquo;file specifier&amp;rdquo; can be:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;A local file path on the filesystem: the log file at that path will be processed&lt;/li&gt;
 &lt;li&gt;A HTTP/HTTPS URL: the log file at that URL will be downloaded and processed&lt;/li&gt;
@@ -252,7 +245,7 @@ walked, and all files matching the &amp;ldquo;MatchPath&amp;rdquo; option regexp
     <item>
       <title>Docs: SQS</title>
       <link>https://getbaker.io/docs/components/inputs/sqs/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/sqs/</guid>
       <description>
@@ -268,8 +261,8 @@ walked, and all files matching the &amp;ldquo;MatchPath&amp;rdquo; option regexp
 &lt;h2 id=&#34;input-sqs&#34;&gt;Input &lt;em&gt;SQS&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This input listens on multiple SQS queues for new incoming log files
-on S3; it is meant to be used with SQS queues popoulated by SNS.&lt;/p&gt;
-&lt;p&gt;It never exits.&lt;/p&gt;
+on S3; it is meant to be used with SQS queues popoulated by SNS.
+It never exits.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[input.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
@@ -341,7 +334,7 @@ on S3; it is meant to be used with SQS queues popoulated by SNS.&lt;/p&gt;
     <item>
       <title>Docs: TCP</title>
       <link>https://getbaker.io/docs/components/inputs/tcp/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/tcp/</guid>
       <description>
@@ -357,8 +350,8 @@ on S3; it is meant to be used with SQS queues popoulated by SNS.&lt;/p&gt;
 &lt;h2 id=&#34;input-tcp&#34;&gt;Input &lt;em&gt;TCP&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This input relies on a TCP connection to receive records in the usual format
-Configure it with a host and port that you want to accept connection from.&lt;/p&gt;
-&lt;p&gt;By default it listens on port 6000 for any connection
+Configure it with a host and port that you want to accept connection from.
+By default it listens on port 6000 for any connection
 It never exits.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[input.config]&lt;/code&gt; section:&lt;/p&gt;
@@ -389,7 +382,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: ClauseFilter</title>
       <link>https://getbaker.io/docs/components/filters/clausefilter/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clausefilter/</guid>
       <description>
@@ -404,14 +397,10 @@ It never exits.&lt;/p&gt;
 
 &lt;h2 id=&#34;filter-clausefilter&#34;&gt;Filter &lt;em&gt;ClauseFilter&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Discard records which do not match a clause given as a boolean S-expression.&lt;br&gt;
-Check the filter documentation for some examples.&lt;/p&gt;
+&lt;p&gt;Discard records which do not match a clause given as a boolean S-expression. Check the filter documentation for some examples.&lt;/p&gt;
 &lt;h3 id=&#34;clausefilter-boolean-expression-format&#34;&gt;ClauseFilter boolean expression format&lt;/h3&gt;
 &lt;p&gt;This document describes the s-expression format used in ClauseFilter.&lt;/p&gt;
-&lt;p&gt;The format uses s-expressions.&lt;br&gt;
-Empty string matches anything (i.&lt;br&gt;
-e.&lt;br&gt;
-all records
+&lt;p&gt;The format uses s-expressions. Empty string matches anything (i.e. all records
 will pass the expression).&lt;/p&gt;
 &lt;p&gt;There are only three keywords: and, or, not&lt;/p&gt;
 &lt;p&gt;If an s-expression starts with any other name, it is assumed to be the name of
@@ -485,7 +474,7 @@ Matches anything
     <item>
       <title>Docs: ClearFields</title>
       <link>https://getbaker.io/docs/components/filters/clearfields/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clearfields/</guid>
       <description>
@@ -530,7 +519,7 @@ Matches anything
     <item>
       <title>Docs: Concatenate</title>
       <link>https://getbaker.io/docs/components/filters/concatenate/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/concatenate/</guid>
       <description>
@@ -587,9 +576,204 @@ Matches anything
     </item>
     
     <item>
+      <title>Docs: ExpandJSON</title>
+      <link>https://getbaker.io/docs/components/filters/expandjson/</link>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/components/filters/expandjson/</guid>
+      <description>
+        
+        
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/filter#ExpandJSON&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;filter-expandjson&#34;&gt;Filter &lt;em&gt;ExpandJSON&lt;/em&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
+&lt;p&gt;ExpandJSON extracts values from a JSON formatted record field and writes them into other fields of the same record.
+It supports &lt;a href=&#34;https://jmespath.org/tutorial.html&#34;&gt;JMESPath&lt;/a&gt; to select the values to copy inside the JSON.&lt;/p&gt;
+&lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
+&lt;p&gt;A possible filter configuration is:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[[filter]]
+name=&amp;quot;ExpandJSON&amp;quot;
+    [filter.config]
+    Source = &amp;quot;json_data&amp;quot;
+    [filter.config.Fields]
+    jfield1  = &amp;quot;field1&amp;quot;
+    jfield2  = &amp;quot;field2&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In this example, the filter extracts values of the &lt;code&gt;jfield1&lt;/code&gt; and &lt;code&gt;jfield2&lt;/code&gt; keys of the JSON
+object present in field &lt;code&gt;json_data&lt;/code&gt;of the record. Then, the values of that keys will be written into the field
+&lt;code&gt;field1&lt;/code&gt; and &lt;code&gt;field2&lt;/code&gt; of the same record.&lt;/p&gt;
+&lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
+&lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Source&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td&gt;record field that contains the json&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Fields&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;map of strings to strings&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td&gt;&amp;lt;JMESPath -&amp;gt; record field&amp;gt; map, the rest will be ignored&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;TrueFalseValues&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[&amp;ldquo;true&amp;rdquo;, &amp;ldquo;false&amp;rdquo;]&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
+&lt;td&gt;bind the json boolean values to correstponding strings&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Hash</title>
+      <link>https://getbaker.io/docs/components/filters/hash/</link>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/components/filters/hash/</guid>
+      <description>
+        
+        
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/filter#Hash&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;filter-hash&#34;&gt;Filter &lt;em&gt;Hash&lt;/em&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
+&lt;p&gt;This filter hashes a field using a specified hash function and writes the value
+to another (or the same) field. In order to have control over the set of characters
+present, the hashed value can optionally be encoded.&lt;/p&gt;
+&lt;p&gt;Supported hash functions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;md5&lt;/li&gt;
+&lt;li&gt;sha256&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Supported encodings:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;hex (hexadecimal encoding)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
+&lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;SrcField&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td&gt;Name of the field to hash&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DstField&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td&gt;Name of the field to write the result to&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Function&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td&gt;Name of the hash function to use&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Encoding&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
+&lt;td&gt;Name of the encoding function to use&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: MetadataLastModified</title>
+      <link>https://getbaker.io/docs/components/filters/metadatalastmodified/</link>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/components/filters/metadatalastmodified/</guid>
+      <description>
+        
+        
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/filter#MetadataLastModified&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;filter-metadatalastmodified&#34;&gt;Filter &lt;em&gt;MetadataLastModified&lt;/em&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
+&lt;p&gt;Extract the &amp;ldquo;last modified&amp;rdquo; timestamp from the record Metadata and write it to the selected field.&lt;/p&gt;
+&lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
+&lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;DstField&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td&gt;Name of the field into which write the timestamp to&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: NotNull</title>
       <link>https://getbaker.io/docs/components/filters/notnull/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/notnull/</guid>
       <description>
@@ -604,8 +788,7 @@ Matches anything
 
 &lt;h2 id=&#34;filter-notnull&#34;&gt;Filter &lt;em&gt;NotNull&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Discard the records having null (i.&lt;br&gt;
-e empty) fields.&lt;/p&gt;
+&lt;p&gt;Discard the records having null (i.e empty) fields.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
@@ -635,7 +818,7 @@ e empty) fields.&lt;/p&gt;
     <item>
       <title>Docs: PartialClone</title>
       <link>https://getbaker.io/docs/components/filters/partialclone/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/partialclone/</guid>
       <description>
@@ -680,7 +863,7 @@ e empty) fields.&lt;/p&gt;
     <item>
       <title>Docs: RegexMatch</title>
       <link>https://getbaker.io/docs/components/filters/regexmatch/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/regexmatch/</guid>
       <description>
@@ -732,7 +915,7 @@ e empty) fields.&lt;/p&gt;
     <item>
       <title>Docs: ReplaceFields</title>
       <link>https://getbaker.io/docs/components/filters/replacefields/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/replacefields/</guid>
       <description>
@@ -747,8 +930,7 @@ e empty) fields.&lt;/p&gt;
 
 &lt;h2 id=&#34;filter-replacefields&#34;&gt;Filter &lt;em&gt;ReplaceFields&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Copy a field value or a fixed value to another field.&lt;br&gt;
-Can copy multiple fields.&lt;/p&gt;
+&lt;p&gt;Copy a field value or a fixed value to another field. Can copy multiple fields.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
@@ -785,7 +967,7 @@ Can copy multiple fields.&lt;/p&gt;
     <item>
       <title>Docs: SetStringFromURL</title>
       <link>https://getbaker.io/docs/components/filters/setstringfromurl/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/setstringfromurl/</guid>
       <description>
@@ -837,7 +1019,7 @@ Can copy multiple fields.&lt;/p&gt;
     <item>
       <title>Docs: StringMatch</title>
       <link>https://getbaker.io/docs/components/filters/stringmatch/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/stringmatch/</guid>
       <description>
@@ -896,7 +1078,7 @@ Can copy multiple fields.&lt;/p&gt;
     <item>
       <title>Docs: Timestamp</title>
       <link>https://getbaker.io/docs/components/filters/timestamp/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamp/</guid>
       <description>
@@ -941,7 +1123,7 @@ Can copy multiple fields.&lt;/p&gt;
     <item>
       <title>Docs: TimestampRange</title>
       <link>https://getbaker.io/docs/components/filters/timestamprange/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamprange/</guid>
       <description>
@@ -956,8 +1138,7 @@ Can copy multiple fields.&lt;/p&gt;
 
 &lt;h2 id=&#34;filter-timestamprange&#34;&gt;Filter &lt;em&gt;TimestampRange&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Discard records if the value of a field containing a timestamp is out of the given time range (i.&lt;br&gt;
-e StartDateTime &amp;lt;= value &amp;lt; EndDateTime)&lt;/p&gt;
+&lt;p&gt;Discard records if the value of a field containing a timestamp is out of the given time range (i.e StartDateTime &amp;lt;= value &amp;lt; EndDateTime)&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
@@ -1001,7 +1182,7 @@ e StartDateTime &amp;lt;= value &amp;lt; EndDateTime)&lt;/p&gt;
     <item>
       <title>Docs: DynamoDB</title>
       <link>https://getbaker.io/docs/components/outputs/dynamodb/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/dynamodb/</guid>
       <description>
@@ -1017,15 +1198,13 @@ e StartDateTime &amp;lt;= value &amp;lt; EndDateTime)&lt;/p&gt;
 &lt;h2 id=&#34;output-dynamodb&#34;&gt;Output &lt;em&gt;DynamoDB&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;non-raw&lt;/em&gt; output, it doesn&amp;rsquo;t receive whole records. Instead it receives a list of fields for each record (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;This output writes the filtered log lines to DynamoDB.&lt;br&gt;
-It must be
+&lt;p&gt;This output writes the filtered log lines to DynamoDB. It must be
 configured specifying the region, the table name, and the columns
-to write.&lt;/p&gt;
-&lt;p&gt;Columns are specified using the syntax &amp;ldquo;t:name&amp;rdquo; where &amp;ldquo;t&amp;rdquo;
-is the type of the data, and &amp;ldquo;name&amp;rdquo; is the name of column.&lt;br&gt;
-Supported
-types are: &amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings.&lt;/p&gt;
-&lt;p&gt;The first column (and field) must be the primary key.&lt;/p&gt;
+to write.
+Columns are specified using the syntax &amp;ldquo;t:name&amp;rdquo; where &amp;ldquo;t&amp;rdquo;
+is the type of the data, and &amp;ldquo;name&amp;rdquo; is the name of column. Supported
+types are: &amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings.
+The first column (and field) must be the primary key.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[output.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
@@ -1090,7 +1269,7 @@ types are: &amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings
     <item>
       <title>Docs: FileWriter</title>
       <link>https://getbaker.io/docs/components/outputs/filewriter/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/filewriter/</guid>
       <description>
@@ -1106,15 +1285,14 @@ types are: &amp;ldquo;n&amp;rdquo; - integers; &amp;ldquo;s&amp;rdquo; - strings
 &lt;h2 id=&#34;output-filewriter&#34;&gt;Output &lt;em&gt;FileWriter&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;raw&lt;/em&gt; output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;This output writes the records into compressed files in a directory.&lt;/p&gt;
-&lt;p&gt;Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.&lt;/p&gt;
-&lt;p&gt;The file names can contain placeholders that are populated by the output (see the keys help below).&lt;/p&gt;
-&lt;p&gt;When the special {{.&lt;br&gt;
-Field0}} placeholder is used, then the user must specify the field name to
-use for replacement in the fields configuration list.&lt;/p&gt;
-&lt;p&gt;The value of that field, extracted from each record, is used as replacement and, moreover, this
-also means that each created file will contain only records with that same value for the field.&lt;/p&gt;
-&lt;p&gt;Note that, with this option, the FileWriter creates as many workers as the different values
+&lt;p&gt;This output writes the records into compressed files in a directory.
+Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.
+The file names can contain placeholders that are populated by the output (see the keys help below).
+When the special {{.Field0}} placeholder is used, then the user must specify the field name to
+use for replacement in the fields configuration list.
+The value of that field, extracted from each record, is used as replacement and, moreover, this
+also means that each created file will contain only records with that same value for the field.
+Note that, with this option, the FileWriter creates as many workers as the different values
 of the field, and each one of these workers concurrently writes to a different file.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[output.config]&lt;/code&gt; section:&lt;/p&gt;
@@ -1166,7 +1344,7 @@ of the field, and each one of these workers concurrently writes to a different f
     <item>
       <title>Docs: Nop</title>
       <link>https://getbaker.io/docs/components/outputs/nop/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/nop/</guid>
       <description>
@@ -1182,8 +1360,7 @@ of the field, and each one of these workers concurrently writes to a different f
 &lt;h2 id=&#34;output-nop&#34;&gt;Output &lt;em&gt;Nop&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;non-raw&lt;/em&gt; output, it doesn&amp;rsquo;t receive whole records. Instead it receives a list of fields for each record (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;No-operation output.&lt;br&gt;
-This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
+&lt;p&gt;No-operation output. This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;No configuration available&lt;/p&gt;
 
@@ -1193,7 +1370,7 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
     <item>
       <title>Docs: OpLog</title>
       <link>https://getbaker.io/docs/components/outputs/oplog/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/oplog/</guid>
       <description>
@@ -1219,7 +1396,7 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
     <item>
       <title>Docs: Stats</title>
       <link>https://getbaker.io/docs/components/outputs/stats/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/stats/</guid>
       <description>
@@ -1235,8 +1412,7 @@ This output simply drops all lines and does not write them anywhere.&lt;/p&gt;
 &lt;h2 id=&#34;output-stats&#34;&gt;Output &lt;em&gt;Stats&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
 &lt;p&gt;This is a &lt;em&gt;raw&lt;/em&gt; output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (&lt;code&gt;output.fields&lt;/code&gt; in TOML).&lt;/p&gt;
-&lt;p&gt;Compute various distributions of the records it receives and dumps that to CSV.&lt;br&gt;
-It computes the distribution of record by size and the distribution of the values of certain fields&lt;/p&gt;
+&lt;p&gt;Compute various distributions of the records it receives and dumps that to CSV. It computes the distribution of record by size and the distribution of the values of certain fields&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[output.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
@@ -1280,7 +1456,7 @@ It computes the distribution of record by size and the distribution of the value
     <item>
       <title>Docs: WebSocket</title>
       <link>https://getbaker.io/docs/components/outputs/websocket/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/websocket/</guid>
       <description>
@@ -1306,7 +1482,7 @@ It computes the distribution of record by size and the distribution of the value
     <item>
       <title>Docs: S3</title>
       <link>https://getbaker.io/docs/components/uploads/s3/</link>
-      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/uploads/s3/</guid>
       <description>
