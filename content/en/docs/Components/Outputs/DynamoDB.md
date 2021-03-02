@@ -1,7 +1,7 @@
 ---
 title: "DynamoDB"
-weight: 20
-date: 2020-12-14
+weight: 23
+date: 2021-03-01
 ---
 {{% pageinfo color="primary" %}}
 
@@ -14,18 +14,13 @@ date: 2020-12-14
 This is a *non-raw* output, it doesn't receive whole records. Instead it receives a list of fields for each record (`output.fields` in TOML).
 
 
-This output writes the filtered log lines to DynamoDB.  
- It must be
+This output writes the filtered log lines to DynamoDB. It must be
 configured specifying the region, the table name, and the columns
-to write.  
-
+to write.
 Columns are specified using the syntax "t:name" where "t"
-is the type of the data, and "name" is the name of column.  
- Supported
-types are: "n" - integers; "s" - strings.  
-
-The first column (and field) must be the primary key.  
-
+is the type of the data, and "name" is the name of column. Supported
+types are: "n" - integers; "s" - strings.
+The first column (and field) must be the primary key.
 
 
 ### Configuration

@@ -1,7 +1,7 @@
 ---
 title: "TCP"
 weight: 6
-date: 2020-12-14
+date: 2021-03-01
 ---
 {{% pageinfo color="primary" %}}
 
@@ -12,11 +12,9 @@ date: 2020-12-14
 
 ### Overview
 This input relies on a TCP connection to receive records in the usual format
-Configure it with a host and port that you want to accept connection from.  
-
+Configure it with a host and port that you want to accept connection from.
 By default it listens on port 6000 for any connection
-It never exits.  
-
+It never exits.
 
 
 ### Configuration

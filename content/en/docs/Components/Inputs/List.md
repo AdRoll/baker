@@ -1,7 +1,7 @@
 ---
 title: "List"
 weight: 4
-date: 2020-12-14
+date: 2021-03-01
 ---
 {{% pageinfo color="primary" %}}
 
@@ -11,10 +11,8 @@ date: 2020-12-14
 ## Input *List*
 
 ### Overview
-This input fetches logs from a predefined list of local or remote sources.  
- The "Files"
-configuration variable is a list of "file specifiers".  
- Each "file specifier" can be:
+This input fetches logs from a predefined list of local or remote sources. The "Files"
+configuration variable is a list of "file specifiers". Each "file specifier" can be:
 
   * A local file path on the filesystem: the log file at that path will be processed
   * A HTTP/HTTPS URL: the log file at that URL will be downloaded and processed

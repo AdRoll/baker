@@ -1,7 +1,7 @@
 ---
 title: "TimestampRange"
-weight: 18
-date: 2020-12-14
+weight: 21
+date: 2021-03-01
 ---
 {{% pageinfo color="primary" %}}
 
@@ -11,8 +11,7 @@ date: 2020-12-14
 ## Filter *TimestampRange*
 
 ### Overview
-Discard records if the value of a field containing a timestamp is out of the given time range (i.  
-e StartDateTime <= value < EndDateTime)
+Discard records if the value of a field containing a timestamp is out of the given time range (i.e StartDateTime <= value < EndDateTime)
 
 ### Configuration
 

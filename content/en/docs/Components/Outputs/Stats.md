@@ -1,7 +1,7 @@
 ---
 title: "Stats"
-weight: 24
-date: 2020-12-14
+weight: 27
+date: 2021-03-01
 ---
 {{% pageinfo color="primary" %}}
 
@@ -14,8 +14,7 @@ date: 2020-12-14
 This is a *raw* output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (`output.fields` in TOML).
 
 
-Compute various distributions of the records it receives and dumps that to CSV.  
- It computes the distribution of record by size and the distribution of the values of certain fields
+Compute various distributions of the records it receives and dumps that to CSV. It computes the distribution of record by size and the distribution of the values of certain fields
 
 
 ### Configuration

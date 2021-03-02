@@ -1,7 +1,7 @@
 ---
 title: "Kinesis"
 weight: 3
-date: 2020-12-14
+date: 2021-03-01
 ---
 {{% pageinfo color="primary" %}}
 
@@ -11,11 +11,8 @@ date: 2020-12-14
 ## Input *Kinesis*
 
 ### Overview
-This input fetches log lines from Kinesis.  
- It listens on a specified stream, and
-processes all the shards in that stream.  
- It never exits.  
-
+This input fetches log lines from Kinesis. It listens on a specified stream, and
+processes all the shards in that stream. It never exits.
 
 
 ### Configuration

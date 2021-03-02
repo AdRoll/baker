@@ -1,7 +1,7 @@
 ---
 title: "ReplaceFields"
-weight: 14
-date: 2020-12-14
+weight: 17
+date: 2021-03-01
 ---
 {{% pageinfo color="primary" %}}
 
@@ -11,9 +11,7 @@ date: 2020-12-14
 ## Filter *ReplaceFields*
 
 ### Overview
-Copy a field value or a fixed value to another field.  
- Can copy multiple fields.  
-
+Copy a field value or a fixed value to another field. Can copy multiple fields.
 
 ### Configuration
 

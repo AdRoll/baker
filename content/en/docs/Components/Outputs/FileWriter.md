@@ -1,7 +1,7 @@
 ---
 title: "FileWriter"
-weight: 21
-date: 2020-12-14
+weight: 24
+date: 2021-03-01
 ---
 {{% pageinfo color="primary" %}}
 
@@ -14,22 +14,15 @@ date: 2020-12-14
 This is a *raw* output, for each record it receives a buffer containing the serialized record, plus a list holding a set of fields (`output.fields` in TOML).
 
 
-This output writes the records into compressed files in a directory.  
-
-Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.  
-
-The file names can contain placeholders that are populated by the output (see the keys help below).  
-
-When the special {{.  
-Field0}} placeholder is used, then the user must specify the field name to
-use for replacement in the fields configuration list.  
-
+This output writes the records into compressed files in a directory.
+Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.
+The file names can contain placeholders that are populated by the output (see the keys help below).
+When the special {{.Field0}} placeholder is used, then the user must specify the field name to
+use for replacement in the fields configuration list.
 The value of that field, extracted from each record, is used as replacement and, moreover, this
-also means that each created file will contain only records with that same value for the field.  
-
+also means that each created file will contain only records with that same value for the field.
 Note that, with this option, the FileWriter creates as many workers as the different values
-of the field, and each one of these workers concurrently writes to a different file.  
-
+of the field, and each one of these workers concurrently writes to a different file.
 
 
 ### Configuration
