@@ -11,10 +11,12 @@ import (
 
 const dedupHelp = `
 This filter removes duplicate records. A record is considered a duplicate, and is thus removed by this filter, 
-if another record with the same values has already been _seen_. The comparison is performed on a user-provided list of fields (Fields setting).
+if another record with the same values has already been _seen_. The comparison is performed on a 
+user-provided list of fields (` + "`Fields`" + ` setting).
 
-WARNING: to remove duplicates, this filter stores one key per unique record in memory, this means that the overall memory grows linearly with the number of unique records in your data set. Depending on your data set, this might 
-lead to OOM (i.e out of memory) errors.
+**WARNING**: to remove duplicates, this filter stores one key per unique record in memory, this means 
+that the overall memory grows linearly with the number of unique records in your data set. Depending 
+on your data set, this might lead to OOM (i.e. out of memory) errors.
 `
 
 var DedupDesc = baker.FilterDesc{
