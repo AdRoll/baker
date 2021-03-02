@@ -11,6 +11,7 @@ func TestDedup(t *testing.T) {
 		name    string
 		records []string
 		fields  []string
+		sep     string
 		want    int // number of output records
 		wantErr bool
 	}{
@@ -54,6 +55,26 @@ func TestDedup(t *testing.T) {
 			fields: []string{"f2"},
 			want:   3,
 		},
+		{
+			name: "equal over concatenation",
+			records: []string{
+				"abc,def,ghi1",
+				"ab,cdef,ghi2",
+				"a,bcdef,ghi3",
+			},
+			fields: []string{"f1", "f2"},
+			want:   3,
+		},
+		{
+			name: "separator clash",
+			records: []string{
+				"abc,def-,ghi1",
+				"abc-def,,ghi2",
+			},
+			fields: []string{"f1", "f2"},
+			sep:    "-",
+			want:   1,
+		},
 
 		// errors
 		{
@@ -62,6 +83,24 @@ func TestDedup(t *testing.T) {
 				"abc,def,ghi",
 			},
 			fields:  []string{"not_exist"},
+			wantErr: true,
+		},
+		{
+			name: "separetor more 1-byte",
+			records: []string{
+				"abc,def,ghi",
+			},
+			fields:  []string{"f1"},
+			sep:     "ab",
+			wantErr: true,
+		},
+		{
+			name: "separetor over max ASCII",
+			records: []string{
+				"abc,def,ghi",
+			},
+			fields:  []string{"f1"},
+			sep:     string([]byte{132}),
 			wantErr: true,
 		},
 	}
@@ -84,7 +123,8 @@ func TestDedup(t *testing.T) {
 				ComponentParams: baker.ComponentParams{
 					FieldByName: fieldByName,
 					DecodedConfig: &DedupConfig{
-						Fields: tt.fields,
+						Fields:       tt.fields,
+						KeySeparetor: tt.sep,
 					},
 				},
 			}

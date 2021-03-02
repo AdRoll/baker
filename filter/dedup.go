@@ -1,10 +1,11 @@
 package filter
 
 import (
+	"bytes"
 	"fmt"
-	"strings"
 	"sync"
 	"sync/atomic"
+	"unicode"
 
 	"github.com/AdRoll/baker"
 )
@@ -27,13 +28,21 @@ var DedupDesc = baker.FilterDesc{
 }
 
 type DedupConfig struct {
-	Fields []string `help:"fields to consider when comparing records" required:"true"`
+	Fields       []string `help:"fields to consider when comparing records" required:"true"`
+	KeySeparetor string   `help:"character separator used to build a key from the fields" default:"\x1e"`
+}
+
+func (cfg *DedupConfig) fillDefaults() {
+	if cfg.KeySeparetor == "" {
+		cfg.KeySeparetor = "\x1e"
+	}
 }
 
 type Dedup struct {
 	cfg *DedupConfig
 
 	fields []baker.FieldIndex
+	sep    []byte
 
 	// Shared state
 	dedupSet          sync.Map // type: map[string]struct{}
@@ -46,10 +55,10 @@ func NewDedup(cfg baker.FilterParams) (baker.Filter, error) {
 		cfg.DecodedConfig = &DedupConfig{}
 	}
 	dcfg := cfg.DecodedConfig.(*DedupConfig)
+	dcfg.fillDefaults()
 
-	f := &Dedup{
-		cfg: dcfg,
-	}
+	f := &Dedup{cfg: dcfg}
+
 	for _, field := range dcfg.Fields {
 		i, ok := cfg.FieldByName(field)
 		if !ok {
@@ -57,6 +66,13 @@ func NewDedup(cfg baker.FilterParams) (baker.Filter, error) {
 		}
 		f.fields = append(f.fields, i)
 	}
+
+	sep := []rune(dcfg.KeySeparetor)
+	if len(sep) != 1 || sep[0] > unicode.MaxASCII {
+		return nil, fmt.Errorf("separetor must be a 1-byte string or hex char")
+	}
+	f.sep = []byte(dcfg.KeySeparetor)
+
 	return f, nil
 }
 
@@ -81,9 +97,9 @@ func (f *Dedup) Process(l baker.Record, next func(baker.Record)) {
 
 // constructKey builds a key by concatenating field values
 func (f *Dedup) constructKey(l baker.Record) string {
-	var sb strings.Builder
-	for _, i := range f.fields {
-		sb.Write(l.Get(i))
+	fields := make([][]byte, len(f.fields))
+	for i, idx := range f.fields {
+		fields[i] = l.Get(idx)
 	}
-	return sb.String()
+	return string(bytes.Join(fields, f.sep))
 }
