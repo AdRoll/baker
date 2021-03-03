@@ -9,12 +9,111 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
+var luaHelp = `
+This filter runs a baker filter defined in a LUA script.
+It's useful to quickly write and run a Baker filter without having to recompile Baker.
+
+This filter is based on [GopherLua](github.com/yuin/gopher-lua), which is an LUA5.1 virtual machine.
+
+To use this filter you need to declare a function in an lua file. This function serves the same purpose
+of the equivalent ` + ticks("baker.Filter.Process") + ` method one would write for a Go filter.
+
+This is a simple filter which writes "hey" to the field "f0" of every record: 
+` + startBlock("lua") + `
+-- rec is a record object to be processed
+-- next is the function next(record) to forward, if you want to, the record into the filter chain.
+function myFilter(rec, next)
+    rec:set(fieldNames["f0"], "hey")
+    next(rec)
+end
+` + endBlock() + `
+
+### The ` + ticks("Record") + ` table
+
+The first argument received by your lua filter function is a Record table. The Record table is an surrogate 
+for its Go counterpart, ` + ticks("baker.Record") + `. The Lua Record table defines the following methods:
+
+#### get
+
+- Go: ` + ticks("Record.Get(FieldIndex) []byte") + `
+- lua: ` + ticks("record:get(idx) -> string") + `
+
+Same as its Go counterpart ` + ticks("record::get") + ` takes a integer representing the field index and returns its value.
+But, unlike in Go where the value is a ` + ticks("[]byte]") + `, in lua it's returned as a string, to allow for fast protoyping.
+
+#### "set"
+
+- Go: ` + ticks("Record.Set(FieldIndex, []byte)") + `
+- lua: ` + ticks("record:set(idx, string)") + `
+
+Same as its Go counterpart ` + ticks("record::set") + ` takes a integer representing the field index and the value to set.
+But, unlike in Go where the value is a ` + ticks("[]byte]") + `, in lua it's a string, to allow for fast protoyping.
+
+#### "copy"
+
+- Go: ` + ticks("Record.Copy() Record") + `
+- lua: ` + ticks("record:copy() -> record") + `
+
+Calling ` + ticks("record::copy") + ` returns a new record, a deep-copy of the original.
+
+#### "clear"
+
+- Go: ` + ticks("Record.Clear()") + `
+- lua: ` + ticks("lua: record:clear()") + `
+
+Calling ` + ticks("record::clear") + ` clears the records internal state, making all its fields empty.
+
+
+### Global functions
+
+#### createRecord
+
+- Go: ` + ticks("Components.CreateRecord() Record") + `
+- lua: ` + ticks("createRecord -> record") + `
+
+` + ticks("createRecord") + ` is the lua equivalent of the ` + ticks("CreateRecord") + ` function passed to your filter during construction.
+It allows to create a new Record instance.
+
+#### validateRecord
+
+- Go: ` + ticks("Components.ValidateRecord(Record) (bool, FieldIndex)") + `
+- lua: ` + ticks("validateRecord(record) -> (bool, int)") + `
+
+` + ticks("validateRecord") + ` is the lua equivalent of the ` + ticks("ValidateRecord") + ` function passed to your filter during construction.
+It validates a given record with respect to the validation function, returning a boolean indicating whether 
+the record is a valid one, if false, the returned integer indicates the index of the first invalid field it met.
+
+#### fieldByName
+
+- Go: ` + ticks("Components.FieldByName(string) (FieldIndex, bool)") + `
+- lua: ` + ticks("fieldByName(string) -> int|nil") + `
+
+` + ticks("fieldByName") + ` is the lua equivalent of the ` + ticks("FieldByName") + ` function passed to your filter during construction.
+It allows to lookup a field index by its name, returning the index or nil if no field exists with this index.
+
+### Global tables
+
+#### fieldNames
+
+- Go: ` + ticks("Components.FieldNames []string") + `
+- lua: ` + ticks("fieldNames") + `
+
+` + ticks("fieldNames") + ` is an integed-indexed table, in other words an array, containing all field names, as ` + ticks("FieldNames") + ` in Go.
+`
+
+// TODO(arl): ideally this functions should not be required, but writing
+// markdown documentation in Go strings is tedious and error-prone.
+
+func ticks(s string) string         { return "`" + s + "`" }
+func startBlock(lang string) string { return "```" + lang }
+func endBlock() string              { return "```" }
+
 // LUADesc describes the LUA filter
 var LUADesc = baker.FilterDesc{
 	Name:   "LUA",
 	New:    NewLUA,
 	Config: &LUAConfig{},
-	Help:   `Run a baker filter defined in a lua script`,
+	Help:   luaHelp,
 }
 
 // LUAConfig holds the configuration for the LUA filter.
