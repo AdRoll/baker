@@ -9,15 +9,18 @@ setup: setup-git ## Setup Hugo locally
 dev: git-update ## Run local server to check you content while writing
 	hugo server
 
-build: git-update ## Build the static files of the website
+build: git-update gen-components ## Build the static files of the website
 	HUGO_ENV=production hugo
+
+gen-components: ## Generate components markdown from main branch
+	cd utils/generate-components-pages && go generate
 
 docker-setup: setup-git ## Setup Hugo with Docker
 
 docker-dev: git-update docker-base ## Run local server with Docker to check you content while writing
 	docker run -w /baker -v $$PWD:/baker -p 1313:1313 --user $$(id -u):$$(id -g) -it baker-docs:base server --bind=0.0.0.0
 
-docker-build: git-update docker-base ## Build the static files of the website with Docker 
+docker-build: git-update gen-components docker-base ## Build the static files of the website with Docker 
 	docker run -w /baker -v $$PWD:/baker -p 1313:1313 --user $$(id -u):$$(id -g) -e HUGO_ENV=production -it baker-docs:base
 
 docker-run-prod: git-update docker-base ## Run the website in production on port :80 with Docker

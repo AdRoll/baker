@@ -1,4 +1,4 @@
-module github.com/AdRoll/baker/generate-components-pages
+module generate-components-pages
 
 go 1.15
 
