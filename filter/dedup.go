@@ -29,7 +29,7 @@ var DedupDesc = baker.FilterDesc{
 
 type DedupConfig struct {
 	Fields       []string `help:"fields to consider when comparing records" required:"true"`
-	KeySeparator string   `help:"character separator used to build a key from the fields" default:"\x1e"`
+	KeySeparator string   `help:"character separator used to build a key from the fields" default:"\\x1e"`
 }
 
 func (cfg *DedupConfig) fillDefaults() {
