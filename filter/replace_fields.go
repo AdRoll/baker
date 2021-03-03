@@ -29,9 +29,6 @@ type ReplaceFields struct {
 }
 
 func NewReplaceFields(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &ReplaceFieldsConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*ReplaceFieldsConfig)
 
 	if len(dcfg.CopyFields) == 0 && len(dcfg.ReplaceFields) == 0 {

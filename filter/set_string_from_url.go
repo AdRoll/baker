@@ -33,9 +33,6 @@ type SetStringFromURL struct {
 }
 
 func NewSetStringFromURL(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &SetStringFromURLConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*SetStringFromURLConfig)
 
 	f, ok := cfg.FieldByName(dcfg.Field)

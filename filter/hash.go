@@ -48,9 +48,6 @@ type Hash struct {
 }
 
 func NewHash(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &HashConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*HashConfig)
 
 	src, ok := cfg.FieldByName(dcfg.SrcField)

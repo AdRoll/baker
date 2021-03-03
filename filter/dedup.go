@@ -51,9 +51,6 @@ type Dedup struct {
 }
 
 func NewDedup(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &DedupConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*DedupConfig)
 	dcfg.fillDefaults()
 

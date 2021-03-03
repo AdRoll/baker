@@ -104,9 +104,6 @@ type S3 struct {
 }
 
 func NewS3(cfg baker.UploadParams) (baker.Upload, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &S3Config{}
-	}
 	dcfg := cfg.DecodedConfig.(*S3Config)
 	if err := dcfg.fillDefaults(); err != nil {
 		return nil, fmt.Errorf("upload.s3: %v", err)
