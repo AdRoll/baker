@@ -12,6 +12,7 @@ var All = []baker.FilterDesc{
 	ConcatenateDesc,
 	DedupDesc,
 	ExpandJSONDesc,
+	FormatTimeDesc,
 	HashDesc,
 	MetadataLastModifiedDesc,
 	NotNullDesc,
