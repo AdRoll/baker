@@ -28,5 +28,5 @@ Keys available in the `[filter.config]` section:
 |Name|Type|Default|Required|Description|
 |----|:--:|:-----:|:------:|-----------|
 | Fields| array of strings| []| true| fields to consider when comparing records|
-| KeySeparator| string| ""| false| character separator used to build a key from the fields|
+| KeySeparator| string| "\x1e"| false| character separator used to build a key from the fields|
 
