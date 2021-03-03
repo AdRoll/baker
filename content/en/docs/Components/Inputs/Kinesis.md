@@ -1,7 +1,7 @@
 ---
 title: "Kinesis"
 weight: 3
-date: 2021-03-01
+date: 2021-03-03
 ---
 {{% pageinfo color="primary" %}}
 
