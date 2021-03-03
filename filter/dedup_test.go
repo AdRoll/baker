@@ -86,7 +86,7 @@ func TestDedup(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "separetor more 1-byte",
+			name: "separator more 1-byte",
 			records: []string{
 				"abc,def,ghi",
 			},
@@ -95,7 +95,7 @@ func TestDedup(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "separetor over max ASCII",
+			name: "separator over max ASCII",
 			records: []string{
 				"abc,def,ghi",
 			},
@@ -124,7 +124,7 @@ func TestDedup(t *testing.T) {
 					FieldByName: fieldByName,
 					DecodedConfig: &DedupConfig{
 						Fields:       tt.fields,
-						KeySeparetor: tt.sep,
+						KeySeparator: tt.sep,
 					},
 				},
 			}

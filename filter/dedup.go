@@ -29,12 +29,12 @@ var DedupDesc = baker.FilterDesc{
 
 type DedupConfig struct {
 	Fields       []string `help:"fields to consider when comparing records" required:"true"`
-	KeySeparetor string   `help:"character separator used to build a key from the fields" default:"\x1e"`
+	KeySeparator string   `help:"character separator used to build a key from the fields" default:"\x1e"`
 }
 
 func (cfg *DedupConfig) fillDefaults() {
-	if cfg.KeySeparetor == "" {
-		cfg.KeySeparetor = "\x1e"
+	if cfg.KeySeparator == "" {
+		cfg.KeySeparator = "\x1e"
 	}
 }
 
@@ -67,11 +67,11 @@ func NewDedup(cfg baker.FilterParams) (baker.Filter, error) {
 		f.fields = append(f.fields, i)
 	}
 
-	sep := []rune(dcfg.KeySeparetor)
+	sep := []rune(dcfg.KeySeparator)
 	if len(sep) != 1 || sep[0] > unicode.MaxASCII {
-		return nil, fmt.Errorf("separetor must be a 1-byte string or hex char")
+		return nil, fmt.Errorf("separator must be a 1-byte string or hex char")
 	}
-	f.sep = []byte(dcfg.KeySeparetor)
+	f.sep = []byte(dcfg.KeySeparator)
 
 	return f, nil
 }
