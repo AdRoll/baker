@@ -5,7 +5,7 @@
     <description>Recent content in Filters on Baker, high performance modular pipelines for the Big Data era</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 01 Mar 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 03 Mar 2021 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/filters/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: ClauseFilter</title>
       <link>https://getbaker.io/docs/components/filters/clausefilter/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clausefilter/</guid>
       <description>
@@ -110,7 +110,7 @@ Matches anything
     <item>
       <title>Docs: ClearFields</title>
       <link>https://getbaker.io/docs/components/filters/clearfields/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clearfields/</guid>
       <description>
@@ -155,7 +155,7 @@ Matches anything
     <item>
       <title>Docs: Concatenate</title>
       <link>https://getbaker.io/docs/components/filters/concatenate/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/concatenate/</guid>
       <description>
@@ -212,9 +212,66 @@ Matches anything
     </item>
     
     <item>
+      <title>Docs: Dedup</title>
+      <link>https://getbaker.io/docs/components/filters/dedup/</link>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/components/filters/dedup/</guid>
+      <description>
+        
+        
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/filter#Dedup&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;filter-dedup&#34;&gt;Filter &lt;em&gt;Dedup&lt;/em&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
+&lt;p&gt;This filter removes duplicate records. A record is considered a duplicate, and is thus removed by this filter,
+if another record with the same values has already been &lt;em&gt;seen&lt;/em&gt;. The comparison is performed on a
+user-provided list of fields (&lt;code&gt;Fields&lt;/code&gt; setting).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;WARNING&lt;/strong&gt;: to remove duplicates, this filter stores one key per unique record in memory, this means
+that the overall memory grows linearly with the number of unique records in your data set. Depending
+on your data set, this might lead to OOM (i.e. out of memory) errors.&lt;/p&gt;
+&lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
+&lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Fields&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td&gt;fields to consider when comparing records&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;KeySeparator&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;\x1e&amp;rdquo;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
+&lt;td&gt;character separator used to build a key from the fields&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: ExpandJSON</title>
       <link>https://getbaker.io/docs/components/filters/expandjson/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/expandjson/</guid>
       <description>
@@ -287,7 +344,7 @@ object present in field &lt;code&gt;json_data&lt;/code&gt;of the record. Then, t
     <item>
       <title>Docs: Hash</title>
       <link>https://getbaker.io/docs/components/filters/hash/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/hash/</guid>
       <description>
@@ -364,7 +421,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: MetadataLastModified</title>
       <link>https://getbaker.io/docs/components/filters/metadatalastmodified/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/metadatalastmodified/</guid>
       <description>
@@ -409,7 +466,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: NotNull</title>
       <link>https://getbaker.io/docs/components/filters/notnull/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/notnull/</guid>
       <description>
@@ -454,7 +511,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: PartialClone</title>
       <link>https://getbaker.io/docs/components/filters/partialclone/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/partialclone/</guid>
       <description>
@@ -499,7 +556,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: RegexMatch</title>
       <link>https://getbaker.io/docs/components/filters/regexmatch/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/regexmatch/</guid>
       <description>
@@ -551,7 +608,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: ReplaceFields</title>
       <link>https://getbaker.io/docs/components/filters/replacefields/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/replacefields/</guid>
       <description>
@@ -603,7 +660,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: SetStringFromURL</title>
       <link>https://getbaker.io/docs/components/filters/setstringfromurl/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/setstringfromurl/</guid>
       <description>
@@ -655,7 +712,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: StringMatch</title>
       <link>https://getbaker.io/docs/components/filters/stringmatch/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/stringmatch/</guid>
       <description>
@@ -714,7 +771,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: Timestamp</title>
       <link>https://getbaker.io/docs/components/filters/timestamp/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamp/</guid>
       <description>
@@ -759,7 +816,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: TimestampRange</title>
       <link>https://getbaker.io/docs/components/filters/timestamprange/</link>
-      <pubDate>Mon, 01 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamprange/</guid>
       <description>
