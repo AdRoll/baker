@@ -1,7 +1,7 @@
 ---
 title: "DynamoDB"
-weight: 23
-date: 2021-03-01
+weight: 24
+date: 2021-03-03
 ---
 {{% pageinfo color="primary" %}}
 
