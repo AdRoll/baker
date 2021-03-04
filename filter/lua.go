@@ -3,6 +3,7 @@ package filter
 import (
 	"fmt"
 	"runtime"
+	"sync"
 
 	"github.com/AdRoll/baker"
 
@@ -124,11 +125,11 @@ type LUAConfig struct {
 
 // LUA allows to run a baker filter from an external script written in lua.
 type LUA struct {
-	l       *lua.LState    // lua state used during all the baker filter lifetime
-	ud      *lua.LUserData // pre-allocated (reused) userdata for the processed record
-	luaFunc lua.LValue     // lua filter function
-	luaNext *lua.LFunction // lua next function (reused)
-	next    func(baker.Record)
+	mu sync.Mutex
+	l  *lua.LState // lua state used during all the baker filter lifetime
+
+	luaFunc  lua.LValue // lua filter function
+	recordMt lua.LValue
 }
 
 // NewLUA returns a new LUA filter.
@@ -147,26 +148,15 @@ func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 		return nil, fmt.Errorf("can't find lua filter %q in script %q", dcfg.FilterName, dcfg.Script)
 	}
 
-	// Preallocate the userdata we use to wrap the record passed to the filter.
-	// We can do this since a single instance of a baker filter is only ever
-	// processing a single record at a time, so we can reuse the lua userdata
-	// structure for it. This reduces allocations.
-	ud := l.NewUserData()
-	l.SetMetatable(ud, l.GetTypeMetatable(luaRecordTypeName))
+	f := &LUA{
+		l:        l,
+		recordMt: l.GetTypeMetatable(luaRecordTypeName),
+		luaFunc:  luaFunc,
+	}
 
-	f := &LUA{}
-
-	// Preallocate the lua next function passed to the filter.
-	luaNext := l.NewFunction(func(L *lua.LState) int {
-		f.next(fastcheckLuaRecord(L, 1).r)
-		return 0
-	})
-
-	f.l = l
-	f.ud = ud
-	f.luaNext = luaNext
-	f.luaFunc = luaFunc
-
+	// Since a filter has no way to know when it's deallocated we set a
+	// finaliser on the lua state instance, which gives us the occasion to close
+	// it.
 	runtime.SetFinalizer(f, func(f *LUA) { f.l.Close() })
 
 	return f, nil
@@ -229,18 +219,27 @@ func (t *LUA) Stats() baker.FilterStats { return baker.FilterStats{} }
 
 // Process forwards records to the lua-written filter.
 func (t *LUA) Process(rec baker.Record, next func(baker.Record)) {
-	// Modify the record inside the pre-allocated user value
-	t.ud.Value = &luaRecord{r: rec}
 
-	// Set the next function which is called by the lua filter to the one
-	// we just received.
-	t.next = next
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	nextCalled := false
+	luaNext := t.l.NewFunction(func(L *lua.LState) int {
+		next(fastcheckLuaRecord(L, 1).r)
+		nextCalled = true
+		return 0
+	})
+
+	// Wrap the incoming record into an lua user data having the 'record' type meta-table.
+	ud := t.l.NewUserData()
+	t.l.SetMetatable(ud, t.recordMt)
+	ud.Value = &luaRecord{r: rec}
 
 	err := t.l.CallByParam(lua.P{
 		Fn:      t.luaFunc,
 		NRet:    0,
 		Protect: true,
-	}, t.ud, t.luaNext)
+	}, ud, luaNext)
 
 	// TODO: should not panic here and instead increment a filter-specific
 	// metric that tracks the number of lua runtime errors.
@@ -265,6 +264,8 @@ func registerLUARecordType(L *lua.LState) {
 func recordToLua(L *lua.LState, r baker.Record) *lua.LUserData {
 	ud := L.NewUserData()
 	ud.Value = &luaRecord{r: r}
+	// TODO(arl) record type metatable likely never changes so we could avoid
+	// the extra lookup here
 	L.SetMetatable(ud, L.GetTypeMetatable(luaRecordTypeName))
 	return ud
 }
