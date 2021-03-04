@@ -129,10 +129,12 @@ type LUA struct {
 	mu sync.Mutex
 	l  *lua.LState // lua state used during all the baker filter lifetime
 
-	luaFunc  lua.LValue // lua filter function
-	recordMt lua.LValue
+	// These do not need protection against concurrent calls as they're strictly
+	// read-only.
+	luaProcess lua.LValue // lua filter function
+	recordMt   lua.LValue // lua record type meta table
 
-	nprocessed, nfiltered int64
+	nprocessed, nfiltered int64 // for filter stats
 }
 
 // NewLUA returns a new LUA filter.
@@ -152,9 +154,9 @@ func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 	}
 
 	f := &LUA{
-		l:        l,
-		recordMt: l.GetTypeMetatable(luaRecordTypeName),
-		luaFunc:  luaFunc,
+		l:          l,
+		recordMt:   l.GetTypeMetatable(luaRecordTypeName),
+		luaProcess: luaFunc,
 	}
 
 	// Since a filter has no way to know when it's deallocated we set a
@@ -240,7 +242,7 @@ func (t *LUA) Process(rec baker.Record, next func(baker.Record)) {
 	ud.Value = &luaRecord{r: rec}
 
 	err := t.l.CallByParam(lua.P{
-		Fn:      t.luaFunc,
+		Fn:      t.luaProcess,
 		NRet:    0,
 		Protect: true,
 	}, ud, luaNext)
