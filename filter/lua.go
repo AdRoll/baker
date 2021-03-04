@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime"
 	"sync"
+	"sync/atomic"
 
 	"github.com/AdRoll/baker"
 
@@ -130,6 +131,8 @@ type LUA struct {
 
 	luaFunc  lua.LValue // lua filter function
 	recordMt lua.LValue
+
+	nprocessed, nfiltered int64
 }
 
 // NewLUA returns a new LUA filter.
@@ -210,15 +213,16 @@ func registerLUATypes(l *lua.LState, comp baker.ComponentParams) {
 	l.SetGlobal("fieldNames", fields)
 }
 
-// TODO: at the moment LUA filter doesn't publish stats.
-// There are multiple ways to do it, either require the filter to update
-// the numbers of processed and filtered records, or deduce them automatically
-// by hooking into next and Process functions (if that proves too costly
-// this could be disabled in configuration.
-func (t *LUA) Stats() baker.FilterStats { return baker.FilterStats{} }
+func (t *LUA) Stats() baker.FilterStats {
+	return baker.FilterStats{
+		NumProcessedLines: atomic.LoadInt64(&t.nprocessed),
+		NumFilteredLines:  atomic.LoadInt64(&t.nfiltered),
+	}
+}
 
 // Process forwards records to the lua-written filter.
 func (t *LUA) Process(rec baker.Record, next func(baker.Record)) {
+	atomic.AddInt64(&t.nprocessed, 1)
 
 	t.mu.Lock()
 	defer t.mu.Unlock()
@@ -245,6 +249,10 @@ func (t *LUA) Process(rec baker.Record, next func(baker.Record)) {
 	// metric that tracks the number of lua runtime errors.
 	if err != nil {
 		panic(err)
+	}
+
+	if !nextCalled {
+		atomic.AddInt64(&t.nfiltered, 1)
 	}
 }
 
