@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Hash filter with the support of md5 and sha256 algorithms [#130](https://github.com/AdRoll/baker/pull/130)
 - Add MetadataLastModified filter [#133](https://github.com/AdRoll/baker/pull/133)
 - Add Dedup filter [#143](https://github.com/AdRoll/baker/pull/143)
+- Add LUA filter [#110](https://github.com/AdRoll/baker/pull/110)
 
 ### Changed
 
