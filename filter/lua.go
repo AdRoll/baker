@@ -61,7 +61,7 @@ Calling ` + ticks("record::copy") + ` returns a new record, a deep-copy of the o
 #### "clear"
 
 - Go: ` + ticks("Record.Clear()") + `
-- lua: ` + ticks("lua: record:clear()") + `
+- lua: ` + ticks("record:clear()") + `
 
 Calling ` + ticks("record::clear") + ` clears the records internal state, making all its fields empty.
 
@@ -71,7 +71,7 @@ Calling ` + ticks("record::clear") + ` clears the records internal state, making
 #### createRecord
 
 - Go: ` + ticks("Components.CreateRecord() Record") + `
-- lua: ` + ticks("createRecord -> record") + `
+- lua: ` + ticks("createRecord() -> record") + `
 
 ` + ticks("createRecord") + ` is the lua equivalent of the ` + ticks("CreateRecord") + ` function passed to your filter during construction.
 It allows to create a new Record instance.
@@ -100,7 +100,7 @@ It allows to lookup a field index by its name, returning the index or nil if no 
 - Go: ` + ticks("Components.FieldNames []string") + `
 - lua: ` + ticks("fieldNames") + `
 
-` + ticks("fieldNames") + ` is an integed-indexed table, in other words an array, containing all field names, as ` + ticks("FieldNames") + ` in Go.
+` + ticks("fieldNames") + ` is an integer-indexed table, in other words an array, containing all field names, as ` + ticks("FieldNames") + ` in Go.
 `
 
 // TODO(arl): ideally this functions should not be required, but writing
@@ -150,7 +150,7 @@ func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 
 	luaFunc := l.GetGlobal(dcfg.FilterName)
 	if luaFunc.Type() == lua.LTNil {
-		return nil, fmt.Errorf("can't find lua filter %q in script %q", dcfg.FilterName, dcfg.Script)
+		return nil, fmt.Errorf("can't find lua filter function name %q in script %q", dcfg.FilterName, dcfg.Script)
 	}
 
 	f := &LUA{
