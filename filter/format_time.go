@@ -12,12 +12,16 @@ import (
 
 const (
 	formatTimeHelp = `
-This filter formats and converts date/time strings from one format to another. It requires the source
-and destination field names along with 2 format strings, the first one indicates how to parse the input
-field while the second how to format it.  
+This filter formats and converts date/time strings from one format to another. 
+It requires the source and destination field names along with 2 format strings, the 
+first one indicates how to parse the input field while the second how to format it.
 
-Most standard formats are supported out of the box and you can provide your own format string,
-see [Go time layout](https://pkg.go.dev/time#pkg-constants). 
+The source time parsing can fail if the time value does not match the provided format.
+In this situation the filter clears the destination field, thus the user can filter out 
+those results with a __NotNull__ filter.
+
+Most standard formats are supported out of the box and you can provide your own format 
+string, see [Go time layout](https://pkg.go.dev/time#pkg-constants).
 
 Supported time format are:
 - ` + "`ANSIC`" + ` format: "Mon Jan _2 15:04:05 2006"
@@ -31,6 +35,7 @@ Supported time format are:
 - ` + "`RFC3339`" + ` format: "2006-01-02T15:04:05Z07:00"
 - ` + "`RFC3339Nano`" + ` format: "2006-01-02T15:04:05.999999999Z07:00"
 - ` + "`unix`" + ` unix epoch in seconds
+- ` + "`unixms`" + ` unix epoch in milliseconds
 - ` + "`unixns`" + ` unix epoch in nanoseconds
 `
 	ansic       = "ANSIC"
@@ -44,6 +49,7 @@ Supported time format are:
 	rfc3339     = "RFC3339"
 	rfc3339nano = "RFC3339Nano"
 	unix        = "unix"
+	unixms      = "unixms"
 	unixns      = "unixns"
 )
 
@@ -58,7 +64,7 @@ type FormatTimeConfig struct {
 	SrcField  string `help:"Field name of the input time" required:"true"`
 	DstField  string `help:"Field name of the output time" required:"true"`
 	SrcFormat string `help:"Format of the input time" required:"false" default:"UnixDate"`
-	DstFormat string `help:"Format of the output time" required:"false" default:"unix"`
+	DstFormat string `help:"Format of the output time" required:"false" default:"unixms"`
 }
 
 func (cfg *FormatTimeConfig) fillDefaults() {
@@ -66,13 +72,11 @@ func (cfg *FormatTimeConfig) fillDefaults() {
 		cfg.SrcFormat = unixdate
 	}
 	if cfg.DstFormat == "" {
-		cfg.DstFormat = unix
+		cfg.DstFormat = unixms
 	}
 }
 
 type FormatTime struct {
-	cfg *FormatTimeConfig
-
 	src    baker.FieldIndex
 	dst    baker.FieldIndex
 	parse  func(t []byte) (time.Time, error)
@@ -80,14 +84,13 @@ type FormatTime struct {
 
 	// Shared state
 	numProcessedLines int64
-	numFilteredLines  int64
 }
 
 func NewFormatTime(cfg baker.FilterParams) (baker.Filter, error) {
 	dcfg := cfg.DecodedConfig.(*FormatTimeConfig)
 	dcfg.fillDefaults()
 
-	f := &FormatTime{cfg: dcfg}
+	f := &FormatTime{}
 
 	idx, ok := cfg.FieldByName(dcfg.SrcField)
 	if !ok {
@@ -95,55 +98,14 @@ func NewFormatTime(cfg baker.FilterParams) (baker.Filter, error) {
 	}
 	f.src = idx
 
-	switch dcfg.SrcFormat {
-	case unix:
-		f.parse = func(b []byte) (time.Time, error) {
-			sec, err := strconv.ParseInt(string(b), 10, 64)
-			if err != nil {
-				return time.Time{}, err
-			}
-			return time.Unix(sec, 0), nil
-		}
-	case unixns:
-		f.parse = func(b []byte) (time.Time, error) {
-			nsec, err := strconv.ParseInt(string(b), 10, 64)
-			if err != nil {
-				return time.Time{}, err
-			}
-			return time.Unix(0, nsec), nil
-		}
-	default:
-		layout := formatToLayout(dcfg.SrcFormat)
-		f.parse = func(b []byte) (time.Time, error) {
-			t, err := time.Parse(layout, string(b))
-			if err != nil {
-				return time.Time{}, err
-			}
-			return t, nil
-		}
-	}
-
 	idx, ok = cfg.FieldByName(dcfg.DstField)
 	if !ok {
 		return nil, fmt.Errorf("unknown field %q", dcfg.DstField)
 	}
 	f.dst = idx
 
-	switch dcfg.DstFormat {
-	case unix:
-		f.format = func(t time.Time) []byte {
-			return strconv.AppendInt(nil, t.Unix(), 10)
-		}
-	case unixns:
-		f.format = func(t time.Time) []byte {
-			return strconv.AppendInt(nil, t.UnixNano(), 10)
-		}
-	default:
-		layout := formatToLayout(dcfg.DstFormat)
-		f.format = func(t time.Time) []byte {
-			return []byte(t.Format(layout))
-		}
-	}
+	f.parse = genParseFun(dcfg.SrcFormat)
+	f.format = genFormatFun(dcfg.DstFormat)
 
 	return f, nil
 }
@@ -151,20 +113,20 @@ func NewFormatTime(cfg baker.FilterParams) (baker.Filter, error) {
 func (f *FormatTime) Stats() baker.FilterStats {
 	return baker.FilterStats{
 		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-		NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
 	}
 }
 
 func (f *FormatTime) Process(l baker.Record, next func(baker.Record)) {
+	atomic.AddInt64(&f.numProcessedLines, 1)
+
 	t, err := f.parse(l.Get(f.src))
 	if err != nil {
 		log.Errorf("can't parse time: %v", err)
-		atomic.AddInt64(&f.numFilteredLines, 1)
-		return
+		l.Set(f.dst, nil)
+	} else {
+		l.Set(f.dst, f.format(t))
 	}
 
-	l.Set(f.dst, f.format(t))
-	atomic.AddInt64(&f.numProcessedLines, 1)
 	next(l)
 }
 
@@ -192,5 +154,65 @@ func formatToLayout(format string) string {
 		return time.RFC3339Nano
 	default:
 		return format
+	}
+}
+
+func genParseFun(format string) func(b []byte) (time.Time, error) {
+	switch format {
+	case unix:
+		return func(b []byte) (time.Time, error) {
+			sec, err := strconv.ParseInt(string(b), 10, 64)
+			if err != nil {
+				return time.Time{}, err
+			}
+			return time.Unix(sec, 0), nil
+		}
+	case unixms:
+		return func(b []byte) (time.Time, error) {
+			msec, err := strconv.ParseInt(string(b), 10, 64)
+			if err != nil {
+				return time.Time{}, err
+			}
+			return time.Unix(0, msec*1_000_000), nil
+		}
+	case unixns:
+		return func(b []byte) (time.Time, error) {
+			nsec, err := strconv.ParseInt(string(b), 10, 64)
+			if err != nil {
+				return time.Time{}, err
+			}
+			return time.Unix(0, nsec), nil
+		}
+	default:
+		layout := formatToLayout(format)
+		return func(b []byte) (time.Time, error) {
+			t, err := time.Parse(layout, string(b))
+			if err != nil {
+				return time.Time{}, err
+			}
+			return t, nil
+		}
+	}
+}
+
+func genFormatFun(format string) func(t time.Time) []byte {
+	switch format {
+	case unix:
+		return func(t time.Time) []byte {
+			return []byte(strconv.FormatInt(t.Unix(), 10))
+		}
+	case unixms:
+		return func(t time.Time) []byte {
+			return []byte(strconv.FormatInt(t.UnixNano()/1_000_000, 10))
+		}
+	case unixns:
+		return func(t time.Time) []byte {
+			return []byte(strconv.FormatInt(t.UnixNano(), 10))
+		}
+	default:
+		layout := formatToLayout(format)
+		return func(t time.Time) []byte {
+			return []byte(t.Format(layout))
+		}
 	}
 }

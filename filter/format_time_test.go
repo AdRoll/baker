@@ -62,6 +62,16 @@ func TestFormatTime(t *testing.T) {
 	}
 	for fout, lout := range format {
 		t := test{
+			name: "unixms->" + fout,
+			in:   fmt.Sprintf("%d", refTime.UnixNano()/1_000_000),
+			fin:  "unixms",
+			out:  refTime.Format(lout),
+			fout: fout,
+		}
+		tests = append(tests, t)
+	}
+	for fout, lout := range format {
+		t := test{
 			name: "unixns->" + fout,
 			in:   fmt.Sprintf("%d", refTime.UnixNano()),
 			fin:  "unixns",
@@ -78,6 +88,16 @@ func TestFormatTime(t *testing.T) {
 			fin:  fin,
 			out:  fmt.Sprintf("%d", timeAsFrom(lin, refTime).Unix()),
 			fout: "unix",
+		}
+		tests = append(tests, t)
+	}
+	for fin, lin := range format {
+		t := test{
+			name: fin + "->unixms",
+			in:   refTime.Format(lin),
+			fin:  fin,
+			out:  fmt.Sprintf("%d", timeAsFrom(lin, refTime).UnixNano()/1_000_000),
+			fout: "unixms",
 		}
 		tests = append(tests, t)
 	}
@@ -137,15 +157,16 @@ func TestFormatTime(t *testing.T) {
 
 func TestFormatTimeErrors(t *testing.T) {
 	tests := []struct {
-		name      string
-		record    string
+		name   string
+		record string
+
 		srcField  string
 		srcFormat string
 		dstField  string
 		dstFormat string
-		want      string
-		newErr    bool // error during filter instantiation
-		procErr   bool // error during filter processing
+
+		want    string
+		wantErr bool // error during filter instantiation
 	}{
 		{
 			name:      "custom format src",
@@ -171,8 +192,8 @@ func TestFormatTimeErrors(t *testing.T) {
 			srcField:  "f1",
 			srcFormat: "", // UnixDate
 			dstField:  "f2",
-			dstFormat: "", // unix
-			want:      "932183424",
+			dstFormat: "", // unixms
+			want:      "932183424000",
 		},
 
 		//errors
@@ -180,37 +201,45 @@ func TestFormatTimeErrors(t *testing.T) {
 			name:     "SrcField error",
 			srcField: "not-exist",
 			dstField: "f2",
-			newErr:   true,
+			wantErr:  true,
 		},
 		{
 			name:     "DstField error",
 			srcField: "f2",
 			dstField: "not-exist",
-			newErr:   true,
+			wantErr:  true,
 		},
 		{
 			name:      "format error",
-			record:    "Sat Jul 17 03:50:24 UTC 1999,",
+			record:    "Sat Jul 17 03:50:24 UTC 1999,not-empty",
 			srcField:  "f1",
 			srcFormat: "foo bar",
 			dstField:  "f2",
-			procErr:   true,
+			want:      "", // dst field shoul empty on error
 		},
 		{
 			name:      "unix time error",
-			record:    "foobar,",
+			record:    "foobar,not-empty",
 			srcField:  "f1",
 			srcFormat: "unix",
 			dstField:  "f2",
-			procErr:   true,
+			want:      "", // dst field shoul empty on error
+		},
+		{
+			name:      "unixms time error",
+			record:    "foobar,not-empty",
+			srcField:  "f1",
+			srcFormat: "unixms",
+			dstField:  "f2",
+			want:      "", // dst field shoul empty on error
 		},
 		{
 			name:      "unixns time error",
-			record:    "foobar,",
+			record:    "foobar,not-empty",
 			srcField:  "f1",
 			srcFormat: "unixns",
 			dstField:  "f2",
-			procErr:   true,
+			want:      "", // dst field shoul empty on error
 		},
 	}
 	fieldByName := func(name string) (baker.FieldIndex, bool) {
@@ -237,11 +266,11 @@ func TestFormatTimeErrors(t *testing.T) {
 				},
 			})
 
-			if (err != nil) != (tt.newErr) {
-				t.Fatalf("got error = %v, want error = %v", err, tt.newErr)
+			if (err != nil) != (tt.wantErr) {
+				t.Fatalf("got error = %v, want error = %v", err, tt.wantErr)
 			}
 
-			if tt.newErr {
+			if tt.wantErr {
 				return
 			}
 
@@ -250,21 +279,16 @@ func TestFormatTimeErrors(t *testing.T) {
 				t.Fatalf("parse error: %q", err)
 			}
 
-			callNext := false
 			f.Process(rec1, func(rec2 baker.Record) {
-				callNext = true
 				id, ok := fieldByName(tt.dstField)
 				if !ok {
 					t.Fatalf("cannot find field name")
 				}
 				time := rec2.Get(id)
 				if string(time) != tt.want {
-					t.Errorf("got hash %q, want %q", time, tt.want)
+					t.Errorf("got time %q, want %q", time, tt.want)
 				}
 			})
-			if !callNext && !tt.procErr {
-				t.Fatalf("process error, want nil")
-			}
 		})
 	}
 }
