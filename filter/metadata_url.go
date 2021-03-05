@@ -10,11 +10,18 @@ import (
 	"github.com/AdRoll/baker/input/inpututils"
 )
 
+const metadataUrlHelp = `
+This filter looks for 'url' in records metadata and copies it into a field of your choice, see DstField.
+If it doesn't find the 'url' in the metadata, this filter clear DstField.
+
+If you wish to discard records without the 'url' metadata, you can add the NotNull filter after this one in your topology.
+`
+
 var MetadataUrlDesc = baker.FilterDesc{
 	Name:   "MetadataUrl",
 	New:    NewMetadataUrl,
 	Config: &MetadataUrlConfig{},
-	Help:   `Extract the Metadata URL from the record Metadata and write it to the selected field`,
+	Help:   metadataUrlHelp,
 }
 
 type MetadataUrlConfig struct {
@@ -58,17 +65,24 @@ func (f *MetadataUrl) Process(l baker.Record, next func(baker.Record)) {
 	atomic.AddInt64(&f.numProcessedLines, 1)
 
 	v, ok := l.Meta(inpututils.MetadataURL)
-	if ok {
-		url := v.(*url.URL)
-		if url != nil {
-			urlStr, ok := f.Load(url)
-			if !ok {
-				urlStr = url.String()
-				f.Store(url, urlStr)
-			}
-			l.Set(f.dst, []byte(urlStr.(string)))
-		}
+	if !ok {
+		l.Set(f.dst, nil)
+		next(l)
+		return
 	}
 
+	url := v.(*url.URL)
+	if url == nil {
+		l.Set(f.dst, nil)
+		next(l)
+		return
+	}
+
+	urlStr, ok := f.Load(url)
+	if !ok {
+		urlStr = url.String()
+		f.Store(url, urlStr)
+	}
+	l.Set(f.dst, []byte(urlStr.(string)))
 	next(l)
 }
