@@ -12,10 +12,12 @@ import (
 
 const (
 	formatTimeHelp = `
-This filter formats and converts time strings from one format to another. The filter requires the 
-source and the destination field name along with the time format of the two fields. Most standard 
-formats are supported, but it is possible to provide a custom one using layout string, 
-i.e. [Go time layout](https://pkg.go.dev/time#pkg-constants).
+This filter formats and converts date/time strings from one format to another. It requires the source
+and destination field names along with 2 format strings, the first one indicates how to parse the input
+field while the second how to format it.  
+
+Most standard formats are supported out of the box and you can provide your own format string,
+see [Go time layout](https://pkg.go.dev/time#pkg-constants). 
 
 Supported time format are:
 - ` + "`ANSIC`" + ` format: "Mon Jan _2 15:04:05 2006"
