@@ -28,7 +28,6 @@ type MetadataUrl struct {
 
 	// Shared state
 	numProcessedLines int64
-	numFilteredLines  int64
 	metadata.Cache    // type: map[*url.URL]string
 }
 
@@ -52,11 +51,12 @@ func NewMetadataUrl(cfg baker.FilterParams) (baker.Filter, error) {
 func (f *MetadataUrl) Stats() baker.FilterStats {
 	return baker.FilterStats{
 		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-		NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
 	}
 }
 
 func (f *MetadataUrl) Process(l baker.Record, next func(baker.Record)) {
+	atomic.AddInt64(&f.numProcessedLines, 1)
+
 	v, ok := l.Meta(inpututils.MetadataURL)
 	if ok {
 		url := v.(*url.URL)
@@ -67,8 +67,8 @@ func (f *MetadataUrl) Process(l baker.Record, next func(baker.Record)) {
 				f.Store(url, urlStr)
 			}
 			l.Set(f.dst, []byte(urlStr.(string)))
-			atomic.AddInt64(&f.numProcessedLines, 1)
 		}
 	}
+
 	next(l)
 }
