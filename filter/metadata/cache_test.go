@@ -22,7 +22,7 @@ func TestCache(t *testing.T) {
 	wg.Wait()
 
 	if c.nentries != 100 {
-		t.Errorf("unexpected cache size; got %d, wanted 100", c.nentries)
+		t.Errorf("unexpected cache size; got %d, want 100", c.nentries)
 	}
 
 	c.Store(100, 100)
@@ -40,6 +40,6 @@ func TestCache(t *testing.T) {
 		t.Error("storing duplicate item should not have cleared cache or changed count")
 	}
 	if v != 100 {
-		t.Errorf("Cache value is wrong, %v instead of 100", v)
+		t.Errorf("got c.Load(100) = %v, want 100", v)
 	}
 }

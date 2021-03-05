@@ -18,7 +18,7 @@ var MetadataUrlDesc = baker.FilterDesc{
 }
 
 type MetadataUrlConfig struct {
-	DstField string `help:"Name of the field into which write the timestamp to" required:"true"`
+	DstField string `help:"Name of the field into to write the url to (or to clear if there's no url)" required:"true"`
 }
 
 type MetadataUrl struct {
