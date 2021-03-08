@@ -203,7 +203,7 @@ func genFormatFun(format string) func(t time.Time) []byte {
 		}
 	case unixms:
 		return func(t time.Time) []byte {
-			return []byte(strconv.FormatInt(t.UnixNano()/1_000_000, 10))
+			return []byte(strconv.FormatInt(t.UnixNano()/int64(time.Millisecond), 10))
 		}
 	case unixns:
 		return func(t time.Time) []byte {
