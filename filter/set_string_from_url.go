@@ -11,12 +11,19 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const helpSetStringFromURL = `
+This filter looks for a set of strings in the URL metadata and sets a field with the found string.
+Discards the log lines if URL metadata doesn't contain any of the given strings.
+
+**On Error:** the input record is discarded.
+`
+
 // SetStringFromURLDesc describes the SetStringFromURL filter.
 var SetStringFromURLDesc = baker.FilterDesc{
 	Name:   "SetStringFromURL",
 	New:    NewSetStringFromURL,
 	Config: &SetStringFromURLConfig{},
-	Help:   `Extract some strings from metadata url and sets a field with it.`,
+	Help:   helpSetStringFromURL,
 }
 
 type SetStringFromURLConfig struct {
