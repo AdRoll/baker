@@ -65,6 +65,7 @@ func (f *SetStringFromURL) Process(l baker.Record, next func(baker.Record)) {
 	if !ok {
 		log.Infof("record metadata has no 'url' key")
 		atomic.AddInt64(&f.numFilteredLines, 1)
+		return
 	}
 
 	path := []byte(iurl.(*url.URL).Path)
