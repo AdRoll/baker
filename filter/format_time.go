@@ -173,7 +173,7 @@ func genParseFun(format string) func(b []byte) (time.Time, error) {
 			if err != nil {
 				return time.Time{}, err
 			}
-			return time.Unix(0, msec*1_000_000), nil
+			return time.Unix(0, msec*int64(time.Millisecond)), nil
 		}
 	case unixns:
 		return func(b []byte) (time.Time, error) {

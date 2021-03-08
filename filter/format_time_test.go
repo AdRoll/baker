@@ -63,7 +63,7 @@ func TestFormatTime(t *testing.T) {
 	for fout, lout := range format {
 		t := test{
 			name: "unixms->" + fout,
-			in:   fmt.Sprintf("%d", refTime.UnixNano()/1_000_000),
+			in:   fmt.Sprintf("%d", refTime.UnixNano()/int64(time.Millisecond)),
 			fin:  "unixms",
 			out:  refTime.Format(lout),
 			fout: fout,
@@ -96,7 +96,7 @@ func TestFormatTime(t *testing.T) {
 			name: fin + "->unixms",
 			in:   refTime.Format(lin),
 			fin:  fin,
-			out:  fmt.Sprintf("%d", timeAsFrom(lin, refTime).UnixNano()/1_000_000),
+			out:  fmt.Sprintf("%d", timeAsFrom(lin, refTime).UnixNano()/int64(time.Millisecond)),
 			fout: "unixms",
 		}
 		tests = append(tests, t)
