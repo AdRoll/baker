@@ -11,12 +11,19 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const helpSetStringFromURL = `
+This filter looks for a set of strings in the URL metadata and sets a field with the found string.
+Discards the log lines if URL metadata doesn't contain any of the given strings.
+
+**On Error:** the input record is discarded.
+`
+
 // SetStringFromURLDesc describes the SetStringFromURL filter.
 var SetStringFromURLDesc = baker.FilterDesc{
 	Name:   "SetStringFromURL",
 	New:    NewSetStringFromURL,
 	Config: &SetStringFromURLConfig{},
-	Help:   `Extract some strings from metadata url and sets a field with it.`,
+	Help:   helpSetStringFromURL,
 }
 
 type SetStringFromURLConfig struct {
@@ -62,6 +69,7 @@ func (f *SetStringFromURL) Process(l baker.Record, next func(baker.Record)) {
 	if !ok {
 		log.Infof("record metadata has no 'url' key")
 		atomic.AddInt64(&f.numFilteredLines, 1)
+		return
 	}
 
 	path := []byte(iurl.(*url.URL).Path)
