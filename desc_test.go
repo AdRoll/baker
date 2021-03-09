@@ -3,9 +3,12 @@ package baker_test
 import (
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/filter/filtertest"
+	"github.com/AdRoll/baker/input/inputtest"
+	"github.com/AdRoll/baker/output/outputtest"
+	"github.com/AdRoll/baker/upload/uploadtest"
 )
 
 func checkDecodedConfig(t *testing.T, dcfg interface{}) {
@@ -25,7 +28,7 @@ func TestCompDescEmptyConfig(t *testing.T) {
 		Name: "dummyInput",
 		New: func(cfg baker.InputParams) (baker.Input, error) {
 			checkDecodedConfig(t, cfg.DecodedConfig)
-			return dummyInput{}, nil
+			return inputtest.Base{}, nil
 		},
 		Config: &struct{}{},
 	}
@@ -33,7 +36,7 @@ func TestCompDescEmptyConfig(t *testing.T) {
 		Name: "dummyFilter",
 		New: func(cfg baker.FilterParams) (baker.Filter, error) {
 			checkDecodedConfig(t, cfg.DecodedConfig)
-			return dummyFilter{}, nil
+			return filtertest.Base{}, nil
 		},
 		Config: &struct{}{},
 	}
@@ -41,7 +44,7 @@ func TestCompDescEmptyConfig(t *testing.T) {
 		Name: "dummyOutput",
 		New: func(cfg baker.OutputParams) (baker.Output, error) {
 			checkDecodedConfig(t, cfg.DecodedConfig)
-			return dummyOutput{}, nil
+			return outputtest.Base{}, nil
 		},
 		Config: &struct{}{},
 	}
@@ -49,7 +52,7 @@ func TestCompDescEmptyConfig(t *testing.T) {
 		Name: "dummyUpload",
 		New: func(cfg baker.UploadParams) (baker.Upload, error) {
 			checkDecodedConfig(t, cfg.DecodedConfig)
-			return dummyUpload{}, nil
+			return uploadtest.Base{}, nil
 		},
 		Config: &struct{}{},
 	}
@@ -57,7 +60,7 @@ func TestCompDescEmptyConfig(t *testing.T) {
 		Name: "dummyMetric",
 		New: func(cfg interface{}) (baker.MetricsClient, error) {
 			checkDecodedConfig(t, cfg)
-			return dummyMetric{}, nil
+			return baker.NopMetrics{}, nil
 		},
 		Config: &struct{}{},
 	}
@@ -100,40 +103,3 @@ name = "dummyMetric"
 		t.Fatalf("cannot build topology: %v", err)
 	}
 }
-
-type dummyInput struct{}
-
-func (dummyInput) Run(chan<- *baker.Data) error { return nil }
-func (dummyInput) Stop()                        {}
-func (dummyInput) Stats() baker.InputStats      { return baker.InputStats{} }
-func (dummyInput) FreeMem(*baker.Data)          {}
-
-type dummyFilter struct{}
-
-func (dummyFilter) Process(baker.Record, func(baker.Record)) {}
-func (dummyFilter) Stats() baker.FilterStats                 { return baker.FilterStats{} }
-
-type dummyOutput struct{}
-
-func (dummyOutput) Run(<-chan baker.OutputRecord, chan<- string) error { return nil }
-func (dummyOutput) Stats() baker.OutputStats                           { return baker.OutputStats{} }
-func (dummyOutput) CanShard() bool                                     { return false }
-
-type dummyUpload struct{}
-
-func (dummyUpload) Run(upch <-chan string) error { return nil }
-func (dummyUpload) Stop()                        {}
-func (dummyUpload) Stats() baker.UploadStats     { return baker.UploadStats{} }
-
-type dummyMetric struct{}
-
-func (dummyMetric) Gauge(string, float64)                            {}
-func (dummyMetric) GaugeWithTags(string, float64, []string)          {}
-func (dummyMetric) RawCount(string, int64)                           {}
-func (dummyMetric) RawCountWithTags(string, int64, []string)         {}
-func (dummyMetric) DeltaCount(string, int64)                         {}
-func (dummyMetric) DeltaCountWithTags(string, int64, []string)       {}
-func (dummyMetric) Histogram(string, float64)                        {}
-func (dummyMetric) HistogramWithTags(string, float64, []string)      {}
-func (dummyMetric) Duration(string, time.Duration)                   {}
-func (dummyMetric) DurationWithTags(string, time.Duration, []string) {}
