@@ -21,9 +21,6 @@ type LazyFilter struct {
 }
 
 func NewLazyFilter(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &LazyFilterConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*LazyFilterConfig)
 	return &LazyFilter{stakhanovite: dcfg.Stakhanovite}, nil
 }
