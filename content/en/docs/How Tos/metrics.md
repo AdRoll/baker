@@ -14,78 +14,17 @@ number of files read or written, to performance statistics published by the Go
 runtime in order to monitor lower level information (objects, memory, garbage 
 collection, etc.).
 
-All components need to implement a `Stats` method where they can expose metrics. 
-Baker calls the `Stats` method of each component once per second. `Stats` returns
-a predefined set of metrics (depending on the component type) and a 
-[`baker.MetricsBag`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag),
-in which one can add other metrics (of arbitrary name and type).
-
-Let's illustrate this with metrics exported by a filter via 
-[`baker.FilterStats`](https://pkg.go.dev/github.com/AdRoll/baker#FilterStats):
-
-```go
-type FilterStats struct {
-	NumProcessedLines int64
-	NumFilteredLines  int64
-	Metrics           MetricsBag
-}
-```
-
-In this case `NumProcessedLines` should represent the **total** number of processed 
-lines since the filter creation, while `NumFilteredLines` is the number of discarded 
-(i.e filtered) records. Due to historical reasons these fields have the word
-_lines_ in them but they do mean the number of records.
-
-#### A practical example
-
-Let's say our filter needs to perform HTTP requests in order to decide whether a record
-should be discarded, we might want to keep track of the requests' durations in an histogram.
-In this case, we would probably record a slice of `time.Duration` in our filter and call
-[`AddTimings`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag.AddTimings) on the
-returned `MetricsBag`.
-
-An important point is that Baker may call `Process` and `Stats` concurrently, from different
-goroutines so you must use proper locking on data structures which are shared between the
-these two methods. 
-
-```go
-func (f *myFilter) Process(r Record, next func(Record)) {
-    atomic.AddInt64(&myFilter.totalLines, 1)
-
-    /* perform http request and keep track of its duration
-     * in i.requestDurations
-     */
-
-    if (/* filter logic*/) {
-        // discard line
-        atomic.AddInt64(&myFilter.filteredLines, 1)
-        return
-    }
-}
-
-func (i *myFilter) Stats() baker.FilterStats {
-    i.mu.Lock()
-    bag := make(baker.MetricsBag)    
-    bag.AddTimings("myfilter_http_request_duration", i.requestDurations)
-    i.mu.Unlock()
-
-    return baker.FilterStats{
-        NumProcessedLines: atomic.LoadInt64(&myFilter.totalLines),
-        NumFilteredLines: atomic.LoadInt64(&myFilter.filteredLines),
-        Metrics: bag,
-    }
-}
-```
-
-#### Configuring metrics in TOML
+## Configuring metrics in TOML
 
 Baker configuration TOML files may have a `[metrics]` section dedicated to the 
 configuration of a metrics client.
+`[metrics.name]` specifies the metrics client to use, from the list of all registered 
+[`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient).
+`[metrics.config]` specifies some configuration settings which are specific to 
+the client you're using.
 
-`[metrics.name]` specifies the metrics client to use, from the list of all registered [`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient).
-`[metrics.config]` specifies some configuration settings which are specific to the client you're using.
-
-For example, this is what the `[metrics]` section would look like with the *Datadog* metrics client:
+For example, this is what the `[metrics]` section would look like with the *Datadog*
+metrics client:
 
 ```toml
 [metrics]
@@ -98,13 +37,13 @@ name="datadog"
     tags=["env:prod", "region:eu-west-1"]  # extra tags to associate to all exported metrics 
 ```
 
-#### Disabling metrics
+### Disabling metrics
 
-If you don't want to publish any metrics, it's enough to not provide the `[metrics]` TOML section in
-Baker configuration file.
+If you don't want to publish any metrics, it's enough to not provide the `[metrics]` TOML 
+section in Baker configuration file.
 
 
-#### Implementing a new metrics client
+## Create a Custom MetricsClient
 
 The [metrics example](https://github.com/AdRoll/baker/tree/main/examples/metrics) shows an
 example implementation of
@@ -134,13 +73,161 @@ or an error saying why it can't.
 func newMyMetrics(icfg interface{}) (baker.MetricsClient, error)
 ```
 
-#### Metrics.Client interface
+## How to expose statistics in a Component
 
-Once a [`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient)
-instance has been successfully created, it's made available to and used by
-a Baker pipeline to report metrics. During construction, components receive the 
-[`MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient) instance.
+All components need to implement a `Stats` method where they can expose metrics. Baker 
+runtime calls the `Stats` method of each component once per second. The different component 
+types support a set of predefined metrics. In particular, the following counters are defined:
 
+- [Input](https://pkg.go.dev/github.com/AdRoll/baker#InputStats):
+    - `NumProcessedLines`, the total number of processed records since the component creation
+- [Filter](https://pkg.go.dev/github.com/AdRoll/baker#FilterStats):
+    - `NumProcessedLines`, the total number of processed records since the component creation
+    - `NumFilteredLines`, the number of discarded (i.e., filtered) records
+- [Output](https://pkg.go.dev/github.com/AdRoll/baker#OutputStats):
+    - `NumProcessedLines`, the total number of processed records since the component creation
+    - `NumErrorLines`, the number of records that have produced an error
+- [Upload](https://pkg.go.dev/github.com/AdRoll/baker#UploadStats):
+    - `NumProcessedFiles`, the total number of processed files since the component creation
+    - `NumErrorFiles`, the number of files that have produced an error
+
+Due to historical reasons, these fields have the word _lines_ in them but they do 
+mean the number of records.
+
+The code example of 
+[how-to-create-filter](https://getbaker.io/docs/how-tos/create_filter/#processing-records) 
+shows how to correctly reports metrics in a custom Filter.
+
+### Report custom metrics
+
+Components may need to report custom metrics for monitoring some specific events. 
+Baker supports two main ways to expose custom metrics, namely:
+
+- return a 
+[`baker.MetricsBag`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag)
+instance from the `Stats` method 
+- directly use the 
+[`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient) in 
+the component code
+
+The two mechanisms following pull vs push approach respectively.
+The `MetricsBag` should be returned by the `Stats` method along with the default
+statistics and it will be collected 1 per second by the Baker runtime. Differently,
+the `MetricsClient` can be requested from the Baker topology in the component
+instantiation and it can be used in any part of the component code to report metrics.
+If there is no particular requirements it is suggested to prefer the `MetricsBag`. 
+Indeed, the pull approach permits the reduction the metrics overhead during the 
+record processing.
+
+Both `MetricsBag` and `MetricsClient` Metrics supports the most common metric types,
+namely:
+- `RawCounter`, a cumulative counter that can only increase.
+- `DeltaCounter`, the total number of event occurrences in a unit time.
+- `Gauge`, a snapshot of an event in the last unit time. 
+- `Histogram`, a statistical distribution of a set of values in one unit 
+of time.
+- `Duration` or `Timing`, like an histogram but with time durations
+
+Moreover, the `MetricsClient` is the direct interface to the remote metrics service 
+used by the topology, e.g., *Datadog*, thus it supports some specific features such 
+as **tags**.
+Tags are a way of adding dimensions to telemetries so they can be filtered, 
+aggregated, and compared in different visualizations.
+Therefore, if a component requires to publish its metrics with a set of specific tags, the 
+`MetricsClient` should use rather than `MetricsBag`.
+However, it is suggested to use `MetricsClient` in the `Stats` method of the 
+components to reduce contention and improve performance in the processing of the 
+elements.
+
+In summary, the go-to way is to implements custom statistics with a `MetricsBag`, but 
+there are some situations in which it is preferable the `MetricsClient`, namely:
+- the components need to publish the metrics using specific tags,
+- the components cannot centralize the metric collections, e.g. the component has 
+multiple goroutines.
+
+#### MetricsBag Example
+
+Let's say our filter needs to perform HTTP requests in order to decide whether a 
+record should be discarded, we might want to keep track of the requests' durations 
+in a histogram. In this case, we would probably record a slice of `time.Duration` in 
+our filter and call 
+[`AddTimings`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag.AddTimings) on
+the returned `MetricsBag`.
+
+An important point is that Baker may call `Process` and `Stats` concurrently, from 
+different goroutines so you must use proper locking on data structures that are
+shared between these two methods. 
+
+```go
+func (f *MyFilter) Process(r Record, next func(Record)) {
+    atomic.AddInt64(&myFilter.totalLines, 1)
+
+    /* perform http request */
+    f.mu.Lock() // keep track of its duration
+    f.requestDurations = append(f.requestDurations, duration)
+    f.mu.Unlock()
+
+    if (/* filter logic*/) {
+        // discard line
+        atomic.AddInt64(&f.filteredLines, 1)
+        return
+    }
+}
+
+func (f *MyFilter) Stats() baker.FilterStats {
+    // copy the slice of durations
+    f.mu.Lock()
+    requestDurations := f.requestDurations[:]
+    f.mu.Unlock()
+
+    bag := make(baker.MetricsBag)
+    bag.AddTimings("myfilter_http_request_duration", requestDurations)
+    return baker.FilterStats{
+        NumProcessedLines: atomic.LoadInt64(&f.totalLines),
+        NumFilteredLines: atomic.LoadInt64(&f.filteredLines),
+        Metrics: bag,
+    }
+}
+```
+
+#### MetricsClient Example
+
+Once a 
 [`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient) 
-supports the most common type of metric types: *gauges*, *counters* and *histograms*.
+instance has been successfully created, it's made available to and used by a Baker 
+pipeline to report metrics. During construction, components receive the 
+[`MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient) instance.
+[`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient) 
+provides a set of methods to report the most common type of metric types (e.g. 
+*gauges*, *counters* and *histograms*)
 
+Taking the previous example of the `MetricsBag`, we now consider the situation in 
+which the time duration that we want to collect, needs to be repported along with specific 
+tags.
+
+```go
+func NewMyFilter(cfg baker.InputParams) (baker.Input, error) {
+    return MyFilter{metrics: cfg.Metrics}
+}
+
+func (f *MyFilter) Process(r Record, next func(Record)) {
+ /*... */
+}
+
+func (f *MyFilter) Stats() baker.FilterStats {
+    f.mu.Lock()
+    for _, duration := range f.requestDurations {
+        f.metrics.DurationWithTags(
+            "myfilter_http_request_duration", 
+            duration, 
+            []string{"tag1", "tag2"},
+        )
+    }
+    f.mu.Unlock()
+
+    return baker.FilterStats{
+        NumProcessedLines: atomic.LoadInt64(&f.totalLines),
+        NumFilteredLines: atomic.LoadInt64(&f.filteredLines),
+    }
+}
+```
