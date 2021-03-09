@@ -27,9 +27,6 @@ type PartialClone struct {
 }
 
 func NewPartialClone(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &PartialCloneConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*PartialCloneConfig)
 
 	if len(dcfg.Fields) == 0 {

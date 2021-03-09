@@ -37,9 +37,6 @@ type TimestampRange struct {
 
 // NewTimestampRange creates and configures a TimestampRange filter.
 func NewTimestampRange(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &TimestampRangeConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*TimestampRangeConfig)
 
 	fidx, ok := cfg.FieldByName(dcfg.Field)

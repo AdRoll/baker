@@ -39,9 +39,6 @@ type MetadataUrl struct {
 }
 
 func NewMetadataUrl(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &MetadataUrlConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*MetadataUrlConfig)
 
 	f := &MetadataUrl{cfg: dcfg}

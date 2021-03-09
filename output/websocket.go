@@ -33,9 +33,6 @@ type WebSocket struct {
 func NewWebSocket(cfg baker.OutputParams) (baker.Output, error) {
 	log.WithFields(log.Fields{"fn": "NewWebSocket", "idx": cfg.Index}).Info("Initializing")
 
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &WebSocketConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*WebSocketConfig)
 	dcfg.fillDefaults()
 

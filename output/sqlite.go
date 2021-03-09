@@ -125,10 +125,6 @@ func runSQLCommands(tx *sql.Tx, commands []string) error {
 
 func NewSQLite(isRaw bool) func(baker.OutputParams) (baker.Output, error) {
 	return func(cfg baker.OutputParams) (baker.Output, error) {
-		if cfg.DecodedConfig == nil {
-			return nil, fmt.Errorf("no config provided")
-		}
-
 		// Convert and validate configuration
 		var dcfg *SQLiteRawWriterConfig
 		if isRaw {
