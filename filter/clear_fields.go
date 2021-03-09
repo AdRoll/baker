@@ -29,9 +29,6 @@ type ClearFields struct {
 
 // NewClearFields returns a ClearFields filter.
 func NewClearFields(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &ClearFieldsConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*ClearFieldsConfig)
 
 	var fields []baker.FieldIndex

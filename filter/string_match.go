@@ -35,9 +35,6 @@ type StringMatch struct {
 
 // NewStringMatch returns a StringMatch filter.
 func NewStringMatch(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &StringMatchConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*StringMatchConfig)
 
 	if len(dcfg.Strings) == 0 {

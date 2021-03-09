@@ -56,10 +56,6 @@ type Kinesis struct {
 // NewKinesis creates a Kinesis tail, and immediately do a first connection to
 // get the current shard list.
 func NewKinesis(cfg baker.InputParams) (baker.Input, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &KinesisConfig{}
-	}
-
 	dcfg := cfg.DecodedConfig.(*KinesisConfig)
 	if err := dcfg.fillDefaults(); err != nil {
 		return nil, fmt.Errorf("Kinesis: %s", err)

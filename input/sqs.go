@@ -65,9 +65,6 @@ type SQS struct {
 }
 
 func NewSQS(cfg baker.InputParams) (baker.Input, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &SQSConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*SQSConfig)
 	dcfg.fillDefaults()
 

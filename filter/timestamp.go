@@ -32,6 +32,7 @@ type Timestamp struct {
 // NewTimestamp creates and configures a Timestamp filter.
 func NewTimestamp(cfg baker.FilterParams) (baker.Filter, error) {
 	dcfg := cfg.DecodedConfig.(*TimestampConfig)
+
 	fidx, ok := cfg.FieldByName(dcfg.Field)
 	if !ok {
 		return nil, fmt.Errorf("unknown field %q", dcfg.Field)

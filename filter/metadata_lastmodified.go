@@ -31,9 +31,6 @@ type MetadataLastModified struct {
 }
 
 func NewMetadataLastModified(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &MetadataLastModifiedConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*MetadataLastModifiedConfig)
 
 	f := &MetadataLastModified{cfg: dcfg}

@@ -40,6 +40,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Hash filter with the support of md5 and sha256 algorithms [#130](https://github.com/AdRoll/baker/pull/130)
 - Add MetadataLastModified filter [#133](https://github.com/AdRoll/baker/pull/133)
 - Add Dedup filter [#143](https://github.com/AdRoll/baker/pull/143)
+- Add MetadataUrl filter [#147](https://github.com/AdRoll/baker/pull/147)
+- Add FormatTime filter [#151](https://github.com/AdRoll/baker/pull/151)
 
 ### Changed
 
@@ -68,6 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PrintHelper()` now supports map type as configuration parameter of a Baker component [#138](https://github.com/AdRoll/baker/pull/138)
 - `List` input did not consider drive letter on Windows paths [#139](https://github.com/AdRoll/baker/pull/139)
 - Do not insert newline after dots in generated help markdown [#140](https://github.com/AdRoll/baker/pull/140)
+- SetStringFromURL filter panics if MetadataURL was not set. [#156](https://github.com/AdRoll/baker/pull/156)
 
 ### Maintenance
 

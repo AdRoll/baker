@@ -102,9 +102,6 @@ const (
 )
 
 func NewClauseFilter(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &ClauseFilterConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*ClauseFilterConfig)
 	if dcfg.Clause == "" {
 		log.Warn("ClauseFilter is being used but the Clause string is empty. This means everything will be passed through this filter.")

@@ -63,11 +63,7 @@ type FileWriter struct {
 func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 	log.WithFields(log.Fields{"fn": "NewFileWriter", "idx": cfg.Index}).Info("Initializing")
 
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &FileWriterConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*FileWriterConfig)
-
 	dcfg.fillDefaults()
 
 	fw := &FileWriter{
