@@ -22,8 +22,8 @@ func TestExpandList(t *testing.T) {
 			name: "extract 2 value",
 			list: "value1;value2",
 			field: map[string]string{
-				"0": "f1",
 				"1": "f2",
+				"0": "f1",
 			},
 			want: map[string]string{
 				"f1": "value1",
@@ -34,7 +34,8 @@ func TestExpandList(t *testing.T) {
 			name: "extract 1 value",
 			list: "value1;value2",
 			field: map[string]string{
-				"1": "f2",
+				"32": "f1",
+				"1":  "f2",
 			},
 			want: map[string]string{
 				"f1": "",

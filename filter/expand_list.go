@@ -3,6 +3,7 @@ package filter
 import (
 	"bytes"
 	"fmt"
+	"sort"
 	"strconv"
 	"sync/atomic"
 	"unicode"
@@ -76,7 +77,16 @@ func NewExpandList(cfg baker.FilterParams) (baker.Filter, error) {
 	}
 	f.source = idx
 
-	for k, v := range dcfg.Fields {
+	// extract and sort Fields map keys
+	fieldsKeys := make([]string, 0, len(dcfg.Fields))
+	for k := range dcfg.Fields {
+		fieldsKeys = append(fieldsKeys, k)
+	}
+	sort.Strings(fieldsKeys)
+
+	// build 'fields' and 'listIdx' slice sorted
+	for _, k := range fieldsKeys {
+		v := dcfg.Fields[k]
 		fIdx, ok := cfg.FieldByName(v)
 		if !ok {
 			return nil, fmt.Errorf("unknown field %q", v)
@@ -112,7 +122,8 @@ func (f *ExpandList) Process(l baker.Record, next func(baker.Record)) {
 	part := bytes.Split(list, f.sep)
 	for i, idx := range f.listIdx {
 		if idx >= len(part) {
-			continue
+			// we can break because f.listIdx is sorted
+			break
 		}
 		b := part[idx]
 		l.Set(f.fields[i], b)
