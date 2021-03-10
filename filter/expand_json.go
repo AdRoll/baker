@@ -64,9 +64,6 @@ type ExpandJSON struct {
 }
 
 func NewExpandJSON(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &ExpandJSONConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*ExpandJSONConfig)
 	dcfg.fillDefaults()
 

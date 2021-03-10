@@ -32,9 +32,6 @@ type Concatenate struct {
 }
 
 func NewConcatenate(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &ConcatenateConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*ConcatenateConfig)
 
 	fields := []baker.FieldIndex{}

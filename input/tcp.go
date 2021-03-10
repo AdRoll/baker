@@ -54,9 +54,6 @@ type TCP struct {
 }
 
 func NewTCP(cfg baker.InputParams) (baker.Input, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &TCPConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*TCPConfig)
 	dcfg.fillDefaults()
 

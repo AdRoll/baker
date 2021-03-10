@@ -106,9 +106,6 @@ func generateWorkerID() (string, error) {
 // NewKCL creates a new KCL.
 func NewKCL(cfg baker.InputParams) (baker.Input, error) {
 	// Read and validate KCL configuration
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &KCLConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*KCLConfig)
 	dcfg.fillDefaults()
 	if err := dcfg.validate(); err != nil {

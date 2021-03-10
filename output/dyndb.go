@@ -217,9 +217,6 @@ type DynamoDB struct {
 // Columns is a slice listing the columns that will be written; the first item in the slice
 // *MUST* be the primary key of the table.
 func NewDynamoDB(cfg baker.OutputParams) (baker.Output, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &DynamoDBConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*DynamoDBConfig)
 	dcfg.fillDefaults()
 

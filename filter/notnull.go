@@ -30,9 +30,6 @@ type NotNull struct {
 
 // NewNotNull creates and configures a new NotNull filter.
 func NewNotNull(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &NotNullConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*NotNullConfig)
 
 	f := &NotNull{cfg: dcfg}

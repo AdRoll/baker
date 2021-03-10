@@ -33,9 +33,6 @@ type RegexMatch struct {
 
 // NewRegexMatch returns a RegexMatch filter.
 func NewRegexMatch(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &RegexMatchConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*RegexMatchConfig)
 
 	if len(dcfg.Fields) != len(dcfg.Regexs) {

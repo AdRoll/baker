@@ -36,18 +36,25 @@ func TestSetStringFromURL(t *testing.T) {
 			wantDiscard: false,
 			wantField:   "us-west-1",
 		},
+		{
+			name:        "no metadataURL",
+			url:         "",
+			wantDiscard: true,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Forge a record having tt.url as metadata
-			u, err := url.Parse(tt.url)
-			if err != nil {
-				t.Fatal(err)
-			}
-
 			ll := &baker.LogLine{}
-			ll.Parse(nil, baker.Metadata{inpututils.MetadataURL: u})
+
+			// Forge a record having tt.url as metadata
+			if tt.url != "" {
+				u, err := url.Parse(tt.url)
+				if err != nil {
+					t.Fatal(err)
+				}
+				ll.Parse(nil, baker.Metadata{inpututils.MetadataURL: u})
+			}
 
 			// Create and setup a filter with tt.strings
 			strings := make([][]byte, 0, len(tt.strings))
