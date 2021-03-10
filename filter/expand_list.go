@@ -11,8 +11,8 @@ import (
 )
 
 const expandListhelp = `
-This filter extracts values from a list formatted field and writes them into other fields of the same 
-record. Each field of the list can be mapped to specific records fields through a TOML table. The elements 
+This filter splits a field using a configured separator and writes the resulting values to other fields of the same 
+record. The mapping between the extracted values and the destination fields is configured with a TOML table. The elements 
 of the list are, by default, separated with the ` + "`;`" + ` character, but it is configurable.
 
 ### Example
@@ -43,7 +43,7 @@ var ExpandListDesc = baker.FilterDesc{
 type ExpandListConfig struct {
 	Source    string            `help:"record field that contains the list" required:"true"`
 	Fields    map[string]string `help:"<list index -> record field> map, the rest will be ignored" required:"true"`
-	Separator string            `help:"character separator of the list" required:"false" default:";"`
+	Separator string            `help:"character separator of the list" default:";"`
 }
 
 func (c *ExpandListConfig) fillDefault() {
