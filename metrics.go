@@ -11,8 +11,8 @@ import (
 // with values relative to that last second.
 type MetricsBag map[string]interface{}
 
-// AddRawCounter adds a counter. A counter is a cumulative metrics that can only increase.
-// value must be positive.
+// AddRawCounter adds a counter. A counter is a cumulative metric that can only increase.
+// To be meaningful, `value` must be positive.
 func (bag MetricsBag) AddRawCounter(name string, value int64) {
 	bag["c:"+name] = value
 }
