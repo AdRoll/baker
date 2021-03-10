@@ -428,15 +428,28 @@ func TestListHttpFile(t *testing.T) {
 		files []string
 		lines int64 // -1 for error
 	}{
-		{[]string{"test7.log.gz"}, 7},
-		{[]string{"test1233.log.gz"}, 1233},
-		{[]string{"test100.log.gz", "test500.log.gz"}, 600},
-		{[]string{"@testlist600"}, 600},
-		{[]string{"test100.log.gz", "@testlist600", "test7.log.gz"}, 707},
+		{[]string{ts.URL + "/test7.log.gz"}, 7},
+		{[]string{ts.URL + "/test1233.log.gz"}, 1233},
+		{[]string{
+			ts.URL + "/test100.log.gz",
+			ts.URL + "/test500.log.gz",
+		}, 600},
+		{[]string{"@" + ts.URL + "/testlist600"}, 600},
+		{[]string{
+			ts.URL + "/test100.log.gz",
+			"@" + ts.URL + "/testlist600",
+			ts.URL + "/test7.log.gz",
+		}, 707},
 		// errors
-		{[]string{"test100.log.gz", "nonexisting2.log.gz"}, -1},
-		{[]string{"@notexistinglist"}, -1},
-		{[]string{"test100.log.gz", "@buglist"}, -1},
+		{[]string{
+			ts.URL + "/test100.log.gz",
+			ts.URL + "/nonexisting2.log.gz",
+		}, -1},
+		{[]string{"@" + ts.URL + "/notexistinglist"}, -1},
+		{[]string{
+			"@" + ts.URL + "/buglist",
+			ts.URL + "/test100.log.gz",
+		}, -1},
 	}
 
 	ch := make(chan *baker.Data)
@@ -453,13 +466,6 @@ func TestListHttpFile(t *testing.T) {
 	}()
 
 	for _, tt := range tests {
-		for idx := range tt.files {
-			if tt.files[idx][0] == '@' {
-				tt.files[idx] = "@" + ts.URL + "/" + tt.files[idx][1:]
-			} else {
-				tt.files[idx] = ts.URL + "/" + tt.files[idx]
-			}
-		}
 		cfg := baker.InputParams{
 			ComponentParams: baker.ComponentParams{
 				DecodedConfig: &ListConfig{Files: tt.files},
