@@ -29,9 +29,6 @@ type OpLog struct {
 func NewOpLog(cfg baker.OutputParams) (baker.Output, error) {
 	log.WithFields(log.Fields{"fn": "NewOpLog", "idx": cfg.Index}).Info("Initializing")
 
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &OpLogConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*OpLogConfig)
 	dcfg.fillDefaults()
 

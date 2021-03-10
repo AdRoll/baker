@@ -246,9 +246,6 @@ type Stats struct {
 
 // NewStats returns a new Stats Baker output.
 func NewStats(cfg baker.OutputParams) (baker.Output, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &StatsConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*StatsConfig)
 	dcfg.fillDefaults()
 

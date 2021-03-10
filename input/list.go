@@ -175,9 +175,6 @@ func (s *List) ProcessDirectory(dir string, matchPath *regexp.Regexp) error {
 func NewList(cfg baker.InputParams) (baker.Input, error) {
 	inpututils.SetGCPercentIfNotSet(800)
 
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &ListConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*ListConfig)
 	dcfg.fillDefaults()
 
