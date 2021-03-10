@@ -22,10 +22,12 @@ type MetadataLastModifiedConfig struct {
 }
 
 type MetadataLastModified struct {
+	cfg *MetadataLastModifiedConfig
+
+	dst baker.FieldIndex
+
+	// Shared state
 	numProcessedLines int64
-	numFilteredLines  int64
-	cfg               *MetadataLastModifiedConfig
-	dst               baker.FieldIndex
 }
 
 func NewMetadataLastModified(cfg baker.FilterParams) (baker.Filter, error) {
@@ -44,11 +46,12 @@ func NewMetadataLastModified(cfg baker.FilterParams) (baker.Filter, error) {
 func (f *MetadataLastModified) Stats() baker.FilterStats {
 	return baker.FilterStats{
 		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-		NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
 	}
 }
 
 func (f *MetadataLastModified) Process(l baker.Record, next func(baker.Record)) {
+	atomic.AddInt64(&f.numProcessedLines, 1)
+
 	v, ok := l.Meta(inpututils.MetadataLastModified)
 	if ok {
 		lastModified := v.(time.Time)
@@ -56,8 +59,8 @@ func (f *MetadataLastModified) Process(l baker.Record, next func(baker.Record)) 
 			unixTime := lastModified.Unix()
 			timestampStr := []byte(strconv.FormatInt(unixTime, 10))
 			l.Set(f.dst, timestampStr)
-			atomic.AddInt64(&f.numProcessedLines, 1)
 		}
 	}
+
 	next(l)
 }
