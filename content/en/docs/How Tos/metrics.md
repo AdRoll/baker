@@ -121,12 +121,11 @@ record processing.
 
 Both `MetricsBag` and `MetricsClient` Metrics support the most common metric types,
 namely:
-- `RawCounter`, a cumulative counter that can only increase.
-- `DeltaCounter`, the total number of event occurrences in a unit time.
-- `Gauge`, a snapshot of an event in the last unit time. 
-- `Histogram`, a statistical distribution of a set of values in one unit 
-of time.
-- `Duration` or `Timing`, like an histogram but with time durations
+- `RawCounter`: a cumulative counter that can only increase
+- `DeltaCounter`: the total number of event occurrences in a unit time
+- `Gauge`: a snapshot of an event in the last unit time
+- `Histogram`: a statistical distribution of a set of values in one unit of time
+- `Duration` or `Timing`: like an histogram but with time durations
 
 Moreover, the `MetricsClient` is the direct interface to the remote metrics service 
 used by the topology, e.g., *Datadog*, thus it supports some specific features such 
@@ -135,9 +134,9 @@ Tags are a way of adding dimensions to telemetries so they can be filtered,
 aggregated, and compared in different visualizations.
 Therefore, if a component requires to publish its metrics with a set of specific tags, the 
 `MetricsClient` should be used rather than `MetricsBag`.
-However, it is suggested to use `MetricsClient` in the `Stats` method of the 
-components to reduce contention and improve performance in the processing of the 
-elements.
+However, it is suggested to use the `MetricsClient` in the `Stats` method to limit
+the number of calls to the client. Indeed, calling the `MetricsClient` methods inside the 
+`Process` method could introduce overheads and performance degradations.
 
 In summary, the go-to way is to implements custom statistics with a `MetricsBag`, but 
 there are some situations in which it is preferable the `MetricsClient`, namely:
@@ -155,8 +154,8 @@ our filter and call
 the returned `MetricsBag`.
 
 An important point is that Baker may call `Process` and `Stats` concurrently, from 
-different goroutines so you must use proper locking on data structures that are
-shared between these two methods. 
+different goroutines so you must use atomics or proper locking on data that are 
+shared between these two methods.
 
 ```go
 func (f *MyFilter) Process(r Record, next func(Record)) {
