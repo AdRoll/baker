@@ -447,7 +447,7 @@ func TestListHttpFile(t *testing.T) {
 			atomic.AddInt64(&counter, int64(bytes.Count(data.Bytes, []byte{'\n'})))
 			// Check the metadata contains a valid last modified date
 			if v := data.Meta["last_modified"]; v.(time.Time).IsZero() {
-				t.Errorf("Invalid last modified time in file, it should be after %s.", time.Unix(0, 0))
+				t.Errorf("Invalid last modified time in file, it should not be zero")
 			}
 		}
 	}()
