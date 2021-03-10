@@ -110,16 +110,16 @@ instance from the `Stats` method
 [`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient) in 
 the component code
 
-The two mechanisms following pull vs push approach respectively.
+The two mechanisms follow the pull vs push approach respectively.
 The `MetricsBag` should be returned by the `Stats` method along with the default
-statistics and it will be collected 1 per second by the Baker runtime. Differently,
+statistics and it will be collected once per second by the Baker runtime. Differently,
 the `MetricsClient` can be requested from the Baker topology in the component
 instantiation and it can be used in any part of the component code to report metrics.
-If there is no particular requirements it is suggested to prefer the `MetricsBag`. 
-Indeed, the pull approach permits the reduction the metrics overhead during the 
+If there is no particular requirement it is suggested to prefer the `MetricsBag` approach. 
+Indeed, the pull approach permits the reduction of the metrics overhead during the 
 record processing.
 
-Both `MetricsBag` and `MetricsClient` Metrics supports the most common metric types,
+Both `MetricsBag` and `MetricsClient` Metrics support the most common metric types,
 namely:
 - `RawCounter`, a cumulative counter that can only increase.
 - `DeltaCounter`, the total number of event occurrences in a unit time.
@@ -134,7 +134,7 @@ as **tags**.
 Tags are a way of adding dimensions to telemetries so they can be filtered, 
 aggregated, and compared in different visualizations.
 Therefore, if a component requires to publish its metrics with a set of specific tags, the 
-`MetricsClient` should use rather than `MetricsBag`.
+`MetricsClient` should be used rather than `MetricsBag`.
 However, it is suggested to use `MetricsClient` in the `Stats` method of the 
 components to reduce contention and improve performance in the processing of the 
 elements.
@@ -149,7 +149,7 @@ multiple goroutines.
 
 Let's say our filter needs to perform HTTP requests in order to decide whether a 
 record should be discarded, we might want to keep track of the requests' durations 
-in a histogram. In this case, we would probably record a slice of `time.Duration` in 
+in an histogram. In this case, we would probably record a slice of `time.Duration` in 
 our filter and call 
 [`AddTimings`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag.AddTimings) on
 the returned `MetricsBag`.
@@ -202,7 +202,7 @@ provides a set of methods to report the most common type of metric types (e.g.
 *gauges*, *counters* and *histograms*)
 
 Taking the previous example of the `MetricsBag`, we now consider the situation in 
-which the time duration that we want to collect, needs to be repported along with specific 
+which the time duration that we want to collect needs to be repported along with specific 
 tags.
 
 ```go
