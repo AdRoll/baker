@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Dedup filter [#143](https://github.com/AdRoll/baker/pull/143)
 - Add MetadataUrl filter [#147](https://github.com/AdRoll/baker/pull/147)
 - Add FormatTime filter [#151](https://github.com/AdRoll/baker/pull/151)
+- Add ExpandList filter [#155](https://github.com/AdRoll/baker/pull/155)
 
 ### Changed
 
