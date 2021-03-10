@@ -19,7 +19,7 @@ func (bag MetricsBag) AddRawCounter(name string, value int64) {
 
 // AddDeltaCounter adds a new delta increment for a counter. The increment represents
 // the variation of the counter in the current time interval.
-// delta must be positive.
+// To be meaningful, `delta` must be positive.
 func (bag MetricsBag) AddDeltaCounter(name string, delta int64) {
 	bag["d:"+name] = delta
 }
