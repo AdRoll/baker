@@ -5,7 +5,7 @@
     <description>Recent content in Filters on Baker, high performance modular pipelines for the Big Data era</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 03 Mar 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 10 Mar 2021 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/filters/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: ClauseFilter</title>
       <link>https://getbaker.io/docs/components/filters/clausefilter/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clausefilter/</guid>
       <description>
@@ -110,7 +110,7 @@ Matches anything
     <item>
       <title>Docs: ClearFields</title>
       <link>https://getbaker.io/docs/components/filters/clearfields/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clearfields/</guid>
       <description>
@@ -155,7 +155,7 @@ Matches anything
     <item>
       <title>Docs: Concatenate</title>
       <link>https://getbaker.io/docs/components/filters/concatenate/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/concatenate/</guid>
       <description>
@@ -214,7 +214,7 @@ Matches anything
     <item>
       <title>Docs: Dedup</title>
       <link>https://getbaker.io/docs/components/filters/dedup/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/dedup/</guid>
       <description>
@@ -271,7 +271,7 @@ on your data set, this might lead to OOM (i.e. out of memory) errors.&lt;/p&gt;
     <item>
       <title>Docs: ExpandJSON</title>
       <link>https://getbaker.io/docs/components/filters/expandjson/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/expandjson/</guid>
       <description>
@@ -342,9 +342,98 @@ object present in field &lt;code&gt;json_data&lt;/code&gt;of the record. Then, t
     </item>
     
     <item>
+      <title>Docs: FormatTime</title>
+      <link>https://getbaker.io/docs/components/filters/formattime/</link>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/components/filters/formattime/</guid>
+      <description>
+        
+        
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/filter#FormatTime&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;filter-formattime&#34;&gt;Filter &lt;em&gt;FormatTime&lt;/em&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
+&lt;p&gt;This filter formats and converts date/time strings from one format to another.
+It requires the source and destination field names along with 2 format strings, the
+first one indicates how to parse the input field while the second how to format it.&lt;/p&gt;
+&lt;p&gt;The source time parsing can fail if the time value does not match the provided format.
+In this situation the filter clears the destination field, thus the user can filter out
+those results with a &lt;strong&gt;NotNull&lt;/strong&gt; filter.&lt;/p&gt;
+&lt;p&gt;Most standard formats are supported out of the box and you can provide your own format
+string, see &lt;a href=&#34;https://pkg.go.dev/time#pkg-constants&#34;&gt;Go time layout&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Supported time format are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ANSIC&lt;/code&gt; format: &amp;ldquo;Mon Jan _2 15:04:05 2006&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;UnixDate&lt;/code&gt; format: &amp;ldquo;Mon Jan _2 15:04:05 MST 2006&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RubyDate&lt;/code&gt; format: &amp;ldquo;Mon Jan 02 15:04:05 -0700 2006&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RFC822&lt;/code&gt; format: &amp;ldquo;02 Jan 06 15:04 MST&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RFC822Z&lt;/code&gt; that is RFC822 with numeric zone, format: &amp;ldquo;02 Jan 06 15:04 -0700&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RFC850&lt;/code&gt; format: &amp;ldquo;Monday, 02-Jan-06 15:04:05 MST&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RFC1123&lt;/code&gt; format: &amp;ldquo;Mon, 02 Jan 2006 15:04:05 MST&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RFC1123Z&lt;/code&gt; that is RFC1123 with numeric zone, format: &amp;ldquo;Mon, 02 Jan 2006 15:04:05 -0700&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RFC3339&lt;/code&gt; format: &amp;ldquo;2006-01-02T15:04:05Z07:00&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RFC3339Nano&lt;/code&gt; format: &amp;ldquo;2006-01-02T15:04:05.999999999Z07:00&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;unix&lt;/code&gt; unix epoch in seconds&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;unixms&lt;/code&gt; unix epoch in milliseconds&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;unixns&lt;/code&gt; unix epoch in nanoseconds&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
+&lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;SrcField&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td&gt;Field name of the input time&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DstField&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td&gt;Field name of the output time&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;SrcFormat&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;UnixDate&amp;rdquo;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
+&lt;td&gt;Format of the input time&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DstFormat&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;unixms&amp;rdquo;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
+&lt;td&gt;Format of the output time&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: Hash</title>
       <link>https://getbaker.io/docs/components/filters/hash/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/hash/</guid>
       <description>
@@ -421,7 +510,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: MetadataLastModified</title>
       <link>https://getbaker.io/docs/components/filters/metadatalastmodified/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/metadatalastmodified/</guid>
       <description>
@@ -464,9 +553,56 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     </item>
     
     <item>
+      <title>Docs: MetadataUrl</title>
+      <link>https://getbaker.io/docs/components/filters/metadataurl/</link>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/components/filters/metadataurl/</guid>
+      <description>
+        
+        
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/filter#MetadataUrl&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;filter-metadataurl&#34;&gt;Filter &lt;em&gt;MetadataUrl&lt;/em&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
+&lt;p&gt;This filter looks for &amp;lsquo;url&amp;rsquo; in records metadata and copies it into a field of your choice, see DstField.
+If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this filter clear DstField.&lt;/p&gt;
+&lt;p&gt;If you wish to discard records without the &amp;lsquo;url&amp;rsquo; metadata, you can add the NotNull filter after this one in your topology.&lt;/p&gt;
+&lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
+&lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;DstField&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td&gt;Name of the field into to write the url to (or to clear if there&amp;rsquo;s no url)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: NotNull</title>
       <link>https://getbaker.io/docs/components/filters/notnull/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/notnull/</guid>
       <description>
@@ -511,7 +647,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: PartialClone</title>
       <link>https://getbaker.io/docs/components/filters/partialclone/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/partialclone/</guid>
       <description>
@@ -556,7 +692,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: RegexMatch</title>
       <link>https://getbaker.io/docs/components/filters/regexmatch/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/regexmatch/</guid>
       <description>
@@ -608,7 +744,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: ReplaceFields</title>
       <link>https://getbaker.io/docs/components/filters/replacefields/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/replacefields/</guid>
       <description>
@@ -660,7 +796,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: SetStringFromURL</title>
       <link>https://getbaker.io/docs/components/filters/setstringfromurl/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/setstringfromurl/</guid>
       <description>
@@ -675,7 +811,9 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
 
 &lt;h2 id=&#34;filter-setstringfromurl&#34;&gt;Filter &lt;em&gt;SetStringFromURL&lt;/em&gt;&lt;/h2&gt;
 &lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;Extract some strings from metadata url and sets a field with it.&lt;/p&gt;
+&lt;p&gt;This filter looks for a set of strings in the URL metadata and sets a field with the found string.
+Discards the log lines if URL metadata doesn&amp;rsquo;t contain any of the given strings.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;On Error:&lt;/strong&gt; the input record is discarded.&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
 &lt;table&gt;
@@ -712,7 +850,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: StringMatch</title>
       <link>https://getbaker.io/docs/components/filters/stringmatch/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/stringmatch/</guid>
       <description>
@@ -771,7 +909,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: Timestamp</title>
       <link>https://getbaker.io/docs/components/filters/timestamp/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamp/</guid>
       <description>
@@ -816,7 +954,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: TimestampRange</title>
       <link>https://getbaker.io/docs/components/filters/timestamprange/</link>
-      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamprange/</guid>
       <description>
