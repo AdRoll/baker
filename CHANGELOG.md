@@ -72,6 +72,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `List` input did not consider drive letter on Windows paths [#139](https://github.com/AdRoll/baker/pull/139)
 - Do not insert newline after dots in generated help markdown [#140](https://github.com/AdRoll/baker/pull/140)
 - SetStringFromURL filter panics if MetadataURL was not set. [#156](https://github.com/AdRoll/baker/pull/156)
+- MetadataLastModified filter wrongly counts the number of processed records [#157](https://github.com/AdRoll/baker/pull/157)
+- `List` input did not correctly manage HTTP status codes [#163](https://github.com/AdRoll/baker/pull/163)
 
 ### Maintenance
 
