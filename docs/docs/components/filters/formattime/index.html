@@ -20,33 +20,30 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>TCP | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="TCP" />
-<meta property="og:description" content=" Read the API documentation »
- Input TCP Overview This input relies on a TCP connection to receive records in the usual format Configure it with a host and port that you want to accept connection from. By default it listens on port 6000 for any connection It never exits.
-Configuration Keys available in the [input.config] section:
-   Name Type Default Required Description     Listener string &quot;&quot; false Host:Port to bind to    " />
+<title>FormatTime | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="FormatTime" />
+<meta property="og:description" content="Read the API documentation »
+ Filter FormatTime Overview This filter formats and converts date/time strings from one format to another. It requires the source and destination field names along with 2 format strings, the first one indicates how to parse the input field while the second how to format it.
+The source time parsing can fail if the time value does not match the provided format. In this situation the filter clears the destination field, thus the user can filter out those results with a NotNull filter." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://getbaker.io/docs/components/inputs/tcp/" />
+<meta property="og:url" content="https://getbaker.io/docs/components/filters/formattime/" />
 <meta property="article:published_time" content="2021-03-10T00:00:00+00:00" />
 <meta property="article:modified_time" content="2021-03-10T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
-<meta itemprop="name" content="TCP">
-<meta itemprop="description" content=" Read the API documentation »
- Input TCP Overview This input relies on a TCP connection to receive records in the usual format Configure it with a host and port that you want to accept connection from. By default it listens on port 6000 for any connection It never exits.
-Configuration Keys available in the [input.config] section:
-   Name Type Default Required Description     Listener string &quot;&quot; false Host:Port to bind to    ">
+<meta itemprop="name" content="FormatTime">
+<meta itemprop="description" content="Read the API documentation »
+ Filter FormatTime Overview This filter formats and converts date/time strings from one format to another. It requires the source and destination field names along with 2 format strings, the first one indicates how to parse the input field while the second how to format it.
+The source time parsing can fail if the time value does not match the provided format. In this situation the filter clears the destination field, thus the user can filter out those results with a NotNull filter.">
 <meta itemprop="datePublished" content="2021-03-10T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-03-10T00:00:00+00:00" />
-<meta itemprop="wordCount" content="69">
+<meta itemprop="wordCount" content="254">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="TCP"/>
-<meta name="twitter:description" content=" Read the API documentation »
- Input TCP Overview This input relies on a TCP connection to receive records in the usual format Configure it with a host and port that you want to accept connection from. By default it listens on port 6000 for any connection It never exits.
-Configuration Keys available in the [input.config] section:
-   Name Type Default Required Description     Listener string &quot;&quot; false Host:Port to bind to    "/>
+<meta name="twitter:title" content="FormatTime"/>
+<meta name="twitter:description" content="Read the API documentation »
+ Filter FormatTime Overview This filter formats and converts date/time strings from one format to another. It requires the source and destination field names along with 2 format strings, the first one indicates how to parse the input field while the second how to format it.
+The source time parsing can fail if the time value does not match the provided format. In this situation the filter clears the destination field, thus the user can filter out those results with a NotNull filter."/>
 
 
 
@@ -308,10 +305,10 @@ Configuration Keys available in the [input.config] section:
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/inputs/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Inputs</a>
+    <a  href="/docs/components/inputs/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Inputs</a>
   </li>
   <ul>
-    <li class="collapse show" id="docscomponentsinputs">
+    <li class="collapse " id="docscomponentsinputs">
       
       
       
@@ -342,7 +339,7 @@ Configuration Keys available in the [input.config] section:
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscomponentsinputstcp" href="/docs/components/inputs/tcp/">TCP</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsinputstcp" href="/docs/components/inputs/tcp/">TCP</a>
       
       
     </li>
@@ -361,10 +358,10 @@ Configuration Keys available in the [input.config] section:
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/filters/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Filters</a>
+    <a  href="/docs/components/filters/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Filters</a>
   </li>
   <ul>
-    <li class="collapse " id="docscomponentsfilters">
+    <li class="collapse show" id="docscomponentsfilters">
       
       
       
@@ -401,7 +398,7 @@ Configuration Keys available in the [input.config] section:
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersformattime" href="/docs/components/filters/formattime/">FormatTime</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscomponentsfiltersformattime" href="/docs/components/filters/formattime/">FormatTime</a>
       
       
       
@@ -719,8 +716,8 @@ Configuration Keys available in the [input.config] section:
 
 
 
-<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/Components/Inputs/TCP.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=TCP" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/Components/Filters/FormatTime.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=FormatTime" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -731,7 +728,7 @@ Configuration Keys available in the [input.config] section:
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#input-tcp">Input <em>TCP</em></a>
+    <li><a href="#filter-formattime">Filter <em>FormatTime</em></a>
       <ul>
         <li><a href="#overview">Overview</a></li>
         <li><a href="#configuration">Configuration</a></li>
@@ -778,14 +775,14 @@ Configuration Keys available in the [input.config] section:
 
 
 <li class="breadcrumb-item" >
-	<a href="https://getbaker.io/docs/components/inputs/">Inputs</a>
+	<a href="https://getbaker.io/docs/components/filters/">Filters</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/components/inputs/tcp/">TCP</a>
+	<a href="https://getbaker.io/docs/components/filters/formattime/">FormatTime</a>
 </li>
 
 	</ol>
@@ -793,24 +790,44 @@ Configuration Keys available in the [input.config] section:
 
             
 <div class="td-content">
-	<h1>TCP</h1>
+	<h1>FormatTime</h1>
     
 	       
 	
 
 <div class="pageinfo pageinfo-primary">
-<p><strong>Read the <a href="https://pkg.go.dev/github.com/AdRoll/baker/input#TCP">API documentation »</a></strong></p>
+<p><strong>Read the <a href="https://pkg.go.dev/github.com/AdRoll/baker/filter#FormatTime">API documentation »</a></strong></p>
 
 </div>
 
-<h2 id="input-tcp">Input <em>TCP</em></h2>
+<h2 id="filter-formattime">Filter <em>FormatTime</em></h2>
 <h3 id="overview">Overview</h3>
-<p>This input relies on a TCP connection to receive records in the usual format
-Configure it with a host and port that you want to accept connection from.
-By default it listens on port 6000 for any connection
-It never exits.</p>
+<p>This filter formats and converts date/time strings from one format to another.
+It requires the source and destination field names along with 2 format strings, the
+first one indicates how to parse the input field while the second how to format it.</p>
+<p>The source time parsing can fail if the time value does not match the provided format.
+In this situation the filter clears the destination field, thus the user can filter out
+those results with a <strong>NotNull</strong> filter.</p>
+<p>Most standard formats are supported out of the box and you can provide your own format
+string, see <a href="https://pkg.go.dev/time#pkg-constants">Go time layout</a>.</p>
+<p>Supported time format are:</p>
+<ul>
+<li><code>ANSIC</code> format: &ldquo;Mon Jan _2 15:04:05 2006&rdquo;</li>
+<li><code>UnixDate</code> format: &ldquo;Mon Jan _2 15:04:05 MST 2006&rdquo;</li>
+<li><code>RubyDate</code> format: &ldquo;Mon Jan 02 15:04:05 -0700 2006&rdquo;</li>
+<li><code>RFC822</code> format: &ldquo;02 Jan 06 15:04 MST&rdquo;</li>
+<li><code>RFC822Z</code> that is RFC822 with numeric zone, format: &ldquo;02 Jan 06 15:04 -0700&rdquo;</li>
+<li><code>RFC850</code> format: &ldquo;Monday, 02-Jan-06 15:04:05 MST&rdquo;</li>
+<li><code>RFC1123</code> format: &ldquo;Mon, 02 Jan 2006 15:04:05 MST&rdquo;</li>
+<li><code>RFC1123Z</code> that is RFC1123 with numeric zone, format: &ldquo;Mon, 02 Jan 2006 15:04:05 -0700&rdquo;</li>
+<li><code>RFC3339</code> format: &ldquo;2006-01-02T15:04:05Z07:00&rdquo;</li>
+<li><code>RFC3339Nano</code> format: &ldquo;2006-01-02T15:04:05.999999999Z07:00&rdquo;</li>
+<li><code>unix</code> unix epoch in seconds</li>
+<li><code>unixms</code> unix epoch in milliseconds</li>
+<li><code>unixns</code> unix epoch in nanoseconds</li>
+</ul>
 <h3 id="configuration">Configuration</h3>
-<p>Keys available in the <code>[input.config]</code> section:</p>
+<p>Keys available in the <code>[filter.config]</code> section:</p>
 <table>
 <thead>
 <tr>
@@ -823,11 +840,32 @@ It never exits.</p>
 </thead>
 <tbody>
 <tr>
-<td>Listener</td>
+<td>SrcField</td>
 <td style="text-align:center">string</td>
 <td style="text-align:center">&quot;&quot;</td>
+<td style="text-align:center">true</td>
+<td>Field name of the input time</td>
+</tr>
+<tr>
+<td>DstField</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">&quot;&quot;</td>
+<td style="text-align:center">true</td>
+<td>Field name of the output time</td>
+</tr>
+<tr>
+<td>SrcFormat</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">&ldquo;UnixDate&rdquo;</td>
 <td style="text-align:center">false</td>
-<td>Host:Port to bind to</td>
+<td>Format of the input time</td>
+</tr>
+<tr>
+<td>DstFormat</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">&ldquo;unixms&rdquo;</td>
+<td style="text-align:center">false</td>
+<td>Format of the output time</td>
 </tr>
 </tbody>
 </table>

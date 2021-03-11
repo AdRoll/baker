@@ -1,7 +1,7 @@
 ---
 title: "SetStringFromURL"
-weight: 19
-date: 2021-03-03
+weight: 21
+date: 2021-03-10
 ---
 {{% pageinfo color="primary" %}}
 
@@ -11,7 +11,12 @@ date: 2021-03-03
 ## Filter *SetStringFromURL*
 
 ### Overview
-Extract some strings from metadata url and sets a field with it.
+
+This filter looks for a set of strings in the URL metadata and sets a field with the found string.
+Discards the log lines if URL metadata doesn't contain any of the given strings.
+
+**On Error:** the input record is discarded.
+
 
 ### Configuration
 
