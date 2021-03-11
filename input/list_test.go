@@ -5,9 +5,11 @@ import (
 	"compress/gzip"
 	"encoding/hex"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -62,7 +64,15 @@ func makeTestLog(tb testing.TB, dir, fn string, numlines int) string {
 	}
 	defer f.Close()
 
-	gzf := gzip.NewWriter(f)
+	writeTestLog(tb, f, numlines)
+
+	return fn
+}
+
+func writeTestLog(tb testing.TB, w io.Writer, numlines int) {
+	tb.Helper()
+
+	gzf := gzip.NewWriter(w)
 	defer gzf.Close()
 
 	for i := 0; i < numlines; i++ {
@@ -71,8 +81,6 @@ func makeTestLog(tb testing.TB, dir, fn string, numlines int) string {
 		buf = append(buf, '\n')
 		gzf.Write(buf)
 	}
-
-	return fn
 }
 
 func pathToURI(p string) string {
@@ -398,4 +406,119 @@ func mockS3Service(t *testing.T, generatedFiles, generatedRecords int, getManife
 	})
 
 	return svc, len(buf), &counter
+}
+
+func TestListHttpFile(t *testing.T) {
+	files := map[string]struct {
+		// alternative fields
+		lines int64    // number of random lines
+		files []string // file names to include
+	}{
+		"/test7.log.gz":    {lines: 7},
+		"/test100.log.gz":  {lines: 100},
+		"/test500.log.gz":  {lines: 500},
+		"/test1233.log.gz": {lines: 1233},
+		"/testlist600":     {files: []string{"/test100.log.gz", "/test500.log.gz"}},
+		"/buglist":         {files: []string{"/test100.log.gz", "/nonesisting.log.gz"}},
+	}
+	ts := newHTTPFileServer(t, files)
+	defer ts.Close()
+
+	var tests = []struct {
+		files []string
+		lines int64 // -1 for error
+	}{
+		{[]string{ts.URL + "/test7.log.gz"}, 7},
+		{[]string{ts.URL + "/test1233.log.gz"}, 1233},
+		{[]string{
+			ts.URL + "/test100.log.gz",
+			ts.URL + "/test500.log.gz",
+		}, 600},
+		{[]string{"@" + ts.URL + "/testlist600"}, 600},
+		{[]string{
+			ts.URL + "/test100.log.gz",
+			"@" + ts.URL + "/testlist600",
+			ts.URL + "/test7.log.gz",
+		}, 707},
+		// errors
+		{[]string{
+			ts.URL + "/test100.log.gz",
+			ts.URL + "/nonexisting2.log.gz",
+		}, -1},
+		{[]string{"@" + ts.URL + "/notexistinglist"}, -1},
+		{[]string{
+			"@" + ts.URL + "/buglist",
+			ts.URL + "/test100.log.gz",
+		}, -1},
+	}
+
+	ch := make(chan *baker.Data)
+	defer close(ch)
+	var counter int64
+	go func() {
+		for data := range ch {
+			atomic.AddInt64(&counter, int64(bytes.Count(data.Bytes, []byte{'\n'})))
+			// Check the metadata contains a valid last modified date
+			if v := data.Meta["last_modified"]; v.(time.Time).IsZero() {
+				t.Errorf("Invalid last modified time in file, it should not be zero")
+			}
+		}
+	}()
+
+	for _, tt := range tests {
+		cfg := baker.InputParams{
+			ComponentParams: baker.ComponentParams{
+				DecodedConfig: &ListConfig{Files: tt.files},
+			},
+		}
+
+		list, err := NewList(cfg)
+		if err != nil {
+			t.Error("Error creating List:", err)
+			continue
+		}
+
+		atomic.StoreInt64(&counter, 0)
+		err = list.Run(ch)
+		wantErr := tt.lines == -1
+		if (err != nil) != (wantErr) {
+			t.Errorf("got error = %v, want error = %v", err, wantErr)
+		}
+		if tt.lines == -1 {
+			continue
+		}
+
+		c := atomic.LoadInt64(&counter)
+		if c != tt.lines {
+			t.Errorf("Invalid number of lines: exp=%d, got=%d", tt.lines, c)
+		}
+	}
+}
+
+type httpServerFiles map[string]struct {
+	lines int64
+	files []string
+}
+
+func newHTTPFileServer(tb testing.TB, files httpServerFiles) *httptest.Server {
+	tb.Helper()
+	var serverURL string
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		f, ok := files[r.URL.Path]
+		if !ok {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		w.Header().Set("Last-Modified", time.Now().Format("Mon, 02 Jan 2006 15:04:05 GMT"))
+		if f.lines != 0 {
+			writeTestLog(tb, w, int(f.lines))
+		} else {
+			for _, name := range f.files {
+				fmt.Fprintln(w, serverURL+name)
+			}
+		}
+	}))
+	serverURL = ts.URL
+	return ts
 }
