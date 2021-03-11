@@ -42,8 +42,7 @@ name="datadog"
 If you don't want to publish any metrics, it's enough to not provide the `[metrics]` TOML 
 section in Baker configuration file.
 
-
-## Create a Custom MetricsClient
+## Implementing a custom MetricsClient
 
 The [metrics example](https://github.com/AdRoll/baker/tree/main/examples/metrics) shows an
 example implementation of
@@ -112,37 +111,44 @@ instance from the `Stats` method
 the component code
 
 The two mechanisms follow the pull vs push approach, respectively.
-`MetricsBag` should be returned by the `Stats` method along with the default
-statistics and is collected once per second by Baker. Differently,
-the `MetricsClient` can be requested from the Baker topology in the component
-instantiation and it can be used in any part of the component code to report metrics.
-If there is no particular requirement the `MetricsBag` approach is preferred. 
-Indeed, the pull approach permits the reduction of the metrics overhead during the 
-record processing.
+
+The `MetricsBag` should be returned by the `Stats` method along with the default
+statistics and is collected once per second by Baker. 
+
+The `MetricsClient` instance configured by your topology is passed to your 
+component during instantiation, in the `ComponentsParam` structure. You can copy it 
+so as to use it at any point in your component code since well-behaved `MetricsClient` 
+implementations are safe for concurrent use by multiple goroutines.
 
 Both `MetricsBag` and `MetricsClient` Metrics support the most common metric types,
 namely:
 - `RawCounter`: a cumulative counter that can only increase
 - `DeltaCounter`: the total number of event occurrences in a unit time
 - `Gauge`: a snapshot of an event in the last unit time
-- `Histogram`: a statistical distribution of a set of values in one unit of time
-- `Duration` or `Timing`: like an histogram but with time durations
+- `Histogram`: statistical distribution of a set of values in one unit of time
+- `Duration` or `Timing`: like a histogram but with time durations
 
-Moreover, the `MetricsClient` is the direct interface to the remote metrics service 
-used by the topology, e.g., *Datadog*, thus it supports some specific features such 
-as **tags**.
-Tags are a way of adding dimensions to telemetries so they can be filtered, 
+If there is no particular requirement the `MetricsBag` approach is preferred. Indeed, 
+the pull approach of the `MetricsBag` is simpler and it better integrates with the 
+other default metric gathering. 
+In addition to that, the `MetricsClient` requires special attention to avoids too
+many calls to the client during the record processing.
+Indeed, the `MetricsClient` is a low-level and direct way to communicate with your 
+metrics system, thus it permits extra flexibility, but it skips the additional 
+aggregation/buffering layer of the `MetricsBag`.
+
+Moreover, the `MetricsClient` supports also the runtime tagging of the published metrics.
+Tags (or labels) are additional dimensions on metrics so they can be filtered, 
 aggregated, and compared in different visualizations.
-Therefore, if a component requires to publish its metrics with a set of specific tags, the 
-`MetricsClient` should be used rather than `MetricsBag`.
-However, it is suggested to use the `MetricsClient` in the `Stats` method to limit
-the number of calls to the client. Indeed, calling the `MetricsClient` methods inside the 
-`Process` method could introduce overheads and performance degradations.
+Therefore, if a component requires publishing its metrics with a set of specific tags, 
+the `MetricsClient` should be used rather than `MetricsBag` (see the 
+[MetricsClient example](/docs/how-tos/metrics/#metricsclient-example)).
 
 In summary, the go-to way is to implements custom statistics with a `MetricsBag`, but 
 there are some situations in which it is preferable the `MetricsClient`, namely:
 - your component needs to publish the metrics using a set of tag that changes at runtime
-- you can't centralize metrics collection in the `Stats` method since the metrics to expose are produced by different worker goroutines running inside your component 
+- you can't centralize metrics collection in the `Stats` method since the metrics 
+to expose are produced by different worker goroutines running inside your component 
 multiple goroutines.
 
 #### MetricsBag Example
@@ -230,3 +236,7 @@ func (f *MyFilter) Stats() baker.FilterStats {
     }
 }
 ```
+
+In the example, we prefered to use the `MetricsClient` in the `Stats` method to limit
+the number of calls to the client. Indeed, calling the `MetricsClient` methods inside 
+the `Process` method could introduce overheads and performance degradations.
