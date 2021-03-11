@@ -73,17 +73,17 @@ or an error saying why it can't.
 func newMyMetrics(icfg interface{}) (baker.MetricsClient, error)
 ```
 
-## How to expose statistics in a Component
+## How to publish statistics from a component
 
-All components need to implement a `Stats` method where they can expose metrics. Baker 
-runtime calls the `Stats` method of each component once per second. The different component 
-types support a set of predefined metrics. In particular, the following counters are defined:
+All components need to implement a `Stats` method where they can expose metrics, called 
+by Baker once per second. Each of the different component types support a set of predefined
+metrics. In particular, the following counters are defined:
 
 - [Input](https://pkg.go.dev/github.com/AdRoll/baker#InputStats):
     - `NumProcessedLines`, the total number of processed records since the component creation
 - [Filter](https://pkg.go.dev/github.com/AdRoll/baker#FilterStats):
     - `NumProcessedLines`, the total number of processed records since the component creation
-    - `NumFilteredLines`, the number of discarded (i.e., filtered) records
+    - `NumFilteredLines`, the number of filtered out (i.e. discarded) records
 - [Output](https://pkg.go.dev/github.com/AdRoll/baker#OutputStats):
     - `NumProcessedLines`, the total number of processed records since the component creation
     - `NumErrorLines`, the number of records that have produced an error
@@ -96,12 +96,13 @@ mean the number of records.
 
 The code example of 
 [how-to-create-filter](https://getbaker.io/docs/how-tos/create_filter/#processing-records) 
-shows how to correctly reports metrics in a custom Filter.
+shows how to correctly report metrics in a custom Filter.
 
 ### Report custom metrics
 
-Components may need to report custom metrics for monitoring some specific events. 
-Baker supports two main ways to expose custom metrics, namely:
+In addition to the records counter described above, components can report custom metrics
+giving a more specific view about the component health or performance.
+Baker supports two ways to expose custom metrics, namely:
 
 - return a 
 [`baker.MetricsBag`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag)
@@ -110,12 +111,12 @@ instance from the `Stats` method
 [`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient) in 
 the component code
 
-The two mechanisms follow the pull vs push approach respectively.
-The `MetricsBag` should be returned by the `Stats` method along with the default
-statistics and it will be collected once per second by the Baker runtime. Differently,
+The two mechanisms follow the pull vs push approach, respectively.
+`MetricsBag` should be returned by the `Stats` method along with the default
+statistics and is collected once per second by Baker. Differently,
 the `MetricsClient` can be requested from the Baker topology in the component
 instantiation and it can be used in any part of the component code to report metrics.
-If there is no particular requirement it is suggested to prefer the `MetricsBag` approach. 
+If there is no particular requirement the `MetricsBag` approach is preferred. 
 Indeed, the pull approach permits the reduction of the metrics overhead during the 
 record processing.
 
@@ -140,8 +141,8 @@ the number of calls to the client. Indeed, calling the `MetricsClient` methods i
 
 In summary, the go-to way is to implements custom statistics with a `MetricsBag`, but 
 there are some situations in which it is preferable the `MetricsClient`, namely:
-- the components need to publish the metrics using specific tags,
-- the components cannot centralize the metric collections, e.g. the component has 
+- your component needs to publish the metrics using a set of tag that changes at runtime
+- you can't centralize metrics collection in the `Stats` method since the metrics to expose are produced by different worker goroutines running inside your component 
 multiple goroutines.
 
 #### MetricsBag Example
@@ -153,9 +154,8 @@ our filter and call
 [`AddTimings`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag.AddTimings) on
 the returned `MetricsBag`.
 
-An important point is that Baker may call `Process` and `Stats` concurrently, from 
-different goroutines so you must use atomics or proper locking on data that are 
-shared between these two methods.
+An important point is that Baker may call `Process` and `Stats` from different goroutines
+so access to the shared data must be properly synchronized (atomic, locks, channel, etc.)
 
 ```go
 func (f *MyFilter) Process(r Record, next func(Record)) {
