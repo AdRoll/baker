@@ -11,7 +11,6 @@ description: >
 
 A pipeline (a.k.a. Topology) is the configured set of operations that Baker performs during
 its execution.
-
 It is configured in a TOML file and is defined by:
 
 * One input component, determining where to fetch records from
@@ -39,7 +38,6 @@ of flattened data, where columns of fields are indexed through integers.
 
 Baker currently provides a single implementation of Record, called `LogLine` (
 [API reference](https://pkg.go.dev/github.com/AdRoll/baker#LogLine)).
-
 If `LogLine` doesn't fit your needs, you can [customize it](/docs/how-tos/record_and_logline/)
 or [implement your version of the Record](/docs/how-tos/custom_record/).
 
@@ -65,6 +63,11 @@ Read our How-to guides to know how to:
 * [create an Output component](/docs/how-tos/create_output/)
 * [create an Upload component](/docs/how-tos/create_upload/)
 
+Moreover, Baker supports Records validation, which is executed right before Records are 
+injected in the Baker processing pipeline. The validation function could be configured 
+through the TOML or the code (see [Pipeline configuration](/docs/how-tos/pipeline_configuration/) 
+and [Validation in baker.Components](/docs/how-tos/baker_components/#validate)).
+
 ## Metrics
 
 During execution, Baker collects different kind of performance data points:
@@ -75,7 +78,6 @@ During execution, Baker collects different kind of performance data points:
 
 If enabled, Baker collects all these metrics and publishes them to a monitoring solution, such as Datadog
 or Prometheus.
-
 Metrics export is configured in Baker topology TOML files, [see how to configure it](/docs/how-tos/metrics/).
 
 Baker also prints general metrics once per second on standard output, in single-line format. Read more 
