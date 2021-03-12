@@ -7,7 +7,6 @@
 
 <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://getbaker.io/docs/components/filters/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -21,16 +20,30 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Filters | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="Filters" />
-<meta property="og:description" content="A high performance, composable and extendable data-processing pipeline for the big data era" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://getbaker.io/docs/components/filters/" />
-<meta property="og:updated_time" content="2021-03-12T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
-<meta itemprop="name" content="Filters">
-<meta itemprop="description" content="A high performance, composable and extendable data-processing pipeline for the big data era">
+<title>ExpandList | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="ExpandList" />
+<meta property="og:description" content="Read the API documentation »
+ Filter ExpandList Overview This filter splits a field using a configured separator and writes the resulting values to other fields of the same record. The mapping between the extracted values and the destination fields is configured with a TOML table. The elements of the list are, by default, separated with the ; character, but it is configurable.
+Example A possible filter configuration is:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://getbaker.io/docs/components/filters/expandlist/" />
+<meta property="article:published_time" content="2021-03-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-03-12T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
+<meta itemprop="name" content="ExpandList">
+<meta itemprop="description" content="Read the API documentation »
+ Filter ExpandList Overview This filter splits a field using a configured separator and writes the resulting values to other fields of the same record. The mapping between the extracted values and the destination fields is configured with a TOML table. The elements of the list are, by default, separated with the ; character, but it is configurable.
+Example A possible filter configuration is:">
+<meta itemprop="datePublished" content="2021-03-12T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-03-12T00:00:00+00:00" />
+<meta itemprop="wordCount" content="174">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Filters"/>
-<meta name="twitter:description" content="A high performance, composable and extendable data-processing pipeline for the big data era"/>
+<meta name="twitter:title" content="ExpandList"/>
+<meta name="twitter:description" content="Read the API documentation »
+ Filter ExpandList Overview This filter splits a field using a configured separator and writes the resulting values to other fields of the same record. The mapping between the extracted values and the destination fields is configured with a TOML table. The elements of the list are, by default, separated with the ; character, but it is configurable.
+Example A possible filter configuration is:"/>
 
 
 
@@ -56,7 +69,7 @@
 
 
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -385,7 +398,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersexpandlist" href="/docs/components/filters/expandlist/">ExpandList</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscomponentsfiltersexpandlist" href="/docs/components/filters/expandlist/">ExpandList</a>
       
       
       
@@ -709,8 +722,8 @@
 
 
 
-<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/Components/Filters/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Filters" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/Components/Filters/ExpandList.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=ExpandList" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -718,6 +731,18 @@
 
 
 
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#filter-expandlist">Filter <em>ExpandList</em></a>
+      <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#example">Example</a></li>
+        <li><a href="#configuration">Configuration</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
 
 
 
@@ -729,6 +754,9 @@
             <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
 	<ol class="breadcrumb spb-1">
 		
+
+
+
 
 
 
@@ -753,8 +781,15 @@
 
 
 
-<li class="breadcrumb-item active" aria-current="page">
+<li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/components/filters/">Filters</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://getbaker.io/docs/components/filters/expandlist/">ExpandList</a>
 </li>
 
 	</ol>
@@ -762,259 +797,78 @@
 
             
 <div class="td-content">
-	<h1>Filters</h1>
-        
+	<h1>ExpandList</h1>
+    
+	       
 	
-	
-        <div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/clausefilter/">ClauseFilter</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/clearfields/">ClearFields</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/concatenate/">Concatenate</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/dedup/">Dedup</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/expandjson/">ExpandJSON</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/expandlist/">ExpandList</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/formattime/">FormatTime</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/hash/">Hash</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/metadatalastmodified/">MetadataLastModified</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/metadataurl/">MetadataUrl</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/notnull/">NotNull</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/partialclone/">PartialClone</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/regexmatch/">RegexMatch</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/replacefields/">ReplaceFields</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/setstringfromurl/">SetStringFromURL</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/stringmatch/">StringMatch</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/timestamp/">Timestamp</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/docs/components/filters/timestamprange/">TimestampRange</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-    
+
+<div class="pageinfo pageinfo-primary">
+<p><strong>Read the <a href="https://pkg.go.dev/github.com/AdRoll/baker/filter#ExpandList">API documentation »</a></strong></p>
+
 </div>
+
+<h2 id="filter-expandlist">Filter <em>ExpandList</em></h2>
+<h3 id="overview">Overview</h3>
+<p>This filter splits a field using a configured separator and writes the resulting values to other fields of the same
+record. The mapping between the extracted values and the destination fields is configured with a TOML table. The elements
+of the list are, by default, separated with the <code>;</code> character, but it is configurable.</p>
+<h3 id="example">Example</h3>
+<p>A possible filter configuration is:</p>
+<pre><code>[[filter]]
+name=&quot;ExpandList&quot;
+    [filter.config]
+    Source = &quot;list_data&quot;
+    Separator = &quot;;&quot;
+    [filter.config.Fields]
+    0 = &quot;field1&quot;
+    1 = &quot;field2&quot;
+</code></pre>
+<p>In this example, the filter extracts the first and the second element of the list present in the field
+<code>list_data</code>of the record. Then, the values of that keys will be written into the field
+<code>field1</code> and <code>field2</code> of the same record.</p>
+<h3 id="configuration">Configuration</h3>
+<p>Keys available in the <code>[filter.config]</code> section:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th style="text-align:center">Type</th>
+<th style="text-align:center">Default</th>
+<th style="text-align:center">Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Source</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">&quot;&quot;</td>
+<td style="text-align:center">true</td>
+<td>record field that contains the list</td>
+</tr>
+<tr>
+<td>Fields</td>
+<td style="text-align:center">map of strings to strings</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">true</td>
+<td>&lt;list index -&gt; record field&gt; map, the rest will be ignored</td>
+</tr>
+<tr>
+<td>Separator</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">&ldquo;;&rdquo;</td>
+<td style="text-align:center">false</td>
+<td>character separator of the list</td>
+</tr>
+</tbody>
+</table>
 
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">Last modified March 12, 2021
 </div>
 </div>
+
 
           </main>
         </div>

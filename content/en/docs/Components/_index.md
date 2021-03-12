@@ -21,6 +21,7 @@ description: "All Baker components: inputs, filters, outputs and uploads"
 * [Concatenate](/docs/components/filters/concatenate)
 * [Dedup](/docs/components/filters/dedup)
 * [ExpandJSON](/docs/components/filters/expandjson)
+* [ExpandList](/docs/components/filters/expandlist)
 * [FormatTime](/docs/components/filters/formattime)
 * [Hash](/docs/components/filters/hash)
 * [MetadataLastModified](/docs/components/filters/metadatalastmodified)
