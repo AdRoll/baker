@@ -4,167 +4,172 @@
   
   <url>
     <loc>https://getbaker.io/docs/components/inputs/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/inputs/kcl/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/inputs/kinesis/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/inputs/list/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/inputs/sqs/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/inputs/tcp/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/clausefilter/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/clearfields/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/concatenate/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/dedup/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/expandjson/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://getbaker.io/docs/components/filters/expandlist/</loc>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/formattime/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/hash/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/metadatalastmodified/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/metadataurl/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/notnull/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/partialclone/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/regexmatch/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/replacefields/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/setstringfromurl/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/stringmatch/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/timestamp/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/filters/timestamprange/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/outputs/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/outputs/dynamodb/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/outputs/filewriter/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/outputs/nop/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/outputs/oplog/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/outputs/stats/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/outputs/websocket/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/uploads/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/components/uploads/s3/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -263,12 +268,12 @@
   
   <url>
     <loc>https://getbaker.io/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://getbaker.io/docs/</loc>
-    <lastmod>2021-03-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-03-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>

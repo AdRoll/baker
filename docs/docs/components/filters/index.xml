@@ -5,7 +5,7 @@
     <description>Recent content in Filters on Baker, high performance modular pipelines for the Big Data era</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 10 Mar 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 12 Mar 2021 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/filters/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: ClauseFilter</title>
       <link>https://getbaker.io/docs/components/filters/clausefilter/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clausefilter/</guid>
       <description>
@@ -110,7 +110,7 @@ Matches anything
     <item>
       <title>Docs: ClearFields</title>
       <link>https://getbaker.io/docs/components/filters/clearfields/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clearfields/</guid>
       <description>
@@ -155,7 +155,7 @@ Matches anything
     <item>
       <title>Docs: Concatenate</title>
       <link>https://getbaker.io/docs/components/filters/concatenate/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/concatenate/</guid>
       <description>
@@ -214,7 +214,7 @@ Matches anything
     <item>
       <title>Docs: Dedup</title>
       <link>https://getbaker.io/docs/components/filters/dedup/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/dedup/</guid>
       <description>
@@ -271,7 +271,7 @@ on your data set, this might lead to OOM (i.e. out of memory) errors.&lt;/p&gt;
     <item>
       <title>Docs: ExpandJSON</title>
       <link>https://getbaker.io/docs/components/filters/expandjson/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/expandjson/</guid>
       <description>
@@ -342,9 +342,84 @@ object present in field &lt;code&gt;json_data&lt;/code&gt;of the record. Then, t
     </item>
     
     <item>
+      <title>Docs: ExpandList</title>
+      <link>https://getbaker.io/docs/components/filters/expandlist/</link>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://getbaker.io/docs/components/filters/expandlist/</guid>
+      <description>
+        
+        
+        
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Read the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker/filter#ExpandList&#34;&gt;API documentation »&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;filter-expandlist&#34;&gt;Filter &lt;em&gt;ExpandList&lt;/em&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;overview&#34;&gt;Overview&lt;/h3&gt;
+&lt;p&gt;This filter splits a field using a configured separator and writes the resulting values to other fields of the same
+record. The mapping between the extracted values and the destination fields is configured with a TOML table. The elements
+of the list are, by default, separated with the &lt;code&gt;;&lt;/code&gt; character, but it is configurable.&lt;/p&gt;
+&lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
+&lt;p&gt;A possible filter configuration is:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[[filter]]
+name=&amp;quot;ExpandList&amp;quot;
+    [filter.config]
+    Source = &amp;quot;list_data&amp;quot;
+    Separator = &amp;quot;;&amp;quot;
+    [filter.config.Fields]
+    0 = &amp;quot;field1&amp;quot;
+    1 = &amp;quot;field2&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In this example, the filter extracts the first and the second element of the list present in the field
+&lt;code&gt;list_data&lt;/code&gt;of the record. Then, the values of that keys will be written into the field
+&lt;code&gt;field1&lt;/code&gt; and &lt;code&gt;field2&lt;/code&gt; of the same record.&lt;/p&gt;
+&lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
+&lt;p&gt;Keys available in the &lt;code&gt;[filter.config]&lt;/code&gt; section:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Type&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Default&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Required&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Source&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;quot;&amp;quot;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td&gt;record field that contains the list&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Fields&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;map of strings to strings&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td&gt;&amp;lt;list index -&amp;gt; record field&amp;gt; map, the rest will be ignored&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Separator&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;string&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&amp;ldquo;;&amp;rdquo;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
+&lt;td&gt;character separator of the list&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: FormatTime</title>
       <link>https://getbaker.io/docs/components/filters/formattime/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/formattime/</guid>
       <description>
@@ -433,7 +508,7 @@ string, see &lt;a href=&#34;https://pkg.go.dev/time#pkg-constants&#34;&gt;Go tim
     <item>
       <title>Docs: Hash</title>
       <link>https://getbaker.io/docs/components/filters/hash/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/hash/</guid>
       <description>
@@ -510,7 +585,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: MetadataLastModified</title>
       <link>https://getbaker.io/docs/components/filters/metadatalastmodified/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/metadatalastmodified/</guid>
       <description>
@@ -555,7 +630,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: MetadataUrl</title>
       <link>https://getbaker.io/docs/components/filters/metadataurl/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/metadataurl/</guid>
       <description>
@@ -602,7 +677,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: NotNull</title>
       <link>https://getbaker.io/docs/components/filters/notnull/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/notnull/</guid>
       <description>
@@ -647,7 +722,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: PartialClone</title>
       <link>https://getbaker.io/docs/components/filters/partialclone/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/partialclone/</guid>
       <description>
@@ -692,7 +767,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: RegexMatch</title>
       <link>https://getbaker.io/docs/components/filters/regexmatch/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/regexmatch/</guid>
       <description>
@@ -744,7 +819,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: ReplaceFields</title>
       <link>https://getbaker.io/docs/components/filters/replacefields/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/replacefields/</guid>
       <description>
@@ -796,7 +871,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: SetStringFromURL</title>
       <link>https://getbaker.io/docs/components/filters/setstringfromurl/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/setstringfromurl/</guid>
       <description>
@@ -850,7 +925,7 @@ Discards the log lines if URL metadata doesn&amp;rsquo;t contain any of the give
     <item>
       <title>Docs: StringMatch</title>
       <link>https://getbaker.io/docs/components/filters/stringmatch/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/stringmatch/</guid>
       <description>
@@ -909,7 +984,7 @@ Discards the log lines if URL metadata doesn&amp;rsquo;t contain any of the give
     <item>
       <title>Docs: Timestamp</title>
       <link>https://getbaker.io/docs/components/filters/timestamp/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamp/</guid>
       <description>
@@ -954,7 +1029,7 @@ Discards the log lines if URL metadata doesn&amp;rsquo;t contain any of the give
     <item>
       <title>Docs: TimestampRange</title>
       <link>https://getbaker.io/docs/components/filters/timestamprange/</link>
-      <pubDate>Wed, 10 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamprange/</guid>
       <description>
