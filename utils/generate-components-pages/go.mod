@@ -1,9 +1,9 @@
-module github.com/AdRoll/baker/generate-components-pages
+module generate-components-pages
 
 go 1.15
 
 require (
-	github.com/AdRoll/baker v0.0.0-20201209102217-af7b7c12682b
+	github.com/AdRoll/baker v0.0.0-20210315093428-ef88c4b991f4
 	github.com/alecthomas/chroma v0.8.2 // indirect
 	github.com/dlclark/regexp2 v1.4.0 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.4 // indirect
