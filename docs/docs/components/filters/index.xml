@@ -5,7 +5,7 @@
     <description>Recent content in Filters on Baker, high performance modular pipelines for the Big Data era</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 12 Mar 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 16 Mar 2021 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/filters/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: ClauseFilter</title>
       <link>https://getbaker.io/docs/components/filters/clausefilter/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clausefilter/</guid>
       <description>
@@ -110,7 +110,7 @@ Matches anything
     <item>
       <title>Docs: ClearFields</title>
       <link>https://getbaker.io/docs/components/filters/clearfields/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clearfields/</guid>
       <description>
@@ -155,7 +155,7 @@ Matches anything
     <item>
       <title>Docs: Concatenate</title>
       <link>https://getbaker.io/docs/components/filters/concatenate/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/concatenate/</guid>
       <description>
@@ -214,7 +214,7 @@ Matches anything
     <item>
       <title>Docs: Dedup</title>
       <link>https://getbaker.io/docs/components/filters/dedup/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/dedup/</guid>
       <description>
@@ -271,7 +271,7 @@ on your data set, this might lead to OOM (i.e. out of memory) errors.&lt;/p&gt;
     <item>
       <title>Docs: ExpandJSON</title>
       <link>https://getbaker.io/docs/components/filters/expandjson/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/expandjson/</guid>
       <description>
@@ -344,7 +344,7 @@ object present in field &lt;code&gt;json_data&lt;/code&gt;of the record. Then, t
     <item>
       <title>Docs: ExpandList</title>
       <link>https://getbaker.io/docs/components/filters/expandlist/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/expandlist/</guid>
       <description>
@@ -419,7 +419,7 @@ name=&amp;quot;ExpandList&amp;quot;
     <item>
       <title>Docs: FormatTime</title>
       <link>https://getbaker.io/docs/components/filters/formattime/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/formattime/</guid>
       <description>
@@ -508,7 +508,7 @@ string, see &lt;a href=&#34;https://pkg.go.dev/time#pkg-constants&#34;&gt;Go tim
     <item>
       <title>Docs: Hash</title>
       <link>https://getbaker.io/docs/components/filters/hash/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/hash/</guid>
       <description>
@@ -585,7 +585,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: MetadataLastModified</title>
       <link>https://getbaker.io/docs/components/filters/metadatalastmodified/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/metadatalastmodified/</guid>
       <description>
@@ -630,7 +630,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: MetadataUrl</title>
       <link>https://getbaker.io/docs/components/filters/metadataurl/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/metadataurl/</guid>
       <description>
@@ -677,7 +677,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: NotNull</title>
       <link>https://getbaker.io/docs/components/filters/notnull/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/notnull/</guid>
       <description>
@@ -722,7 +722,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: PartialClone</title>
       <link>https://getbaker.io/docs/components/filters/partialclone/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/partialclone/</guid>
       <description>
@@ -767,7 +767,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: RegexMatch</title>
       <link>https://getbaker.io/docs/components/filters/regexmatch/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/regexmatch/</guid>
       <description>
@@ -819,7 +819,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: ReplaceFields</title>
       <link>https://getbaker.io/docs/components/filters/replacefields/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/replacefields/</guid>
       <description>
@@ -871,7 +871,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: SetStringFromURL</title>
       <link>https://getbaker.io/docs/components/filters/setstringfromurl/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/setstringfromurl/</guid>
       <description>
@@ -925,7 +925,7 @@ Discards the log lines if URL metadata doesn&amp;rsquo;t contain any of the give
     <item>
       <title>Docs: StringMatch</title>
       <link>https://getbaker.io/docs/components/filters/stringmatch/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/stringmatch/</guid>
       <description>
@@ -984,7 +984,7 @@ Discards the log lines if URL metadata doesn&amp;rsquo;t contain any of the give
     <item>
       <title>Docs: Timestamp</title>
       <link>https://getbaker.io/docs/components/filters/timestamp/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamp/</guid>
       <description>
@@ -1029,7 +1029,7 @@ Discards the log lines if URL metadata doesn&amp;rsquo;t contain any of the give
     <item>
       <title>Docs: TimestampRange</title>
       <link>https://getbaker.io/docs/components/filters/timestamprange/</link>
-      <pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamprange/</guid>
       <description>
