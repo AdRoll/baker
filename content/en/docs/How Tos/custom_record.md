@@ -13,11 +13,11 @@ where columns of fields are indexed through integers.
 If the Record implementations provided by Baker doesn't fit your needs, you can create your own
 version, implementing the [`Record` inteface](https://pkg.go.dev/github.com/AdRoll/baker#Record).
 
-## How to use a custom version of the Record
+## How to use your Record implementation
 
-Once your Record version is ready, you need to use it in your code.
-To do so, you must create and fill a [`baker.Components`](/docs/how-tos/baker_components/) struct.
-The only required field to set is the `CreateRecord`, which should return a new instance of your Record 
+Once your Record implementation is ready, you want to let Baker know how to create new instances of it.
+To do so, you should create and fill a [`baker.Components`](/docs/how-tos/baker_components/) struct.
+The only required field to set is the `CreateRecord`, which returns a new instance of your custom record `struct`.
 (see more details at [CreateRecord](/docs/how-tos/baker_components/#createrecord)).
 
 ```go
@@ -30,10 +30,11 @@ comp := baker.Components{
 }
 ```
 
-Optionally, it is possible to set other functionality through the `baker.Components`. 
-For instance, you can provide a custom [Validation](/docs/how-tos/baker_components/#validate) function 
-or a custom [FieldByName](/docs/how-tos/baker_components/#fieldbyname) function for your own Record
-implementation.
+The other configuration of the `baker.Components`, namely _Validation_, _FieldByName_, and _FieldNames_,
+could be configured also through the TOML configuration. Although, if your own record needs a more specific
+implementation you can implement them using compiled Go code, see [`FieldByName`](/docs/how-tos/baker_components/#fieldbyname), 
+[`FieldNames`](/docs/how-tos/baker_components/#fieldnames), [`Validation`](/docs/how-tos/baker_components/#validate) 
+documentation.
 
 ## Record conformance test
 

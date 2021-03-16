@@ -63,10 +63,11 @@ Read our How-to guides to know how to:
 * [create an Output component](/docs/how-tos/create_output/)
 * [create an Upload component](/docs/how-tos/create_upload/)
 
-Moreover, Baker supports Records validation, which is executed right before Records are 
-injected in the Baker processing pipeline. The validation function could be configured 
-through the TOML or the code (see [Pipeline configuration](/docs/how-tos/pipeline_configuration/) 
-and [Validation in baker.Components](/docs/how-tos/baker_components/#validate)).
+In addition, Baker can validate records right after they're fetched by the input component. Records 
+that don't pass validation are discarded before even entering the pipeline. You can configure Record
+validation in your topology TOML file 
+([Pipeline configuration](/docs/how-tos/pipeline_configuration/#validation-configuration))
+or via Go function when you compile Baker ([baker.Components](/docs/how-tos/baker_components/#validate)).
 
 ## Metrics
 
