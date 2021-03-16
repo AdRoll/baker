@@ -50,7 +50,7 @@ example implementation of
 and how to register it within Baker so that it can be selected in the
 `[metrics.name]` TOML section.
 
-In order to be selected from TOML, you must first register a 
+In order to be selected from TOML, you should first register a 
 [`baker.MetricsDesc`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsDesc) 
 instance within [`baker.Components`](https://pkg.go.dev/github.com/AdRoll/baker#Components).
 
@@ -79,16 +79,16 @@ by Baker once per second. Each of the different component types support a set of
 metrics. In particular, the following counters are defined:
 
 - [Input](https://pkg.go.dev/github.com/AdRoll/baker#InputStats):
-    - `NumProcessedLines`, the total number of processed records since the component creation
+    - `NumProcessedLines`, the total number of processed records since the component creation.
 - [Filter](https://pkg.go.dev/github.com/AdRoll/baker#FilterStats):
-    - `NumProcessedLines`, the total number of processed records since the component creation
-    - `NumFilteredLines`, the number of filtered out (i.e. discarded) records
+    - `NumProcessedLines`, the total number of processed records since the component creation.
+    - `NumFilteredLines`, the number of filtered out (i.e. discarded) records.
 - [Output](https://pkg.go.dev/github.com/AdRoll/baker#OutputStats):
-    - `NumProcessedLines`, the total number of processed records since the component creation
-    - `NumErrorLines`, the number of records that have produced an error
+    - `NumProcessedLines`, the total number of processed records since the component creation.
+    - `NumErrorLines`, the number of records that have produced an error.
 - [Upload](https://pkg.go.dev/github.com/AdRoll/baker#UploadStats):
-    - `NumProcessedFiles`, the total number of processed files since the component creation
-    - `NumErrorFiles`, the number of files that have produced an error
+    - `NumProcessedFiles`, the total number of processed files since the component creation.
+    - `NumErrorFiles`, the number of files that have produced an error.
 
 Due to historical reasons, these fields have the word _lines_ in them but they do 
 mean the number of records.
@@ -103,10 +103,10 @@ In addition to the record counters described above, components can report custom
 giving a more specific view about the component health or performance.
 Baker supports two ways of exposing custom metrics:
 
-- returning a 
+- Returning a 
 [`baker.MetricsBag`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag)
 instance from the `Stats` method.
-- directly using the 
+- Directly using the 
 [`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient) in 
 the component code.
 
@@ -122,11 +122,11 @@ implementations are safe for concurrent use by multiple goroutines.
 
 Both `MetricsBag` and `MetricsClient` Metrics support the most common metric types,
 namely:
-- `RawCounter`: a cumulative counter that can only increase
-- `DeltaCounter`: the total number of event occurrences in a unit time
-- `Gauge`: a snapshot of an event in the last unit time
-- `Histogram`: statistical distribution of a set of values in one unit of time
-- `Duration` or `Timing`: like a histogram but with time durations
+- `RawCounter`: a cumulative counter that can only increase.
+- `DeltaCounter`: the total number of event occurrences in a unit time.
+- `Gauge`: a snapshot of an event in the last unit time.
+- `Histogram`: statistical distribution of a set of values in one unit of time.
+- `Duration` or `Timing`: like a histogram but with time durations.
 
 If there is no particular requirement the `MetricsBag` approach is preferred. Indeed, 
 the `MetricsBag` pull approach is simpler and it better integrates with the 
@@ -146,8 +146,8 @@ the `MetricsClient` should be used rather than `MetricsBag` (see the
 
 In summary, the go-to way is to implement custom statistics with a `MetricsBag`, but 
 there are some situations where a `MetricsClient` is preferred, for example:
-- your component needs to publish the metrics using a set of tag that changes at runtime
-- you can't centralize metrics collection in the `Stats` method since the metrics 
+- Your component needs to publish the metrics using a set of tag that changes at runtime.
+- You can't centralize metrics collection in the `Stats` method since the metrics
 to expose are produced by different worker goroutines running inside your component 
 multiple goroutines.
 
