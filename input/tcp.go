@@ -99,8 +99,11 @@ func (s *TCP) Run(inch chan<- *baker.Data) error {
 		ctxLog.WithFields(log.Fields{"addr": conn.RemoteAddr()}).Info("Connected")
 		wg.Add(1)
 		go func(conn *net.TCPConn) {
-			defer wg.Done()
-			s.handleStream(conn)
+			defer func() {
+				conn.Close()
+				wg.Done()
+			}()
+
 			err := s.handleStream(conn)
 			if err != nil {
 				ctxLog.WithError(err).WithFields(log.Fields{"error": err}).Error("Error when handling stream")
@@ -137,8 +140,6 @@ func (s *TCP) Stats() baker.InputStats {
 func (s *TCP) Stop() {
 	atomic.StoreInt64(&s.stop, 1)
 }
-
-	defer conn.Close()
 
 func (s *TCP) handleStream(conn *net.TCPConn) error {
 	// r, err := newFastGzReader(conn)
