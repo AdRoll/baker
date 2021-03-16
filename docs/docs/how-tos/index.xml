@@ -1162,63 +1162,15 @@ current speed in records per second, etc.) or per-component metrics such as the
 number of files read or written, to performance statistics published by the Go
 runtime in order to monitor lower level information (objects, memory, garbage
 collection, etc.).&lt;/p&gt;
-&lt;p&gt;All components need to implement a &lt;code&gt;Stats&lt;/code&gt; method where they can expose metrics.
-Baker calls the &lt;code&gt;Stats&lt;/code&gt; method of each component once per second. &lt;code&gt;Stats&lt;/code&gt; returns
-a predefined set of metrics (depending on the component type) and a
-&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag&#34;&gt;&lt;code&gt;baker.MetricsBag&lt;/code&gt;&lt;/a&gt;,
-in which one can add other metrics (of arbitrary name and type).&lt;/p&gt;
-&lt;p&gt;Let&amp;rsquo;s illustrate this with metrics exported by a filter via
-&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FilterStats&#34;&gt;&lt;code&gt;baker.FilterStats&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; FilterStats &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
-	NumProcessedLines &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
-	NumFilteredLines  &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
-	Metrics           MetricsBag
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In this case &lt;code&gt;NumProcessedLines&lt;/code&gt; should represent the &lt;strong&gt;total&lt;/strong&gt; number of processed
-lines since the filter creation, while &lt;code&gt;NumFilteredLines&lt;/code&gt; is the number of discarded
-(i.e filtered) records. Due to historical reasons these fields have the word
-&lt;em&gt;lines&lt;/em&gt; in them but they do mean the number of records.&lt;/p&gt;
-&lt;h4 id=&#34;a-practical-example&#34;&gt;A practical example&lt;/h4&gt;
-&lt;p&gt;Let&amp;rsquo;s say our filter needs to perform HTTP requests in order to decide whether a record
-should be discarded, we might want to keep track of the requests&#39; durations in an histogram.
-In this case, we would probably record a slice of &lt;code&gt;time.Duration&lt;/code&gt; in our filter and call
-&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag.AddTimings&#34;&gt;&lt;code&gt;AddTimings&lt;/code&gt;&lt;/a&gt; on the
-returned &lt;code&gt;MetricsBag&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;An important point is that Baker may call &lt;code&gt;Process&lt;/code&gt; and &lt;code&gt;Stats&lt;/code&gt; concurrently, from different
-goroutines so you must use proper locking on data structures which are shared between the
-these two methods.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;myFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
-    atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.totalLines, &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;)
-
-    &lt;span style=&#34;color:#6272a4&#34;&gt;/* perform http request and keep track of its duration
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;     * in i.requestDurations
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;     */&lt;/span&gt;
-
-    &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#6272a4&#34;&gt;/* filter logic*/&lt;/span&gt;) {
-        &lt;span style=&#34;color:#6272a4&#34;&gt;// discard line
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;        atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.filteredLines, &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;)
-        &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt;
-    }
-}
-
-&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (i &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;myFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() baker.FilterStats {
-    i.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Lock&lt;/span&gt;()
-    bag &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;make&lt;/span&gt;(baker.MetricsBag)    
-    bag.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddTimings&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;myfilter_http_request_duration&amp;#34;&lt;/span&gt;, i.requestDurations)
-    i.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Unlock&lt;/span&gt;()
-
-    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; baker.FilterStats{
-        NumProcessedLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.totalLines),
-        NumFilteredLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.filteredLines),
-        Metrics: bag,
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;configuring-metrics-in-toml&#34;&gt;Configuring metrics in TOML&lt;/h4&gt;
+&lt;h2 id=&#34;configuring-metrics-in-toml&#34;&gt;Configuring metrics in TOML&lt;/h2&gt;
 &lt;p&gt;Baker configuration TOML files may have a &lt;code&gt;[metrics]&lt;/code&gt; section dedicated to the
-configuration of a metrics client.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;[metrics.name]&lt;/code&gt; specifies the metrics client to use, from the list of all registered &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;.
-&lt;code&gt;[metrics.config]&lt;/code&gt; specifies some configuration settings which are specific to the client you&amp;rsquo;re using.&lt;/p&gt;
-&lt;p&gt;For example, this is what the &lt;code&gt;[metrics]&lt;/code&gt; section would look like with the &lt;em&gt;Datadog&lt;/em&gt; metrics client:&lt;/p&gt;
+configuration of a metrics client.
+&lt;code&gt;[metrics.name]&lt;/code&gt; specifies the metrics client to use, from the list of all registered
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;.
+&lt;code&gt;[metrics.config]&lt;/code&gt; specifies some configuration settings which are specific to
+the client you&amp;rsquo;re using.&lt;/p&gt;
+&lt;p&gt;For example, this is what the &lt;code&gt;[metrics]&lt;/code&gt; section would look like with the &lt;em&gt;Datadog&lt;/em&gt;
+metrics client:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[metrics]
 name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;datadog&amp;#34;&lt;/span&gt;
 
@@ -1227,16 +1179,16 @@ name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;datadog&amp;#34;&lt;/spa
     prefix=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;myapp.baker.&amp;#34;&lt;/span&gt;                  &lt;span style=&#34;color:#6272a4&#34;&gt;# prefix for all exported metric names&lt;/span&gt;
     send_logs=&lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;                         &lt;span style=&#34;color:#6272a4&#34;&gt;# whether we should log messages (as Dogstatd events) or not &lt;/span&gt;
     tags=[&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;env:prod&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;region:eu-west-1&amp;#34;&lt;/span&gt;]  &lt;span style=&#34;color:#6272a4&#34;&gt;# extra tags to associate to all exported metrics &lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;disabling-metrics&#34;&gt;Disabling metrics&lt;/h4&gt;
-&lt;p&gt;If you don&amp;rsquo;t want to publish any metrics, it&amp;rsquo;s enough to not provide the &lt;code&gt;[metrics]&lt;/code&gt; TOML section in
-Baker configuration file.&lt;/p&gt;
-&lt;h4 id=&#34;implementing-a-new-metrics-client&#34;&gt;Implementing a new metrics client&lt;/h4&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;disabling-metrics&#34;&gt;Disabling metrics&lt;/h3&gt;
+&lt;p&gt;If you don&amp;rsquo;t want to publish any metrics, it&amp;rsquo;s enough to not provide the &lt;code&gt;[metrics]&lt;/code&gt; TOML
+section in Baker configuration file.&lt;/p&gt;
+&lt;h2 id=&#34;implementing-a-custom-metricsclient&#34;&gt;Implementing a custom MetricsClient&lt;/h2&gt;
 &lt;p&gt;The &lt;a href=&#34;https://github.com/AdRoll/baker/tree/main/examples/metrics&#34;&gt;metrics example&lt;/a&gt; shows an
 example implementation of
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
 and how to register it within Baker so that it can be selected in the
 &lt;code&gt;[metrics.name]&lt;/code&gt; TOML section.&lt;/p&gt;
-&lt;p&gt;In order to be selected from TOML, you must first register a
+&lt;p&gt;In order to be selected from TOML, you should first register a
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsDesc&#34;&gt;&lt;code&gt;baker.MetricsDesc&lt;/code&gt;&lt;/a&gt;
 instance within &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; fooBarDesc = baker.MetricsDesc{
@@ -1250,13 +1202,168 @@ should either return a ready to use
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
 or an error saying why it can&amp;rsquo;t.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;newMyMetrics&lt;/span&gt;(icfg &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt;{}) (baker.MetricsClient, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;metricsclient-interface&#34;&gt;Metrics.Client interface&lt;/h4&gt;
-&lt;p&gt;Once a &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
-instance has been successfully created, it&amp;rsquo;s made available to and used by
-a Baker pipeline to report metrics. During construction, components receive the
-&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;MetricsClient&lt;/code&gt;&lt;/a&gt; instance.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
-supports the most common type of metric types: &lt;em&gt;gauges&lt;/em&gt;, &lt;em&gt;counters&lt;/em&gt; and &lt;em&gt;histograms&lt;/em&gt;.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;how-to-publish-statistics-from-a-component&#34;&gt;How to publish statistics from a component&lt;/h2&gt;
+&lt;p&gt;All components need to implement a &lt;code&gt;Stats&lt;/code&gt; method where they can expose metrics, called
+by Baker once per second. Each of the different component types support a set of predefined
+metrics. In particular, the following counters are defined:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#InputStats&#34;&gt;Input&lt;/a&gt;:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;NumProcessedLines&lt;/code&gt;, the total number of processed records since the component creation.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FilterStats&#34;&gt;Filter&lt;/a&gt;:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;NumProcessedLines&lt;/code&gt;, the total number of processed records since the component creation.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;NumFilteredLines&lt;/code&gt;, the number of filtered out (i.e. discarded) records.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#OutputStats&#34;&gt;Output&lt;/a&gt;:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;NumProcessedLines&lt;/code&gt;, the total number of processed records since the component creation.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;NumErrorLines&lt;/code&gt;, the number of records that have produced an error.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#UploadStats&#34;&gt;Upload&lt;/a&gt;:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;NumProcessedFiles&lt;/code&gt;, the total number of processed files since the component creation.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;NumErrorFiles&lt;/code&gt;, the number of files that have produced an error.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Due to historical reasons, these fields have the word &lt;em&gt;lines&lt;/em&gt; in them but they do
+mean the number of records.&lt;/p&gt;
+&lt;p&gt;The code example of
+&lt;a href=&#34;https://getbaker.io/docs/how-tos/create_filter/#processing-records&#34;&gt;how-to-create-filter&lt;/a&gt;
+shows how to correctly report metrics in a custom Filter.&lt;/p&gt;
+&lt;h3 id=&#34;report-custom-metrics&#34;&gt;Report custom metrics&lt;/h3&gt;
+&lt;p&gt;In addition to the record counters described above, components can report custom metrics
+giving a more specific view about the component health or performance.
+Baker supports two ways of exposing custom metrics:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Returning a
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag&#34;&gt;&lt;code&gt;baker.MetricsBag&lt;/code&gt;&lt;/a&gt;
+instance from the &lt;code&gt;Stats&lt;/code&gt; method.&lt;/li&gt;
+&lt;li&gt;Directly using the
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt; in
+the component code.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The two mechanisms follow the pull vs push approaches, respectively.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;MetricsBag&lt;/code&gt; should be returned by the &lt;code&gt;Stats&lt;/code&gt; method along with the default
+statistics and is collected once per second by Baker.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;MetricsClient&lt;/code&gt; instance configured by your topology is passed to your
+component during instantiation, in the &lt;code&gt;ComponentsParam&lt;/code&gt; structure. You can copy it
+so as to use it at any point in your component code since well-behaved &lt;code&gt;MetricsClient&lt;/code&gt;
+implementations are safe for concurrent use by multiple goroutines.&lt;/p&gt;
+&lt;p&gt;Both &lt;code&gt;MetricsBag&lt;/code&gt; and &lt;code&gt;MetricsClient&lt;/code&gt; Metrics support the most common metric types,
+namely:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;RawCounter&lt;/code&gt;: a cumulative counter that can only increase.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;DeltaCounter&lt;/code&gt;: the total number of event occurrences in a unit time.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Gauge&lt;/code&gt;: a snapshot of an event in the last unit time.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Histogram&lt;/code&gt;: statistical distribution of a set of values in one unit of time.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Duration&lt;/code&gt; or &lt;code&gt;Timing&lt;/code&gt;: like a histogram but with time durations.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If there is no particular requirement the &lt;code&gt;MetricsBag&lt;/code&gt; approach is preferred. Indeed,
+the &lt;code&gt;MetricsBag&lt;/code&gt; pull approach is simpler and it better integrates with the
+other default metric gathering.
+In addition to that, the &lt;code&gt;MetricsClient&lt;/code&gt; requires special attention to avoid too
+many calls to the client during record processing.
+Indeed, the &lt;code&gt;MetricsClient&lt;/code&gt; is a low-level and direct way to communicate with your
+metrics system, thus it permits extra flexibility, but it skips the additional
+aggregation/buffering layer of the &lt;code&gt;MetricsBag&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Moreover, the &lt;code&gt;MetricsClient&lt;/code&gt; supports also the runtime tagging of the published metrics.
+Tags (or labels) are additional dimensions on metrics and allow them to be filtered,
+aggregated, and compared in different visualizations.
+Therefore, if tags are only known at runtime and you need to add dynamic tags to your metrics,
+the &lt;code&gt;MetricsClient&lt;/code&gt; should be used rather than &lt;code&gt;MetricsBag&lt;/code&gt; (see the
+&lt;a href=&#34;https://getbaker.io/docs/how-tos/metrics/#metricsclient-example&#34;&gt;MetricsClient example&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;In summary, the go-to way is to implement custom statistics with a &lt;code&gt;MetricsBag&lt;/code&gt;, but
+there are some situations where a &lt;code&gt;MetricsClient&lt;/code&gt; is preferred, for example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Your component needs to publish the metrics using a set of tag that changes at runtime.&lt;/li&gt;
+&lt;li&gt;You can&amp;rsquo;t centralize metrics collection in the &lt;code&gt;Stats&lt;/code&gt; method since the metrics
+to expose are produced by different worker goroutines running inside your component
+multiple goroutines.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;metricsbag-example&#34;&gt;MetricsBag Example&lt;/h4&gt;
+&lt;p&gt;Let&amp;rsquo;s say our filter needs to perform HTTP requests in order to decide whether a
+record should be discarded, we might want to keep track of the requests&#39; durations
+in an histogram. In this case, we would probably record a slice of &lt;code&gt;time.Duration&lt;/code&gt; in
+our filter and call
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag.AddTimings&#34;&gt;&lt;code&gt;AddTimings&lt;/code&gt;&lt;/a&gt; on
+the returned &lt;code&gt;MetricsBag&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;An important point is that Baker may call &lt;code&gt;Process&lt;/code&gt; and &lt;code&gt;Stats&lt;/code&gt; from different goroutines
+so access to the shared data must be properly synchronized (atomic, lock, channel, etc.)&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
+    atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.totalLines, &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;)
+
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// Perform http request
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    f.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Lock&lt;/span&gt;() &lt;span style=&#34;color:#6272a4&#34;&gt;// keep track of its duration
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    f.requestDurations = &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;append&lt;/span&gt;(f.requestDurations, duration)
+    f.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Unlock&lt;/span&gt;()
+
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#6272a4&#34;&gt;/* filter logic*/&lt;/span&gt;) {
+        &lt;span style=&#34;color:#6272a4&#34;&gt;// Discard record
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;        atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.filteredLines, &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;)
+        &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt;
+    }
+}
+
+&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() baker.FilterStats {
+    &lt;span style=&#34;color:#6272a4&#34;&gt;// Copy the slice of durations
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    f.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Lock&lt;/span&gt;()
+    requestDurations &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; f.requestDurations[:]
+    f.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Unlock&lt;/span&gt;()
+
+    bag &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;make&lt;/span&gt;(baker.MetricsBag)
+    bag.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddTimings&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;myfilter_http_request_duration&amp;#34;&lt;/span&gt;, requestDurations)
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; baker.FilterStats{
+        NumProcessedLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.totalLines),
+        NumFilteredLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.filteredLines),
+        Metrics: bag,
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;metricsclient-example&#34;&gt;MetricsClient Example&lt;/h4&gt;
+&lt;p&gt;Once a
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
+instance has been successfully created, it&amp;rsquo;s made available to and can be used by a Baker
+pipeline to report metrics. During construction, components receive the
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;MetricsClient&lt;/code&gt;&lt;/a&gt; instance.
+&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
+provides a set of methods to report the most common type of metric types (&lt;em&gt;gauges&lt;/em&gt;,
+&lt;em&gt;counters&lt;/em&gt; and &lt;em&gt;histograms&lt;/em&gt;)&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s now consider we want to publish additional tags alongside the duration slice of our previous &lt;code&gt;MetricsBag&lt;/code&gt; example.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;NewMyFilter&lt;/span&gt;(cfg baker.InputParams) (baker.Input, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;) {
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; MyFilter{metrics: cfg.Metrics}
+}
+
+&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
+ &lt;span style=&#34;color:#6272a4&#34;&gt;/*... */&lt;/span&gt;
+}
+
+&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() baker.FilterStats {
+    f.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Lock&lt;/span&gt;()
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;for&lt;/span&gt; _, duration &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;range&lt;/span&gt; f.requestDurations {
+        f.metrics.&lt;span style=&#34;color:#50fa7b&#34;&gt;DurationWithTags&lt;/span&gt;(
+            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;myfilter_http_request_duration&amp;#34;&lt;/span&gt;, 
+            duration, 
+            []&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;{&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;tag1&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;tag2&amp;#34;&lt;/span&gt;},
+        )
+    }
+    f.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Unlock&lt;/span&gt;()
+
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; baker.FilterStats{
+        NumProcessedLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.totalLines),
+        NumFilteredLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.filteredLines),
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Here, we chose to use the &lt;code&gt;MetricsClient&lt;/code&gt; in the &lt;code&gt;Stats&lt;/code&gt; method to limit the number of
+calls to the client. Indeed, since &lt;code&gt;Stats&lt;/code&gt; gets called once per second, the &lt;code&gt;MetricsClient&lt;/code&gt; is
+also called once per second. We could have directly called &lt;code&gt;DurationWithTags&lt;/code&gt; from the
+&lt;code&gt;Process&lt;/code&gt; method but we would have probably - depending on the frequency of incoming
+records - called it way more often, and this could have potentially introduce some performance
+degradation.&lt;/p&gt;
 
       </description>
     </item>
