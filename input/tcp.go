@@ -142,12 +142,11 @@ func (s *TCP) Stop() {
 }
 
 func (s *TCP) handleStream(conn *net.TCPConn) error {
-	// r, err := newFastGzReader(conn)
 	r, err := gzip.NewReader(conn)
 	if err != nil {
 		return fmt.Errorf("error initializing gzip: %v", err)
 	}
-	// defer r.Close()
+	defer r.Close()
 
 	rbuf := bufio.NewReaderSize(r, tcpChunkBuffer)
 
