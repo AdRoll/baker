@@ -99,18 +99,18 @@ shows how to correctly report metrics in a custom Filter.
 
 ### Report custom metrics
 
-In addition to the records counter described above, components can report custom metrics
+In addition to the record counters described above, components can report custom metrics
 giving a more specific view about the component health or performance.
-Baker supports two ways to expose custom metrics, namely:
+Baker supports two ways of exposing custom metrics:
 
-- return a 
+- returning a 
 [`baker.MetricsBag`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag)
-instance from the `Stats` method 
-- directly use the 
+instance from the `Stats` method.
+- directly using the 
 [`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient) in 
-the component code
+the component code.
 
-The two mechanisms follow the pull vs push approach, respectively.
+The two mechanisms follow the pull vs push approaches, respectively.
 
 The `MetricsBag` should be returned by the `Stats` method along with the default
 statistics and is collected once per second by Baker. 
@@ -129,23 +129,23 @@ namely:
 - `Duration` or `Timing`: like a histogram but with time durations
 
 If there is no particular requirement the `MetricsBag` approach is preferred. Indeed, 
-the pull approach of the `MetricsBag` is simpler and it better integrates with the 
+the `MetricsBag` pull approach is simpler and it better integrates with the 
 other default metric gathering. 
-In addition to that, the `MetricsClient` requires special attention to avoids too
-many calls to the client during the record processing.
+In addition to that, the `MetricsClient` requires special attention to avoid too
+many calls to the client during record processing.
 Indeed, the `MetricsClient` is a low-level and direct way to communicate with your 
 metrics system, thus it permits extra flexibility, but it skips the additional 
 aggregation/buffering layer of the `MetricsBag`.
 
 Moreover, the `MetricsClient` supports also the runtime tagging of the published metrics.
-Tags (or labels) are additional dimensions on metrics so they can be filtered, 
+Tags (or labels) are additional dimensions on metrics and allow them to be filtered, 
 aggregated, and compared in different visualizations.
-Therefore, if a component requires publishing its metrics with a set of specific tags, 
+Therefore, if tags are only known at runtime and you need to add dynamic tags to your metrics, 
 the `MetricsClient` should be used rather than `MetricsBag` (see the 
 [MetricsClient example](/docs/how-tos/metrics/#metricsclient-example)).
 
-In summary, the go-to way is to implements custom statistics with a `MetricsBag`, but 
-there are some situations in which it is preferable the `MetricsClient`, namely:
+In summary, the go-to way is to implement custom statistics with a `MetricsBag`, but 
+there are some situations where a `MetricsClient` is preferred, for example:
 - your component needs to publish the metrics using a set of tag that changes at runtime
 - you can't centralize metrics collection in the `Stats` method since the metrics 
 to expose are produced by different worker goroutines running inside your component 
@@ -161,26 +161,26 @@ our filter and call
 the returned `MetricsBag`.
 
 An important point is that Baker may call `Process` and `Stats` from different goroutines
-so access to the shared data must be properly synchronized (atomic, locks, channel, etc.)
+so access to the shared data must be properly synchronized (atomic, lock, channel, etc.)
 
 ```go
 func (f *MyFilter) Process(r Record, next func(Record)) {
     atomic.AddInt64(&myFilter.totalLines, 1)
 
-    /* perform http request */
+    // Perform http request
     f.mu.Lock() // keep track of its duration
     f.requestDurations = append(f.requestDurations, duration)
     f.mu.Unlock()
 
     if (/* filter logic*/) {
-        // discard line
+        // Discard record
         atomic.AddInt64(&f.filteredLines, 1)
         return
     }
 }
 
 func (f *MyFilter) Stats() baker.FilterStats {
-    // copy the slice of durations
+    // Copy the slice of durations
     f.mu.Lock()
     requestDurations := f.requestDurations[:]
     f.mu.Unlock()
@@ -199,16 +199,14 @@ func (f *MyFilter) Stats() baker.FilterStats {
 
 Once a 
 [`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient) 
-instance has been successfully created, it's made available to and used by a Baker 
+instance has been successfully created, it's made available to and can be used by a Baker 
 pipeline to report metrics. During construction, components receive the 
 [`MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient) instance.
 [`baker.MetricsClient`](https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient) 
-provides a set of methods to report the most common type of metric types (e.g. 
-*gauges*, *counters* and *histograms*)
+provides a set of methods to report the most common type of metric types (*gauges*,
+*counters* and *histograms*)
 
-Taking the previous example of the `MetricsBag`, we now consider the situation in 
-which the time duration that we want to collect needs to be repported along with specific 
-tags.
+Let's now consider we want to publish additional tags alongside the duration slice of our previous `MetricsBag` example.
 
 ```go
 func NewMyFilter(cfg baker.InputParams) (baker.Input, error) {
@@ -237,6 +235,9 @@ func (f *MyFilter) Stats() baker.FilterStats {
 }
 ```
 
-In the example, we prefered to use the `MetricsClient` in the `Stats` method to limit
-the number of calls to the client. Indeed, calling the `MetricsClient` methods inside 
-the `Process` method could introduce overheads and performance degradations.
+Here, we chose to use the `MetricsClient` in the `Stats` method to limit the number of
+calls to the client. Indeed, since `Stats` gets called once per second, the `MetricsClient` is 
+also called once per second. We could have directly called `DurationWithTags` from the 
+`Process` method but we would have probably - depending on the frequency of incoming 
+records - called it way more often, and this could have potentially introduce some performance 
+degradation. 
