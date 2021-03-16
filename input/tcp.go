@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"compress/gzip"
+	"fmt"
 	"io"
 	"net"
 	"sync"
@@ -100,6 +101,10 @@ func (s *TCP) Run(inch chan<- *baker.Data) error {
 		go func(conn *net.TCPConn) {
 			defer wg.Done()
 			s.handleStream(conn)
+			err := s.handleStream(conn)
+			if err != nil {
+				ctxLog.WithError(err).WithFields(log.Fields{"error": err}).Error("Error when handling stream")
+			}
 		}(conn)
 	}
 
@@ -133,15 +138,13 @@ func (s *TCP) Stop() {
 	atomic.StoreInt64(&s.stop, 1)
 }
 
-func (s *TCP) handleStream(conn *net.TCPConn) {
 	defer conn.Close()
-	ctxLog := log.WithFields(log.Fields{"f": "handleStream", "addr": conn.RemoteAddr()})
 
+func (s *TCP) handleStream(conn *net.TCPConn) error {
 	// r, err := newFastGzReader(conn)
 	r, err := gzip.NewReader(conn)
 	if err != nil {
-		ctxLog.WithError(err).Error("error initializing gzip")
-		return
+		return fmt.Errorf("error initializing gzip: %v", err)
 	}
 	// defer r.Close()
 
@@ -160,8 +163,7 @@ func (s *TCP) handleStream(conn *net.TCPConn) {
 		}
 
 		if err != nil {
-			ctxLog.WithError(err).Error("error reading stream")
-			return
+			return fmt.Errorf("error reading stream: %v", err)
 		}
 
 		// We need to send a batch of complete lines to the filter
@@ -175,8 +177,7 @@ func (s *TCP) handleStream(conn *net.TCPConn) {
 		if bakerData.Bytes[n-1] != '\n' {
 			endl, err := rbuf.ReadBytes('\n')
 			if err != nil {
-				ctxLog.WithError(err).Error("error searching newline")
-				return
+				return fmt.Errorf("error searching for new line char: %v", err)
 			}
 
 			// If there is no space in the buffer to complete the
@@ -202,4 +203,5 @@ func (s *TCP) handleStream(conn *net.TCPConn) {
 		bakerData.Bytes = bakerData.Bytes[:n]
 		s.send(bakerData)
 	}
+	return nil
 }
