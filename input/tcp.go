@@ -69,7 +69,6 @@ func NewTCP(cfg baker.InputParams) (baker.Input, error) {
 }
 
 func (s *TCP) Run(inch chan<- *baker.Data) error {
-	var wg sync.WaitGroup
 	s.setOutputChannel(inch)
 
 	ctxLog := log.WithFields(log.Fields{"f": "Run"})
@@ -86,6 +85,7 @@ func (s *TCP) Run(inch chan<- *baker.Data) error {
 	}
 	defer l.Close()
 
+	wg := sync.WaitGroup{}
 	for atomic.LoadInt64(&s.stop) == 0 {
 		l.SetDeadline(time.Now().Add(1 * time.Second))
 		conn, err := l.AcceptTCP()
@@ -97,6 +97,7 @@ func (s *TCP) Run(inch chan<- *baker.Data) error {
 		}
 
 		ctxLog.WithFields(log.Fields{"addr": conn.RemoteAddr()}).Info("Connected")
+
 		wg.Add(1)
 		go func(conn *net.TCPConn) {
 			defer func() {
@@ -104,8 +105,7 @@ func (s *TCP) Run(inch chan<- *baker.Data) error {
 				wg.Done()
 			}()
 
-			err := s.handleStream(conn)
-			if err != nil {
+			if err := s.handleStream(conn); err != nil {
 				ctxLog.WithError(err).WithFields(log.Fields{"error": err}).Error("Error when handling stream")
 			}
 		}(conn)
@@ -203,5 +203,6 @@ func (s *TCP) handleStream(conn *net.TCPConn) error {
 		bakerData.Bytes = bakerData.Bytes[:n]
 		s.send(bakerData)
 	}
+
 	return nil
 }
