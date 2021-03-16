@@ -4,9 +4,11 @@ import (
 	"bufio"
 	"bytes"
 	"compress/gzip"
+	"errors"
 	"fmt"
 	"io"
 	"net"
+	"os"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -90,7 +92,7 @@ func (s *TCP) Run(inch chan<- *baker.Data) error {
 		l.SetDeadline(time.Now().Add(1 * time.Second))
 		conn, err := l.AcceptTCP()
 		if err != nil {
-			if opErr, ok := err.(*net.OpError); ok && opErr.Timeout() {
+			if errors.Is(err, os.ErrDeadlineExceeded) {
 				continue
 			}
 			ctxLog.WithFields(log.Fields{"error": err}).Error("Error while accepting")
