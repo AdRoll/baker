@@ -140,7 +140,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.57fb8722108213a3d0b76380a0b49f516ed98e04f206d31fee88ae67deb1274d6d4045b5448d1a792108a70c46e48840c2e0ecb08d9638ee989c6fdac26f339a.json"
+  data-offline-search-index-json-src="/offline-search-index.4ba15d1ca4f121bb4eef2542567436a8dc00708859db8652234f4b6561ddb7b8904c3fd24f63d3b16512cab085550344de56f839bb40d4f3be6695b567dd4c4b.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -171,7 +171,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.57fb8722108213a3d0b76380a0b49f516ed98e04f206d31fee88ae67deb1274d6d4045b5448d1a792108a70c46e48840c2e0ecb08d9638ee989c6fdac26f339a.json"
+  data-offline-search-index-json-src="/offline-search-index.4ba15d1ca4f121bb4eef2542567436a8dc00708859db8652234f4b6561ddb7b8904c3fd24f63d3b16512cab085550344de56f839bb40d4f3be6695b567dd4c4b.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -770,8 +770,8 @@
 	
 	<h2 id="pipeline">Pipeline</h2>
 <p>A pipeline (a.k.a. Topology) is the configured set of operations that Baker performs during
-its execution.</p>
-<p>It is configured in a TOML file and is defined by:</p>
+its execution.
+It is configured in a TOML file and is defined by:</p>
 <ul>
 <li>One input component, determining where to fetch records from</li>
 <li>Zero or more filters, applied sequentially, which together compose the <strong>filter chain</strong>. A filter is
@@ -794,8 +794,8 @@ for incoming records from the input (e.g.: Kinesis), processes them and sends th
 <p>Baker processes &ldquo;records&rdquo;. A <code>Record</code> is an interface that provides an abstraction over a record
 of flattened data, where columns of fields are indexed through integers.</p>
 <p>Baker currently provides a single implementation of Record, called <code>LogLine</code> (
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine">API reference</a>).</p>
-<p>If <code>LogLine</code> doesn&rsquo;t fit your needs, you can <a href="/docs/how-tos/record_and_logline/">customize it</a>
+<a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine">API reference</a>).
+If <code>LogLine</code> doesn&rsquo;t fit your needs, you can <a href="/docs/how-tos/record_and_logline/">customize it</a>
 or <a href="/docs/how-tos/custom_record/">implement your version of the Record</a>.</p>
 <h2 id="components">Components</h2>
 <p>To process records, Baker uses up to 4 component types, each one with a different job:</p>
@@ -818,6 +818,11 @@ these files to a remote destination, such as Amazon S3 for example.</li>
 <li><a href="/docs/how-tos/create_output/">create an Output component</a></li>
 <li><a href="/docs/how-tos/create_upload/">create an Upload component</a></li>
 </ul>
+<p>In addition, Baker can validate records right after they&rsquo;re fetched by the input component. Records
+that don&rsquo;t pass validation are discarded before even entering the pipeline. You can configure Record
+validation in your topology TOML file
+(<a href="/docs/how-tos/pipeline_configuration/#validation-configuration">Pipeline configuration</a>)
+or via Go function when you compile Baker (<a href="/docs/how-tos/baker_components/#validate">baker.Components</a>).</p>
 <h2 id="metrics">Metrics</h2>
 <p>During execution, Baker collects different kind of performance data points:</p>
 <ul>
@@ -826,8 +831,8 @@ these files to a remote destination, such as Amazon S3 for example.</li>
 <li>Go runtime metrics: mallocs, frees, garbage collections and so on.</li>
 </ul>
 <p>If enabled, Baker collects all these metrics and publishes them to a monitoring solution, such as Datadog
-or Prometheus.</p>
-<p>Metrics export is configured in Baker topology TOML files, <a href="/docs/how-tos/metrics/">see how to configure it</a>.</p>
+or Prometheus.
+Metrics export is configured in Baker topology TOML files, <a href="/docs/how-tos/metrics/">see how to configure it</a>.</p>
 <p>Baker also prints general metrics once per second on standard output, in single-line format. Read more
 about it <a href="/docs/how-tos/read_stats/">here</a>.</p>
 <h2 id="sharding">Sharding</h2>
