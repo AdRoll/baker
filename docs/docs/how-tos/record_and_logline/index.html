@@ -147,7 +147,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.57fb8722108213a3d0b76380a0b49f516ed98e04f206d31fee88ae67deb1274d6d4045b5448d1a792108a70c46e48840c2e0ecb08d9638ee989c6fdac26f339a.json"
+  data-offline-search-index-json-src="/offline-search-index.4ba15d1ca4f121bb4eef2542567436a8dc00708859db8652234f4b6561ddb7b8904c3fd24f63d3b16512cab085550344de56f839bb40d4f3be6695b567dd4c4b.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -178,7 +178,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.57fb8722108213a3d0b76380a0b49f516ed98e04f206d31fee88ae67deb1274d6d4045b5448d1a792108a70c46e48840c2e0ecb08d9638ee989c6fdac26f339a.json"
+  data-offline-search-index-json-src="/offline-search-index.4ba15d1ca4f121bb4eef2542567436a8dc00708859db8652234f4b6561ddb7b8904c3fd24f63d3b16512cab085550344de56f839bb40d4f3be6695b567dd4c4b.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -779,18 +779,18 @@
 A <code>Record</code>, in Baker, is an interface that provides an abstraction over a record of
 structured data, where fields are indexed and accessed via integers.</p>
 <p>At the moment, Baker provides a single implementation of the Record interface,
-called <a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine"><code>LogLine</code></a>.</p>
-<p>If <code>LogLine</code> doesn&rsquo;t fit your needs, you can implement the
+called <a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine"><code>LogLine</code></a>.
+If <code>LogLine</code> doesn&rsquo;t fit your needs, you can implement the
 <a href="https://pkg.go.dev/github.com/AdRoll/baker#Record"><code>Record</code> interface</a> or
 modify <a href="#custom-logline"><code>LogLine</code></a>. See the <a href="/docs/how-tos/custom_record/">custom Record how-to</a>
 for more details about implementing the <code>Record</code> interface from scratch.</p>
 <h2 id="logline">LogLine</h2>
 <p>A <a href="https://pkg.go.dev/github.com/AdRoll/baker#LogLine"><code>LogLine</code></a> is an implementation
 of the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Record"><code>Record</code> interface</a>
-which is highly optimized for fast parsing and serializing of CSV records.</p>
-<p>It supports any single-byte field separator and doesn&rsquo;t handle quotes (neither single nor double).</p>
-<p>The maximum number of fields is hard-coded by the <code>LogLineNumFields</code> constant which is 3000.</p>
-<p>100 extra fields can be stored at runtime in a <code>LogLine</code> (also hardcoded with <code>NumFieldsBaker</code>),
+which is highly optimized for fast parsing and serializing of CSV records.
+It supports any single-byte field separator and doesn&rsquo;t handle quotes (neither single nor double).</p>
+<p>The maximum number of fields is hard-coded by the <code>LogLineNumFields</code> constant which is 3000.
+100 extra fields can be stored at runtime in a <code>LogLine</code> (also hardcoded with <code>NumFieldsBaker</code>),
 these extra fields are a fast way to exchange data between filters and/or outputs but they are
 neither handled during Parsing (i.e <code>LogLine.Parse</code>) nor serialization (<code>LogLine.ToText</code>).</p>
 <h3 id="custom-logline">Custom LogLine</h3>
@@ -799,8 +799,8 @@ neither handled during Parsing (i.e <code>LogLine.Parse</code>) nor serializatio
 do not suit your needs, you can copy <a href="https://github.com/AdRoll/baker/blob/main/logline.go"><code>logline.go</code></a>
 in your project and modify the constants declared at the top of the file.</p>
 <p>Your specialized <code>LogLine</code> will still implement <code>baker.Record</code> and thus can be used in lieu
-of <code>baker.LogLine</code>.</p>
-<p>The <code>CreateRecord</code> function set into
+of <code>baker.LogLine</code>.
+The <code>CreateRecord</code> function set into
 <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>baker.Components</code></a> must return an
 instance of your custom <code>LogLine</code> instead of the default one.</p>
 
