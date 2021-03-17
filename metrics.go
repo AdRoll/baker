@@ -38,7 +38,7 @@ func (bag MetricsBag) AddHistogram(name string, values []float64) {
 	bag["h:"+name] = values
 }
 
-// AddTimings adds a metric of type time to the bag and traks its value.
+// AddTimings adds a metric of type histogram to the bag and tracks its value.
 // Timing is basically a histogram but allows to sample values of type time.Duration.
 // A histogram samples observations and counts them in different 'buckets'.
 func (bag MetricsBag) AddTimings(name string, values []time.Duration) {
@@ -46,7 +46,7 @@ func (bag MetricsBag) AddTimings(name string, values []time.Duration) {
 }
 
 // Merge merges metrics with the same name and types from another MetricsBag into this bag.
-// Counters and Deltas are summed up, Gauge is averaged, and Histograms and Timings concatenate.
+// Counters are summed up, gauges are averaged, and histograms are concatenated.
 func (bag MetricsBag) Merge(other MetricsBag) {
 	for key, val := range other {
 		switch key[0] {
