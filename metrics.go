@@ -13,14 +13,14 @@ type MetricsBag map[string]interface{}
 
 // AddRawCounter adds a metric of type counter to the bag and sets its current value.
 // A counter is a cumulative metric that can only increase.
-// To be meaningful, `value` must be positive.
+// To be meaningful, value must be positive.
 func (bag MetricsBag) AddRawCounter(name string, value int64) {
 	bag["c:"+name] = value
 }
 
 // AddDeltaCounter adds a metric of type counter to the bag and increments its value.
 // A counter is a cumulative metric that can only increase.
-// To be meaningful, `delta` must be positive.
+// To be meaningful, delta must be positive.
 func (bag MetricsBag) AddDeltaCounter(name string, delta int64) {
 	bag["d:"+name] = delta
 }
