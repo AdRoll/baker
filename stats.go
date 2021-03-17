@@ -129,6 +129,7 @@ func (sd *StatsDumper) dumpNow() {
 
 	if invalid > 0 {
 		m := make(map[string]int64)
+		t.mu.Lock()
 		for f := range t.invalid {
 			if t.invalid[f] > 0 {
 				name := sd.t.fieldNames[f]
@@ -137,6 +138,7 @@ func (sd *StatsDumper) dumpNow() {
 				sd.metrics.RawCount("error_lines."+name, int64(value))
 			}
 		}
+		t.mu.Unlock()
 		fmt.Fprintf(sd.w, "--- Validation errors: %v\n", m)
 	}
 

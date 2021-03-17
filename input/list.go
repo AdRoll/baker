@@ -140,7 +140,7 @@ func (s *List) openFile(fn string, sizeOnly bool) (io.ReadCloser, int64, time.Ti
 			return resp.Body, *resp.ContentLength, *resp.LastModified, u, nil
 		}
 	case "http", "https":
-		resp, err := http.Get(fn)
+		resp, err := httpGet(fn)
 		if err != nil {
 			s.setFatalErr(err)
 			return nil, 0, time.Unix(0, 0), u, err
@@ -360,7 +360,7 @@ func (s *List) processList(fn string) error {
 		}
 
 	case "http", "https":
-		resp, err := http.Get(u.Path)
+		resp, err := httpGet(fn)
 		if err != nil {
 			return err
 		}
@@ -422,4 +422,16 @@ func (s *List) Stats() baker.InputStats {
 
 func (s *List) Stop() {
 	s.setFatalErr(errors.New("abort requested"))
+}
+
+func httpGet(url string) (*http.Response, error) {
+	res, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	if res.StatusCode != http.StatusOK {
+		res.Body.Close()
+		return nil, fmt.Errorf("error file %q return %d code", url, res.StatusCode)
+	}
+	return res, nil
 }

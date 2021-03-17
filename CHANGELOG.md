@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Dedup filter [#143](https://github.com/AdRoll/baker/pull/143)
 - Add MetadataUrl filter [#147](https://github.com/AdRoll/baker/pull/147)
 - Add FormatTime filter [#151](https://github.com/AdRoll/baker/pull/151)
+- Add ExpandList filter [#155](https://github.com/AdRoll/baker/pull/155)
 
 ### Changed
 
@@ -70,7 +71,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PrintHelper()` now supports map type as configuration parameter of a Baker component [#138](https://github.com/AdRoll/baker/pull/138)
 - `List` input did not consider drive letter on Windows paths [#139](https://github.com/AdRoll/baker/pull/139)
 - Do not insert newline after dots in generated help markdown [#140](https://github.com/AdRoll/baker/pull/140)
+- Fix data race in statsDumper [#154](https://github.com/AdRoll/baker/pull/154)
 - SetStringFromURL filter panics if MetadataURL was not set. [#156](https://github.com/AdRoll/baker/pull/156)
+- MetadataLastModified filter wrongly counts the number of processed records [#157](https://github.com/AdRoll/baker/pull/157)
+- `List` input did not correctly manage HTTP status codes [#163](https://github.com/AdRoll/baker/pull/163)
 
 ### Maintenance
 
