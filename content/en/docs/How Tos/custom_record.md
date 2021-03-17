@@ -8,60 +8,33 @@ description: >
 
 As you can read in the [Record and LogLine page](/docs/core-concepts/record_implementation/),
 Baker processes objects called **records**.
-
 A `Record`, in Baker, is an interface that provides an abstraction over a record of flattened data,
 where columns of fields are indexed through integers.
-
 If the Record implementations provided by Baker doesn't fit your needs, you can create your own
 version, implementing the [`Record` inteface](https://pkg.go.dev/github.com/AdRoll/baker#Record).
 
-## How to use a custom version of the Record
+## How to use your Record implementation
 
-Once your Record version is ready, you need to use it in your code.
-
-In order to do so, you must create and fill a [`baker.Components`](/docs/how-tos/baker_components/) struct.
+Once your Record implementation is ready, you want to let Baker know how to create new instances of it.
+To do so, you should create and fill a [`baker.Components`](/docs/how-tos/baker_components/) struct.
+The only required field to set is the `CreateRecord`, which returns a new instance of your custom record `struct`.
+(see more details at [CreateRecord](/docs/how-tos/baker_components/#createrecord)).
 
 ```go
-type Components struct {
-	Validate     ValidationFunc
-	CreateRecord func() Record
-	FieldByName  func(string) (FieldIndex, bool)
-	FieldNames   []string
+comp := baker.Components{
+	CreateRecord: func() baker.Record {
+		return &MyCustomRecord{}
+	},
 
-	// ... other fields
+	// ... other configuration
 }
 ```
 
-### Validate
-
-`Validate` is the function used to validate a record. It is called for each processed record
-unless not set or when the `[general] dont_validate_fields = true` configuration is set in
-the TOML file.
-
-Regardless of the TOML configuration, the function is passed to all components that can use
-it at their will.
-
-### `CreateRecord`
-
-`CreateRecord` is the function that creates a new record. If not set, a default function is
-used that creates a `LogLine` with `,` as field separator.
-
-The function is used internally by Baker to create new records every time a new one comes from
-the input.
-
-The function is also passed to components that can use it to create new records while processing.
-
-### `FieldByName`
-
-`FieldByName` gets a field index by its name. The function is mainly used by the components
-(that receive it during setup) to retrieve the index of a field they need for filtering or
-processing, but it is also used internally by Baker when sending fields to the output
-(when at least one field is selected in the output TOML configuration).
-
-### `FieldNames`
-
-`FieldNames []string` lists the names of the fields a `Record` can have. Since it's a slice, its
-length also indicates the maximum number of fields.
+The other configuration of the `baker.Components`, namely _Validation_, _FieldByName_, and _FieldNames_,
+could be configured also through the TOML configuration. Although, if your own record needs a more specific
+implementation you can implement them using compiled Go code, see [`FieldByName`](/docs/how-tos/baker_components/#fieldbyname), 
+[`FieldNames`](/docs/how-tos/baker_components/#fieldnames), [`Validation`](/docs/how-tos/baker_components/#validate) 
+documentation.
 
 ## Record conformance test
 
