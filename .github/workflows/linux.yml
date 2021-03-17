@@ -23,19 +23,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: gofmt
-        run: make gofmt
-
-      - name: govet
-        run: make govet
-
-      - name: go mod verify
-        run: go mod verify
-
-      - name: goimports
+      - name: Lint / Static checks
         run: |
-            go get golang.org/x/tools/cmd/goimports
-            test -z "$(goimports -d . | tee /dev/stderr)"
+          make gofmt
+          make govet
+          go mod verify
+          go install golang.org/x/tools/cmd/goimports
+          test -z "$(goimports -d . | tee /dev/stderr)"
 
       - name: Test
         run: make test
