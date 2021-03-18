@@ -55,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TimestampRange filter accepts 'now' as range [#106](https://github.com/AdRoll/baker/pull/106)
 - Standardize the components' structs names [#105](https://github.com/AdRoll/baker/pull/105)
 - **Breaking** Change func FieldName to FieldNames (slice) as it allows to know the number of defined fields [#110](https://github.com/AdRoll/baker/pull/110)
-- ExpandList filter just forwards if the input list is empty. 
+- ExpandList filter just forwards if the input list is empty [#171](https://github.com/AdRoll/baker/pull/171)
 
 ### Removed
 
