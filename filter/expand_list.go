@@ -119,6 +119,11 @@ func (f *ExpandList) Process(l baker.Record, next func(baker.Record)) {
 	atomic.AddInt64(&f.numProcessedLines, 1)
 
 	list := l.Get(f.source)
+	if len(list) == 0 {
+		next(l)
+		return
+	}
+
 	part := bytes.Split(list, f.sep)
 	for i, idx := range f.listIdx {
 		if idx >= len(part) {
