@@ -5,10 +5,10 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Go 1.15.x
+      - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.15.x
+          go-version: 1.16.x
         id: go
 
       - name: Check out code into the Go module directory
@@ -23,29 +23,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: gofmt
-        run: make gofmt
-
-      - name: govet
-        run: make govet
-
-      - name: go mod verify
-        run: go mod verify
-
-      - name: goimports
+      - name: Lint / Static checks
         run: |
-            go get golang.org/x/tools/cmd/goimports
-            test -z "$(goimports -d . | tee /dev/stderr)"
+          make gofmt
+          make govet
+          go mod verify
+          go install golang.org/x/tools/cmd/goimports
+          test -z "$(goimports -d . | tee /dev/stderr)"
 
       - name: Test
         run: make test
-
-      - name: Coverage
-        env:
-          CODECOV_TOKEN: 863a635e-5c68-4b66-9f81-b41cb835de2e
-        run: |
-            make -- --ci-test-cover
-            curl -s https://codecov.io/bash | bash
 
       - name: Compile tests/benchmarks
         run: make compile-tests

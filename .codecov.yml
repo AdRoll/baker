@@ -23,3 +23,7 @@ ignore:
   - "tutorials"
   - "examples"
   - "testutil"
+  - "input/inputtest"
+  - "filter/filtertest"
+  - "output/outputtest"
+  - "upload/uploadtest"
