@@ -8,8 +8,8 @@ import (
 
 func TestExpandList(t *testing.T) {
 	tests := []struct {
-		name string
-		list string
+		name   string
+		record string
 
 		field  map[string]string
 		source string // default: "source"
@@ -19,20 +19,21 @@ func TestExpandList(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "extract 2 value",
-			list: "value1;value2",
+			name:   "extract 2 values",
+			record: ",,value1;value2", // f1:"foo" f2:"bar" source:"value1;value2"
 			field: map[string]string{
 				"1": "f2",
 				"0": "f1",
 			},
 			want: map[string]string{
-				"f1": "value1",
-				"f2": "value2",
+				"f1":     "value1",
+				"f2":     "value2",
+				"source": "value1;value2",
 			},
 		},
 		{
-			name: "extract 1 value",
-			list: "value1;value2",
+			name:   "extract 1 value",
+			record: ",,value1;value2",
 			field: map[string]string{
 				"32": "f1",
 				"1":  "f2",
@@ -43,8 +44,8 @@ func TestExpandList(t *testing.T) {
 			},
 		},
 		{
-			name: "sorce empty",
-			list: "",
+			name:   "sorce empty",
+			record: ",,",
 			field: map[string]string{
 				"1": "f2",
 			},
@@ -54,8 +55,21 @@ func TestExpandList(t *testing.T) {
 			},
 		},
 		{
-			name: "out of range",
-			list: "value1;value2",
+			name:   "only source is empty",
+			record: "foo,bar,",
+			field: map[string]string{
+				"0": "f1",
+				"1": "f2",
+			},
+			want: map[string]string{
+				"f1":     "foo",
+				"f2":     "bar",
+				"source": "",
+			},
+		},
+		{
+			name:   "out of range",
+			record: ",,value1;value2",
 			field: map[string]string{
 				"93": "f2",
 			},
@@ -65,8 +79,8 @@ func TestExpandList(t *testing.T) {
 			},
 		},
 		{
-			name: "change separator",
-			list: "value2-value1",
+			name:   "change separator",
+			record: ",,value2-value1",
 			field: map[string]string{
 				"0": "f2",
 				"1": "f1",
@@ -80,12 +94,12 @@ func TestExpandList(t *testing.T) {
 
 		// errors
 		{
-			name:    "Source not exists",
+			name:    "source not exists",
 			source:  "not_exist",
 			wantErr: true,
 		},
 		{
-			name: "Field name not exists",
+			name: "field name not exists",
 			field: map[string]string{
 				"0": "not_exist",
 			},
@@ -156,11 +170,9 @@ func TestExpandList(t *testing.T) {
 			}
 
 			rec := &baker.LogLine{FieldSeparator: ','}
-			i, ok := fieldByName(tt.source)
-			if !ok {
-				t.Fatalf("uknown field %q", tt.source)
+			if err := rec.Parse([]byte(tt.record), nil); err != nil {
+				t.Fatalf("parse error %q: %v", tt.record, err)
 			}
-			rec.Set(i, []byte(tt.list))
 
 			filter.Process(rec, func(rec2 baker.Record) {
 				for k, v := range tt.want {
