@@ -120,6 +120,8 @@ func (f *ExpandList) Process(l baker.Record, next func(baker.Record)) {
 
 	list := l.Get(f.source)
 	if len(list) == 0 {
+		// skip the empty string because bytes.Split
+		// transforms it to a slice with an empty string
 		next(l)
 		return
 	}

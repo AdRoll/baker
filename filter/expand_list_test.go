@@ -9,7 +9,7 @@ import (
 func TestExpandList(t *testing.T) {
 	tests := []struct {
 		name   string
-		record string // default: ",,"
+		record string
 
 		field  map[string]string
 		source string // default: "source"
@@ -149,9 +149,6 @@ func TestExpandList(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.source == "" {
 				tt.source = "source"
-			}
-			if tt.record == "" {
-				tt.record = ",,"
 			}
 			cfg := baker.FilterParams{
 				ComponentParams: baker.ComponentParams{
