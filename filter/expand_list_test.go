@@ -19,7 +19,7 @@ func TestExpandList(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:   "extract 2 value",
+			name:   "extract 2 values",
 			record: ",,value1;value2", // f1:"foo" f2:"bar" source:"value1;value2"
 			field: map[string]string{
 				"1": "f2",
