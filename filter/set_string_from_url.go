@@ -32,8 +32,7 @@ type SetStringFromURLConfig struct {
 }
 
 type SetStringFromURL struct {
-	numProcessedLines int64
-	numFilteredLines  int64
+	numFilteredLines int64
 
 	field   baker.FieldIndex
 	strings [][]byte
@@ -57,14 +56,11 @@ func NewSetStringFromURL(cfg baker.FilterParams) (baker.Filter, error) {
 
 func (f *SetStringFromURL) Stats() baker.FilterStats {
 	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-		NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
+		NumFilteredLines: atomic.LoadInt64(&f.numFilteredLines),
 	}
 }
 
 func (f *SetStringFromURL) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.numProcessedLines, 1)
-
 	iurl, ok := l.Meta(inpututils.MetadataURL)
 	if !ok {
 		log.Infof("record metadata has no 'url' key")

@@ -3,7 +3,6 @@ package filter
 import (
 	"fmt"
 	"sort"
-	"sync/atomic"
 
 	"github.com/AdRoll/baker"
 )
@@ -23,7 +22,6 @@ type ClearFieldsConfig struct {
 
 // ClearFields filter clears (i.e set to the empty string) a set of fields.
 type ClearFields struct {
-	nlines int64
 	fields []baker.FieldIndex
 }
 
@@ -46,15 +44,11 @@ func NewClearFields(cfg baker.FilterParams) (baker.Filter, error) {
 
 // Stats returns filter statistics.
 func (f *ClearFields) Stats() baker.FilterStats {
-	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.nlines),
-		NumFilteredLines:  atomic.LoadInt64(&f.nlines),
-	}
+	return baker.FilterStats{}
 }
 
 // Process is where the actual filtering takes place.
 func (f *ClearFields) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.nlines, 1)
 	for _, fidx := range f.fields {
 		l.Set(fidx, nil)
 	}

@@ -3,7 +3,6 @@ package filter
 import (
 	"fmt"
 	"strconv"
-	"sync/atomic"
 	"time"
 
 	"github.com/AdRoll/baker"
@@ -81,9 +80,6 @@ type FormatTime struct {
 	dst    baker.FieldIndex
 	parse  func(t []byte) (time.Time, error)
 	format func(t time.Time) []byte
-
-	// Shared state
-	numProcessedLines int64
 }
 
 func NewFormatTime(cfg baker.FilterParams) (baker.Filter, error) {
@@ -111,14 +107,10 @@ func NewFormatTime(cfg baker.FilterParams) (baker.Filter, error) {
 }
 
 func (f *FormatTime) Stats() baker.FilterStats {
-	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-	}
+	return baker.FilterStats{}
 }
 
 func (f *FormatTime) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.numProcessedLines, 1)
-
 	t, err := f.parse(l.Get(f.src))
 	if err != nil {
 		log.Errorf("can't parse time: %v", err)

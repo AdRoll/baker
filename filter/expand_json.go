@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"sync/atomic"
 
 	"github.com/AdRoll/baker"
 	"github.com/jmespath/go-jmespath"
@@ -59,8 +58,6 @@ type ExpandJSON struct {
 	jexp            []*jmespath.JMESPath
 	source          baker.FieldIndex
 	trueFalseValues [2][]byte
-
-	numProcessedLines int64
 }
 
 func NewExpandJSON(cfg baker.FilterParams) (baker.Filter, error) {
@@ -100,9 +97,7 @@ func NewExpandJSON(cfg baker.FilterParams) (baker.Filter, error) {
 }
 
 func (f *ExpandJSON) Stats() baker.FilterStats {
-	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-	}
+	return baker.FilterStats{}
 }
 
 func (f *ExpandJSON) Process(l baker.Record, next func(baker.Record)) {
@@ -116,7 +111,6 @@ func (f *ExpandJSON) Process(l baker.Record, next func(baker.Record)) {
 		l.Set(f.fields[i], f.postProcessJSON(r))
 	}
 
-	atomic.AddInt64(&f.numProcessedLines, 1)
 	next(l)
 }
 

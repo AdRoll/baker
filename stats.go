@@ -26,15 +26,10 @@ type StatsDumper struct {
 }
 
 // NewStatsDumper creates and initializes a StatsDumper using the given
-// topology and writing stats on standard output. If also exports metrics
+// topology and writing stats on standard output. It also exports metrics
 // via the Metrics interface configured with the Topology, if any.
 func NewStatsDumper(t *Topology) (sd *StatsDumper) {
-	mc := t.metrics
-	if t.metrics == nil {
-		mc = NopMetrics{}
-	}
-
-	return &StatsDumper{t: t, w: os.Stdout, metrics: mc}
+	return &StatsDumper{t: t, w: os.Stdout, metrics: t.Metrics}
 }
 
 // SetWriter sets the writer into which stats are written.
@@ -50,12 +45,6 @@ func (sd *StatsDumper) dumpNow() {
 	if nsec == 0 {
 		return
 	}
-
-	var curwlines int64
-	for _, o := range t.Output {
-		curwlines += o.Stats().NumProcessedLines
-	}
-	sd.metrics.RawCount("processed_lines", curwlines)
 
 	istats := t.Input.Stats()
 	currlines := istats.NumProcessedLines
@@ -76,12 +65,14 @@ func (sd *StatsDumper) dumpNow() {
 		allMetrics.Merge(stats.Metrics)
 	}
 
-	outErrors := int64(0)
+	var curwlines, outErrors int64
 	for _, o := range t.Output {
 		stats := o.Stats()
 		outErrors += stats.NumErrorLines
+		curwlines += stats.NumProcessedLines
 		allMetrics.Merge(stats.Metrics)
 	}
+	sd.metrics.RawCount("processed_lines", curwlines)
 
 	var numUploadErrors, numUploads int64
 	if t.Upload != nil {
@@ -110,6 +101,14 @@ func (sd *StatsDumper) dumpNow() {
 			sd.metrics.DeltaCount(k[2:], v.(int64))
 		case 'g':
 			sd.metrics.Gauge(k[2:], v.(float64))
+		case 'h':
+			for _, v := range v.([]float64) {
+				sd.metrics.Histogram(k[2:], v)
+			}
+		case 't':
+			for _, v := range v.([]time.Duration) {
+				sd.metrics.Duration(k[2:], v)
+			}
 		}
 	}
 

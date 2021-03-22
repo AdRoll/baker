@@ -22,10 +22,9 @@ type NotNullConfig struct {
 
 // NotNull is a baker filter that discards records having null fields.
 type NotNull struct {
-	numProcessedLines int64
-	numFilteredLines  int64
-	cfg               *NotNullConfig
-	fields            []baker.FieldIndex
+	numFilteredLines int64
+	cfg              *NotNullConfig
+	fields           []baker.FieldIndex
 }
 
 // NewNotNull creates and configures a new NotNull filter.
@@ -46,14 +45,12 @@ func NewNotNull(cfg baker.FilterParams) (baker.Filter, error) {
 // Stats implements baker.Filter.
 func (v *NotNull) Stats() baker.FilterStats {
 	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&v.numProcessedLines),
-		NumFilteredLines:  atomic.LoadInt64(&v.numFilteredLines),
+		NumFilteredLines: atomic.LoadInt64(&v.numFilteredLines),
 	}
 }
 
 // Process implements baker.Filter.
 func (v *NotNull) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&v.numProcessedLines, 1)
 	for _, field := range v.fields {
 		if l.Get(field) == nil {
 			atomic.AddInt64(&v.numFilteredLines, 1)

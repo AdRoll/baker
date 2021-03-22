@@ -3,7 +3,6 @@ package filter
 import (
 	"fmt"
 	"strconv"
-	"sync/atomic"
 	"time"
 
 	"github.com/AdRoll/baker"
@@ -25,8 +24,7 @@ type TimestampConfig struct {
 // Timestamp is a baker filter that sets the value of a certain field to the
 // Unix Epoch timestamp (in seconds, UTC) for all the records it processes.
 type Timestamp struct {
-	nlines int64
-	fidx   baker.FieldIndex
+	fidx baker.FieldIndex
 }
 
 // NewTimestamp creates and configures a Timestamp filter.
@@ -43,17 +41,12 @@ func NewTimestamp(cfg baker.FilterParams) (baker.Filter, error) {
 
 // Stats implements baker.Filter.
 func (f *Timestamp) Stats() baker.FilterStats {
-	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.nlines),
-	}
+	return baker.FilterStats{}
 }
 
 // Process implements baker.Filter.
 func (f *Timestamp) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.nlines, 1)
-
 	now := strconv.AppendInt(nil, time.Now().Unix(), 10)
 	l.Set(f.fidx, now)
-
 	next(l)
 }

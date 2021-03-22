@@ -82,12 +82,11 @@ type ClauseFilterConfig struct {
 }
 
 type ClauseFilter struct {
-	cfg               *ClauseFilterConfig
-	topClause         Clause
-	numProcessedLines int64
-	numFilteredLines  int64
-	fieldByName       func(string) (baker.FieldIndex, bool)
-	aaa               baker.FilterParams
+	cfg              *ClauseFilterConfig
+	topClause        Clause
+	numFilteredLines int64
+	fieldByName      func(string) (baker.FieldIndex, bool)
+	aaa              baker.FilterParams
 }
 
 type clauseType int
@@ -128,7 +127,6 @@ type Clause struct {
 }
 
 func (f *ClauseFilter) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.numProcessedLines, 1)
 	if f.matchClause(l, &f.topClause) {
 		next(l)
 	} else {
@@ -138,8 +136,7 @@ func (f *ClauseFilter) Process(l baker.Record, next func(baker.Record)) {
 
 func (f *ClauseFilter) Stats() baker.FilterStats {
 	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-		NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
+		NumFilteredLines: atomic.LoadInt64(&f.numFilteredLines),
 	}
 }
 
