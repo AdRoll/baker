@@ -37,6 +37,7 @@ type InputParams struct {
 // FilterParams holds the parameters passed to Filter constructor.
 type FilterParams struct {
 	ComponentParams
+	DropOnError bool
 }
 
 // OutputParams holds the parameters passed to Output constructor.

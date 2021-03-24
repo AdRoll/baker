@@ -54,7 +54,10 @@ type ConfigFilterChain struct {
 
 // ConfigFilter specifies the configuration for a single filter component.
 type ConfigFilter struct {
-	Name          string
+	Name        string
+	DropOnError bool // Drop the record if an error happens
+	// NextOnError bool // Call next() when an error happens
+	// <Action>OnError bool // More actions could be added
 	DecodedConfig interface{}
 
 	Config *toml.Primitive

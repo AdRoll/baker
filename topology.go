@@ -96,7 +96,8 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	// * Create filters
 	for idx := range cfg.Filter {
 		filCfg := FilterParams{
-			ComponentParams{
+			DropOnError: cfg.Filter[idx].DropOnError,
+			ComponentParams: ComponentParams{
 				DecodedConfig:  cfg.Filter[idx].DecodedConfig,
 				FieldByName:    cfg.fieldByName,
 				FieldNames:     cfg.fieldNames,
