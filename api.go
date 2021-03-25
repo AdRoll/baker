@@ -100,6 +100,13 @@ type Filter interface {
 	Stats() FilterStats
 }
 
+type Modifier interface {
+	Process(l Record)
+
+	// Stats returns stats about the filter
+	Stats() FilterStats
+}
+
 // Output is the final end of a topology, it process the records that have
 // reached the end of the filter chain and performs the final action (storing,
 // sending through the wire, counting, etc.)
