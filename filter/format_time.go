@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/AdRoll/baker"
-	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -53,7 +52,7 @@ Supported time format are:
 	unixns      = "unixns"
 )
 
-var FormatTimeDesc = baker.FilterDesc{
+var FormatTimeDesc = baker.ModifierDesc{
 	Name:   "FormatTime",
 	New:    NewFormatTime,
 	Config: &FormatTimeConfig{},
@@ -86,7 +85,7 @@ type FormatTime struct {
 	numProcessedLines int64
 }
 
-func NewFormatTime(cfg baker.FilterParams) (baker.Filter, error) {
+func NewFormatTime(cfg baker.FilterParams) (baker.Modifier, error) {
 	dcfg := cfg.DecodedConfig.(*FormatTimeConfig)
 	dcfg.fillDefaults()
 
@@ -116,18 +115,16 @@ func (f *FormatTime) Stats() baker.FilterStats {
 	}
 }
 
-func (f *FormatTime) Process(l baker.Record, next func(baker.Record)) {
+func (f *FormatTime) Process(l baker.Record) {
 	atomic.AddInt64(&f.numProcessedLines, 1)
 
 	t, err := f.parse(l.Get(f.src))
 	if err != nil {
-		log.Errorf("can't parse time: %v", err)
-		l.Set(f.dst, nil)
-	} else {
-		l.Set(f.dst, f.format(t))
+		l.SetErr(fmt.Errorf("can't parse time: %q", err))
+		return
 	}
 
-	next(l)
+	l.Set(f.dst, f.format(t))
 }
 
 func formatToLayout(format string) string {
