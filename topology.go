@@ -15,7 +15,7 @@ import (
 // how to process them (filter), and where to output the results (output+upload)
 type Topology struct {
 	Input   Input
-	Filters []Filter
+	Filters []interface{}
 	Output  []Output
 	Upload  Upload
 
@@ -45,6 +45,8 @@ type Topology struct {
 
 	validate   ValidationFunc
 	fieldNames []string // Used by StatsDumper
+
+	cfg *Config
 }
 
 // NewTopologyFromConfig gets a baker configuration and returns a Topology
@@ -62,6 +64,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 			},
 		},
 		invalid: make(map[FieldIndex]int64),
+		cfg:     cfg,
 	}
 
 	// Create the metrics client first since it's injected into components parameters.
@@ -105,7 +108,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 				Metrics:        tp.metrics,
 			},
 		}
-		fil, err := cfg.Filter[idx].desc.New(filCfg)
+		fil, err := cfg.Filter[idx].newFilter(filCfg)
 		if err != nil {
 			return nil, fmt.Errorf("error creating filter: %v", err)
 		}
@@ -199,9 +202,89 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	next := tp.filterChainEnd
 	for i := len(tp.Filters) - 1; i >= 0; i-- {
 		nf := next
-		f := tp.Filters[i]
-		next = func(l Record) {
-			f.Process(l, nf)
+		iface := tp.Filters[i]
+
+		dropOnError := tp.cfg.Filter[i].DropOnError
+		logErrors := tp.cfg.Filter[i].LogErrors
+		fname := tp.cfg.Filter[i].Name
+
+		switch f := iface.(type) {
+
+		/* Generic filter */
+		case Filter:
+			if dropOnError {
+				next = func(r1 Record) {
+					// Reset previous error.
+					r1.SetErr(nil)
+
+					// Call current filter.
+					// r1 -> filter -> r2
+					// r2 = filter(r1)
+					f.Process(r1, func(r2 Record) {
+						if r2.Err() != nil {
+							if logErrors {
+								log.WithError(r2.Err()).WithField("filter", fname).Error("dropping record")
+							}
+							return // drop
+						}
+
+						nf(r2)
+					})
+				}
+			} else {
+				next = func(r1 Record) {
+					// Reset previous error.
+					r1.SetErr(nil)
+
+					// Call current filter.
+					f.Process(r1, func(r2 Record) {
+						if logErrors && r2.Err() != nil {
+							log.WithError(r2.Err()).WithField("filter", fname).Error("error in record")
+						}
+
+						// Forward the record to the next filter in the chain.
+						nf(r2)
+					})
+				}
+			}
+
+		/* Modifier */
+		case Modifier:
+			if dropOnError {
+				next = func(r Record) {
+					// Reset previous error.
+					r.SetErr(nil)
+
+					// Call current modifier.
+					f.Process(r)
+
+					if r.Err() != nil {
+						if logErrors {
+							log.WithError(r.Err()).WithField("filter", fname).Error("dropping record")
+						}
+						return // drop
+					}
+
+					// Forward the record to the next filter in the chain.
+					nf(r)
+				}
+			} else {
+				next = func(r Record) {
+					// Reset previous error.
+					r.SetErr(nil)
+
+					f.Process(r)
+
+					if logErrors && r.Err() != nil {
+						log.WithError(r.Err()).WithField("filter", fname).Error("error in record")
+					}
+
+					// Forward the record to the next filter in the chain.
+					nf(r)
+				}
+			}
+		default:
+			panic(fmt.Sprintf("unsupported type %v", f))
 		}
 	}
 	tp.chain = func(l Record) {

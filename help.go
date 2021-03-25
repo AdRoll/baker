@@ -67,10 +67,11 @@ func PrintHelp(w io.Writer, name string, comp Components, format HelpFormat) err
 		}
 	}
 
-	for _, fil := range comp.Filters {
-		if strings.EqualFold(fil.Name, name) || dumpall {
+	for i, fil := range comp.Filters {
+		fname := comp.filterName(i)
+		if strings.EqualFold(fname, name) || dumpall {
 			if err := generateHelp(w, fil); err != nil {
-				return fmt.Errorf("can't print help for %q filter: %v", fil.Name, err)
+				return fmt.Errorf("can't print help for %q filter: %v", fname, err)
 			}
 			if !dumpall {
 				return nil

@@ -11,6 +11,7 @@ import (
 	"unicode"
 
 	"github.com/rasky/toml"
+	log "github.com/sirupsen/logrus"
 )
 
 // The configuration for the topology is parsed from TOML format.
@@ -57,8 +58,37 @@ type ConfigFilter struct {
 	Name          string
 	DecodedConfig interface{}
 
+	DropOnError bool
+	LogErrors   bool
+
 	Config *toml.Primitive
-	desc   *FilterDesc
+	desc   interface{} // FilterDesc, ModifierDesc, etc.
+}
+
+func (cf *ConfigFilter) configFromDesc() interface{} {
+	switch d := cf.desc.(type) {
+	case *FilterDesc:
+		return d.Config
+	case *ModifierDesc:
+		return d.Config
+	default:
+		break
+	}
+
+	panic(fmt.Sprintf("unsupported type %v", cf.desc))
+}
+
+func (cf *ConfigFilter) newFilter(fp FilterParams) (interface{}, error) {
+	switch d := cf.desc.(type) {
+	case *FilterDesc:
+		return d.New(fp)
+	case *ModifierDesc:
+		return d.New(fp)
+	default:
+		break
+	}
+
+	panic(fmt.Sprintf("unsupported type %v", cf.desc))
 }
 
 // ConfigOutput specifies the configuration for the output component.
@@ -309,10 +339,20 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 
 	for idx := range cfg.Filter {
 		cfgfil := &cfg.Filter[idx]
-		for _, fil := range comp.Filters {
-			if strings.EqualFold(fil.Name, cfgfil.Name) {
-				cfgfil.desc = &fil
-				break
+		for _, ifil := range comp.Filters {
+			switch fil := ifil.(type) {
+			case ModifierDesc:
+				if strings.EqualFold(fil.Name, cfgfil.Name) {
+					cfgfil.desc = &fil
+					break
+				}
+			case FilterDesc:
+				if strings.EqualFold(fil.Name, cfgfil.Name) {
+					cfgfil.desc = &fil
+					break
+				}
+			default:
+				log.Fatalf("unknown filter type: %T", fil)
 			}
 		}
 		if cfgfil.desc == nil {
@@ -358,7 +398,7 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 
 	for idx := range cfg.Filter {
 		// Clone the configuration object to allow the use of multiple instances of the same filter
-		cfg.Filter[idx].DecodedConfig = cloneConfig(cfg.Filter[idx].desc.Config)
+		cfg.Filter[idx].DecodedConfig = cloneConfig(cfg.Filter[idx].configFromDesc())
 		if err := decodeAndCheckConfig(md, cfg.Filter[idx]); err != nil {
 			return nil, err
 		}

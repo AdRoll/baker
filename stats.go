@@ -67,11 +67,20 @@ func (sd *StatsDumper) dumpNow() {
 
 	var filtered int64
 	filteredMap := make(map[string]int64)
-	for _, f := range t.Filters {
-		stats := f.Stats()
+	for _, iface := range t.Filters {
+
+		var stats FilterStats
+
+		switch f := iface.(type) {
+		case Filter:
+			stats = f.Stats()
+		case Modifier:
+			stats = f.Stats()
+		}
+
 		if stats.NumFilteredLines > 0 {
 			filtered += stats.NumFilteredLines
-			filteredMap[fmt.Sprintf("%T", f)] += filtered
+			filteredMap[fmt.Sprintf("%T", iface)] += filtered
 		}
 		allMetrics.Merge(stats.Metrics)
 	}

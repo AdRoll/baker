@@ -1,12 +1,14 @@
 package baker
 
+import "fmt"
+
 // Components holds the descriptions of all components one can use
 // to build a topology.
 type Components struct {
-	Inputs  []InputDesc  // Inputs represents the list of available inputs
-	Filters []FilterDesc // Filters represents the list of available filters
-	Outputs []OutputDesc // Outputs represents the list of available outputs
-	Uploads []UploadDesc // Uploads represents the list of available uploads
+	Inputs  []InputDesc   // Inputs represents the list of available inputs
+	Filters []interface{} // Filters represents the list of available filters
+	Outputs []OutputDesc  // Outputs represents the list of available outputs
+	Uploads []UploadDesc  // Uploads represents the list of available uploads
 
 	Metrics []MetricsDesc // Metrics represents the list of available metrics clients
 	User    []UserDesc    // User represents the list of user-defined configurations
@@ -17,6 +19,20 @@ type Components struct {
 
 	FieldByName func(string) (FieldIndex, bool) // FieldByName gets a field index by its name
 	FieldNames  []string                        // FieldNames holds field names, indexed by their FieldIndex
+}
+
+func (c *Components) filterName(idx int) string {
+	iface := c.Filters[idx]
+	switch f := iface.(type) {
+	case FilterDesc:
+		return f.Name
+	case ModifierDesc:
+		return f.Name
+	default:
+		break
+	}
+
+	panic(fmt.Sprintf("unsupported type for filter[%v]: %v", idx, iface))
 }
 
 // ComponentParams holds the common configuration parameters passed to components of all kinds.
@@ -78,6 +94,13 @@ type FilterDesc struct {
 	New    func(FilterParams) (Filter, error) // New is the constructor-like function called by the topology to create a new filter
 	Config interface{}                        // Config is the component configuration
 	Help   string                             // Help string
+}
+
+type ModifierDesc struct {
+	Name   string                               // Name of the filter
+	New    func(FilterParams) (Modifier, error) // New is the constructor-like function called by the topology to create a new filter
+	Config interface{}                          // Config is the component configuration
+	Help   string                               // Help string
 }
 
 // OutputDesc describes an Output component to the topology.
