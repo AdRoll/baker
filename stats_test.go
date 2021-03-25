@@ -214,8 +214,8 @@ func TestStatsDumper(t *testing.T) {
 	}
 	testutil.DiffWithGolden(t, buf.Bytes(), golden)
 
-	// check published metrics. The MockMetrics should contain two times the
-	// same metrics 1 collected after 1 second and the other after stop
+	// Check published metrics. MockMetrics should contain each metric twice, the first
+	// collected after 1 second and the other after stop.
 	for k, want := range wantMetrics {
 		mc := tp.Metrics.(mockMetrics)
 		get, ok := mc[k]
@@ -354,7 +354,7 @@ name="MockMetrics"
 	if !strings.Contains(out[0], wantS) {
 		t.Errorf("StatsDumper stats line doesn't contain %q\nline:\n\t%q", out[0], wantS)
 	}
-	// The validation errors line should shown 2 errors for each field
+	// The validation errors line should show 2 errors for each field
 	wantS = `map[field0:2 field1:2]`
 	if !strings.Contains(out[1], wantS) {
 		t.Errorf("StatsDumper validation error line doesn't contain %q\nline:\n\t%q", out[1], wantS)

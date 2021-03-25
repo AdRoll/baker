@@ -26,9 +26,10 @@ type Topology struct {
 	rawOutput bool
 	upch      chan string
 
-	malformed int64                // count parse or empty records
-	mu        sync.RWMutex         // protects invalid map
-	invalid   map[FieldIndex]int64 // tracks validation errors (by field)
+	malformed int64 // count parsing errors and empty records
+
+	mu      sync.RWMutex         // protects invalid map
+	invalid map[FieldIndex]int64 // tracks validation errors (by field)
 
 	shard func(l Record) uint64
 	chain func(l Record)
