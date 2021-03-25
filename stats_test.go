@@ -202,11 +202,11 @@ func TestStatsDumper(t *testing.T) {
 	sd.SetWriter(buf)
 
 	stop := sd.Run()
-	// StatsDumper does not print anything the first second
+	// StatsDumper does not print anything the first second.
 	time.Sleep(1050 * time.Millisecond)
 	stop()
 
-	// check std output
+	// Check std output.
 	golden := filepath.Join("testdata", t.Name()+".golden")
 	if *testutil.UpdateGolden {
 		ioutil.WriteFile(golden, buf.Bytes(), os.ModePerm)
@@ -349,18 +349,18 @@ name="MockMetrics"
 	out := strings.Split(strings.TrimSpace(buf.String()), "\n")
 	// Only take the last 2 lines (the final ones).
 	out = out[len(out)-2:]
-	// The Stats line should contain the following string, indicating 6 validation errors
+	// The Stats line should contain the following string, indicating 6 validation errors.
 	wantS := `errors[p:0 i:4 f:0 o:0 u:0]`
 	if !strings.Contains(out[0], wantS) {
 		t.Errorf("StatsDumper stats line doesn't contain %q\nline:\n\t%q", out[0], wantS)
 	}
-	// The validation errors line should show 2 errors for each field
+	// The validation errors line should show 2 errors for each field.
 	wantS = `map[field0:2 field1:2]`
 	if !strings.Contains(out[1], wantS) {
 		t.Errorf("StatsDumper validation error line doesn't contain %q\nline:\n\t%q", out[1], wantS)
 	}
 
-	// check published metrics
+	// Check published metrics.
 	mc := topo.Metrics.(mockMetrics)
 	wantN := int64(4)
 	v, ok := mc["c:error_lines"]
