@@ -65,11 +65,16 @@ type LogLine struct {
 	wdata [256][]byte
 	wcnt  uint8
 
+	err error
+
 	cache Cache
 
 	// FieldSeparator is the byte used to separate fields value.
 	FieldSeparator byte
 }
+
+func (l *LogLine) SetErr(err error) { l.err = err }
+func (l *LogLine) Err() error       { return l.err }
 
 // Get the value of a field (either standard or custom)
 func (l *LogLine) Get(f FieldIndex) []byte {

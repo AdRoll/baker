@@ -69,6 +69,9 @@ type Record interface {
 	//  // do something with the result
 	//  result := val.(string)
 	Cache() *Cache
+
+	SetErr(err error)
+	Err() error
 }
 
 // Cache is a per-record cache.
