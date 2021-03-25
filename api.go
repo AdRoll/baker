@@ -36,6 +36,11 @@ type FilterStats struct {
 	Metrics           MetricsBag
 }
 
+// ModifierStats...
+type ModifierStats struct {
+	Metrics MetricsBag
+}
+
 // OutputStats contains statistics about the output component,
 // ready for export to the metric client and to print debug info
 type OutputStats struct {
@@ -104,7 +109,7 @@ type Modifier interface {
 	Process(l Record)
 
 	// Stats returns stats about the filter
-	Stats() FilterStats
+	Stats() ModifierStats
 }
 
 // Output is the final end of a topology, it process the records that have

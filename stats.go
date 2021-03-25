@@ -69,20 +69,21 @@ func (sd *StatsDumper) dumpNow() {
 	filteredMap := make(map[string]int64)
 	for _, iface := range t.Filters {
 
-		var stats FilterStats
+		var mbag MetricsBag
 
 		switch f := iface.(type) {
 		case Filter:
-			stats = f.Stats()
+			stats := f.Stats()
+			if stats.NumFilteredLines > 0 {
+				filtered += stats.NumFilteredLines
+				filteredMap[fmt.Sprintf("%T", iface)] += filtered
+			}
+			mbag = stats.Metrics
 		case Modifier:
-			stats = f.Stats()
+			mbag = f.Stats().Metrics
 		}
 
-		if stats.NumFilteredLines > 0 {
-			filtered += stats.NumFilteredLines
-			filteredMap[fmt.Sprintf("%T", iface)] += filtered
-		}
-		allMetrics.Merge(stats.Metrics)
+		allMetrics.Merge(mbag)
 	}
 
 	outErrors := int64(0)
