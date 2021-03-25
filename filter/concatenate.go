@@ -3,7 +3,6 @@ package filter
 import (
 	"errors"
 	"fmt"
-	"sync/atomic"
 	"unicode"
 
 	"github.com/AdRoll/baker"
@@ -24,11 +23,9 @@ type ConcatenateConfig struct {
 }
 
 type Concatenate struct {
-	numProcessedLines int64
-	numFilteredLines  int64
-	fields            []baker.FieldIndex
-	target            baker.FieldIndex
-	separator         []byte
+	fields    []baker.FieldIndex
+	target    baker.FieldIndex
+	separator []byte
 }
 
 func NewConcatenate(cfg baker.FilterParams) (baker.Filter, error) {
@@ -66,15 +63,10 @@ func NewConcatenate(cfg baker.FilterParams) (baker.Filter, error) {
 }
 
 func (c *Concatenate) Stats() baker.FilterStats {
-	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&c.numProcessedLines),
-		NumFilteredLines:  atomic.LoadInt64(&c.numFilteredLines),
-	}
+	return baker.FilterStats{}
 }
 
 func (c *Concatenate) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&c.numProcessedLines, 1)
-
 	key := make([]byte, 0, 512)
 	flen := len(c.fields) - 1
 	for i, f := range c.fields {

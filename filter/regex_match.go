@@ -24,7 +24,6 @@ type RegexMatchConfig struct {
 
 // RegexMatch filter clears (i.e set to the empty string) a set of fields.
 type RegexMatch struct {
-	processed int64
 	discarded int64
 
 	fields []baker.FieldIndex
@@ -62,8 +61,7 @@ func NewRegexMatch(cfg baker.FilterParams) (baker.Filter, error) {
 // Stats returns filter statistics.
 func (f *RegexMatch) Stats() baker.FilterStats {
 	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.processed),
-		NumFilteredLines:  atomic.LoadInt64(&f.discarded),
+		NumFilteredLines: atomic.LoadInt64(&f.discarded),
 	}
 }
 
@@ -79,8 +77,6 @@ func (f *RegexMatch) match(l baker.Record) bool {
 
 // Process is where the actual filtering takes place.
 func (f *RegexMatch) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.processed, 1)
-
 	if !f.match(l) {
 		atomic.AddInt64(&f.discarded, 1)
 		return

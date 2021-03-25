@@ -45,9 +45,8 @@ type Dedup struct {
 	sep    []byte
 
 	// Shared state
-	dedupSet          sync.Map // type: map[string]struct{}
-	numProcessedLines int64
-	numFilteredLines  int64
+	dedupSet         sync.Map // type: map[string]struct{}
+	numFilteredLines int64
 }
 
 func NewDedup(cfg baker.FilterParams) (baker.Filter, error) {
@@ -75,14 +74,11 @@ func NewDedup(cfg baker.FilterParams) (baker.Filter, error) {
 
 func (f *Dedup) Stats() baker.FilterStats {
 	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-		NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
+		NumFilteredLines: atomic.LoadInt64(&f.numFilteredLines),
 	}
 }
 
 func (f *Dedup) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.numProcessedLines, 1)
-
 	key := f.constructKey(l)
 	if _, found := f.dedupSet.LoadOrStore(key, struct{}{}); found {
 		atomic.AddInt64(&f.numFilteredLines, 1)

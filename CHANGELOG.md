@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--
+- Remove `NumProcessedLines` metric from FilterStats [#173](https://github.com/AdRoll/baker/pull/173)
 
 ### Deprecated
 
@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--
+- Do not call Output.Stats() twice in `StatsDumper` [#173](https://github.com/AdRoll/baker/pull/173)
 
 ### Security
 

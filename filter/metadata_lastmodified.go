@@ -3,7 +3,6 @@ package filter
 import (
 	"fmt"
 	"strconv"
-	"sync/atomic"
 	"time"
 
 	"github.com/AdRoll/baker"
@@ -25,9 +24,6 @@ type MetadataLastModified struct {
 	cfg *MetadataLastModifiedConfig
 
 	dst baker.FieldIndex
-
-	// Shared state
-	numProcessedLines int64
 }
 
 func NewMetadataLastModified(cfg baker.FilterParams) (baker.Filter, error) {
@@ -44,14 +40,10 @@ func NewMetadataLastModified(cfg baker.FilterParams) (baker.Filter, error) {
 }
 
 func (f *MetadataLastModified) Stats() baker.FilterStats {
-	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-	}
+	return baker.FilterStats{}
 }
 
 func (f *MetadataLastModified) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.numProcessedLines, 1)
-
 	v, ok := l.Meta(inpututils.MetadataLastModified)
 	if ok {
 		lastModified := v.(time.Time)

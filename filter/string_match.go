@@ -29,7 +29,6 @@ type StringMatch struct {
 	strings [][]byte
 	invert  bool
 
-	processed int64
 	discarded int64
 }
 
@@ -57,8 +56,7 @@ func NewStringMatch(cfg baker.FilterParams) (baker.Filter, error) {
 // Stats returns filter statistics.
 func (f *StringMatch) Stats() baker.FilterStats {
 	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.processed),
-		NumFilteredLines:  atomic.LoadInt64(&f.discarded),
+		NumFilteredLines: atomic.LoadInt64(&f.discarded),
 	}
 }
 
@@ -75,8 +73,6 @@ func (f *StringMatch) isMatchAny(l baker.Record) bool {
 
 // Process is where the actual filtering takes place.
 func (f *StringMatch) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.processed, 1)
-
 	if f.isMatchAny(l) == !f.invert {
 		atomic.AddInt64(&f.discarded, 1)
 		return

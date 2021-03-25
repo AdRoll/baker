@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
-	"sync/atomic"
 	"unicode"
 
 	"github.com/AdRoll/baker"
@@ -60,9 +59,6 @@ type ExpandList struct {
 	fields  []baker.FieldIndex
 	listIdx []int
 	sep     []byte
-
-	// Shared state
-	numProcessedLines int64
 }
 
 func NewExpandList(cfg baker.FilterParams) (baker.Filter, error) {
@@ -110,14 +106,10 @@ func NewExpandList(cfg baker.FilterParams) (baker.Filter, error) {
 }
 
 func (f *ExpandList) Stats() baker.FilterStats {
-	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-	}
+	return baker.FilterStats{}
 }
 
 func (f *ExpandList) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.numProcessedLines, 1)
-
 	list := l.Get(f.source)
 	if len(list) == 0 {
 		// skip the empty string because bytes.Split

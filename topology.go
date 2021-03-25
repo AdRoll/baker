@@ -18,6 +18,7 @@ type Topology struct {
 	Filters []Filter
 	Output  []Output
 	Upload  Upload
+	Metrics MetricsClient
 
 	inerr     atomic.Value
 	inch      chan *Data
@@ -25,8 +26,7 @@ type Topology struct {
 	rawOutput bool
 	upch      chan string
 
-	metrics   MetricsClient
-	malformed int64 // count parse or empty records
+	malformed int64 // count parsing errors and empty records
 
 	mu      sync.RWMutex         // protects invalid map
 	invalid map[FieldIndex]int64 // tracks validation errors (by field)
@@ -66,15 +66,15 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 
 	// Create the metrics client first since it's injected into components parameters.
 	if cfg.Metrics.Name != "" {
-		tp.metrics, err = cfg.Metrics.desc.New(cfg.Metrics.DecodedConfig)
+		tp.Metrics, err = cfg.Metrics.desc.New(cfg.Metrics.DecodedConfig)
 		if err != nil {
 			return nil, fmt.Errorf("error creating metrics interface: %q: %v", cfg.Metrics.Name, err)
 		}
 	}
 
 	// Assign a dummy client if no one was installed
-	if tp.metrics == nil {
-		tp.metrics = NopMetrics{}
+	if tp.Metrics == nil {
+		tp.Metrics = NopMetrics{}
 	}
 
 	// * Create input
@@ -85,7 +85,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 			FieldNames:     cfg.fieldNames,
 			CreateRecord:   cfg.createRecord,
 			ValidateRecord: cfg.validate,
-			Metrics:        tp.metrics,
+			Metrics:        tp.Metrics,
 		},
 	}
 	tp.Input, err = cfg.Input.desc.New(inCfg)
@@ -102,7 +102,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 				FieldNames:     cfg.fieldNames,
 				CreateRecord:   cfg.createRecord,
 				ValidateRecord: cfg.validate,
-				Metrics:        tp.metrics,
+				Metrics:        tp.Metrics,
 			},
 		}
 		fil, err := cfg.Filter[idx].desc.New(filCfg)
@@ -133,7 +133,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 				FieldNames:     cfg.fieldNames,
 				CreateRecord:   cfg.createRecord,
 				ValidateRecord: cfg.validate,
-				Metrics:        tp.metrics,
+				Metrics:        tp.Metrics,
 			},
 			Index:  i,
 			Fields: tp.outFields,
@@ -185,7 +185,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 				FieldNames:     cfg.fieldNames,
 				CreateRecord:   cfg.createRecord,
 				ValidateRecord: cfg.validate,
-				Metrics:        tp.metrics,
+				Metrics:        tp.Metrics,
 			},
 		}
 		tp.Upload, err = cfg.Upload.desc.New(upCfg)

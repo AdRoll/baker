@@ -3,7 +3,6 @@ package filter
 import (
 	"errors"
 	"fmt"
-	"sync/atomic"
 
 	"github.com/AdRoll/baker"
 )
@@ -22,10 +21,9 @@ type ReplaceFieldsConfig struct {
 }
 
 type ReplaceFields struct {
-	numProcessedLines int64
-	copyFields        [][2]baker.FieldIndex
-	replaceFieldsSrc  [][]byte
-	replaceFieldsDst  []baker.FieldIndex
+	copyFields       [][2]baker.FieldIndex
+	replaceFieldsSrc [][]byte
+	replaceFieldsDst []baker.FieldIndex
 }
 
 func NewReplaceFields(cfg baker.FilterParams) (baker.Filter, error) {
@@ -99,8 +97,6 @@ func NewReplaceFields(cfg baker.FilterParams) (baker.Filter, error) {
 }
 
 func (f *ReplaceFields) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.numProcessedLines, 1)
-
 	for _, field := range f.copyFields {
 		l.Set(field[1], l.Get(field[0]))
 	}
@@ -113,7 +109,5 @@ func (f *ReplaceFields) Process(l baker.Record, next func(baker.Record)) {
 }
 
 func (c *ReplaceFields) Stats() baker.FilterStats {
-	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&c.numProcessedLines),
-	}
+	return baker.FilterStats{}
 }

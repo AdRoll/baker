@@ -38,8 +38,7 @@ type HashConfig struct {
 }
 
 type Hash struct {
-	numProcessedLines int64
-	numFilteredLines  int64
+	numFilteredLines int64
 
 	src    baker.FieldIndex
 	dst    baker.FieldIndex
@@ -98,14 +97,11 @@ func NewHash(cfg baker.FilterParams) (baker.Filter, error) {
 
 func (h *Hash) Stats() baker.FilterStats {
 	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&h.numProcessedLines),
-		NumFilteredLines:  atomic.LoadInt64(&h.numFilteredLines),
+		NumFilteredLines: atomic.LoadInt64(&h.numFilteredLines),
 	}
 }
 
 func (h *Hash) Process(r baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&h.numProcessedLines, 1)
-
 	hashed, err := h.hash(r.Get(h.src))
 	if err != nil {
 		log.Errorf("can't process record, hashing failed: %v", err)

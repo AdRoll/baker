@@ -27,10 +27,9 @@ type TimestampRangeConfig struct {
 // TimestampRange is a baker filter that discards records depending on the
 // value of a field representing a Unix timestamp.
 type TimestampRange struct {
-	numProcessedLines int64
-	numFilteredLines  int64
-	startDate         int64
-	endDate           int64
+	numFilteredLines int64
+	startDate        int64
+	endDate          int64
 
 	fidx baker.FieldIndex
 }
@@ -83,15 +82,12 @@ func (f *TimestampRange) setTimes(start, end string) error {
 // Stats implements baker.Filter.
 func (f *TimestampRange) Stats() baker.FilterStats {
 	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-		NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
+		NumFilteredLines: atomic.LoadInt64(&f.numFilteredLines),
 	}
 }
 
 // Process implements baker.Filter.
 func (f *TimestampRange) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.numProcessedLines, 1)
-
 	// Convert the record timestamp to unix time (int64)
 	ts, err := strconv.ParseInt(string(l.Get(f.fidx)), 10, 64)
 	if err != nil {

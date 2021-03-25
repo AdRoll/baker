@@ -3,7 +3,6 @@ package filter
 import (
 	"fmt"
 	"net/url"
-	"sync/atomic"
 
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/filter/metadata"
@@ -34,8 +33,7 @@ type MetadataUrl struct {
 	dst baker.FieldIndex
 
 	// Shared state
-	numProcessedLines int64
-	metadata.Cache    // type: map[*url.URL]string
+	metadata.Cache // type: map[*url.URL]string
 }
 
 func NewMetadataUrl(cfg baker.FilterParams) (baker.Filter, error) {
@@ -53,14 +51,10 @@ func NewMetadataUrl(cfg baker.FilterParams) (baker.Filter, error) {
 }
 
 func (f *MetadataUrl) Stats() baker.FilterStats {
-	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-	}
+	return baker.FilterStats{}
 }
 
 func (f *MetadataUrl) Process(l baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&f.numProcessedLines, 1)
-
 	v, ok := l.Meta(inpututils.MetadataURL)
 	if !ok {
 		l.Set(f.dst, nil)

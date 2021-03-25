@@ -2,7 +2,6 @@ package filter
 
 import (
 	"fmt"
-	"sync/atomic"
 
 	"github.com/AdRoll/baker"
 )
@@ -19,9 +18,6 @@ type PartialCloneConfig struct {
 }
 
 type PartialClone struct {
-	numProcessedLines int64
-	numFilteredLines  int64
-
 	fieldIdx     []baker.FieldIndex
 	createRecord func() baker.Record
 }
@@ -49,15 +45,10 @@ func NewPartialClone(cfg baker.FilterParams) (baker.Filter, error) {
 }
 
 func (s *PartialClone) Stats() baker.FilterStats {
-	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&s.numProcessedLines),
-		NumFilteredLines:  atomic.LoadInt64(&s.numFilteredLines),
-	}
+	return baker.FilterStats{}
 }
 
 func (s *PartialClone) Process(r baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&s.numProcessedLines, 1)
-
 	l2 := s.createRecord()
 	for _, idx := range s.fieldIdx {
 		l2.Set(idx, r.Get(idx))
