@@ -351,7 +351,7 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 	}
 
 	// Copy custom configuration structure, to prepare for re-reading
-	cfg.Input.DecodedConfig = cfg.Input.desc.Config
+	cfg.Input.DecodedConfig = cloneConfig(cfg.Input.desc.Config)
 	if err := decodeAndCheckConfig(md, cfg.Input); err != nil {
 		return nil, err
 	}
@@ -364,20 +364,20 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		}
 	}
 
-	cfg.Output.DecodedConfig = cfg.Output.desc.Config
+	cfg.Output.DecodedConfig = cloneConfig(cfg.Output.desc.Config)
 	if err := decodeAndCheckConfig(md, cfg.Output); err != nil {
 		return nil, err
 	}
 
 	if cfg.Upload.Name != "" {
-		cfg.Upload.DecodedConfig = cfg.Upload.desc.Config
+		cfg.Upload.DecodedConfig = cloneConfig(cfg.Upload.desc.Config)
 		if err := decodeAndCheckConfig(md, cfg.Upload); err != nil {
 			return nil, err
 		}
 	}
 
 	if cfg.Metrics.Name != "" {
-		cfg.Metrics.DecodedConfig = cfg.Metrics.desc.Config
+		cfg.Metrics.DecodedConfig = cloneConfig(cfg.Metrics.desc.Config)
 		if err := decodeAndCheckConfig(md, cfg.Metrics); err != nil {
 			return nil, err
 		}

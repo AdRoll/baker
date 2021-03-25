@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Do not call Output.Stats() twice in `StatsDumper` [#173](https://github.com/AdRoll/baker/pull/173)
+- Call cloneConfig instead of resuing pointer in Desc configurations [#174](https://github.com/AdRoll/baker/pull/174)
 
 ### Security
 
