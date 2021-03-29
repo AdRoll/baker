@@ -26,4 +26,5 @@ var All = []baker.FilterDesc{
 	StringMatchDesc,
 	TimestampDesc,
 	TimestampRangeDesc,
+	TruncateDesc,
 }
