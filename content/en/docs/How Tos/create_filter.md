@@ -36,19 +36,14 @@ type Filter interface {
 A very simple example of filter doing nothing is:
 
 ```go
-type MyFilter struct{
-    numProcessedLines int64
-}
+type MyFilter struct{}
 
 func (f *MyFilter) Process(r baker.Record, next func(baker.Record)) {
-    atomic.AddInt64(&f.numProcessedLines, 1)
     next(r)
 }
 
 func (f *MyFilter) Stats() baker.FilterStats { 
-    return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
-    }
+    return baker.FilterStats{}
 }
 ```
 
@@ -136,13 +131,10 @@ When a filter discards a record it should also report it in the stats:
 
 ```go
 type MyFilter struct{
-    numProcessedLines int64
     numFilteredLines  int64
 }
 
 func (f *MyFilter) Process(r Record, next func(Record)) {
-    atomic.AddInt64(&f.numProcessedLines, 1)
-
     // shouldBeDiscarded is part of the filter logic
     if shouldBeDiscarded(r) {
         atomic.AddInt64(&f.numFilteredLines, 1)
@@ -155,7 +147,6 @@ func (f *MyFilter) Process(r Record, next func(Record)) {
 
 func (f *MyFilter) Stats() FilterStats { 
     return baker.FilterStats{
-        NumProcessedLines: atomic.LoadInt64(&f.numProcessedLines),
         NumFilteredLines:  atomic.LoadInt64(&f.numFilteredLines),
     }
 }
