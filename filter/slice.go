@@ -10,7 +10,7 @@ var SliceDesc = baker.FilterDesc{
 	Name:   "Slice",
 	New:    NewSlice,
 	Config: &SliceConfig{},
-	Help:   "Slices the source field value using start/end indexes and saves the value to the destination field. If the start index is greater than the field value length, set an empty string to destination",
+	Help:   "Slices the source field value using start/end indexes and copies the value to the destination field. If the start index is greater than the field value length, set an empty string to destination",
 }
 
 type SliceConfig struct {

@@ -58,6 +58,14 @@ func TestSlice(t *testing.T) {
 			wantInitErr: true,
 		},
 		{
+			name:        "start > end",
+			src:         "1st",
+			dst:         "3rd",
+			start:       3,
+			end:         2,
+			wantInitErr: true,
+		},
+		{
 			name:   "Nothing to Slice, end <= field length",
 			src:    "1st",
 			dst:    "2nd",
@@ -123,6 +131,13 @@ func TestSlice(t *testing.T) {
 			start:  1,
 			record: []byte("1234567890,b,c"),
 			want:   []byte("1234567890,b,234567890"),
+		},
+		{
+			name:   "no start/end",
+			src:    "1st",
+			dst:    "3rd",
+			record: []byte("1234567890,b,c"),
+			want:   []byte("1234567890,b,1234567890"),
 		},
 	}
 
