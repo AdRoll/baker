@@ -24,6 +24,7 @@ func TestTruncate(t *testing.T) {
 		src         string
 		dst         string
 		l           int
+		start       int
 		record      []byte
 		want        []byte
 		wantInitErr bool
@@ -47,7 +48,6 @@ func TestTruncate(t *testing.T) {
 			name:        "wrong length",
 			src:         "1st",
 			dst:         "2nd",
-			l:           0,
 			wantInitErr: true,
 		},
 		{
@@ -58,20 +58,73 @@ func TestTruncate(t *testing.T) {
 			wantInitErr: true,
 		},
 		{
-			name:   "Nothing to truncate",
+			name:   "index over length",
 			src:    "1st",
 			dst:    "2nd",
 			l:      5,
-			record: []byte("a,b,c"),
-			want:   []byte("a,b,c"),
+			start:  5,
+			record: []byte("12345,b,c"),
+			want:   []byte("12345,,c"),
 		},
 		{
-			name:   "Truncated",
+			name:   "index over length, same field",
+			src:    "1st",
+			dst:    "1st",
+			l:      5,
+			start:  5,
+			record: []byte("12345,b,c"),
+			want:   []byte(",b,c"),
+		},
+		{
+			name:   "Nothing to truncate, length <= field length",
+			src:    "1st",
+			dst:    "2nd",
+			l:      5,
+			record: []byte("12345,b,c"),
+			want:   []byte("12345,12345,c"),
+		},
+		{
+			name:   "Nothing to truncate, length > field length",
+			src:    "1st",
+			dst:    "2nd",
+			l:      7,
+			record: []byte("12345,b,c"),
+			want:   []byte("12345,12345,c"),
+		},
+		{
+			name:   "Truncated w/o start",
 			src:    "1st",
 			dst:    "2nd",
 			l:      5,
 			record: []byte("1234567890,b,c"),
 			want:   []byte("1234567890,12345,c"),
+		},
+		{
+			name:   "Truncated w start",
+			src:    "1st",
+			dst:    "2nd",
+			start:  2,
+			l:      5,
+			record: []byte("1234567890,b,c"),
+			want:   []byte("1234567890,34567,c"),
+		},
+		{
+			name:   "Truncated w start, same field",
+			src:    "1st",
+			dst:    "1st",
+			start:  3,
+			l:      4,
+			record: []byte("1234567890,b,c"),
+			want:   []byte("4567,b,c"),
+		},
+		{
+			name:   "Truncated w start, last field",
+			src:    "1st",
+			dst:    "3rd",
+			start:  1,
+			l:      4,
+			record: []byte("1234567890,b,c"),
+			want:   []byte("1234567890,b,2345"),
 		},
 	}
 
@@ -80,9 +133,10 @@ func TestTruncate(t *testing.T) {
 			cfg := baker.FilterParams{
 				ComponentParams: baker.ComponentParams{
 					DecodedConfig: &TruncateConfig{
-						Src:    tt.src,
-						Dst:    tt.dst,
-						Length: tt.l,
+						Src:      tt.src,
+						Dst:      tt.dst,
+						Length:   tt.l,
+						StartIdx: tt.start,
 					},
 					FieldByName: fieldByName,
 				},
@@ -114,7 +168,7 @@ func TestTruncate(t *testing.T) {
 				g := ll.Get(idx)
 				w := want.Get(idx)
 				if !bytes.Equal(g, w) {
-					t.Errorf("%s - got: %s ; want: %s", tt.name, g, w)
+					t.Errorf("%s - got: %s ; want: %s (full %s)", tt.name, g, w, ll.ToText(nil))
 				}
 			}
 		})
