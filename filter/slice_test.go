@@ -7,7 +7,7 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-func TestTruncate(t *testing.T) {
+func TestSlice(t *testing.T) {
 	fields := map[string]baker.FieldIndex{
 		"1st": 0,
 		"2nd": 1,
@@ -76,7 +76,7 @@ func TestTruncate(t *testing.T) {
 			want:   []byte(",b,c"),
 		},
 		{
-			name:   "Nothing to truncate, length <= field length",
+			name:   "Nothing to Slice, length <= field length",
 			src:    "1st",
 			dst:    "2nd",
 			l:      5,
@@ -84,7 +84,7 @@ func TestTruncate(t *testing.T) {
 			want:   []byte("12345,12345,c"),
 		},
 		{
-			name:   "Nothing to truncate, length > field length",
+			name:   "Nothing to Slice, length > field length",
 			src:    "1st",
 			dst:    "2nd",
 			l:      7,
@@ -92,7 +92,7 @@ func TestTruncate(t *testing.T) {
 			want:   []byte("12345,12345,c"),
 		},
 		{
-			name:   "Truncated w/o start",
+			name:   "Sliced w/o start",
 			src:    "1st",
 			dst:    "2nd",
 			l:      5,
@@ -100,7 +100,7 @@ func TestTruncate(t *testing.T) {
 			want:   []byte("1234567890,12345,c"),
 		},
 		{
-			name:   "Truncated w start",
+			name:   "Sliced w start",
 			src:    "1st",
 			dst:    "2nd",
 			start:  2,
@@ -109,7 +109,7 @@ func TestTruncate(t *testing.T) {
 			want:   []byte("1234567890,34567,c"),
 		},
 		{
-			name:   "Truncated w start, same field",
+			name:   "Sliced w start, same field",
 			src:    "1st",
 			dst:    "1st",
 			start:  3,
@@ -118,7 +118,7 @@ func TestTruncate(t *testing.T) {
 			want:   []byte("4567,b,c"),
 		},
 		{
-			name:   "Truncated w start, last field",
+			name:   "Sliced w start, last field",
 			src:    "1st",
 			dst:    "3rd",
 			start:  1,
@@ -132,7 +132,7 @@ func TestTruncate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			cfg := baker.FilterParams{
 				ComponentParams: baker.ComponentParams{
-					DecodedConfig: &TruncateConfig{
+					DecodedConfig: &SliceConfig{
 						Src:      tt.src,
 						Dst:      tt.dst,
 						Length:   tt.l,
@@ -142,7 +142,7 @@ func TestTruncate(t *testing.T) {
 				},
 			}
 
-			filter, err := NewTruncate(cfg)
+			filter, err := NewSlice(cfg)
 			if err != nil && !tt.wantInitErr {
 				t.Fatal(err)
 			}
