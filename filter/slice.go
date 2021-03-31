@@ -10,22 +10,22 @@ var SliceDesc = baker.FilterDesc{
 	Name:   "Slice",
 	New:    NewSlice,
 	Config: &SliceConfig{},
-	Help:   "Slices the source field value to the given bytes length and start index and saves the value to the destination field. If the start index is greater than the field value lenght, set an empty string to destination",
+	Help:   "Slices the source field value using start/end indexes and saves the value to the destination field. If the start index is greater than the field value length, set an empty string to destination",
 }
 
 type SliceConfig struct {
 	Src      string `help:"The source field to slice" required:"true"`
 	Dst      string `help:"The destination field to save the sliced value to" required:"true"`
-	Length   int    `help:"The lenght of the truncation to apply to the source value" required:"true"`
-	StartIdx int    `help:"The 0-based byte index to start slicing from" default:"0"`
+	StartIdx int    `help:"The index representing the start of the slicing" default:"0"`
+	EndIdx   int    `help:"The index representing the end of the slicing. Defaults to the end of the field"`
 }
 
 // Slice filter slices the source field value to the given bytes length and saves the value to the destination field
 type Slice struct {
 	src      baker.FieldIndex
 	dst      baker.FieldIndex
-	length   int
 	startIdx int
+	endIdx   int
 }
 
 // NewSlice creates a new Slice filter
@@ -42,37 +42,41 @@ func NewSlice(cfg baker.FilterParams) (baker.Filter, error) {
 		return nil, fmt.Errorf("cannot find destination field \"%s\"", dcfg.Dst)
 	}
 
-	if dcfg.Length < 1 {
-		return nil, fmt.Errorf("invalid length %d", dcfg.Length)
+	if dcfg.EndIdx <= dcfg.StartIdx && dcfg.EndIdx > 0 {
+		return nil, fmt.Errorf("end index must be greater than start index %d - %d", dcfg.StartIdx, dcfg.EndIdx)
 	}
 
 	f := &Slice{
 		src:      src,
 		dst:      dst,
-		length:   dcfg.Length,
 		startIdx: dcfg.StartIdx,
+		endIdx:   dcfg.EndIdx,
 	}
 
 	return f, nil
 }
 
-// Process records, slicing src fields to the given length, saving the result to the dest field
+// Process records, slicing src field and saving the result to the dest field
 func (f *Slice) Process(r baker.Record, next func(baker.Record)) {
-	v := r.Get(f.src)
-	l := len(v)
+	src := r.Get(f.src)
 
-	if f.startIdx >= l {
-		r.Set(f.dst, []byte(""))
-		next(r)
-		return
+	end := f.endIdx
+	if end > len(src) || end == 0 {
+		end = len(src)
 	}
 
-	end := f.startIdx + f.length
-	if end > l {
-		end = l
+	sz := end - f.startIdx
+	if f.startIdx >= len(src) {
+		sz = 0
 	}
 
-	r.Set(f.dst, v[f.startIdx:end])
+	sl := make([]byte, sz)
+
+	if f.startIdx < len(src) {
+		copy(sl, src[f.startIdx:end])
+	}
+
+	r.Set(f.dst, sl)
 	next(r)
 }
 

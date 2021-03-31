@@ -23,8 +23,8 @@ func TestSlice(t *testing.T) {
 		name        string
 		src         string
 		dst         string
-		l           int
 		start       int
+		end         int
 		record      []byte
 		want        []byte
 		wantInitErr bool
@@ -34,14 +34,14 @@ func TestSlice(t *testing.T) {
 			name:        "empty src",
 			src:         "",
 			dst:         "2nd",
-			l:           5,
+			end:         5,
 			wantInitErr: true,
 		},
 		{
 			name:        "empty dst",
 			src:         "1st",
 			dst:         "",
-			l:           5,
+			end:         5,
 			wantInitErr: true,
 		},
 		{
@@ -54,40 +54,30 @@ func TestSlice(t *testing.T) {
 			name:        "negative length",
 			src:         "1st",
 			dst:         "2nd",
-			l:           -2,
+			end:         -2,
 			wantInitErr: true,
 		},
 		{
-			name:   "index over length",
+			name:   "Nothing to Slice, end <= field length",
 			src:    "1st",
 			dst:    "2nd",
-			l:      5,
-			start:  5,
-			record: []byte("12345,b,c"),
-			want:   []byte("12345,,c"),
-		},
-		{
-			name:   "index over length, same field",
-			src:    "1st",
-			dst:    "1st",
-			l:      5,
-			start:  5,
-			record: []byte("12345,b,c"),
-			want:   []byte(",b,c"),
-		},
-		{
-			name:   "Nothing to Slice, length <= field length",
-			src:    "1st",
-			dst:    "2nd",
-			l:      5,
+			end:    5,
 			record: []byte("12345,b,c"),
 			want:   []byte("12345,12345,c"),
 		},
 		{
-			name:   "Nothing to Slice, length > field length",
+			name:   "Nothing to Slice, end > field length",
 			src:    "1st",
 			dst:    "2nd",
-			l:      7,
+			end:    7,
+			record: []byte("12345,b,c"),
+			want:   []byte("12345,12345,c"),
+		},
+		{
+			name:   "big end value",
+			src:    "1st",
+			dst:    "2nd",
+			end:    100,
 			record: []byte("12345,b,c"),
 			want:   []byte("12345,12345,c"),
 		},
@@ -95,7 +85,7 @@ func TestSlice(t *testing.T) {
 			name:   "Sliced w/o start",
 			src:    "1st",
 			dst:    "2nd",
-			l:      5,
+			end:    5,
 			record: []byte("1234567890,b,c"),
 			want:   []byte("1234567890,12345,c"),
 		},
@@ -104,7 +94,7 @@ func TestSlice(t *testing.T) {
 			src:    "1st",
 			dst:    "2nd",
 			start:  2,
-			l:      5,
+			end:    7,
 			record: []byte("1234567890,b,c"),
 			want:   []byte("1234567890,34567,c"),
 		},
@@ -113,7 +103,7 @@ func TestSlice(t *testing.T) {
 			src:    "1st",
 			dst:    "1st",
 			start:  3,
-			l:      4,
+			end:    7,
 			record: []byte("1234567890,b,c"),
 			want:   []byte("4567,b,c"),
 		},
@@ -122,9 +112,17 @@ func TestSlice(t *testing.T) {
 			src:    "1st",
 			dst:    "3rd",
 			start:  1,
-			l:      4,
+			end:    5,
 			record: []byte("1234567890,b,c"),
 			want:   []byte("1234567890,b,2345"),
+		},
+		{
+			name:   "missing end",
+			src:    "1st",
+			dst:    "3rd",
+			start:  1,
+			record: []byte("1234567890,b,c"),
+			want:   []byte("1234567890,b,234567890"),
 		},
 	}
 
@@ -135,8 +133,8 @@ func TestSlice(t *testing.T) {
 					DecodedConfig: &SliceConfig{
 						Src:      tt.src,
 						Dst:      tt.dst,
-						Length:   tt.l,
 						StartIdx: tt.start,
+						EndIdx:   tt.end,
 					},
 					FieldByName: fieldByName,
 				},
