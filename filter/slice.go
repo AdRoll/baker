@@ -60,23 +60,21 @@ func NewSlice(cfg baker.FilterParams) (baker.Filter, error) {
 func (f *Slice) Process(r baker.Record, next func(baker.Record)) {
 	src := r.Get(f.src)
 
+	// if end is 0 or greater than the field => end = len(field)
 	end := f.endIdx
 	if end > len(src) || end == 0 {
 		end = len(src)
 	}
 
-	sz := end - f.startIdx
-	if f.startIdx >= len(src) {
-		sz = 0
+	// if start is greater or equal the length of the field, then we write an empty result
+	start := f.startIdx
+	if start >= len(src) {
+		start = len(src)
 	}
 
-	sl := make([]byte, sz)
+	var empty []byte
+	r.Set(f.dst, append(empty, src[start:end]...))
 
-	if f.startIdx < len(src) {
-		copy(sl, src[f.startIdx:end])
-	}
-
-	r.Set(f.dst, sl)
 	next(r)
 }
 

@@ -139,6 +139,32 @@ func TestSlice(t *testing.T) {
 			record: []byte("1234567890,b,c"),
 			want:   []byte("1234567890,b,1234567890"),
 		},
+		{
+			name:   "start > len(field)",
+			src:    "1st",
+			dst:    "3rd",
+			start:  20,
+			record: []byte("1234567890,b,c"),
+			want:   []byte("1234567890,b,"),
+		},
+		{
+			name:   "start > len(field) && end==0",
+			src:    "1st",
+			dst:    "3rd",
+			start:  50,
+			end:    0,
+			record: []byte("1234567890,b,c"),
+			want:   []byte("1234567890,b,"),
+		},
+		{
+			name:   "start > len(field) && end > len(field)",
+			src:    "1st",
+			dst:    "3rd",
+			start:  50,
+			end:    51,
+			record: []byte("1234567890,b,c"),
+			want:   []byte("1234567890,b,"),
+		},
 	}
 
 	for _, tt := range tests {
