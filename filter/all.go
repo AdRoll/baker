@@ -23,6 +23,7 @@ var All = []baker.FilterDesc{
 	RegexMatchDesc,
 	ReplaceFieldsDesc,
 	SetStringFromURLDesc,
+	SliceDesc,
 	StringMatchDesc,
 	TimestampDesc,
 	TimestampRangeDesc,
