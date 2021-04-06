@@ -4,12 +4,12 @@ go 1.14
 
 require (
 	github.com/DataDog/datadog-go v3.2.0+incompatible
-	github.com/aws/aws-sdk-go v1.25.6-0.20191003182926-f28610301a1e
+	github.com/aws/aws-sdk-go v1.34.8
 	github.com/bmizerany/perks v0.0.0-20141205001514-d9a9656a3a4b
 	github.com/charmbracelet/glamour v0.2.0
 	github.com/fernet/fernet-go v0.0.0-20191111064656-eff2850e6001
 	github.com/google/uuid v1.1.2-0.20190416172445-c2e93f3ae59f
-	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
+	github.com/jmespath/go-jmespath v0.3.0
 	github.com/jpillora/backoff v0.0.0-20160301230512-f85df8d02bdf
 	github.com/juju/ratelimit v0.0.0-20151125201925-77ed1c8a0121
 	github.com/klauspost/compress v0.0.0-20160229075208-2d3d403f37d2
@@ -21,6 +21,6 @@ require (
 	github.com/rasky/toml v0.1.1-0.20160309013025-90bcb678a72a
 	github.com/sirupsen/logrus v1.4.2
 	github.com/valyala/gozstd v1.9.0
-	github.com/vmware/vmware-go-kcl v0.0.0-20200605022506-bd2980e951b3
-	golang.org/x/net v0.0.0-20190522155817-f3200d17e092
+	github.com/vmware/vmware-go-kcl v0.0.0-20210126043010-022ec8d9de8f
+	golang.org/x/net v0.0.0-20200202094626-16171245cfb2
 )
