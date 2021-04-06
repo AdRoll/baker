@@ -7,6 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.25.6-0.20191003182926-f28610301a1e
 	github.com/bmizerany/perks v0.0.0-20141205001514-d9a9656a3a4b
 	github.com/charmbracelet/glamour v0.2.0
+	github.com/fernet/fernet-go v0.0.0-20191111064656-eff2850e6001
 	github.com/google/uuid v1.1.2-0.20190416172445-c2e93f3ae59f
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 	github.com/jpillora/backoff v0.0.0-20160301230512-f85df8d02bdf
