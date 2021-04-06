@@ -343,7 +343,7 @@ func (p *recordProcessor) ProcessRecords(input *interfaces.ProcessRecordsInput) 
 	lastRecordSequenceNumber := input.Records[len(input.Records)-1].SequenceNumber
 	log.Debugf("Processed %d records: checkpoint=%s, msBehindLatest=%v", len(input.Records), aws.StringValue(lastRecordSequenceNumber), input.MillisBehindLatest)
 	if err := input.Checkpointer.Checkpoint(lastRecordSequenceNumber); err != nil {
-		log.Errorf("Error checkpointing at %s", *lastRecordSequenceNumber)
+		log.Errorf("Error checkpointing at %s: %s", *lastRecordSequenceNumber, err)
 	}
 }
 
