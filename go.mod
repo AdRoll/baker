@@ -22,5 +22,7 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/valyala/gozstd v1.9.0
 	github.com/vmware/vmware-go-kcl v0.0.0-20210126043010-022ec8d9de8f
-	golang.org/x/net v0.0.0-20200202094626-16171245cfb2
+	github.com/yuin/goldmark v1.2.1 // indirect
+	golang.org/x/net v0.0.0-20201021035429-f5854403a974
+	golang.org/x/sys v0.0.0-20210119212857-b64e53b001e4 // indirect
 )
