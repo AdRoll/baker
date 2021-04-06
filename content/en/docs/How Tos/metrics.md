@@ -81,8 +81,7 @@ metrics. In particular, the following counters are defined:
 - [Input](https://pkg.go.dev/github.com/AdRoll/baker#InputStats):
     - `NumProcessedLines`, the total number of processed records since the component creation.
 - [Filter](https://pkg.go.dev/github.com/AdRoll/baker#FilterStats):
-    - `NumProcessedLines`, the total number of processed records since the component creation.
-    - `NumFilteredLines`, the number of filtered out (i.e. discarded) records.
+   - `NumFilteredLines`, the number of filtered out (i.e. discarded) records.
 - [Output](https://pkg.go.dev/github.com/AdRoll/baker#OutputStats):
     - `NumProcessedLines`, the total number of processed records since the component creation.
     - `NumErrorLines`, the number of records that have produced an error.
@@ -165,9 +164,8 @@ so access to the shared data must be properly synchronized (atomic, lock, channe
 
 ```go
 func (f *MyFilter) Process(r Record, next func(Record)) {
-    atomic.AddInt64(&myFilter.totalLines, 1)
-
     // Perform http request
+
     f.mu.Lock() // keep track of its duration
     f.requestDurations = append(f.requestDurations, duration)
     f.mu.Unlock()
@@ -188,7 +186,6 @@ func (f *MyFilter) Stats() baker.FilterStats {
     bag := make(baker.MetricsBag)
     bag.AddTimings("myfilter_http_request_duration", requestDurations)
     return baker.FilterStats{
-        NumProcessedLines: atomic.LoadInt64(&f.totalLines),
         NumFilteredLines: atomic.LoadInt64(&f.filteredLines),
         Metrics: bag,
     }
@@ -229,7 +226,6 @@ func (f *MyFilter) Stats() baker.FilterStats {
     f.mu.Unlock()
 
     return baker.FilterStats{
-        NumProcessedLines: atomic.LoadInt64(&f.totalLines),
         NumFilteredLines: atomic.LoadInt64(&f.filteredLines),
     }
 }
