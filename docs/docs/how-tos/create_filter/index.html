@@ -38,7 +38,7 @@ To create a filter and make it available to Baker, one must:
  Implement the Filter interface Add a FilterDesc for the filter to the available filters in Components  The Filter interface New Filter components need to implement the Filter interface.">
 <meta itemprop="datePublished" content="2020-11-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-11-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="975">
+<meta itemprop="wordCount" content="961">
 
 
 
@@ -156,7 +156,7 @@ To create a filter and make it available to Baker, one must:
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4ba15d1ca4f121bb4eef2542567436a8dc00708859db8652234f4b6561ddb7b8904c3fd24f63d3b16512cab085550344de56f839bb40d4f3be6695b567dd4c4b.json"
+  data-offline-search-index-json-src="/offline-search-index.bc155e3e37f3d7fccdb917e43ea001edad44880d37c3fe8eb30c15799aa001cfd623f6a86c0de34d2a09cd4d6b6ff9265570ec8c0d6b8a418cd5a64bf9d62926.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -187,7 +187,7 @@ To create a filter and make it available to Baker, one must:
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4ba15d1ca4f121bb4eef2542567436a8dc00708859db8652234f4b6561ddb7b8904c3fd24f63d3b16512cab085550344de56f839bb40d4f3be6695b567dd4c4b.json"
+  data-offline-search-index-json-src="/offline-search-index.bc155e3e37f3d7fccdb917e43ea001edad44880d37c3fe8eb30c15799aa001cfd623f6a86c0de34d2a09cd4d6b6ff9265570ec8c0d6b8a418cd5a64bf9d62926.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -392,6 +392,12 @@ To create a filter and make it available to Baker, one must:
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscrypt" href="/docs/components/filters/crypt/">Crypt</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersdedup" href="/docs/components/filters/dedup/">Dedup</a>
       
       
@@ -459,6 +465,12 @@ To create a filter and make it available to Baker, one must:
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterssetstringfromurl" href="/docs/components/filters/setstringfromurl/">SetStringFromURL</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersslice" href="/docs/components/filters/slice/">Slice</a>
       
       
       
@@ -827,19 +839,14 @@ the available filters in <a href="https://pkg.go.dev/github.com/AdRoll/baker#Com
 <li><code>Stats</code> return statistics (<a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterStats">FilterStats</a>) about the filtering process</li>
 </ul>
 <p>A very simple example of filter doing nothing is:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> MyFilter <span style="color:#8be9fd;font-style:italic">struct</span>{
-    numProcessedLines <span style="color:#8be9fd">int64</span>
-}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> MyFilter <span style="color:#8be9fd;font-style:italic">struct</span>{}
 
 <span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r baker.Record, next <span style="color:#8be9fd;font-style:italic">func</span>(baker.Record)) {
-    atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numProcessedLines, <span style="color:#bd93f9">1</span>)
     <span style="color:#50fa7b">next</span>(r)
 }
 
 <span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Stats</span>() baker.FilterStats { 
-    <span style="color:#ff79c6">return</span> baker.FilterStats{
-		NumProcessedLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numProcessedLines),
-    }
+    <span style="color:#ff79c6">return</span> baker.FilterStats{}
 }
 </code></pre></div><h2 id="filterdesc">FilterDesc</h2>
 <p>To be included in the Baker filters, a filter must be described by a
@@ -892,13 +899,10 @@ Record to process and <code>next</code> is a closure assigned to the next elemen
 do not call <code>next()</code> if they want to discard the record.</p>
 <p>When a filter discards a record it should also report it in the stats:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> MyFilter <span style="color:#8be9fd;font-style:italic">struct</span>{
-    numProcessedLines <span style="color:#8be9fd">int64</span>
     numFilteredLines  <span style="color:#8be9fd">int64</span>
 }
 
 <span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numProcessedLines, <span style="color:#bd93f9">1</span>)
-
     <span style="color:#6272a4">// shouldBeDiscarded is part of the filter logic
 </span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> <span style="color:#50fa7b">shouldBeDiscarded</span>(r) {
         atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numFilteredLines, <span style="color:#bd93f9">1</span>)
@@ -911,7 +915,6 @@ do not call <code>next()</code> if they want to discard the record.</p>
 
 <span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Stats</span>() FilterStats { 
     <span style="color:#ff79c6">return</span> baker.FilterStats{
-        NumProcessedLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numProcessedLines),
         NumFilteredLines:  atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.numFilteredLines),
     }
 }

@@ -32,7 +32,7 @@
 ">
 <meta itemprop="datePublished" content="2020-11-03T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-11-03T00:00:00+00:00" />
-<meta itemprop="wordCount" content="1214">
+<meta itemprop="wordCount" content="1197">
 
 
 
@@ -147,7 +147,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4ba15d1ca4f121bb4eef2542567436a8dc00708859db8652234f4b6561ddb7b8904c3fd24f63d3b16512cab085550344de56f839bb40d4f3be6695b567dd4c4b.json"
+  data-offline-search-index-json-src="/offline-search-index.bc155e3e37f3d7fccdb917e43ea001edad44880d37c3fe8eb30c15799aa001cfd623f6a86c0de34d2a09cd4d6b6ff9265570ec8c0d6b8a418cd5a64bf9d62926.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -178,7 +178,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4ba15d1ca4f121bb4eef2542567436a8dc00708859db8652234f4b6561ddb7b8904c3fd24f63d3b16512cab085550344de56f839bb40d4f3be6695b567dd4c4b.json"
+  data-offline-search-index-json-src="/offline-search-index.bc155e3e37f3d7fccdb917e43ea001edad44880d37c3fe8eb30c15799aa001cfd623f6a86c0de34d2a09cd4d6b6ff9265570ec8c0d6b8a418cd5a64bf9d62926.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -383,6 +383,12 @@
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscrypt" href="/docs/components/filters/crypt/">Crypt</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersdedup" href="/docs/components/filters/dedup/">Dedup</a>
       
       
@@ -450,6 +456,12 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterssetstringfromurl" href="/docs/components/filters/setstringfromurl/">SetStringFromURL</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersslice" href="/docs/components/filters/slice/">Slice</a>
       
       
       
@@ -850,7 +862,6 @@ metrics. In particular, the following counters are defined:</p>
 </li>
 <li><a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterStats">Filter</a>:
 <ul>
-<li><code>NumProcessedLines</code>, the total number of processed records since the component creation.</li>
 <li><code>NumFilteredLines</code>, the number of filtered out (i.e. discarded) records.</li>
 </ul>
 </li>
@@ -932,10 +943,9 @@ the returned <code>MetricsBag</code>.</p>
 <p>An important point is that Baker may call <code>Process</code> and <code>Stats</code> from different goroutines
 so access to the shared data must be properly synchronized (atomic, lock, channel, etc.)</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>myFilter.totalLines, <span style="color:#bd93f9">1</span>)
-
     <span style="color:#6272a4">// Perform http request
-</span><span style="color:#6272a4"></span>    f.mu.<span style="color:#50fa7b">Lock</span>() <span style="color:#6272a4">// keep track of its duration
+</span><span style="color:#6272a4"></span>
+    f.mu.<span style="color:#50fa7b">Lock</span>() <span style="color:#6272a4">// keep track of its duration
 </span><span style="color:#6272a4"></span>    f.requestDurations = <span style="color:#8be9fd;font-style:italic">append</span>(f.requestDurations, duration)
     f.mu.<span style="color:#50fa7b">Unlock</span>()
 
@@ -955,7 +965,6 @@ so access to the shared data must be properly synchronized (atomic, lock, channe
     bag <span style="color:#ff79c6">:=</span> <span style="color:#8be9fd;font-style:italic">make</span>(baker.MetricsBag)
     bag.<span style="color:#50fa7b">AddTimings</span>(<span style="color:#f1fa8c">&#34;myfilter_http_request_duration&#34;</span>, requestDurations)
     <span style="color:#ff79c6">return</span> baker.FilterStats{
-        NumProcessedLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.totalLines),
         NumFilteredLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.filteredLines),
         Metrics: bag,
     }
@@ -990,7 +999,6 @@ provides a set of methods to report the most common type of metric types (<em>ga
     f.mu.<span style="color:#50fa7b">Unlock</span>()
 
     <span style="color:#ff79c6">return</span> baker.FilterStats{
-        NumProcessedLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.totalLines),
         NumFilteredLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.filteredLines),
     }
 }

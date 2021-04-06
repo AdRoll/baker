@@ -26,14 +26,14 @@
  A local file path on the filesystem: the log file at that path will be processed A HTTP/HTTPS URL: the log file at that URL will be downloaded and processed A S3 URL: the log file at that URL that will be downloaded and processed &ldquo;@&rdquo; followed by a local path pointing to a file: the file is expected to be a text file and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a HTTP/HTTPS URL: the text file pointed by the URL will be downloaded, and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a S3 URL pointing to a file: the text file pointed by the URL will be downloaded, and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a local path pointing to a directory (must end with a slash): the directory will be recursively walked, and all files matching the &ldquo;MatchPath&rdquo; option regexp will be processed as logfiles &ldquo;@&rdquo; followed by a S3 URL pointing to a directory: the directory on S3 will be recursively walked, and all files matching the &ldquo;MatchPath&rdquo; option regexp will be processed as logfiles &ldquo;-&quot;: the contents of a log file will be read from stdin and processed &ldquo;@-&quot;: each line read from stdin will be parsed as a &ldquo;file specifier&rdquo;  All records produced by this input contain 2 metadata values:" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://getbaker.io/docs/components/inputs/list/" />
-<meta property="article:published_time" content="2021-03-17T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-03-17T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
+<meta property="article:published_time" content="2021-04-06T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-04-06T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
 <meta itemprop="name" content="List">
 <meta itemprop="description" content="Read the API documentation »
  Input List Overview This input fetches logs from a predefined list of local or remote sources. The &ldquo;Files&rdquo; configuration variable is a list of &ldquo;file specifiers&rdquo;. Each &ldquo;file specifier&rdquo; can be:
  A local file path on the filesystem: the log file at that path will be processed A HTTP/HTTPS URL: the log file at that URL will be downloaded and processed A S3 URL: the log file at that URL that will be downloaded and processed &ldquo;@&rdquo; followed by a local path pointing to a file: the file is expected to be a text file and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a HTTP/HTTPS URL: the text file pointed by the URL will be downloaded, and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a S3 URL pointing to a file: the text file pointed by the URL will be downloaded, and each line will be read and parsed as a &ldquo;file specifier&rdquo; &ldquo;@&rdquo; followed by a local path pointing to a directory (must end with a slash): the directory will be recursively walked, and all files matching the &ldquo;MatchPath&rdquo; option regexp will be processed as logfiles &ldquo;@&rdquo; followed by a S3 URL pointing to a directory: the directory on S3 will be recursively walked, and all files matching the &ldquo;MatchPath&rdquo; option regexp will be processed as logfiles &ldquo;-&quot;: the contents of a log file will be read from stdin and processed &ldquo;@-&quot;: each line read from stdin will be parsed as a &ldquo;file specifier&rdquo;  All records produced by this input contain 2 metadata values:">
-<meta itemprop="datePublished" content="2021-03-17T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2021-03-17T00:00:00+00:00" />
+<meta itemprop="datePublished" content="2021-04-06T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-04-06T00:00:00+00:00" />
 <meta itemprop="wordCount" content="338">
 
 
@@ -150,7 +150,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4ba15d1ca4f121bb4eef2542567436a8dc00708859db8652234f4b6561ddb7b8904c3fd24f63d3b16512cab085550344de56f839bb40d4f3be6695b567dd4c4b.json"
+  data-offline-search-index-json-src="/offline-search-index.bc155e3e37f3d7fccdb917e43ea001edad44880d37c3fe8eb30c15799aa001cfd623f6a86c0de34d2a09cd4d6b6ff9265570ec8c0d6b8a418cd5a64bf9d62926.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -181,7 +181,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4ba15d1ca4f121bb4eef2542567436a8dc00708859db8652234f4b6561ddb7b8904c3fd24f63d3b16512cab085550344de56f839bb40d4f3be6695b567dd4c4b.json"
+  data-offline-search-index-json-src="/offline-search-index.bc155e3e37f3d7fccdb917e43ea001edad44880d37c3fe8eb30c15799aa001cfd623f6a86c0de34d2a09cd4d6b6ff9265570ec8c0d6b8a418cd5a64bf9d62926.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -386,6 +386,12 @@
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscrypt" href="/docs/components/filters/crypt/">Crypt</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersdedup" href="/docs/components/filters/dedup/">Dedup</a>
       
       
@@ -453,6 +459,12 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterssetstringfromurl" href="/docs/components/filters/setstringfromurl/">SetStringFromURL</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersslice" href="/docs/components/filters/slice/">Slice</a>
       
       
       
@@ -871,7 +883,7 @@ walked, and all files matching the &ldquo;MatchPath&rdquo; option regexp will be
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified March 17, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified April 6, 2021
 </div>
 </div>
 
