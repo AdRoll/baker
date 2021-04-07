@@ -735,19 +735,14 @@ the available filters in &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/ba
 &lt;li&gt;&lt;code&gt;Stats&lt;/code&gt; return statistics (&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FilterStats&#34;&gt;FilterStats&lt;/a&gt;) about the filtering process&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;A very simple example of filter doing nothing is:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; MyFilter &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt;{
-    numProcessedLines &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
-}
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; MyFilter &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt;{}
 
 &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r baker.Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(baker.Record)) {
-    atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.numProcessedLines, &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;)
     &lt;span style=&#34;color:#50fa7b&#34;&gt;next&lt;/span&gt;(r)
 }
 
 &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() baker.FilterStats { 
-    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; baker.FilterStats{
-		NumProcessedLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.numProcessedLines),
-    }
+    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; baker.FilterStats{}
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;filterdesc&#34;&gt;FilterDesc&lt;/h2&gt;
 &lt;p&gt;To be included in the Baker filters, a filter must be described by a
@@ -800,13 +795,10 @@ Record to process and &lt;code&gt;next&lt;/code&gt; is a closure assigned to the
 do not call &lt;code&gt;next()&lt;/code&gt; if they want to discard the record.&lt;/p&gt;
 &lt;p&gt;When a filter discards a record it should also report it in the stats:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; MyFilter &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt;{
-    numProcessedLines &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
     numFilteredLines  &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
 }
 
 &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
-    atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.numProcessedLines, &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;)
-
     &lt;span style=&#34;color:#6272a4&#34;&gt;// shouldBeDiscarded is part of the filter logic
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;shouldBeDiscarded&lt;/span&gt;(r) {
         atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.numFilteredLines, &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;)
@@ -819,7 +811,6 @@ do not call &lt;code&gt;next()&lt;/code&gt; if they want to discard the record.&
 
 &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() FilterStats { 
     &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; baker.FilterStats{
-        NumProcessedLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.numProcessedLines),
         NumFilteredLines:  atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.numFilteredLines),
     }
 }
@@ -1200,7 +1191,6 @@ metrics. In particular, the following counters are defined:&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FilterStats&#34;&gt;Filter&lt;/a&gt;:
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;NumProcessedLines&lt;/code&gt;, the total number of processed records since the component creation.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;NumFilteredLines&lt;/code&gt;, the number of filtered out (i.e. discarded) records.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
@@ -1282,10 +1272,9 @@ the returned &lt;code&gt;MetricsBag&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;An important point is that Baker may call &lt;code&gt;Process&lt;/code&gt; and &lt;code&gt;Stats&lt;/code&gt; from different goroutines
 so access to the shared data must be properly synchronized (atomic, lock, channel, etc.)&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
-    atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myFilter.totalLines, &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;)
-
     &lt;span style=&#34;color:#6272a4&#34;&gt;// Perform http request
-&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    f.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Lock&lt;/span&gt;() &lt;span style=&#34;color:#6272a4&#34;&gt;// keep track of its duration
+&lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;
+    f.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Lock&lt;/span&gt;() &lt;span style=&#34;color:#6272a4&#34;&gt;// keep track of its duration
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    f.requestDurations = &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;append&lt;/span&gt;(f.requestDurations, duration)
     f.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Unlock&lt;/span&gt;()
 
@@ -1305,7 +1294,6 @@ so access to the shared data must be properly synchronized (atomic, lock, channe
     bag &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;make&lt;/span&gt;(baker.MetricsBag)
     bag.&lt;span style=&#34;color:#50fa7b&#34;&gt;AddTimings&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;myfilter_http_request_duration&amp;#34;&lt;/span&gt;, requestDurations)
     &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; baker.FilterStats{
-        NumProcessedLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.totalLines),
         NumFilteredLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.filteredLines),
         Metrics: bag,
     }
@@ -1340,7 +1328,6 @@ provides a set of methods to report the most common type of metric types (&lt;em
     f.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Unlock&lt;/span&gt;()
 
     &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; baker.FilterStats{
-        NumProcessedLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.totalLines),
         NumFilteredLines: atomic.&lt;span style=&#34;color:#50fa7b&#34;&gt;LoadInt64&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;f.filteredLines),
     }
 }

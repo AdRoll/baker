@@ -7,7 +7,6 @@
 
 <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://getbaker.io/docs/components/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -21,16 +20,27 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Components | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="Components" />
-<meta property="og:description" content="All Baker components: inputs, filters, outputs and uploads" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://getbaker.io/docs/components/" />
-<meta property="og:updated_time" content="2020-11-12T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
-<meta itemprop="name" content="Components">
-<meta itemprop="description" content="All Baker components: inputs, filters, outputs and uploads">
+<title>Slice | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="Slice" />
+<meta property="og:description" content="Read the API documentation »
+ Filter Slice Overview Slices the source field value using start/end indexes and copies the value to the destination field. If the start index is greater than the field length, Slice sets the destination to an empty string. If the end index is greater than the field length, Slice considers the end index to be equal to the field length. Note: Indexes are 0-based and are intended as number of bytes, thus not taking into account any encoding the values may have." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://getbaker.io/docs/components/filters/slice/" />
+<meta property="article:published_time" content="2021-04-06T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-04-06T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
+<meta itemprop="name" content="Slice">
+<meta itemprop="description" content="Read the API documentation »
+ Filter Slice Overview Slices the source field value using start/end indexes and copies the value to the destination field. If the start index is greater than the field length, Slice sets the destination to an empty string. If the end index is greater than the field length, Slice considers the end index to be equal to the field length. Note: Indexes are 0-based and are intended as number of bytes, thus not taking into account any encoding the values may have.">
+<meta itemprop="datePublished" content="2021-04-06T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-04-06T00:00:00+00:00" />
+<meta itemprop="wordCount" content="146">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Components"/>
-<meta name="twitter:description" content="All Baker components: inputs, filters, outputs and uploads"/>
+<meta name="twitter:title" content="Slice"/>
+<meta name="twitter:description" content="Read the API documentation »
+ Filter Slice Overview Slices the source field value using start/end indexes and copies the value to the destination field. If the start index is greater than the field length, Slice sets the destination to an empty string. If the end index is greater than the field length, Slice considers the end index to be equal to the field length. Note: Indexes are 0-based and are intended as number of bytes, thus not taking into account any encoding the values may have."/>
 
 
 
@@ -56,7 +66,7 @@
 
 
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -96,7 +106,7 @@
 				
 				
 				
-				<a class="nav-link active" href="/docs/components/" ><span class="active">Components</span></a>
+				<a class="nav-link" href="/docs/components/" ><span>Components</span></a>
 			</li>
 			
 			<li class="nav-item mr-4 mb-2 mb-lg-0">
@@ -275,7 +285,7 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Components</a>
+    <a  href="/docs/components/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Components</a>
   </li>
   <ul>
     <li class="collapse show" id="docscomponents">
@@ -292,10 +302,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/inputs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Inputs</a>
+    <a  href="/docs/components/inputs/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Inputs</a>
   </li>
   <ul>
-    <li class="collapse show" id="docscomponentsinputs">
+    <li class="collapse " id="docscomponentsinputs">
       
       
       
@@ -345,7 +355,7 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/filters/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Filters</a>
+    <a  href="/docs/components/filters/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Filters</a>
   </li>
   <ul>
     <li class="collapse show" id="docscomponentsfilters">
@@ -451,7 +461,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersslice" href="/docs/components/filters/slice/">Slice</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscomponentsfiltersslice" href="/docs/components/filters/slice/">Slice</a>
       
       
       
@@ -488,10 +498,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/outputs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Outputs</a>
+    <a  href="/docs/components/outputs/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Outputs</a>
   </li>
   <ul>
-    <li class="collapse show" id="docscomponentsoutputs">
+    <li class="collapse " id="docscomponentsoutputs">
       
       
       
@@ -547,10 +557,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/uploads/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Uploads</a>
+    <a  href="/docs/components/uploads/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Uploads</a>
   </li>
   <ul>
-    <li class="collapse show" id="docscomponentsuploads">
+    <li class="collapse " id="docscomponentsuploads">
       
       
       
@@ -721,8 +731,8 @@
 
 
 
-<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/Components/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Components" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/Components/Filters/Slice.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=Slice" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -733,12 +743,10 @@
 
 <nav id="TableOfContents">
   <ul>
-    <li>
+    <li><a href="#filter-slice">Filter <em>Slice</em></a>
       <ul>
-        <li><a href="#inputs"><strong>Inputs</strong></a></li>
-        <li><a href="#filters"><strong>Filters</strong></a></li>
-        <li><a href="#outputs"><strong>Outputs</strong></a></li>
-        <li><a href="#uploads"><strong>Uploads</strong></a></li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#configuration">Configuration</a></li>
       </ul>
     </li>
   </ul>
@@ -761,6 +769,12 @@
 
 
 
+
+
+
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/">Documentation</a>
 </li>
@@ -768,8 +782,22 @@
 
 
 
-<li class="breadcrumb-item active" aria-current="page">
+<li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/components/">Components</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://getbaker.io/docs/components/filters/">Filters</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://getbaker.io/docs/components/filters/slice/">Slice</a>
 </li>
 
 	</ol>
@@ -777,67 +805,72 @@
 
             
 <div class="td-content">
-	<h1>Components</h1>
-        <div class="lead">All Baker components: inputs, filters, outputs and uploads</div>
+	<h1>Slice</h1>
+    
+	       
 	
-	<h3 id="inputs"><strong>Inputs</strong></h3>
-<ul>
-<li><a href="/docs/components/inputs/kcl">KCL</a></li>
-<li><a href="/docs/components/inputs/kinesis">Kinesis</a></li>
-<li><a href="/docs/components/inputs/list">List</a></li>
-<li><a href="/docs/components/inputs/sqs">SQS</a></li>
-<li><a href="/docs/components/inputs/tcp">TCP</a></li>
-</ul>
-<h3 id="filters"><strong>Filters</strong></h3>
-<ul>
-<li><a href="/docs/components/filters/clausefilter">ClauseFilter</a></li>
-<li><a href="/docs/components/filters/clearfields">ClearFields</a></li>
-<li><a href="/docs/components/filters/concatenate">Concatenate</a></li>
-<li><a href="/docs/components/filters/crypt">Crypt</a></li>
-<li><a href="/docs/components/filters/dedup">Dedup</a></li>
-<li><a href="/docs/components/filters/expandjson">ExpandJSON</a></li>
-<li><a href="/docs/components/filters/expandlist">ExpandList</a></li>
-<li><a href="/docs/components/filters/formattime">FormatTime</a></li>
-<li><a href="/docs/components/filters/hash">Hash</a></li>
-<li><a href="/docs/components/filters/metadatalastmodified">MetadataLastModified</a></li>
-<li><a href="/docs/components/filters/metadataurl">MetadataUrl</a></li>
-<li><a href="/docs/components/filters/notnull">NotNull</a></li>
-<li><a href="/docs/components/filters/partialclone">PartialClone</a></li>
-<li><a href="/docs/components/filters/regexmatch">RegexMatch</a></li>
-<li><a href="/docs/components/filters/replacefields">ReplaceFields</a></li>
-<li><a href="/docs/components/filters/setstringfromurl">SetStringFromURL</a></li>
-<li><a href="/docs/components/filters/slice">Slice</a></li>
-<li><a href="/docs/components/filters/stringmatch">StringMatch</a></li>
-<li><a href="/docs/components/filters/timestamp">Timestamp</a></li>
-<li><a href="/docs/components/filters/timestamprange">TimestampRange</a></li>
-</ul>
-<h3 id="outputs"><strong>Outputs</strong></h3>
-<ul>
-<li><a href="/docs/components/outputs/dynamodb">DynamoDB</a></li>
-<li><a href="/docs/components/outputs/filewriter">FileWriter</a></li>
-<li><a href="/docs/components/outputs/nop">Nop</a></li>
-<li><a href="/docs/components/outputs/oplog">OpLog</a></li>
-<li><a href="/docs/components/outputs/stats">Stats</a></li>
-<li><a href="/docs/components/outputs/websocket">WebSocket</a></li>
-</ul>
-<h3 id="uploads"><strong>Uploads</strong></h3>
-<ul>
-<li><a href="/docs/components/uploads/s3">S3</a></li>
-</ul>
 
-        <div class="section-index">
-    
-    
-    
-    
-    
+<div class="pageinfo pageinfo-primary">
+<p><strong>Read the <a href="https://pkg.go.dev/github.com/AdRoll/baker/filter#Slice">API documentation »</a></strong></p>
+
 </div>
 
+<h2 id="filter-slice">Filter <em>Slice</em></h2>
+<h3 id="overview">Overview</h3>
+<p>Slices the source field value using start/end indexes and copies the value to the destination field.
+If the start index is greater than the field length, Slice sets the destination to an empty string.
+If the end index is greater than the field length, Slice considers the end index to be equal to the field length.
+Note: Indexes are 0-based and are intended as number of bytes, thus not taking into account any encoding the values may have.</p>
+<h3 id="configuration">Configuration</h3>
+<p>Keys available in the <code>[filter.config]</code> section:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th style="text-align:center">Type</th>
+<th style="text-align:center">Default</th>
+<th style="text-align:center">Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Src</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">&quot;&quot;</td>
+<td style="text-align:center">true</td>
+<td>The source field to slice</td>
+</tr>
+<tr>
+<td>Dst</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">&quot;&quot;</td>
+<td style="text-align:center">true</td>
+<td>The destination field to save the sliced value to</td>
+</tr>
+<tr>
+<td>StartIdx</td>
+<td style="text-align:center">int</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">false</td>
+<td>The index representing where the slicing starts</td>
+</tr>
+<tr>
+<td>EndIdx</td>
+<td style="text-align:center">int</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">false</td>
+<td>The index representing where the slicind ends. Defaults to the last byte</td>
+</tr>
+</tbody>
+</table>
+
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 12, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified April 6, 2021
 </div>
 </div>
+
 
           </main>
         </div>
