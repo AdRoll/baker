@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove `NumProcessedLines` metric from FilterStats [#173](https://github.com/AdRoll/baker/pull/173)
 - Add the Crypt filter [#177](https://github.com/AdRoll/baker/pull/177)
-- Bump vmware-go-kvl and gozstd [#181](https://github.com/AdRoll/baker/pull/181)
+- Bump vmware-go-kcl and gozstd [#181](https://github.com/AdRoll/baker/pull/181)
 
 ### Deprecated
 
