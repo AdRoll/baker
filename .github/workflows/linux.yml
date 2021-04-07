@@ -28,7 +28,7 @@ jobs:
           make gofmt
           make govet
           go mod verify
-          go install golang.org/x/tools/cmd/goimports
+          go install golang.org/x/tools/cmd/goimports@latest
           test -z "$(goimports -d . | tee /dev/stderr)"
 
       - name: Test
