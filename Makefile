@@ -18,7 +18,7 @@ setup: setup-git ## Setup Hugo locally
 	npm install postcss-cli autoprefixer postcss
 
 gen-components: ## Generate components markdown from baker@latest
-	cd utils/generate-components-pages && (go get github.com/AdRoll/baker@latest; go generate)
+	cd utils/generate-components-pages && (go get github.com/AdRoll/baker@main; go generate)
 
 .PHONY: setup-git git-update setup gen-components
 
