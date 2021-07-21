@@ -74,7 +74,7 @@ func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 		useReplField: strings.Contains(dcfg.PathString, "{{.Field0}}"),
 	}
 
-	if fw.useReplField && len(cfg.Fields) != 1 {
+	if fw.useReplField && len(cfg.Fields) == 0 {
 		return nil, errors.New("if {{.Field0}} is given, at least one field must be given in [output.fields]")
 	}
 
