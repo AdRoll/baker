@@ -137,11 +137,7 @@ func (cfg *FileWriterConfig) fillDefaults() {
 	}
 }
 
-// Internal object only.
-// a fileWorker instance will be responsible for
-// managing writing to a file including rotating
-// it periodically.
-
+// fileWorker manages writes to a file and its periodic rotation.
 type fileWorker struct {
 	in   chan []byte
 	done chan bool
