@@ -26,7 +26,7 @@ const helpMsg = `This output writes the records into compressed files in a direc
 Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.
 The file names can contain placeholders that are populated by the output (see the keys help below).
 When the special {{.Field0}} placeholder is used, then the user must specify the field name to
-use for replacement in the fields configuration list.
+use as replacement in the fields configuration list.
 The value of that field, extracted from each record, is used as replacement and, moreover, this
 also means that each created file will contain only records with that same value for the field.
 Note that, with this option, the FileWriter creates as many workers as the different values
@@ -42,7 +42,7 @@ var FileWriterDesc = baker.OutputDesc{
 }
 
 type FileWriterConfig struct {
-	PathString           string        `help:"Template to describe location of the output directory: supports .Year, .Month, .Day and .Rotation. Also .Field0 if a field name has been specified in the output's fields list."`
+	PathString           string        `help:"Template to describe location of the output directory: supports .Year, .Month, .Day, .Rotation and .Field0 (only with at least one field in [output.fields])."`
 	RotateInterval       time.Duration `help:"Time after which data will be rotated. If -1, it will not rotate until the end." default:"60s"`
 	ZstdCompressionLevel int           `help:"zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
 	ZstdWindowLog        int           `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
@@ -75,7 +75,7 @@ func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 	}
 
 	if fw.useReplField && len(cfg.Fields) != 1 {
-		return nil, errors.New("cannot use {{.Field0}} without an entry in the output's fields list")
+		return nil, errors.New("if {{.Field0}} is given, at least one field must be given in [output.fields]")
 	}
 
 	return fw, nil
