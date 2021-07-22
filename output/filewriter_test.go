@@ -14,24 +14,32 @@ func TestFileWriterConfig(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "all defaults",
-			cfg:     &FileWriterConfig{},
-			wantErr: false,
+			name: "all defaults",
+			cfg:  &FileWriterConfig{},
 		},
 		{
-			name: "with split / no fields",
+			name: "{{.Field0}} and len(output.fields) == 1",
 			cfg: &FileWriterConfig{
 				PathString: "/path/{{.Field0}}/file.gz",
 			},
+			fields: []baker.FieldIndex{0},
+		},
+		{
+			name: "{{.Field0}} and len(output.fields) > 1",
+			cfg: &FileWriterConfig{
+				PathString: "/path/{{.Field0}}/file.gz",
+			},
+			fields: []baker.FieldIndex{0, 1},
+		},
+
+		// error cases
+		{
+			name: "{{.Field0}} and len(output.fields) == 0",
+			cfg: &FileWriterConfig{
+				PathString: "/path/{{.Field0}}/file.gz",
+			},
+			fields:  []baker.FieldIndex{},
 			wantErr: true,
-		},
-		{
-			name: "with split / with fields",
-			cfg: &FileWriterConfig{
-				PathString: "/path/{{.Field0}}/file.gz",
-			},
-			fields:  []baker.FieldIndex{1},
-			wantErr: false,
 		},
 	}
 
