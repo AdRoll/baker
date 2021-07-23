@@ -82,7 +82,8 @@ func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 }
 
 func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) error {
-	log.WithFields(log.Fields{"idx": w.index}).Info("FileWriter ready to log")
+	ctxlog := log.WithFields(log.Fields{"idx": w.index})
+	ctxlog.Info("FileWriter ready to log")
 
 	for lldata := range input {
 		wname := ""
@@ -102,12 +103,12 @@ func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) er
 		atomic.AddInt64(&w.totaln, int64(1))
 	}
 
-	log.WithFields(log.Fields{"idx": w.index}).Info("FileWriter Terminating")
 	for _, worker := range w.workers {
 		worker.Close()
 	}
 	for _, worker := range w.workers {
 		worker.Wait()
+	ctxlog.Info("FileWriter Terminating")
 	}
 
 	return nil
