@@ -202,11 +202,11 @@ type fileWorker struct {
 
 	cfg *FileWriterConfig
 
-	pathTemplate   *template.Template
 	replFieldValue string
 	index          int
 	uid            string
 	rotateIdx      int64
+	tmpl           *template.Template
 }
 
 const fileWorkerChunkBuffer = 128 * 1024
@@ -214,16 +214,16 @@ const fileWorkerChunkBuffer = 128 * 1024
 func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid string, upch chan<- string) (*fileWorker, error) {
 	ctxLog := log.WithFields(log.Fields{"output": "FileWriter", "idx": index})
 
-	pathTemplate, err := template.New("fileWorkerType").Parse(cfg.PathString)
+	tmpl, err := template.New("fileWorkerType").Parse(cfg.PathString)
 	if err != nil {
-		panic(err.Error())
+		return nil, fmt.Errorf("invalid PathString template: %s", err)
 	}
 
 	fw := &fileWorker{
 		in:             make(chan []byte, 1),
 		done:           make(chan struct{}),
 		cfg:            cfg,
-		pathTemplate:   pathTemplate,
+		tmpl:           tmpl,
 		replFieldValue: replFieldValue,
 		index:          index,
 		uid:            uid,
@@ -318,6 +318,8 @@ func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid stri
 				newPath := fw.makePath()
 				ctxLog.WithFields(log.Fields{"current": curPath, "new": newPath}).Info("FileWriter worker file rotation")
 				if curw, err = newFile(newPath); err != nil {
+					// TODO(arl): when sticky error will be in place, do not
+					// log.Fatal here but set the sticky error instead.
 					ctxLog.WithError(err).WithField("current", curPath).Fatal("FileWriter worker can't create file")
 				}
 				curPath = newPath
@@ -370,7 +372,7 @@ func (fw *fileWorker) makePath() string {
 		"Field0":   fw.replFieldValue,
 	}
 
-	err := fw.pathTemplate.Execute(&buf, replacementVars)
+	err := fw.tmpl.Execute(&buf, replacementVars)
 	if err != nil {
 		panic(err.Error())
 	}
