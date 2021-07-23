@@ -86,6 +86,9 @@ func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) er
 	ctxlog := log.WithFields(log.Fields{"idx": w.index})
 	ctxlog.Info("FileWriter ready to log")
 
+
+	var err error
+
 	for lldata := range input {
 		wname := ""
 		if w.useReplField {
@@ -95,24 +98,32 @@ func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) er
 		if !ok {
 			// Unique UUID for the output processes
 			uid := uuid.New().String()
-			worker = newWorker(w.Cfg, wname, w.index, uid, upch)
+			worker, err = newWorker(w.Cfg, wname, w.index, uid, upch)
+			if err != nil {
+				// This error will be returned, but we'll try to cleanup the
+				// potential other workers, not early exit.
+				err = fmt.Errorf("FileWriter, can't create new worker: %s", err)
+				break
+			}
 			w.workers[wname] = worker
 		}
 
-		worker.Write(lldata.Record)
+		worker.write(lldata.Record)
 
-		atomic.AddInt64(&w.totaln, int64(1))
+		atomic.AddInt64(&w.totaln, 1)
 	}
 
 	ctxlog.Info("FileWriter Terminating")
 
 	// Concurrently close the workers, but with no more than 'NumCPU' goroutines.
 	sem := make(chan struct{}, runtime.NumCPU())
+	wg := sync.WaitGroup{}
 	for i := range w.workers {
 		i := i
 		sem <- struct{}{}
+		wg.Add(1)
 		go func() {
-			defer func() { <-sem }()
+			defer func() { <-sem; wg.Done() }()
 			err := w.workers[i].Close()
 			if err != nil {
 				ctxlog.WithError(err).Error("error when closing worker")
@@ -120,7 +131,9 @@ func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) er
 		}()
 	}
 
-	return nil
+	wg.Wait()
+
+	return err
 }
 
 func (w *FileWriter) Stats() baker.OutputStats {
@@ -151,7 +164,6 @@ func (cfg *FileWriterConfig) fillDefaults() {
 type fileWorker struct {
 	in   chan []byte
 	done chan struct{}
-	upch chan<- string
 
 	cfg *FileWriterConfig
 
@@ -160,22 +172,13 @@ type fileWorker struct {
 	index          int
 	uid            string
 	rotateIdx      int64
-
-	currentPath string
-	fd          *os.File
-	lock        sync.Mutex
-
-	writer  *bufio.Writer
-	cwriter io.WriteCloser
-
-	useZstd bool
 }
 
-const (
-	fileWorkerChunkBuffer = 128 * 1024
-)
+const fileWorkerChunkBuffer = 128 * 1024
 
-func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid string, upch chan<- string) *fileWorker {
+func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid string, upch chan<- string) (*fileWorker, error) {
+	ctxLog := log.WithFields(log.Fields{"output": "FileWriter", "idx": index})
+
 	pathTemplate, err := template.New("fileWorkerType").Parse(cfg.PathString)
 	if err != nil {
 		panic(err.Error())
@@ -184,53 +187,134 @@ func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid stri
 	fw := &fileWorker{
 		in:             make(chan []byte, 1),
 		done:           make(chan struct{}),
-		upch:           upch,
 		cfg:            cfg,
 		pathTemplate:   pathTemplate,
 		replFieldValue: replFieldValue,
 		index:          index,
 		uid:            uid,
-		useZstd:        false,
 		rotateIdx:      0,
 	}
 
+	useZstd := false
 	if strings.HasSuffix(cfg.PathString, ".zst") || strings.HasSuffix(cfg.PathString, ".zstd") {
-		fw.useZstd = true
+		useZstd = true
 	}
 
-	fw.Rotate()
+	zstdParams := zstd.WriterParams{
+		CompressionLevel: cfg.ZstdCompressionLevel,
+		WindowLog:        cfg.ZstdWindowLog,
+	}
+
+	newFile := func(path string) (io.WriteCloser, error) {
+		f, err := os.Create(path)
+		if err != nil {
+			return nil, err
+		}
+
+		bufw := bufio.NewWriterSize(f, fileWorkerChunkBuffer)
+
+		var wc io.WriteCloser
+		if useZstd {
+			zstdw := zstd.NewWriterParams(bufw, &zstdParams)
+			wc = makeWriteCloser(zstdw, zstdw.Close)
+		} else {
+			// Only way to for gzip.NewWriterLevel to fail is to pass an
+			// incorrect compression level.
+			wc, _ = gzip.NewWriterLevel(bufw, gzip.BestSpeed)
+		}
+
+		// Close the writers in order, as a stack of defer would do, with the
+		// difference that they'll be closed when the called call Close, not
+		// when the current function returns.
+		close := func() error {
+			if err := wc.Close(); err != nil {
+				return fmt.Errorf("compression error: %s", err)
+			}
+			if err := bufw.Flush(); err != nil {
+				return err
+			}
+			if err := f.Close(); err != nil {
+				return err
+			}
+			return nil
+		}
+
+		return makeWriteCloser(wc, close), nil
+	}
+
+	curPath := fw.makePath()
+	curw, err := newFile(curPath)
+	if err != nil {
+		return nil, fmt.Errorf("can't create file: %v", err)
+	}
 
 	go func() {
 		ticker := time.NewTicker(cfg.RotateInterval)
 
 		defer func() {
-			fw.closeall()
-			fw.upload(fw.currentPath)
+			ctxLog.WithFields(log.Fields{"current": curPath}).Info("FileWriter worker terminating")
+
+			// Close the last file and upload it.
+			if err := curw.Close(); err != nil {
+				ctxLog.WithError(err).WithField("current", curPath).Error("FileWriter worker error closing file")
+			}
+			upch <- curPath
 			close(fw.done)
 		}()
 
 		for {
 			select {
 			case <-ticker.C:
-				fw.Rotate()
+				// Close the current file, upload it and swap 'curw' with a
+				// newly created file, result of the rotation.
+
+				if err := curw.Close(); err != nil {
+					ctxLog.WithError(err).WithField("current", curPath).Error("FileWriter worker error closing file")
+				}
+
+				upch <- curPath
+
+				newPath := fw.makePath()
+				ctxLog.WithFields(log.Fields{"current": curPath, "new": newPath}).Info("FileWriter worker file rotation")
+				if curw, err = newFile(newPath); err != nil {
+					ctxLog.WithError(err).WithField("current", curPath).Fatal("FileWriter worker can't create file")
+				}
+				curPath = newPath
+
 			case line, ok := <-fw.in:
 				if !ok {
 					ticker.Stop()
 					return
 				}
-				if err := fw.write(line); err != nil {
-					log.WithError(err).Error("error writing to file")
+				if _, err := curw.Write(line); err != nil {
+					log.WithError(err).Error("FileWriter worker error writing to file")
+				}
+				const linesep = "\n"
+				if _, err := curw.Write([]byte(linesep)); err != nil {
+					log.WithError(err).Error("FileWriter worker error writing to file")
 				}
 			}
 		}
 	}()
 
-	return fw
+	return fw, nil
+}
+
+func (fw *fileWorker) write(req []byte) {
+	fw.in <- req
+}
+
+func (fw *fileWorker) Close() error {
+	fmt.Println("fileWorker.Close, closing in channel")
+	close(fw.in)
+	fmt.Println("fileWorker.Close, waiting for done channel to be closed")
+	<-fw.done
+	return nil
 }
 
 func (fw *fileWorker) makePath() string {
 	now := time.Now().UTC()
-	var doc bytes.Buffer
+	var buf bytes.Buffer
 
 	replacementVars := map[string]string{
 		"Index":    fmt.Sprintf("%04d", fw.index),
@@ -245,92 +329,28 @@ func (fw *fileWorker) makePath() string {
 		"Field0":   fw.replFieldValue,
 	}
 
-	err := fw.pathTemplate.Execute(&doc, replacementVars)
+	err := fw.pathTemplate.Execute(&buf, replacementVars)
 	if err != nil {
 		panic(err.Error())
 	}
-	replacedPath := doc.String()
-	dir := path.Dir(replacedPath)
-
+	dir := path.Dir(buf.String())
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		os.MkdirAll(dir, 0777)
 	}
-	return replacedPath
+	return buf.String()
 }
 
-func (fw *fileWorker) Rotate() {
-	ctxLog := log.WithFields(log.Fields{"current": fw.currentPath, "idx": fw.index})
-
-	ctxLog.Info("Rotating")
-	oldPath := fw.currentPath
-	fw.currentPath = fw.makePath()
-
-	fd, err := os.OpenFile(fw.currentPath, os.O_WRONLY|os.O_CREATE, 0666)
-	if err != nil {
-		ctxLog.Fatal("failed to rotate")
-		panic(err)
-	}
-	w := bufio.NewWriterSize(fd, fileWorkerChunkBuffer)
-	var cwriter io.WriteCloser
-	if fw.useZstd {
-		params := &zstd.WriterParams{
-			CompressionLevel: fw.cfg.ZstdCompressionLevel,
-			WindowLog:        fw.cfg.ZstdWindowLog,
-		}
-		cwriter = zstd.NewWriterParams(w, params)
-	} else {
-		cwriter, err = gzip.NewWriterLevel(w, gzip.BestSpeed)
-	}
-	if err != nil {
-		ctxLog.WithError(err).Fatal("failed to rotate")
-		panic(err)
-	}
-
-	fw.lock.Lock()
-	defer fw.lock.Unlock()
-	fw.closeall()
-	fw.upload(oldPath)
-	fw.fd = fd
-	fw.writer = w
-	fw.cwriter = cwriter
-	fw.rotateIdx++
-	ctxLog.Info("Rotated")
+// makeWriteCloser converts an io.Writer and a Close function into a
+// WriteCloser.
+func makeWriteCloser(w io.Writer, close func() error) io.WriteCloser {
+	return &writeCloser{Writer: w, close: close}
 }
 
-func (fw *fileWorker) upload(filepath string) {
-	if filepath != "" {
-		fw.upch <- filepath
-	}
+type writeCloser struct {
+	io.Writer
+	close func() error
 }
 
-func (fw *fileWorker) Write(req []byte) {
-	fw.in <- req
-}
-
-func (fw *fileWorker) Close() error {
-	log.WithFields(log.Fields{"idx": fw.index}).Info("fileWorker closing")
-	close(fw.in)
-	<-fw.done
-	return nil
-}
-
-func (fw *fileWorker) closeall() {
-	if fw.cwriter != nil {
-		fw.cwriter.Close()
-	}
-	if fw.writer != nil {
-		fw.writer.Flush()
-	}
-	if fw.fd != nil {
-		fw.fd.Close()
-	}
-}
-
-func (fw *fileWorker) write(line []byte) error {
-	fw.lock.Lock()
-	defer fw.lock.Unlock()
-
-	_, err := fw.cwriter.Write(line)
-	fw.cwriter.Write([]byte("\n"))
-	return err
+func (wc *writeCloser) Close() error {
+	return wc.close()
 }
