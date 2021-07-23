@@ -79,7 +79,7 @@ var FileWriterDesc = baker.OutputDesc{
 
 type FileWriterConfig struct {
 	PathString           string        `help:"Template describing names of the generated files. See top-level documentation for supported placeholders.."`
-	RotateInterval       time.Duration `help:"Time interval between 2 successive file rotations. If 0 or negative, rotation is disabled." default:"60s"`
+	RotateInterval       time.Duration `help:"Time interval between 2 successive file rotations. -1 disabled rotation." default:"60s"`
 	ZstdCompressionLevel int           `help:"Zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
 	ZstdWindowLog        int           `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
 }
@@ -284,7 +284,12 @@ func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid stri
 	}
 
 	go func() {
-		ticker := time.NewTicker(cfg.RotateInterval)
+		var tick <-chan time.Time
+		var ticker *time.Ticker
+		if cfg.RotateInterval > 0 {
+			ticker = time.NewTicker(cfg.RotateInterval)
+			tick = ticker.C
+		}
 
 		defer func() {
 			ctxLog.WithFields(log.Fields{"current": curPath}).Info("FileWriter worker terminating")
@@ -299,9 +304,9 @@ func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid stri
 
 		for {
 			select {
-			case <-ticker.C:
-				// Close the current file, upload it and swap 'curw' with a
-				// newly created file, result of the rotation.
+			case <-tick:
+				// Perform rotation. Close, upload and swap curw with a newly
+				// created file, after evaluating the path template.
 
 				if err := curw.Close(); err != nil {
 					ctxLog.WithError(err).WithField("current", curPath).Error("FileWriter worker error closing file")
@@ -309,6 +314,7 @@ func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid stri
 
 				upch <- curPath
 
+				fw.rotateIdx++
 				newPath := fw.makePath()
 				ctxLog.WithFields(log.Fields{"current": curPath, "new": newPath}).Info("FileWriter worker file rotation")
 				if curw, err = newFile(newPath); err != nil {
@@ -318,7 +324,9 @@ func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid stri
 
 			case line, ok := <-fw.in:
 				if !ok {
-					ticker.Stop()
+					if ticker != nil {
+						ticker.Stop()
+					}
 					return
 				}
 				if _, err := curw.Write(line); err != nil {
