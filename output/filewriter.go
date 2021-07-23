@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"runtime"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -103,12 +104,20 @@ func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) er
 		atomic.AddInt64(&w.totaln, int64(1))
 	}
 
-	for _, worker := range w.workers {
-		worker.Close()
-	}
-	for _, worker := range w.workers {
-		worker.Wait()
 	ctxlog.Info("FileWriter Terminating")
+
+	// Concurrently close the workers, but with no more than 'NumCPU' goroutines.
+	sem := make(chan struct{}, runtime.NumCPU())
+	for i := range w.workers {
+		i := i
+		sem <- struct{}{}
+		go func() {
+			defer func() { <-sem }()
+			err := w.workers[i].Close()
+			if err != nil {
+				ctxlog.WithError(err).Error("error when closing worker")
+			}
+		}()
 	}
 
 	return nil
@@ -282,13 +291,11 @@ func (fw *fileWorker) Write(req []byte) {
 	fw.in <- req
 }
 
-func (fw *fileWorker) Close() {
+func (fw *fileWorker) Close() error {
 	log.WithFields(log.Fields{"idx": fw.index}).Info("fileWorker closing")
 	close(fw.in)
-}
-
-func (fw *fileWorker) Wait() {
 	<-fw.done
+	return nil
 }
 
 func (fw *fileWorker) closeall() {
