@@ -23,15 +23,50 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-const helpMsg = `This output writes the records into compressed files in a directory.
-Files will be compressed using Gzip or Zstandard based on the filename extension in PathString.
-The file names can contain placeholders that are populated by the output (see the keys help below).
-When the special {{.Field0}} placeholder is used, then the user must specify the field name to
-use as replacement in the fields configuration list.
-The value of that field, extracted from each record, is used as replacement and, moreover, this
-also means that each created file will contain only records with that same value for the field.
-Note that, with this option, the FileWriter creates as many workers as the different values
-of the field, and each one of these workers concurrently writes to a different file.
+const helpMsg = `This output writes serialized records into compressed files, gzip (.gz) or zstd
+(.zst) depending on the file extension in PathString.
+
+Generated files may be rotated if RotateInterval is set. PathString is used to
+control the name of the generated files, it may contain placeholders. These
+placeholders are evaluated each time a file is created, that is upon creation
+of the output or everytime a rotation takes place.
+
+Supported placeholders:
+ - {{.Index}}     index of the current output process (see [output.procs]), 4 digits long
+ - {{.Year}}      year (YYYY) at file creation
+ - {{.Month}}     month number (MM) at file creation
+ - {{.Day}}       day of the month number (DD) at file creation
+ - {{.Hour}}      hour (HH) at file creation
+ - {{.Minute}}    minute (MM) at file creation
+ - {{.Second}}    second (SS) at file creation
+ - {{.UUID}}      worker random UUID (v4), 36 chars long
+ - {{.Rotation}}  rotation count, 6 digits long
+ - {{.Field0}}    value of the first field provided in [output.fields] (only if present).
+ 
+When choosing configuration values for your FileWriter, it's important to keep in mind
+the following rules:
+
+1. a file should only ever be accessed by a single worker at a time
+
+If you use multiple output processes, you probably want to use {{.Index}} so that 
+generated filenames are guaranteed to be different for each workers.
+
+ 2. rotation should never generate the same path twice
+ 
+To avoid a file to be overwritten by its successor in the rotation, you should ensure
+that 2 files generated at a distance of RotateInterval will have different filenames.
+To ensure filenames are different, you should set RotateInterval to a duration that 
+exceeds that of the time-based placeholder with the shortest span.
+
+For example, the following is correct:
+
+    PathString = "/path/to/file-{{.Hour}}-{{.Minute}}.log.gz" 
+    RotateInterval = 5m
+
+While the following is not correct:
+
+    PathString = "/path/to/file-{{.Hour}}-{{.Minute}}.log.gz" 
+    RotateInterval = 1s
 `
 
 var FileWriterDesc = baker.OutputDesc{
@@ -43,9 +78,9 @@ var FileWriterDesc = baker.OutputDesc{
 }
 
 type FileWriterConfig struct {
-	PathString           string        `help:"Template to describe location of the output directory: supports .Year, .Month, .Day, .Rotation and .Field0 (only with at least one field in [output.fields])."`
-	RotateInterval       time.Duration `help:"Time after which data will be rotated. If -1, it will not rotate until the end." default:"60s"`
-	ZstdCompressionLevel int           `help:"zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
+	PathString           string        `help:"Template describing names of the generated files. See top-level documentation for supported placeholders.."`
+	RotateInterval       time.Duration `help:"Time interval between 2 successive file rotations. If 0 or negative, rotation is disabled." default:"60s"`
+	ZstdCompressionLevel int           `help:"Zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
 	ZstdWindowLog        int           `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
 }
 
