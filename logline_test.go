@@ -2,12 +2,14 @@ package baker
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 )
 
 // This tests ensure parse does not crash when it meets a log line
 // with too many separators
 func TestLogLineParse_separators(t *testing.T) {
+	maxSeparators := LogLineNumFields - 1
 	tests := []struct {
 		name  string
 		nseps int
@@ -25,17 +27,17 @@ func TestLogLineParse_separators(t *testing.T) {
 		},
 		{
 			name:  "max-minus-1-separators",
-			nseps: int(LogLineNumFields - 1),
+			nseps: int(maxSeparators - 1),
 			reset: false,
 		},
 		{
 			name:  "max-separators",
-			nseps: int(LogLineNumFields),
+			nseps: int(maxSeparators),
 			reset: false,
 		},
 		{
 			name:  "more-than-max-separators",
-			nseps: int(LogLineNumFields + 1),
+			nseps: int(maxSeparators + 1),
 			reset: true,
 		},
 	}
@@ -169,14 +171,14 @@ func TestLogLineParseCustomSeparator(t *testing.T) {
 	})
 }
 
-func TestLogLineToTextCustomSeparator(t *testing.T) {
+func TestLogLineToText(t *testing.T) {
 	t.Run("default comma separator", func(t *testing.T) {
 		ll := LogLine{FieldSeparator: 44}
 		ll.Set(0, []byte("value1"))
 		ll.Set(1, []byte("value2"))
 		ll.Set(3, []byte("value4"))
 		text := ll.ToText(nil)
-		exp := []byte("value1,value2,,value4,,")
+		exp := []byte("value1,value2,,value4")
 		if !bytes.Equal(text, exp) {
 			t.Fatalf("want: %s got: %s", exp, text)
 		}
@@ -188,31 +190,112 @@ func TestLogLineToTextCustomSeparator(t *testing.T) {
 		ll.Set(1, []byte("value2"))
 		ll.Set(3, []byte("value4"))
 		text := ll.ToText(nil)
-		exp := []byte("value1.value2..value4..")
+		exp := []byte("value1.value2..value4")
 		if !bytes.Equal(text, exp) {
 			t.Fatalf("want: %s got: %s", exp, text)
 		}
 	})
-}
 
-func BenchmarkParse(b *testing.B) {
-	text := []byte("value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value")
-	b.Run("bench", func(b *testing.B) {
-		for n := 0; n < b.N; n++ {
-			ll := LogLine{FieldSeparator: 44}
-			ll.Parse(text, nil)
+	t.Run("empty logline", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: 44}
+		b := ll.ToText(nil)
+		if !bytes.Equal(b, []byte("")) {
+			t.Fatalf("want: '' got: %s", b)
 		}
 	})
-}
 
-func BenchmarkToText(b *testing.B) {
-	b.Run("bench", func(b *testing.B) {
+	t.Run("set", func(t *testing.T) {
+		want := []byte(",,value2")
 		ll := LogLine{FieldSeparator: 44}
-		for i := 0; i < 100; i++ {
-			ll.Set(FieldIndex(i), []byte("value"))
+		ll.Set(2, []byte("value2"))
+		b := ll.ToText(nil)
+		if !bytes.Equal(b, want) {
+			t.Fatalf("want: %s got: %s", want, b)
 		}
-		for n := 0; n < b.N; n++ {
-			_ = ll.ToText(nil)
+	})
+
+	t.Run("parse", func(t *testing.T) {
+		want := []byte("value,value,value")
+		ll := LogLine{FieldSeparator: 44}
+		ll.Parse(want, nil)
+		b := ll.ToText(nil)
+		if !bytes.Equal(b, want) {
+			t.Fatalf("want: %s got: %s", want, b)
+		}
+	})
+
+	t.Run("parse and set", func(t *testing.T) {
+		want := []byte("value2,value,value")
+		text := []byte("value,value,value")
+		ll := LogLine{FieldSeparator: 44}
+		ll.Parse(text, nil)
+		ll.Set(0, []byte("value2"))
+		b := ll.ToText(nil)
+		if !bytes.Equal(b, want) {
+			t.Fatalf("want: %s got: %s", want, b)
+		}
+	})
+
+	t.Run("parse and set 2", func(t *testing.T) {
+		want := []byte("value,value,value,,,value2")
+		text := []byte("value,value,value")
+		ll := LogLine{FieldSeparator: 44}
+		ll.Parse(text, nil)
+		ll.Set(5, []byte("value2"))
+		b := ll.ToText(nil)
+		if !bytes.Equal(b, want) {
+			t.Fatalf("want: %s got: %s", want, b)
+		}
+	})
+
+	t.Run("parse max num fields", func(t *testing.T) {
+		values := make([]string, 0, LogLineNumFields)
+		for i := 0; i < int(LogLineNumFields); i++ {
+			values = append(values, "value")
+		}
+		want := []byte(strings.Join(values, ","))
+		ll := LogLine{FieldSeparator: 44}
+		ll.Parse(want, nil)
+		b := ll.ToText(nil)
+		if !bytes.Equal(b, want) {
+			t.Fatalf("want: %s got: %s", want, b)
+
+		}
+	})
+
+	t.Run("parse max num fields and set", func(t *testing.T) {
+		values := make([]string, 0, LogLineNumFields)
+		for i := 0; i < int(LogLineNumFields); i++ {
+			values = append(values, "value")
+		}
+		text := []byte(strings.Join(values, ","))
+		values[50] = "other"
+		want := []byte(strings.Join(values, ","))
+		ll := LogLine{FieldSeparator: 44}
+		ll.Parse(text, nil)
+		ll.Set(50, []byte("other"))
+		b := ll.ToText(nil)
+		if !bytes.Equal(b, want) {
+			t.Fatalf("want: %s got: %s", want, b)
+
+		}
+	})
+
+	t.Run("parse max num field - 1 and set last", func(t *testing.T) {
+		values := make([]string, 0, LogLineNumFields)
+		for i := 0; i < int(LogLineNumFields)-1; i++ {
+			values = append(values, "value")
+		}
+		text := []byte(strings.Join(values, ","))
+		values = append(values, "other")
+		want := []byte(strings.Join(values, ","))
+
+		ll := LogLine{FieldSeparator: 44}
+		ll.Parse(text, nil)
+		ll.Set(LogLineNumFields-1, []byte("other"))
+		b := ll.ToText(nil)
+		if !bytes.Equal(b, want) {
+			t.Fatalf("want: %s got: %s", want, b)
 		}
 	})
 }

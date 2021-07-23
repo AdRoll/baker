@@ -118,16 +118,18 @@ func (l *LogLine) Parse(text []byte, meta Metadata) error {
 	fc := FieldIndex(1)
 	for i, ch := range text {
 		if ch == l.FieldSeparator {
-			if fc > LogLineNumFields {
+			// We return an error if we reach the penultimate 'idx' array position.
+			// The last position needs to be used to store the total length of the buffer.
+			if fc >= LogLineNumFields {
 				return errLogLineTooManyFields
 			}
 			l.idx[fc] = int32(i)
 			fc++
 		}
 	}
-	for ; fc <= LogLineNumFields; fc++ {
-		l.idx[fc] = int32(len(text))
-	}
+	// Set the length of the buffer as the last value and leave the rest of the array zeroed.
+	l.idx[fc] = int32(len(text))
+
 	l.data = text
 	if meta != nil {
 		l.meta = meta
@@ -160,11 +162,23 @@ func (l *LogLine) ToText(buf []byte) []byte {
 		return buf
 	}
 
+	// get the last setted index in the write array
 	var lastw int
 	for i := len(l.wmask) - 1; i > 0; i-- {
 		if l.wmask[i] != 0 {
 			lastw = i
 			break
+		}
+	}
+
+	// get the last index in the data buffer
+	lastr := 0
+	if l.data != nil {
+		for i := len(l.idx) - 1; i > 0; i-- {
+			if l.idx[i] != 0 {
+				lastr = i - 1
+				break
+			}
 		}
 	}
 
@@ -183,11 +197,12 @@ func (l *LogLine) ToText(buf []byte) []byte {
 		buf = newbuf
 	}
 
-	done := false
-	for fc := FieldIndex(0); fc < LogLineNumFields && !done; fc++ {
+	for fc := FieldIndex(0); fc < LogLineNumFields; fc++ {
 		buf = append(buf, l.Get(fc)...)
+		if fc >= FieldIndex(lastw) && fc >= FieldIndex(lastr) {
+			break
+		}
 		buf = append(buf, l.FieldSeparator)
-		done = fc > FieldIndex(lastw) && (l.data == nil || l.idx[fc] == -1)
 	}
 	return buf
 }

@@ -138,6 +138,31 @@ func BenchmarkLogLineParse(b *testing.B) {
 	sink = ll
 }
 
+func BenchmarkLogLineToText(b *testing.B) {
+	b.Run("from set", func(b *testing.B) {
+		ll := baker.LogLine{FieldSeparator: 44}
+		for i := 0; i < 100; i++ {
+			ll.Set(baker.FieldIndex(i), []byte("value"))
+		}
+
+		b.ReportAllocs()
+		for n := 0; n < b.N; n++ {
+			_ = ll.ToText(nil)
+		}
+	})
+
+	b.Run("from parse", func(b *testing.B) {
+		text := []byte("value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value")
+		ll := baker.LogLine{FieldSeparator: 44}
+		ll.Parse(text, nil)
+
+		b.ReportAllocs()
+		for n := 0; n < b.N; n++ {
+			_ = ll.ToText(nil)
+		}
+	})
+}
+
 func BenchmarkLogLineCopy(b *testing.B) {
 	b.Run("set=0", func(b *testing.B) {
 		var ll baker.Record
