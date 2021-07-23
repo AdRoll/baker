@@ -78,6 +78,7 @@ func TestFileWriterConfig(t *testing.T) {
 func testFileWriterCompareInOut(numRecords int, wait, rotate time.Duration, comps ...string) func(*testing.T) {
 	return func(t *testing.T) {
 		cfg := baker.OutputParams{
+			Fields: []baker.FieldIndex{1},
 			ComponentParams: baker.ComponentParams{
 				DecodedConfig: &FileWriterConfig{
 					PathString:     filepath.Join(append([]string{t.TempDir()}, comps...)...),
@@ -96,46 +97,32 @@ func testFileWriterCompareInOut(numRecords int, wait, rotate time.Duration, comp
 		go func() {
 			for i := 0; i < numRecords; i++ {
 				record := fmt.Sprintf("foo,%d,bar", i)
-				inch <- baker.OutputRecord{Fields: nil, Record: []byte(record)}
+				inch <- baker.OutputRecord{Fields: []string{strconv.Itoa(i)}, Record: []byte(record)}
 				sentRecords[i] = record
 				time.Sleep(wait)
 			}
 			close(inch)
 		}()
 
-		// TODO(arl): when the race condition has been fixed,
-		// TestFileWriterCompareInOut should pass with addSync = true. At this
-		// point, we can remove addSync.
-		//
-		// Since upch is not buffered, the output should guarantee that once
-		// fw.Run() returns, all filenames should have been sent into the upload
-		// channel. Thus should be no need for additional additional
-		// synchronization here.
-		const addSync = false
-
-		var uploaded []string
 		upch := make(chan string)
-		done := make(chan struct{})
+		errc := make(chan error, 1)
 		go func() {
-			for p := range upch {
-				t.Logf("sent to uploader: %s", p)
-				uploaded = append(uploaded, p)
-			}
-			if addSync {
-				close(done)
-			}
+			errc <- fw.Run(inch, upch)
+			close(upch)
 		}()
 
-		if err := fw.Run(inch, upch); err != nil {
-			t.Fatal(err)
+		// Drain the channel containing the uploaded paths.
+		var uploaded []string
+		for p := range upch {
+			uploaded = append(uploaded, p)
 		}
-		if addSync {
-			close(upch)
-			<-done
+
+		if err := <-errc; err != nil {
+			t.Fatalf("fw.Run() error: %v", err)
 		}
 
 		// Verify that the set of records sent to the output is equal to the set of
-		// records present in the -possibly multiple- files sent to the uploader.
+		// records present in the file(s) sent to the uploader.
 		uploadedRecords := make(map[int]string)
 
 		for _, p := range uploaded {
@@ -179,7 +166,7 @@ func testFileWriterCompareInOut(numRecords int, wait, rotate time.Duration, comp
 		}
 
 		if !reflect.DeepEqual(sentRecords, uploadedRecords) {
-			t.Fatalf("mismatch between sent and uploaded records\nsent:     %+v\nuploaded: %+v\n", sentRecords, uploadedRecords)
+			t.Errorf("total mismatch: %d records found in uploaded files, sent %d", len(uploadedRecords), len(sentRecords))
 		}
 	}
 }
@@ -189,23 +176,57 @@ func TestFileWriterCompareInOut(t *testing.T) {
 
 	defer testutil.DisableLogging()()
 
-	t.Run("year-month-rotation/out=gz",
-		testFileWriterCompareInOut(500, 1*time.Millisecond, time.Second,
-			"{{.Year}}", "{{.Month}}", "{{.Rotation}}-out.csv.gz",
-		))
-
-	t.Run("year-month/out=gz",
-		testFileWriterCompareInOut(500, 0, time.Second,
-			"{{.Year}}", "{{.Month}}", "out.csv.gz",
-		))
-
-	t.Run("year-month-rotation/out=zst",
-		testFileWriterCompareInOut(500, 1*time.Millisecond, time.Second,
-			"{{.Year}}", "{{.Month}}", "{{.Rotation}}-out.csv.zst",
-		))
-
-	t.Run("year-month/out=zst",
-		testFileWriterCompareInOut(500, 0, time.Second,
-			"{{.Year}}", "{{.Month}}", "out.csv.zst",
-		))
+	tests := []struct {
+		name       string
+		numRecords int
+		wait       time.Duration
+		rotate     time.Duration
+		comps      []string
+	}{
+		{
+			name:       "year-month-rotation/out=gz",
+			numRecords: 500,
+			wait:       1 * time.Millisecond,
+			rotate:     time.Second,
+			comps:      []string{"{{.Year}}", "{{.Month}}", "{{.Rotation}}-out.csv.gz"},
+		},
+		{
+			name:       "year-month/out=gz",
+			numRecords: 500,
+			wait:       0,
+			rotate:     time.Second,
+			comps:      []string{"{{.Year}}", "{{.Month}}", "out.csv.gz"},
+		},
+		{
+			name:       "year-month-rotation/out=zst",
+			numRecords: 500,
+			wait:       1 * time.Millisecond,
+			rotate:     time.Second,
+			comps:      []string{"{{.Year}}", "{{.Month}}", "{{.Rotation}}-out.csv.zst"},
+		},
+		{
+			name:       "year-month/out=zst",
+			numRecords: 500,
+			wait:       0,
+			rotate:     time.Second,
+			comps:      []string{"{{.Year}}", "{{.Month}}", "out.csv.zst"},
+		},
+		{
+			name:       "disable-rotation",
+			numRecords: 500,
+			wait:       0,
+			rotate:     -1,
+			comps:      []string{"disable-rotation.out.csv.zst"},
+		},
+		{
+			name:       "year-month/field0-out=zst",
+			numRecords: 20,
+			wait:       1 * time.Millisecond,
+			rotate:     time.Second,
+			comps:      []string{"{{.Year}}", "{{.Month}}", "{{.Field0}}-out.csv.zst"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, testFileWriterCompareInOut(tt.numRecords, tt.wait, tt.rotate, tt.comps...))
+	}
 }
