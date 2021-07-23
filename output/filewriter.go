@@ -165,7 +165,6 @@ type fileWorker struct {
 	fd          *os.File
 	lock        sync.Mutex
 
-	ticker  *time.Ticker
 	writer  *bufio.Writer
 	cwriter io.WriteCloser
 
@@ -200,12 +199,29 @@ func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid stri
 	}
 
 	fw.Rotate()
-	go fw.run()
 
-	fw.ticker = time.NewTicker(cfg.RotateInterval)
 	go func() {
-		for range fw.ticker.C {
-			fw.Rotate()
+		ticker := time.NewTicker(cfg.RotateInterval)
+
+		defer func() {
+			fw.closeall()
+			fw.upload(fw.currentPath)
+			close(fw.done)
+		}()
+
+		for {
+			select {
+			case <-ticker.C:
+				fw.Rotate()
+			case line, ok := <-fw.in:
+				if !ok {
+					ticker.Stop()
+					return
+				}
+				if err := fw.write(line); err != nil {
+					log.WithError(err).Error("error writing to file")
+				}
+			}
 		}
 	}()
 
@@ -317,16 +333,4 @@ func (fw *fileWorker) write(line []byte) error {
 	_, err := fw.cwriter.Write(line)
 	fw.cwriter.Write([]byte("\n"))
 	return err
-}
-
-func (fw *fileWorker) run() {
-	for line := range fw.in {
-		if err := fw.write(line); err != nil {
-			log.WithError(err).Error("error writing to file")
-		}
-	}
-	fw.ticker.Stop()
-	fw.closeall()
-	fw.upload(fw.currentPath)
-	close(fw.done)
 }
