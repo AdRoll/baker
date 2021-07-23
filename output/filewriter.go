@@ -348,9 +348,7 @@ func (fw *fileWorker) write(req []byte) {
 }
 
 func (fw *fileWorker) Close() error {
-	fmt.Println("fileWorker.Close, closing in channel")
 	close(fw.in)
-	fmt.Println("fileWorker.Close, waiting for done channel to be closed")
 	<-fw.done
 	return nil
 }
