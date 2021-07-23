@@ -141,7 +141,7 @@ func (cfg *FileWriterConfig) fillDefaults() {
 // fileWorker manages writes to a file and its periodic rotation.
 type fileWorker struct {
 	in   chan []byte
-	done chan bool
+	done chan struct{}
 	upch chan<- string
 
 	cfg *FileWriterConfig
@@ -175,7 +175,7 @@ func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid stri
 
 	fw := &fileWorker{
 		in:             make(chan []byte, 1),
-		done:           make(chan bool, 1),
+		done:           make(chan struct{}),
 		upch:           upch,
 		cfg:            cfg,
 		pathTemplate:   pathTemplate,
@@ -287,8 +287,8 @@ func (fw *fileWorker) Close() {
 	close(fw.in)
 }
 
-func (fw *fileWorker) Wait() bool {
-	return <-fw.done
+func (fw *fileWorker) Wait() {
+	<-fw.done
 }
 
 func (fw *fileWorker) closeall() {
@@ -321,5 +321,5 @@ func (fw *fileWorker) run() {
 	fw.ticker.Stop()
 	fw.closeall()
 	fw.upload(fw.currentPath)
-	fw.done <- true
+	close(fw.done)
 }
