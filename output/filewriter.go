@@ -32,14 +32,14 @@ placeholders are evaluated each time a file is created, that is upon creation
 of the output or everytime a rotation takes place.
 
 Supported placeholders:
+ - {{.Year}}      year at file creation, 4 digits (YYYY)
+ - {{.Month}}     month number at file creation, 2 digits (MM)
+ - {{.Day}}       day of the month at file creation, 2 digits (DD)
+ - {{.Hour}}      hour at file creation in 24h format, 2 digits (HH)
+ - {{.Minute}}    minute at file creation, 2 digits (MM)
+ - {{.Second}}    second at file creation, 2 digits (SS)
  - {{.Index}}     index of the current output process (see [output.procs]), 4 digits long
- - {{.Year}}      year (YYYY) at file creation
- - {{.Month}}     month number (MM) at file creation
- - {{.Day}}       day of the month number (DD) at file creation
- - {{.Hour}}      hour (HH) at file creation
- - {{.Minute}}    minute (MM) at file creation
- - {{.Second}}    second (SS) at file creation
- - {{.UUID}}      worker random UUID (v4), 36 chars long
+ - {{.UUID}}      per-worker random UUID (v4 UUID), 36 chars long
  - {{.Rotation}}  rotation count, 6 digits long
  - {{.Field0}}    value of the first field provided in [output.fields] (only if present).
  
@@ -48,8 +48,8 @@ the following rules:
 
 1. a file should only ever be accessed by a single worker at a time
 
-If you use multiple output processes, you probably want to use {{.Index}} so that 
-generated filenames are guaranteed to be different for each workers.
+If you use multiple output processes, you should use {{.Index}} or {{.UUID}} 
+so that generated filenames are guaranteed to be different for each workers.
 
  2. rotation should never generate the same path twice
  
@@ -58,12 +58,14 @@ that 2 files generated at a distance of RotateInterval will have different filen
 To ensure filenames are different, you should set RotateInterval to a duration that 
 exceeds that of the time-based placeholder with the shortest span.
 
-For example, the following is correct:
+For example, the following is correct since it's the generated path is guaranteed to
+be unique at each rotation:
 
     PathString = "/path/to/file-{{.Hour}}-{{.Minute}}.log.gz" 
     RotateInterval = 5m
 
-While the following is not correct:
+However, this is not correct, since successive generations may generate the exact same 
+path:
 
     PathString = "/path/to/file-{{.Hour}}-{{.Minute}}.log.gz" 
     RotateInterval = 1s
