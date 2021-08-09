@@ -31,11 +31,11 @@ func DiffWithGolden(t *testing.T, src []byte, golden string) {
 		return
 	}
 
-	diffBytes(t, golden, "actual", goldbuf, src)
+	DiffBytes(t, golden, "actual", goldbuf, src)
 }
 
-// diffBytes fails the test and shows differences, line by line, if any
-func diffBytes(t *testing.T, aname, bname string, a, b []byte) {
+// DiffBytes fails the test and shows differences, line by line, if any
+func DiffBytes(t *testing.T, aname, bname string, a, b []byte) {
 	t.Helper()
 
 	var buf bytes.Buffer // holding long error message
