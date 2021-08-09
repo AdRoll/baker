@@ -10,7 +10,7 @@ import (
 )
 
 func TestReader(t *testing.T) {
-	lorem := filepath.Join("testdata", "lorem.txt")
+	lorem := filepath.Join("testdata", "lorem.txt.golden")
 	want, err := os.ReadFile(lorem)
 	if err != nil {
 		t.Fatalf("can't read original file: %s", err)
