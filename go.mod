@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/DataDog/datadog-go v3.2.0+incompatible
+	github.com/arl/dirtree v0.0.0-20210803151130-5e9203237698
 	github.com/aws/aws-sdk-go v1.34.8
 	github.com/bmizerany/perks v0.0.0-20141205001514-d9a9656a3a4b
 	github.com/charmbracelet/glamour v0.2.0
@@ -12,9 +13,7 @@ require (
 	github.com/jmespath/go-jmespath v0.3.0
 	github.com/jpillora/backoff v0.0.0-20160301230512-f85df8d02bdf
 	github.com/juju/ratelimit v0.0.0-20151125201925-77ed1c8a0121
-	github.com/klauspost/compress v0.0.0-20160229075208-2d3d403f37d2
-	github.com/klauspost/cpuid v0.0.0-20160302075316-09cded8978dc // indirect
-	github.com/klauspost/crc32 v0.0.0-20160219142609-19b0b332c9e4 // indirect
+	github.com/klauspost/compress v1.13.1
 	github.com/mattn/go-sqlite3 v1.14.3
 	github.com/nsf/sexp v0.0.0-20130620094510-d3d2f2591f1d
 	github.com/pierrec/lz4/v3 v3.3.2

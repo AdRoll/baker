@@ -1,16 +1,24 @@
-package output
+package output_test
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
+	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/arl/dirtree"
+
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/input"
+	"github.com/AdRoll/baker/output"
 	"github.com/AdRoll/baker/pkg/zip_agnostic"
 	"github.com/AdRoll/baker/testutil"
 )
@@ -18,24 +26,24 @@ import (
 func TestFileWriterConfig(t *testing.T) {
 	tests := []struct {
 		name    string
-		cfg     *FileWriterConfig
+		cfg     *output.FileWriterConfig
 		fields  []baker.FieldIndex
 		wantErr bool
 	}{
 		{
 			name: "all defaults",
-			cfg:  &FileWriterConfig{},
+			cfg:  &output.FileWriterConfig{},
 		},
 		{
 			name: "{{.Field0}} and len(output.fields) == 1",
-			cfg: &FileWriterConfig{
+			cfg: &output.FileWriterConfig{
 				PathString: "/path/{{.Field0}}/file.gz",
 			},
 			fields: []baker.FieldIndex{0},
 		},
 		{
 			name: "{{.Field0}} and len(output.fields) > 1",
-			cfg: &FileWriterConfig{
+			cfg: &output.FileWriterConfig{
 				PathString: "/path/{{.Field0}}/file.gz",
 			},
 			fields: []baker.FieldIndex{0, 1},
@@ -44,7 +52,7 @@ func TestFileWriterConfig(t *testing.T) {
 		// error cases
 		{
 			name: "{{.Field0}} and len(output.fields) == 0",
-			cfg: &FileWriterConfig{
+			cfg: &output.FileWriterConfig{
 				PathString: "/path/{{.Field0}}/file.gz",
 			},
 			fields:  []baker.FieldIndex{},
@@ -60,7 +68,7 @@ func TestFileWriterConfig(t *testing.T) {
 				},
 				Fields: tt.fields,
 			}
-			_, err := NewFileWriter(cfg)
+			_, err := output.NewFileWriter(cfg)
 			if tt.wantErr && err == nil {
 				t.Fatalf("wantErr: %v, got: %v", tt.wantErr, err)
 			}
@@ -80,13 +88,13 @@ func testFileWriterCompareInOut(numRecords int, wait, rotate time.Duration, comp
 		cfg := baker.OutputParams{
 			Fields: []baker.FieldIndex{1},
 			ComponentParams: baker.ComponentParams{
-				DecodedConfig: &FileWriterConfig{
+				DecodedConfig: &output.FileWriterConfig{
 					PathString:     filepath.Join(append([]string{t.TempDir()}, comps...)...),
 					RotateInterval: rotate,
 				},
 			},
 		}
-		fw, err := NewFileWriter(cfg)
+		fw, err := output.NewFileWriter(cfg)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -219,14 +227,146 @@ func TestFileWriterCompareInOut(t *testing.T) {
 			comps:      []string{"disable-rotation.out.csv.zst"},
 		},
 		{
-			name:       "year-month/field0-out=zst",
+			name:       "field0-out=zst",
 			numRecords: 20,
 			wait:       1 * time.Millisecond,
 			rotate:     time.Second,
-			comps:      []string{"{{.Year}}", "{{.Month}}", "{{.Field0}}-out.csv.zst"},
+			comps:      []string{"{{.Field0}}-out.csv.zst"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, testFileWriterCompareInOut(tt.numRecords, tt.wait, tt.rotate, tt.comps...))
+	}
+}
+
+// testFileWriterIntegration builds and run a topology rading from
+// /testdata/filewriter/random1.csv.log.zst and using the FileWriter output,
+// configured with the given pathString. In pathString, TMPDIR gets replaced at
+// runtime by the test case temporary Once the topology exits, the content of
+// the created temporary directory is listed, and compared with the content of
+// the golden file named after the test, i.e "testdata/filewriter/TestName".
+// To update the golden file, run:
+//  go test -race -run TestName -update
+func testFileWriterIntegration(t *testing.T, pathString string) {
+	// This test uses a randomly generated input CSV file.
+	//  schema: pick(AAA|BBB|CCC|DDD), digit(22), first, last, email, state
+	//  site: https://www.convertcsv.com/generate-test-data.htm
+
+	toml := `
+	[fields]
+	names = ["kind", "digits", "first", "last", "email", "state"]
+
+	[input]
+	name = "list"
+	
+	[input.config]
+	files = ["./testdata/filewriter/random1.csv.log.zst"]
+	
+	[output]
+	fields = ["kind"]
+	name = "filewriter"
+	procs = 1
+	[output.config]
+	pathstring = "%s"
+
+	#rotateinterval = "2s" NOT USED
+`
+
+	tmpDir := t.TempDir()
+	toml = fmt.Sprintf(toml, strings.Replace(pathString, "TMPDIR", tmpDir, -1))
+
+	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml),
+		baker.Components{
+			Inputs:  []baker.InputDesc{input.ListDesc},
+			Outputs: []baker.OutputDesc{output.FileWriterDesc},
+		})
+	if err != nil {
+		t.Fatal(err)
+	}
+	topo, err := baker.NewTopologyFromConfig(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	topo.Start()
+	topo.Wait()
+
+	// We decompress files since the content of compressed files is not
+	// guaranteed to be determinsitic, however it's lossless so we'll use the
+	// decompressed file to control the files the output produced.
+	decompressFilesInDir(t, tmpDir)
+
+	buf := &bytes.Buffer{}
+	if err := dirtree.Write(buf, tmpDir, dirtree.ModeAll, dirtree.ExcludeRoot); err != nil {
+		t.Fatal(err)
+	}
+
+	golden := filepath.Join("testdata", "filewriter", t.Name())
+	if testutil.UpdateGolden != nil && *testutil.UpdateGolden {
+		if err := os.WriteFile(golden, buf.Bytes(), os.ModePerm); err != nil {
+			t.Fatalf("can't update golden file: %v", err)
+		}
+	}
+
+	testutil.DiffWithGolden(t, buf.Bytes(), golden)
+}
+
+func TestFileWriterIntegrationField0(t *testing.T) {
+	testFileWriterIntegration(t, filepath.Join("TMPDIR", "{{.Field0}}", "out.csv.zst"))
+}
+
+// decompressFilesInDir decompresses all compressed (zstd/gzip) files it finds
+// under root (recursively), and removes the compressed files in files with the
+// same name but without the extension.
+func decompressFilesInDir(tb testing.TB, root string) {
+	var rm []string // files to delete after a successfull walk
+
+	err := filepath.WalkDir(root, func(fullpath string, dirent fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if dirent.IsDir() {
+			return nil
+		}
+
+		switch filepath.Ext(fullpath) {
+		case ".gz", ".zst", ".zstd":
+		default:
+			return nil
+		}
+
+		inf, err := os.Open(fullpath)
+		if err != nil {
+			return fmt.Errorf("can't open input file: %v", err)
+		}
+		defer inf.Close()
+		zr, err := zip_agnostic.NewReader(inf)
+		if err != nil {
+			return fmt.Errorf("can't read input file: %v", err)
+		}
+		defer zr.Close()
+
+		fout, err := os.Create(strings.TrimSuffix(fullpath, filepath.Ext(fullpath)))
+		if err != nil {
+			return fmt.Errorf("can't create output file: %v", err)
+		}
+		defer fout.Close()
+
+		if _, err := io.Copy(fout, zr); err != nil {
+			return err
+		}
+		rm = append(rm, fullpath)
+		return nil
+	})
+
+	if err != nil {
+		tb.Fatalf("decompressFilesInDir: error walking directory: %v", err)
+	}
+
+	for _, name := range rm {
+		if err := os.Remove(name); err != nil {
+			tb.Fatalf("after Walk, can't remove %s: %v", name, err)
+		}
 	}
 }
