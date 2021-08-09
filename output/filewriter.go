@@ -95,6 +95,7 @@ type FileWriter struct {
 	workers map[string]*fileWorker
 	index   int
 
+	tmpl         *template.Template
 	useReplField bool
 }
 
@@ -116,6 +117,11 @@ func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 		return nil, errors.New("if {{.Field0}} is given, at least one field must be given in [output.fields]")
 	}
 
+	var err error
+	if fw.tmpl, err = template.New("fileWorkerType").Parse(dcfg.PathString); err != nil {
+		return nil, fmt.Errorf("FileWorker: invalid PathString template: %s", err)
+	}
+
 	return fw, nil
 }
 
@@ -135,7 +141,7 @@ func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) er
 		if !ok {
 			// Unique UUID for the output processes
 			uid := uuid.New().String()
-			worker, err = newWorker(w.Cfg, wname, w.index, uid, upch)
+			worker, err = newWorker(w.Cfg, w.tmpl, wname, w.index, uid, upch)
 			if err != nil {
 				// This error will be returned, but we'll try to cleanup the
 				// potential other workers, not early exit.
@@ -208,24 +214,17 @@ type fileWorker struct {
 	index          int
 	uid            string
 	rotateIdx      int64
-	tmpl           *template.Template
 }
 
 const fileWorkerChunkBuffer = 128 * 1024
 
-func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid string, upch chan<- string) (*fileWorker, error) {
+func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue string, index int, uid string, upch chan<- string) (*fileWorker, error) {
 	ctxLog := log.WithFields(log.Fields{"output": "FileWriter", "idx": index})
-
-	tmpl, err := template.New("fileWorkerType").Parse(cfg.PathString)
-	if err != nil {
-		return nil, fmt.Errorf("invalid PathString template: %s", err)
-	}
 
 	fw := &fileWorker{
 		in:             make(chan []byte, 1),
 		done:           make(chan struct{}),
 		cfg:            cfg,
-		tmpl:           tmpl,
 		replFieldValue: replFieldValue,
 		index:          index,
 		uid:            uid,
@@ -279,7 +278,7 @@ func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid stri
 		return makeWriteCloser(wc, close), nil
 	}
 
-	curPath := fw.makePath()
+	curPath := fw.makePath(tmpl)
 	curw, err := newFile(curPath)
 	if err != nil {
 		return nil, fmt.Errorf("can't create file: %v", err)
@@ -317,7 +316,7 @@ func newWorker(cfg *FileWriterConfig, replFieldValue string, index int, uid stri
 				upch <- curPath
 
 				fw.rotateIdx++
-				newPath := fw.makePath()
+				newPath := fw.makePath(tmpl)
 				ctxLog.WithFields(log.Fields{"current": curPath, "new": newPath}).Info("FileWriter worker file rotation")
 				if curw, err = newFile(newPath); err != nil {
 					// TODO(arl): when sticky error will be in place, do not
@@ -357,7 +356,7 @@ func (fw *fileWorker) Close() error {
 	return nil
 }
 
-func (fw *fileWorker) makePath() string {
+func (fw *fileWorker) makePath(tmpl *template.Template) string {
 	now := time.Now().UTC()
 	var buf bytes.Buffer
 
@@ -374,7 +373,7 @@ func (fw *fileWorker) makePath() string {
 		"Field0":   fw.replFieldValue,
 	}
 
-	err := fw.tmpl.Execute(&buf, replacementVars)
+	err := tmpl.Execute(&buf, replacementVars)
 	if err != nil {
 		panic(err.Error())
 	}
