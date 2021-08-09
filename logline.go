@@ -188,6 +188,7 @@ func (l *LogLine) ToText(buf []byte) []byte {
 	for i := uint8(1); i <= l.wcnt; i++ {
 		wlen += len(l.wdata[i])
 	}
+	wlen += int(l.wcnt) - 1 // add 1 additional byte per separator
 
 	blen, bcap, dlen := len(buf), cap(buf), len(l.data)
 	avail := bcap - blen
