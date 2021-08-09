@@ -253,8 +253,11 @@ func TestFileWriterCompareInOut(t *testing.T) {
 //
 // To update the golden file, run: go test -race -run TestName -update
 func testFileWriterIntegrationDeterministic(t *testing.T, pathString string) {
+	const procs = 1
+	const rotate = -1
+
 	tmpDir := t.TempDir()
-	testFileWriterIntegration(t, tmpDir, pathString)
+	testFileWriterIntegration(t, tmpDir, pathString, procs, rotate)
 
 	buf := &bytes.Buffer{}
 	if err := dirtree.Write(buf, tmpDir, dirtree.ModeAll, dirtree.ExcludeRoot); err != nil {
@@ -271,7 +274,7 @@ func testFileWriterIntegrationDeterministic(t *testing.T, pathString string) {
 	testutil.DiffWithGolden(t, buf.Bytes(), golden)
 	if t.Failed() {
 		dirCpy := filepath.Join(os.TempDir(), t.Name())
-		fmt.Printf("ERROR: copying output directory to %s for investigation\n\n", dirCpy)
+		fmt.Printf("ERROR: copying output directory to %q for investigation\n\n", dirCpy)
 		if err := testutil.CopyDirectory(tmpDir, dirCpy); err != nil {
 			t.Fatal(err)
 		}
@@ -288,9 +291,9 @@ func testFileWriterIntegrationDeterministic(t *testing.T, pathString string) {
 // "testdata/filewriter/input.sorted.csv". testFileWriterIntegrationCheckRecords
 // is useful when the filenames and their content is not expected to be
 // deterministic.
-func testFileWriterIntegrationCheckRecords(t *testing.T, pathString string) {
+func testFileWriterIntegrationCheckRecords(t *testing.T, pathString string, procs int, rotate time.Duration) {
 	tmpDir := t.TempDir()
-	decompressed := testFileWriterIntegration(t, tmpDir, pathString)
+	decompressed := testFileWriterIntegration(t, tmpDir, pathString, procs, rotate)
 
 	// Create a buffer with all the records in ascending order, separated by /n
 	var records []string
@@ -316,14 +319,14 @@ func testFileWriterIntegrationCheckRecords(t *testing.T, pathString string) {
 	testutil.DiffWithGolden(t, out, filepath.Join("testdata", "filewriter", "input.sorted.csv"))
 	if t.Failed() {
 		outName := filepath.Join(os.TempDir(), t.Name())
-		fmt.Printf("ERROR: writing incorrect buffer to %s for investigation\n\n", outName)
-		if err := os.WriteFile(t.Name(), out, os.ModePerm); err != nil {
+		fmt.Printf("ERROR: writing incorrect buffer to %q for investigation\n\n", outName)
+		if err := os.WriteFile(outName, out, os.ModePerm); err != nil {
 			t.Fatal(err)
 		}
 	}
 }
 
-func testFileWriterIntegration(t *testing.T, tmpDir, pathString string) []string {
+func testFileWriterIntegration(t *testing.T, tmpDir, pathString string, procs int, rotate time.Duration) []string {
 	// This test uses a randomly generated input CSV file.
 	//  schema: pick(AAA|BBB|CCC|DDD), digit(22), first, last, email, state
 	//  site: https://www.convertcsv.com/generate-test-data.htm
@@ -341,14 +344,15 @@ func testFileWriterIntegration(t *testing.T, tmpDir, pathString string) []string
 	[output]
 	fields = ["kind"]
 	name = "filewriter"
-	procs = 1
+	procs = %d
 	[output.config]
-	pathstring = "%s"
-
-	#rotateinterval = "2s" NOT USED
+	pathstring = %q
+	rotateinterval = %q
 `
 
-	toml = fmt.Sprintf(toml, strings.Replace(pathString, "TMPDIR", tmpDir, -1))
+	defer testutil.DisableLogging()()
+
+	toml = fmt.Sprintf(toml, procs, strings.Replace(pathString, "TMPDIR", tmpDir, -1), rotate)
 
 	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml),
 		baker.Components{
@@ -380,12 +384,31 @@ func TestFileWriterIntegrationIndex(t *testing.T) {
 	testFileWriterIntegrationDeterministic(t, filepath.Join("TMPDIR", "{{.Index}}", "subdir", "out.csv.zst"))
 }
 
-func TestFileWriterIntegrationRotation(t *testing.T) {
+func TestFileWriterIntegrationRotationIndex(t *testing.T) {
 	testFileWriterIntegrationDeterministic(t, filepath.Join("TMPDIR", "{{.Rotation}}", "out.csv.zst"))
 }
 
-func TestFileWriterIntegrationRotation2(t *testing.T) {
-	testFileWriterIntegrationCheckRecords(t, filepath.Join("TMPDIR", "{{.Rotation}}", "out.csv.zst"))
+func TestFileWriterIntegrationTimestamp(t *testing.T) {
+	const procs = 1
+	const rotate = -1
+	testFileWriterIntegrationCheckRecords(t, filepath.Join("TMPDIR", "{{.Year}}{{.Month}}{{.Day}}{{.Hour}}{{.Minute}}{{.Second}}-out.csv.zst"), procs, rotate)
+}
+func TestFileWriterIntegrationProcs(t *testing.T) {
+	const procs = 8
+	const rotate = -1
+	testFileWriterIntegrationCheckRecords(t, filepath.Join("TMPDIR", "{{.Index}}-out.csv.zst"), procs, rotate)
+}
+
+func TestFileWriterIntegrationFastRotation(t *testing.T) {
+	const procs = 1
+	const rotate = 1 * time.Microsecond
+	testFileWriterIntegrationCheckRecords(t, filepath.Join("TMPDIR", "{{.Rotation}}-out.csv.zst"), procs, rotate)
+}
+
+func TestFileWriterIntegrationUUID(t *testing.T) {
+	const procs = 8
+	const rotate = -1
+	testFileWriterIntegrationCheckRecords(t, filepath.Join("TMPDIR", "{{.UUID}}-out.csv.zst"), procs, rotate)
 }
 
 // decompressFilesInDir decompresses all compressed (zstd/gzip) files it finds
