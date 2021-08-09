@@ -264,7 +264,7 @@ func testFileWriterIntegrationDeterministic(t *testing.T, pathString string) {
 		t.Fatal(err)
 	}
 
-	golden := filepath.Join("testdata", "filewriter", t.Name())
+	golden := filepath.Join("testdata", "filewriter", t.Name()+".golden")
 	if testutil.UpdateGolden != nil && *testutil.UpdateGolden {
 		if err := os.WriteFile(golden, buf.Bytes(), os.ModePerm); err != nil {
 			t.Fatalf("can't update golden file: %v", err)
@@ -273,7 +273,7 @@ func testFileWriterIntegrationDeterministic(t *testing.T, pathString string) {
 
 	testutil.DiffWithGolden(t, buf.Bytes(), golden)
 	if t.Failed() {
-		dirCpy := filepath.Join(os.TempDir(), t.Name())
+		dirCpy := filepath.Join(os.TempDir(), t.Name()+".golden")
 		fmt.Printf("ERROR: copying output directory to %q for investigation\n\n", dirCpy)
 		if err := testutil.CopyDirectory(tmpDir, dirCpy); err != nil {
 			t.Fatal(err)
@@ -288,7 +288,7 @@ func testFileWriterIntegrationDeterministic(t *testing.T, pathString string) {
 //
 // Once the topology exits, this test checks that all records that have been
 // consumed are present in the produced files (compared with
-// "testdata/filewriter/input.sorted.csv". testFileWriterIntegrationCheckRecords
+// "testdata/filewriter/input.sorted.golden". testFileWriterIntegrationCheckRecords
 // is useful when the filenames and their content is not expected to be
 // deterministic.
 func testFileWriterIntegrationCheckRecords(t *testing.T, pathString string, procs int, rotate time.Duration) {
@@ -316,7 +316,7 @@ func testFileWriterIntegrationCheckRecords(t *testing.T, pathString string, proc
 		out = append(out, '\n')
 	}
 
-	testutil.DiffWithGolden(t, out, filepath.Join("testdata", "filewriter", "input.sorted.csv"))
+	testutil.DiffWithGolden(t, out, filepath.Join("testdata", "filewriter", "input.sorted.golden"))
 	if t.Failed() {
 		outName := filepath.Join(os.TempDir(), t.Name())
 		fmt.Printf("ERROR: writing incorrect buffer to %q for investigation\n\n", outName)
