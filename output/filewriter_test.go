@@ -349,8 +349,9 @@ func testFileWriterIntegration(t *testing.T, tmpDir, pathString string, procs in
 	pathstring = %q
 	rotateinterval = %q
 `
-
-	defer testutil.DisableLogging()()
+	if !testing.Verbose() {
+		defer testutil.LessLogging()()
+	}
 
 	toml = fmt.Sprintf(toml, procs, strings.Replace(pathString, "TMPDIR", tmpDir, -1), rotate)
 
