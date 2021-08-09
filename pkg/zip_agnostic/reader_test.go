@@ -10,15 +10,16 @@ import (
 )
 
 func TestReader(t *testing.T) {
-	want, err := os.ReadFile("testdata/lorem.txt")
+	lorem := filepath.Join("testdata", "lorem.txt")
+	want, err := os.ReadFile(lorem)
 	if err != nil {
 		t.Fatalf("can't read original file: %s", err)
 	}
 
 	fnames := []string{
-		"testdata/lorem.txt",
-		"testdata/lorem.txt.zst",
-		"testdata/lorem.txt.gz",
+		lorem,
+		lorem + ".zst",
+		lorem + ".gz",
 	}
 
 	for _, fname := range fnames {
