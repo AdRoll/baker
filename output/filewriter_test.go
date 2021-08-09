@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"sort"
 	"strconv"
 	"strings"
 	"testing"
@@ -246,9 +247,83 @@ func TestFileWriterCompareInOut(t *testing.T) {
 //
 // Once the topology exits, the content of the created temporary directory is
 // listed, and compared with the content of the golden file named after the
-// test, i.e "testdata/filewriter/TestName". To update the golden file, run:
-//  go test -race -run TestName -update
-func testFileWriterIntegrationCheckFiles(t *testing.T, pathString string) {
+// test, i.e "testdata/filewriter/TestName". Since the listing computes the
+// checksum for each file, it's expected that the topology produces a
+// determinstic file/directory hierarchy.
+//
+// To update the golden file, run: go test -race -run TestName -update
+func testFileWriterIntegrationDeterministic(t *testing.T, pathString string) {
+	tmpDir := t.TempDir()
+	testFileWriterIntegration(t, tmpDir, pathString)
+
+	buf := &bytes.Buffer{}
+	if err := dirtree.Write(buf, tmpDir, dirtree.ModeAll, dirtree.ExcludeRoot); err != nil {
+		t.Fatal(err)
+	}
+
+	golden := filepath.Join("testdata", "filewriter", t.Name())
+	if testutil.UpdateGolden != nil && *testutil.UpdateGolden {
+		if err := os.WriteFile(golden, buf.Bytes(), os.ModePerm); err != nil {
+			t.Fatalf("can't update golden file: %v", err)
+		}
+	}
+
+	testutil.DiffWithGolden(t, buf.Bytes(), golden)
+	if t.Failed() {
+		dirCpy := filepath.Join(os.TempDir(), t.Name())
+		fmt.Printf("ERROR: copying output directory to %s for investigation\n\n", dirCpy)
+		if err := testutil.CopyDirectory(tmpDir, dirCpy); err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
+// testFileWriterIntegrationCheckRecords builds and run a topology reading from
+// /testdata/filewriter/input.csv.log.zst and using the FileWriter output,
+// configured with the given pathString (in pathString, "TMPDIR" gets replaced
+// at runtime by the test case temporary directory).
+//
+// Once the topology exits, this test checks that all records that have been
+// consumed are present in the produced files (compared with
+// "testdata/filewriter/input.sorted.csv". testFileWriterIntegrationCheckRecords
+// is useful when the filenames and their content is not expected to be
+// deterministic.
+func testFileWriterIntegrationCheckRecords(t *testing.T, pathString string) {
+	tmpDir := t.TempDir()
+	decompressed := testFileWriterIntegration(t, tmpDir, pathString)
+
+	// Create a buffer with all the records in ascending order, separated by /n
+	var records []string
+	for _, name := range decompressed {
+		f, err := os.Open(name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		scan := bufio.NewScanner(f)
+		for scan.Scan() {
+			records = append(records, scan.Text())
+		}
+		f.Close()
+	}
+	sort.Strings(records)
+
+	var out []byte
+	for _, rec := range records {
+		out = append(out, rec...)
+		out = append(out, '\n')
+	}
+
+	testutil.DiffWithGolden(t, out, filepath.Join("testdata", "filewriter", "input.sorted.csv"))
+	if t.Failed() {
+		outName := filepath.Join(os.TempDir(), t.Name())
+		fmt.Printf("ERROR: writing incorrect buffer to %s for investigation\n\n", outName)
+		if err := os.WriteFile(t.Name(), out, os.ModePerm); err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
+func testFileWriterIntegration(t *testing.T, tmpDir, pathString string) []string {
 	// This test uses a randomly generated input CSV file.
 	//  schema: pick(AAA|BBB|CCC|DDD), digit(22), first, last, email, state
 	//  site: https://www.convertcsv.com/generate-test-data.htm
@@ -273,7 +348,6 @@ func testFileWriterIntegrationCheckFiles(t *testing.T, pathString string) {
 	#rotateinterval = "2s" NOT USED
 `
 
-	tmpDir := t.TempDir()
 	toml = fmt.Sprintf(toml, strings.Replace(pathString, "TMPDIR", tmpDir, -1))
 
 	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml),
@@ -295,40 +369,34 @@ func testFileWriterIntegrationCheckFiles(t *testing.T, pathString string) {
 	// We decompress files since the content of compressed files is not
 	// guaranteed to be determinsitic, however it's lossless so we'll use the
 	// decompressed file to control the files the output produced.
-	decompressFilesInDir(t, tmpDir)
-
-	buf := &bytes.Buffer{}
-	if err := dirtree.Write(buf, tmpDir, dirtree.ModeAll, dirtree.ExcludeRoot); err != nil {
-		t.Fatal(err)
-	}
-
-	golden := filepath.Join("testdata", "filewriter", t.Name())
-	if testutil.UpdateGolden != nil && *testutil.UpdateGolden {
-		if err := os.WriteFile(golden, buf.Bytes(), os.ModePerm); err != nil {
-			t.Fatalf("can't update golden file: %v", err)
-		}
-	}
-
-	testutil.DiffWithGolden(t, buf.Bytes(), golden)
+	return decompressFilesInDir(t, tmpDir)
 }
 
 func TestFileWriterIntegrationField0(t *testing.T) {
-	testFileWriterIntegrationCheckFiles(t, filepath.Join("TMPDIR", "{{.Field0}}", "out.csv.zst"))
+	testFileWriterIntegrationDeterministic(t, filepath.Join("TMPDIR", "{{.Field0}}", "out.csv.zst"))
 }
 
 func TestFileWriterIntegrationIndex(t *testing.T) {
-	testFileWriterIntegrationCheckFiles(t, filepath.Join("TMPDIR", "{{.Index}}", "subdir", "out.csv.zst"))
+	testFileWriterIntegrationDeterministic(t, filepath.Join("TMPDIR", "{{.Index}}", "subdir", "out.csv.zst"))
 }
 
 func TestFileWriterIntegrationRotation(t *testing.T) {
-	testFileWriterIntegrationCheckFiles(t, filepath.Join("TMPDIR", "{{.Rotation}}", "out.csv.zst"))
+	testFileWriterIntegrationDeterministic(t, filepath.Join("TMPDIR", "{{.Rotation}}", "out.csv.zst"))
+}
+
+func TestFileWriterIntegrationRotation2(t *testing.T) {
+	testFileWriterIntegrationCheckRecords(t, filepath.Join("TMPDIR", "{{.Rotation}}", "out.csv.zst"))
 }
 
 // decompressFilesInDir decompresses all compressed (zstd/gzip) files it finds
 // under root (recursively), and removes the compressed files in files with the
-// same name but without the extension.
-func decompressFilesInDir(tb testing.TB, root string) {
-	var rm []string // files to delete after a successfull walk
+// same name but without the extension. decompressFilesInDir returns the
+// absolute path of all files containing decompressed data.
+func decompressFilesInDir(tb testing.TB, root string) []string {
+	var (
+		rm           []string // files to delete after a successfull walk
+		decompressed []string // files with decompressed data
+	)
 
 	err := filepath.WalkDir(root, func(fullpath string, dirent fs.DirEntry, err error) error {
 		if err != nil {
@@ -356,7 +424,8 @@ func decompressFilesInDir(tb testing.TB, root string) {
 		}
 		defer zr.Close()
 
-		fout, err := os.Create(strings.TrimSuffix(fullpath, filepath.Ext(fullpath)))
+		outPath := strings.TrimSuffix(fullpath, filepath.Ext(fullpath))
+		fout, err := os.Create(outPath)
 		if err != nil {
 			return fmt.Errorf("can't create output file: %v", err)
 		}
@@ -366,6 +435,7 @@ func decompressFilesInDir(tb testing.TB, root string) {
 			return err
 		}
 		rm = append(rm, fullpath)
+		decompressed = append(decompressed, outPath)
 		return nil
 	})
 
@@ -378,4 +448,6 @@ func decompressFilesInDir(tb testing.TB, root string) {
 			tb.Fatalf("after Walk, can't remove %s: %v", name, err)
 		}
 	}
+
+	return decompressed
 }
