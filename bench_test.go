@@ -141,7 +141,7 @@ func BenchmarkLogLineParse(b *testing.B) {
 func BenchmarkLogLineToText(b *testing.B) {
 	b.Run("from set", func(b *testing.B) {
 		ll := baker.LogLine{FieldSeparator: 44}
-		for i := 0; i < 100; i++ {
+		for i := 0; i < 200; i++ {
 			ll.Set(baker.FieldIndex(i), []byte("value"))
 		}
 
@@ -152,9 +152,34 @@ func BenchmarkLogLineToText(b *testing.B) {
 	})
 
 	b.Run("from parse", func(b *testing.B) {
-		text := []byte("value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value")
+		l := make([][]byte, 0, 200)
+		for i := 0; i < 1000; i++ {
+			l = append(l, []byte("value"))
+		}
+		text := bytes.Join(l, []byte(","))
+
 		ll := baker.LogLine{FieldSeparator: 44}
 		ll.Parse(text, nil)
+
+		b.ReportAllocs()
+		for n := 0; n < b.N; n++ {
+			_ = ll.ToText(nil)
+		}
+	})
+
+	b.Run("from parse + set", func(b *testing.B) {
+		l := make([][]byte, 0, 200)
+		for i := 0; i < 1000; i++ {
+			l = append(l, []byte("value"))
+		}
+		text := bytes.Join(l, []byte(","))
+
+		ll := baker.LogLine{FieldSeparator: 44}
+		ll.Parse(text, nil)
+
+		for i := 0; i < 200; i++ {
+			ll.Set(baker.FieldIndex(i), []byte("newvalue"))
+		}
 
 		b.ReportAllocs()
 		for n := 0; n < b.N; n++ {
