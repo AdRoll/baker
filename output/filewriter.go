@@ -129,7 +129,6 @@ func (w *FileWriter) Run(input <-chan baker.OutputRecord, upch chan<- string) er
 	ctxlog := log.WithFields(log.Fields{"idx": w.index})
 	ctxlog.Info("FileWriter ready to log")
 
-
 	var err error
 
 	for lldata := range input {
