@@ -87,10 +87,12 @@ type FileWriterConfig struct {
 }
 
 type FileWriter struct {
+	// atomically-accessed, keep on top for 64-bit alignment.
+	totaln int64
+
 	Cfg *FileWriterConfig
 
 	Fields []baker.FieldIndex
-	totaln int64
 
 	workers map[string]*fileWorker
 	index   int
