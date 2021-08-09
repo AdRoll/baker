@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
@@ -279,7 +279,10 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 		return makeWriteCloser(wc, close), nil
 	}
 
-	curPath := fw.makePath(tmpl)
+	curPath, err := fw.makePath(tmpl)
+	if err != nil {
+		return nil, err
+	}
 	curw, err := newFile(curPath)
 	if err != nil {
 		return nil, fmt.Errorf("can't create file: %v", err)
@@ -317,7 +320,13 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 				upch <- curPath
 
 				fw.rotateIdx++
-				newPath := fw.makePath(tmpl)
+				newPath, err := fw.makePath(tmpl)
+				if err != nil {
+					// TODO(arl): when sticky error will be in place, do not
+					// log.Fatal here but set the sticky error instead.
+					ctxLog.WithError(err).WithField("current", curPath).Fatal("FileWriter worker can't create file")
+				}
+
 				ctxLog.WithFields(log.Fields{"current": curPath, "new": newPath}).Info("FileWriter worker file rotation")
 				if curw, err = newFile(newPath); err != nil {
 					// TODO(arl): when sticky error will be in place, do not
@@ -357,7 +366,7 @@ func (fw *fileWorker) Close() error {
 	return nil
 }
 
-func (fw *fileWorker) makePath(tmpl *template.Template) string {
+func (fw *fileWorker) makePath(tmpl *template.Template) (string, error) {
 	now := time.Now().UTC()
 	var buf bytes.Buffer
 
@@ -378,11 +387,19 @@ func (fw *fileWorker) makePath(tmpl *template.Template) string {
 	if err != nil {
 		panic(err.Error())
 	}
-	dir := path.Dir(buf.String())
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		os.MkdirAll(dir, 0777)
+
+	dir := filepath.Dir(buf.String())
+	if _, err = os.Stat(dir); err != nil {
+		if os.IsNotExist(err) {
+			if err := os.MkdirAll(dir, 0777); err != nil {
+				return "", fmt.Errorf("can't create directory structure: %s", err)
+			}
+		} else {
+			return "", fmt.Errorf("can't stat directory: %s", err)
+		}
 	}
-	return buf.String()
+
+	return buf.String(), nil
 }
 
 // makeWriteCloser converts an io.Writer and a Close function into a
