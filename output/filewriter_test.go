@@ -315,6 +315,14 @@ func TestFileWriterIntegrationField0(t *testing.T) {
 	testFileWriterIntegration(t, filepath.Join("TMPDIR", "{{.Field0}}", "out.csv.zst"))
 }
 
+func TestFileWriterIntegrationIndex(t *testing.T) {
+	testFileWriterIntegration(t, filepath.Join("TMPDIR", "{{.Index}}", "subdir", "out.csv.zst"))
+}
+
+func TestFileWriterIntegrationRotation(t *testing.T) {
+	testFileWriterIntegration(t, filepath.Join("TMPDIR", "{{.Rotation}}", "out.csv.zst"))
+}
+
 // decompressFilesInDir decompresses all compressed (zstd/gzip) files it finds
 // under root (recursively), and removes the compressed files in files with the
 // same name but without the extension.
