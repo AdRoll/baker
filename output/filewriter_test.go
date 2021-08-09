@@ -239,15 +239,16 @@ func TestFileWriterCompareInOut(t *testing.T) {
 	}
 }
 
-// testFileWriterIntegration builds and run a topology rading from
-// /testdata/filewriter/random1.csv.log.zst and using the FileWriter output,
-// configured with the given pathString. In pathString, TMPDIR gets replaced at
-// runtime by the test case temporary Once the topology exits, the content of
-// the created temporary directory is listed, and compared with the content of
-// the golden file named after the test, i.e "testdata/filewriter/TestName".
-// To update the golden file, run:
+// testFileWriterIntegration builds and run a topology reading from
+// /testdata/filewriter/input.csv.log.zst and using the FileWriter output,
+// configured with the given pathString (in pathString, "TMPDIR" gets replaced
+// at runtime by the test case temporary directory).
+//
+// Once the topology exits, the content of the created temporary directory is
+// listed, and compared with the content of the golden file named after the
+// test, i.e "testdata/filewriter/TestName". To update the golden file, run:
 //  go test -race -run TestName -update
-func testFileWriterIntegration(t *testing.T, pathString string) {
+func testFileWriterIntegrationCheckFiles(t *testing.T, pathString string) {
 	// This test uses a randomly generated input CSV file.
 	//  schema: pick(AAA|BBB|CCC|DDD), digit(22), first, last, email, state
 	//  site: https://www.convertcsv.com/generate-test-data.htm
@@ -260,7 +261,7 @@ func testFileWriterIntegration(t *testing.T, pathString string) {
 	name = "list"
 	
 	[input.config]
-	files = ["./testdata/filewriter/random1.csv.log.zst"]
+	files = ["./testdata/filewriter/input.csv.log.zst"]
 	
 	[output]
 	fields = ["kind"]
@@ -312,15 +313,15 @@ func testFileWriterIntegration(t *testing.T, pathString string) {
 }
 
 func TestFileWriterIntegrationField0(t *testing.T) {
-	testFileWriterIntegration(t, filepath.Join("TMPDIR", "{{.Field0}}", "out.csv.zst"))
+	testFileWriterIntegrationCheckFiles(t, filepath.Join("TMPDIR", "{{.Field0}}", "out.csv.zst"))
 }
 
 func TestFileWriterIntegrationIndex(t *testing.T) {
-	testFileWriterIntegration(t, filepath.Join("TMPDIR", "{{.Index}}", "subdir", "out.csv.zst"))
+	testFileWriterIntegrationCheckFiles(t, filepath.Join("TMPDIR", "{{.Index}}", "subdir", "out.csv.zst"))
 }
 
 func TestFileWriterIntegrationRotation(t *testing.T) {
-	testFileWriterIntegration(t, filepath.Join("TMPDIR", "{{.Rotation}}", "out.csv.zst"))
+	testFileWriterIntegrationCheckFiles(t, filepath.Join("TMPDIR", "{{.Rotation}}", "out.csv.zst"))
 }
 
 // decompressFilesInDir decompresses all compressed (zstd/gzip) files it finds
