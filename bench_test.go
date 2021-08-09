@@ -63,6 +63,11 @@ fields=["fielda", "fieldb"]
 		}
 		return 0, false
 	}
+	fieldNames := []string{
+		"fielda",
+		"fieldb",
+		"fieldc",
+	}
 
 	var shardingFuncs = map[baker.FieldIndex]baker.ShardingFunc{
 		0: hash(0),
@@ -75,6 +80,7 @@ fields=["fielda", "fieldb"]
 		Outputs:       []baker.OutputDesc{outputtest.RawRecorderDesc, outputtest.RecorderDesc},
 		ShardingFuncs: shardingFuncs,
 		FieldByName:   fieldByName,
+		FieldNames:    fieldNames,
 		Validate:      func(baker.Record) (bool, baker.FieldIndex) { return true, 0 },
 	}
 
