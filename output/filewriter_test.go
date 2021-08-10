@@ -25,6 +25,10 @@ import (
 )
 
 func TestFileWriterConfig(t *testing.T) {
+	if !testing.Verbose() {
+		defer testutil.LessLogging()()
+	}
+
 	tests := []struct {
 		name    string
 		cfg     *output.FileWriterConfig
