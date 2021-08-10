@@ -132,6 +132,7 @@ func BenchmarkLogLineParse(b *testing.B) {
 	md := baker.Metadata{"foo": "bar"}
 
 	b.ReportAllocs()
+	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		ll.Parse(buf, md)
 	}
@@ -146,6 +147,7 @@ func BenchmarkLogLineToText(b *testing.B) {
 		}
 
 		b.ReportAllocs()
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
 			_ = ll.ToText(nil)
 		}
@@ -162,6 +164,7 @@ func BenchmarkLogLineToText(b *testing.B) {
 		ll.Parse(text, nil)
 
 		b.ReportAllocs()
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
 			_ = ll.ToText(nil)
 		}
@@ -182,6 +185,7 @@ func BenchmarkLogLineToText(b *testing.B) {
 		}
 
 		b.ReportAllocs()
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
 			_ = ll.ToText(nil)
 		}
