@@ -7,13 +7,13 @@ import (
 )
 
 // This tests ensure parse does not crash when it meets a log line
-// with too many separators
+// with too many separators.
 func TestLogLineParse_separators(t *testing.T) {
-	maxSeparators := LogLineNumFields - 1
+	maxSeparators := int(LogLineNumFields - 1)
 	tests := []struct {
 		name  string
 		nseps int
-		reset bool // whether the line should be zeroed out after parse
+		reset bool // Whether the line should be zeroed out after parse.
 	}{
 		{
 			name:  "empty",
@@ -27,17 +27,17 @@ func TestLogLineParse_separators(t *testing.T) {
 		},
 		{
 			name:  "max-minus-1-separators",
-			nseps: int(maxSeparators - 1),
+			nseps: maxSeparators - 1,
 			reset: false,
 		},
 		{
 			name:  "max-separators",
-			nseps: int(maxSeparators),
+			nseps: maxSeparators,
 			reset: false,
 		},
 		{
 			name:  "more-than-max-separators",
-			nseps: int(maxSeparators + 1),
+			nseps: maxSeparators + 1,
 			reset: true,
 		},
 	}
@@ -136,7 +136,7 @@ func TestLogLineRecordConformance(t *testing.T) {
 func TestLogLineParseCustomSeparator(t *testing.T) {
 	t.Run("default comma separator", func(t *testing.T) {
 		text := []byte("value1,value2,,value4")
-		ll := LogLine{FieldSeparator: 44}
+		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(text, nil)
 		if !bytes.Equal(ll.Get(0), []byte("value1")) {
 			t.Fatalf("want: %v, got: %v", "value1", ll.Get(0))
@@ -154,7 +154,7 @@ func TestLogLineParseCustomSeparator(t *testing.T) {
 
 	t.Run("custom dot separator", func(t *testing.T) {
 		text := []byte("value1.value2..value4")
-		ll := LogLine{FieldSeparator: 46}
+		ll := LogLine{FieldSeparator: '.'}
 		ll.Parse(text, nil)
 		if !bytes.Equal(ll.Get(0), []byte("value1")) {
 			t.Fatalf("want: %v, got: %v", "value1", ll.Get(0))
@@ -173,7 +173,7 @@ func TestLogLineParseCustomSeparator(t *testing.T) {
 
 func TestLogLineToText(t *testing.T) {
 	t.Run("default comma separator", func(t *testing.T) {
-		ll := LogLine{FieldSeparator: 44}
+		ll := LogLine{FieldSeparator: ','}
 		ll.Set(0, []byte("value1"))
 		ll.Set(1, []byte("value2"))
 		ll.Set(3, []byte("value4"))
@@ -185,7 +185,7 @@ func TestLogLineToText(t *testing.T) {
 	})
 
 	t.Run("custom dot separator", func(t *testing.T) {
-		ll := LogLine{FieldSeparator: 46}
+		ll := LogLine{FieldSeparator: '.'}
 		ll.Set(0, []byte("value1"))
 		ll.Set(1, []byte("value2"))
 		ll.Set(3, []byte("value4"))
@@ -197,7 +197,7 @@ func TestLogLineToText(t *testing.T) {
 	})
 
 	t.Run("empty logline", func(t *testing.T) {
-		ll := LogLine{FieldSeparator: 44}
+		ll := LogLine{FieldSeparator: ','}
 		b := ll.ToText(nil)
 		if !bytes.Equal(b, []byte("")) {
 			t.Fatalf("want: '' got: %s", b)
@@ -206,7 +206,8 @@ func TestLogLineToText(t *testing.T) {
 
 	t.Run("set", func(t *testing.T) {
 		want := []byte(",,value2")
-		ll := LogLine{FieldSeparator: 44}
+
+		ll := LogLine{FieldSeparator: ','}
 		ll.Set(2, []byte("value2"))
 		b := ll.ToText(nil)
 		if !bytes.Equal(b, want) {
@@ -216,7 +217,8 @@ func TestLogLineToText(t *testing.T) {
 
 	t.Run("parse", func(t *testing.T) {
 		want := []byte("value,value,value")
-		ll := LogLine{FieldSeparator: 44}
+
+		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(want, nil)
 		b := ll.ToText(nil)
 		if !bytes.Equal(b, want) {
@@ -227,7 +229,8 @@ func TestLogLineToText(t *testing.T) {
 	t.Run("parse and set", func(t *testing.T) {
 		want := []byte("value2,value,value")
 		text := []byte("value,value,value")
-		ll := LogLine{FieldSeparator: 44}
+
+		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(text, nil)
 		ll.Set(0, []byte("value2"))
 		b := ll.ToText(nil)
@@ -239,7 +242,8 @@ func TestLogLineToText(t *testing.T) {
 	t.Run("parse and set 2", func(t *testing.T) {
 		want := []byte("value,value,value,,,value2")
 		text := []byte("value,value,value")
-		ll := LogLine{FieldSeparator: 44}
+
+		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(text, nil)
 		ll.Set(5, []byte("value2"))
 		b := ll.ToText(nil)
@@ -254,7 +258,8 @@ func TestLogLineToText(t *testing.T) {
 			values = append(values, "value")
 		}
 		want := []byte(strings.Join(values, ","))
-		ll := LogLine{FieldSeparator: 44}
+
+		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(want, nil)
 		b := ll.ToText(nil)
 		if !bytes.Equal(b, want) {
@@ -271,7 +276,8 @@ func TestLogLineToText(t *testing.T) {
 		text := []byte(strings.Join(values, ","))
 		values[50] = "other"
 		want := []byte(strings.Join(values, ","))
-		ll := LogLine{FieldSeparator: 44}
+
+		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(text, nil)
 		ll.Set(50, []byte("other"))
 		b := ll.ToText(nil)
@@ -290,7 +296,7 @@ func TestLogLineToText(t *testing.T) {
 		values = append(values, "other")
 		want := []byte(strings.Join(values, ","))
 
-		ll := LogLine{FieldSeparator: 44}
+		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(text, nil)
 		ll.Set(LogLineNumFields-1, []byte("other"))
 		b := ll.ToText(nil)

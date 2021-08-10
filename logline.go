@@ -11,7 +11,7 @@ const (
 	// outputs) on a per-record basis.
 	NumFieldsBaker FieldIndex = 100
 
-	// DefaultLogLineFieldSeparator defines the default field separator, which is the comma
+	// DefaultLogLineFieldSeparator defines the default field separator, which is the comma.
 	DefaultLogLineFieldSeparator byte = 44
 )
 
@@ -71,7 +71,7 @@ type LogLine struct {
 	FieldSeparator byte
 }
 
-// Get the value of a field (either standard or custom)
+// Get the value of a field (either standard or custom).
 func (l *LogLine) Get(f FieldIndex) []byte {
 	if idx := l.wmask[f]; idx != 0 {
 		return l.wdata[idx]
@@ -88,7 +88,7 @@ func (l *LogLine) Get(f FieldIndex) []byte {
 	return l.data[s:e]
 }
 
-// Set changes the value of a field (either standard or custom) to a new value
+// Set changes the value of a field (either standard or custom) to a new value.
 func (l *LogLine) Set(f FieldIndex, data []byte) {
 	if l.wmask[f] != 0 {
 		l.wdata[l.wmask[f]] = data
@@ -149,20 +149,20 @@ func (l *LogLine) ToText(buf []byte) []byte {
 		blen, bcap, dlen := len(buf), cap(buf), len(l.data)
 		avail := bcap - blen
 		if avail < dlen {
-			// not enough capacity: create a new buffer big enough to hold the
+			// Not enough capacity: create a new buffer big enough to hold the
 			// previous buffer data, which we copy into, and the log line data.
 			newbuf := make([]byte, blen+dlen)
 			copy(newbuf, buf)
 			buf = newbuf
 		} else {
-			// we have the capacity, just reslice to the desired length.
+			// We have the capacity, just reslice to the desired length.
 			buf = buf[:blen+dlen]
 		}
 		copy(buf[blen:], l.data)
 		return buf
 	}
 
-	// get the last setted index in the write array
+	// Get the last setted index in the write array.
 	var last int
 	for i := len(l.wmask) - 1; i > 0; i-- {
 		if l.wmask[i] != 0 {
@@ -171,7 +171,7 @@ func (l *LogLine) ToText(buf []byte) []byte {
 		}
 	}
 
-	// get the last index in the data buffer
+	// Get the last index in the data buffer.
 	if l.data != nil {
 		var lastr int
 		for i := len(l.idx) - 1; i > 0; i-- {
@@ -180,7 +180,7 @@ func (l *LogLine) ToText(buf []byte) []byte {
 				break
 			}
 		}
-		// update last value
+		// Update last value.
 		if last < lastr {
 			last = lastr
 		}
@@ -192,7 +192,7 @@ func (l *LogLine) ToText(buf []byte) []byte {
 	for i := uint8(1); i <= l.wcnt; i++ {
 		wlen += len(l.wdata[i])
 	}
-	wlen += int(l.wcnt) - 1 // add 1 additional byte per separator
+	wlen += int(l.wcnt) - 1 // Add 1 additional byte per separator.
 
 	blen, bcap, dlen := len(buf), cap(buf), len(l.data)
 	avail := bcap - blen
@@ -212,7 +212,7 @@ func (l *LogLine) ToText(buf []byte) []byte {
 	return buf
 }
 
-// Clear clears the logline
+// Clear clears the logline.
 func (l *LogLine) Clear() {
 	*l = LogLine{FieldSeparator: l.FieldSeparator}
 }
@@ -229,7 +229,7 @@ func (l *LogLine) Cache() *Cache {
 
 // Copy creates and returns a copy of the current log line.
 func (l *LogLine) Copy() Record {
-	// Copy metadata
+	// Copy metadata.
 	md := make(Metadata)
 	for k, v := range l.meta {
 		md[k] = v
