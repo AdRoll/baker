@@ -209,8 +209,6 @@ type fileWorker struct {
 	in   chan []byte
 	done chan struct{}
 
-	cfg *FileWriterConfig
-
 	replFieldValue string
 	index          int
 	uid            string
@@ -225,7 +223,6 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 	fw := &fileWorker{
 		in:             make(chan []byte, 1),
 		done:           make(chan struct{}),
-		cfg:            cfg,
 		replFieldValue: replFieldValue,
 		index:          index,
 		uid:            uid,
