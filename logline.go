@@ -163,22 +163,26 @@ func (l *LogLine) ToText(buf []byte) []byte {
 	}
 
 	// get the last setted index in the write array
-	var lastw int
+	var last int
 	for i := len(l.wmask) - 1; i > 0; i-- {
 		if l.wmask[i] != 0 {
-			lastw = i
+			last = i
 			break
 		}
 	}
 
 	// get the last index in the data buffer
-	lastr := 0
 	if l.data != nil {
+		var lastr int
 		for i := len(l.idx) - 1; i > 0; i-- {
 			if l.idx[i] != 0 {
 				lastr = i - 1
 				break
 			}
+		}
+		// update last value
+		if last < lastr {
+			last = lastr
 		}
 	}
 
@@ -200,7 +204,7 @@ func (l *LogLine) ToText(buf []byte) []byte {
 
 	for fc := FieldIndex(0); fc < LogLineNumFields; fc++ {
 		buf = append(buf, l.Get(fc)...)
-		if fc >= FieldIndex(lastw) && fc >= FieldIndex(lastr) {
+		if fc >= FieldIndex(last) {
 			break
 		}
 		buf = append(buf, l.FieldSeparator)
