@@ -132,70 +132,97 @@ fields=["fielda", "fieldb"]
 var sink interface{}
 
 func BenchmarkLogLineParse(b *testing.B) {
-	var ll baker.Record
-	ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
-	buf := bytes.Repeat([]byte(`hello,world,,`), 200)
+	fields := make([][]byte, 0, baker.LogLineNumFields)
+	for i := 0; i < int(baker.LogLineNumFields); i++ {
+		fields = append(fields, []byte("xxxxxxxxxx"))
+	}
 	md := baker.Metadata{"foo": "bar"}
 
-	b.ReportAllocs()
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		ll.Parse(buf, md)
+	nparse := []int{1, 50, 500, 1000, 2000, 3000}
+	for _, nparse := range nparse {
+		b.Run(fmt.Sprintf("len=%d", nparse), func(b *testing.B) {
+			text := []byte(bytes.Join(fields[:nparse], []byte(",")))
+
+			var ll baker.Record
+			ll = &baker.LogLine{FieldSeparator: ','}
+
+			b.ReportAllocs()
+			b.ResetTimer()
+			for n := 0; n < b.N; n++ {
+				ll.Parse(text, md)
+			}
+			sink = ll
+		})
 	}
-	sink = ll
 }
 
-func BenchmarkLogLineToText(b *testing.B) {
-	b.Run("from set", func(b *testing.B) {
-		ll := baker.LogLine{FieldSeparator: 44}
-		for i := 0; i < 200; i++ {
-			ll.Set(baker.FieldIndex(i), []byte("value"))
+func BenchmarkLogLineToTextFromSet(b *testing.B) {
+	nset := []int{1, 50, 100, 254}
+	for _, nset := range nset {
+		ll := baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+		b.Run(fmt.Sprintf("set=%d", nset), func(b *testing.B) {
+			for i := 0; i < nset; i++ {
+				ll.Set(baker.FieldIndex(i), []byte("xxxxxxxxxx"))
+			}
+
+			b.ReportAllocs()
+			b.ResetTimer()
+			for n := 0; n < b.N; n++ {
+				_ = ll.ToText(nil)
+			}
+		})
+	}
+}
+func BenchmarkLogLineToTextFromParse(b *testing.B) {
+	fields := make([][]byte, 0, baker.LogLineNumFields)
+	for i := 0; i < int(baker.LogLineNumFields); i++ {
+		fields = append(fields, []byte("xxxxxxxxxx"))
+	}
+
+	nparse := []int{1, 50, 500, 1000, 2000, 3000}
+	for _, nparse := range nparse {
+		b.Run(fmt.Sprintf("parse=%d", nparse), func(b *testing.B) {
+			text := bytes.Join(fields[:nparse], []byte(","))
+
+			ll := baker.LogLine{FieldSeparator: ','}
+			ll.Parse(text, nil)
+
+			b.ReportAllocs()
+			b.ResetTimer()
+			for n := 0; n < b.N; n++ {
+				_ = ll.ToText(nil)
+			}
+		})
+	}
+}
+func BenchmarkLogLineToTextFromParseSet(b *testing.B) {
+	fields := make([][]byte, 0, baker.LogLineNumFields)
+	for i := 0; i < int(baker.LogLineNumFields); i++ {
+		fields = append(fields, []byte("xxxxxxxxxx"))
+	}
+
+	nparse := []int{100, 1000, 3000}
+	nset := []int{50, 100, 254}
+	for _, nparse := range nparse {
+		for _, nset := range nset {
+			b.Run(fmt.Sprintf("parse=%d,set=%d", nparse, nset), func(b *testing.B) {
+				text := bytes.Join(fields[:nparse], []byte(","))
+
+				ll := baker.LogLine{FieldSeparator: ','}
+				ll.Parse(text, nil)
+
+				for i := 0; i < nset; i++ {
+					ll.Set(baker.FieldIndex(i), []byte("newvalue"))
+				}
+
+				b.ReportAllocs()
+				b.ResetTimer()
+				for n := 0; n < b.N; n++ {
+					_ = ll.ToText(nil)
+				}
+			})
 		}
-
-		b.ReportAllocs()
-		b.ResetTimer()
-		for n := 0; n < b.N; n++ {
-			_ = ll.ToText(nil)
-		}
-	})
-
-	b.Run("from parse", func(b *testing.B) {
-		l := make([][]byte, 0, 200)
-		for i := 0; i < 1000; i++ {
-			l = append(l, []byte("value"))
-		}
-		text := bytes.Join(l, []byte(","))
-
-		ll := baker.LogLine{FieldSeparator: 44}
-		ll.Parse(text, nil)
-
-		b.ReportAllocs()
-		b.ResetTimer()
-		for n := 0; n < b.N; n++ {
-			_ = ll.ToText(nil)
-		}
-	})
-
-	b.Run("from parse + set", func(b *testing.B) {
-		l := make([][]byte, 0, 200)
-		for i := 0; i < 1000; i++ {
-			l = append(l, []byte("value"))
-		}
-		text := bytes.Join(l, []byte(","))
-
-		ll := baker.LogLine{FieldSeparator: 44}
-		ll.Parse(text, nil)
-
-		for i := 0; i < 200; i++ {
-			ll.Set(baker.FieldIndex(i), []byte("newvalue"))
-		}
-
-		b.ReportAllocs()
-		b.ResetTimer()
-		for n := 0; n < b.N; n++ {
-			_ = ll.ToText(nil)
-		}
-	})
+	}
 }
 
 func BenchmarkLogLineCopy(b *testing.B) {
