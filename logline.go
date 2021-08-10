@@ -50,7 +50,7 @@ type LogLine struct {
 	// LogLine.Set()).
 	// wcnt is the 1-based counter of how many fields were modified;
 	// wdata is the dense storage for those modifications (so we allow for a
-	// total of 256 different fields being written to).
+	// total of 254 different fields being written to).
 	// wmask is a table indexed by each possible field index, that contains:
 	//   * 0 if the field was not modified (so the current value can be fetched
 	//     by idx/data)

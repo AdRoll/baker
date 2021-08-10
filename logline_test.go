@@ -391,12 +391,28 @@ func TestLogLineCustomFields(t *testing.T) {
 }
 
 func TestLogLineSetPanic(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("%s should panic", t.Name())
-		}
-	}()
+	t.Run("index out of range", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("%s should panic", t.Name())
+			}
+		}()
 
-	ll := LogLine{FieldSeparator: ','}
-	ll.Set(LogLineNumFields+NumFieldsBaker, []byte("value"))
+		ll := LogLine{FieldSeparator: ','}
+		ll.Set(LogLineNumFields+NumFieldsBaker, []byte("value"))
+	})
+
+	t.Run("too many field changed", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("got: %s, want: no panic", r)
+			}
+		}()
+
+		ll := LogLine{FieldSeparator: ','}
+		// Maximum of 254 values.
+		for i := 0; i < 255; i++ {
+			ll.Set(FieldIndex(i), []byte("value"))
+		}
+	})
 }
