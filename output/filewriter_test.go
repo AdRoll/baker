@@ -322,11 +322,25 @@ func testFileWriterIntegrationCheckRecords(t *testing.T, pathString string, proc
 
 	testutil.DiffWithGolden(t, out, filepath.Join("testdata", "filewriter", "input.sorted.golden"))
 	if t.Failed() {
-		outName := filepath.Join(os.TempDir(), t.Name())
-		fmt.Printf("ERROR: writing incorrect buffer to %q for investigation\n\n", outName)
-		if err := os.WriteFile(outName, out, os.ModePerm); err != nil {
+		tmp, err := os.MkdirTemp(os.TempDir(), t.Name())
+		if err != nil {
 			t.Fatal(err)
 		}
+
+		dirCpy := filepath.Join(tmp, "outdir")
+		csvCpy := filepath.Join(tmp, "sorted.csv")
+		if err := os.Mkdir(dirCpy, 0777); err != nil {
+			t.Fatal(err)
+		}
+
+		fmt.Printf("ERROR: copying data for failure investigation in %s\n\t- output directory copy: ./outdir\n\t- incorrect sorted buffer: ./sorted.csv\n\n", tmp)
+		if err := testutil.CopyDirectory(tmpDir, dirCpy); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(csvCpy, out, os.ModePerm); err != nil {
+			t.Fatal(err)
+		}
+
 	}
 }
 
@@ -402,6 +416,12 @@ func TestFileWriterIntegrationProcs(t *testing.T) {
 	const procs = 8
 	const rotate = -1
 	testFileWriterIntegrationCheckRecords(t, filepath.Join("TMPDIR", "{{.Index}}-out.csv.zst"), procs, rotate)
+}
+
+func TestFileWriterIntegrationProcsFields0(t *testing.T) {
+	const procs = 8
+	const rotate = -1
+	testFileWriterIntegrationCheckRecords(t, filepath.Join("TMPDIR", "{{.Field0}}.{{.Index}}-out.csv.zst"), procs, rotate)
 }
 
 func TestFileWriterIntegrationFastRotation(t *testing.T) {
