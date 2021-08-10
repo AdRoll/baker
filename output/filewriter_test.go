@@ -63,6 +63,14 @@ func TestFileWriterConfig(t *testing.T) {
 			fields:  []baker.FieldIndex{},
 			wantErr: true,
 		},
+		{
+			name: "malformed template",
+			cfg: &output.FileWriterConfig{
+				PathString: "/path/{{.BadPattern}",
+			},
+			fields:  []baker.FieldIndex{},
+			wantErr: true,
+		},
 	}
 
 	for _, tt := range tests {
