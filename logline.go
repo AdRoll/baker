@@ -164,7 +164,7 @@ func (l *LogLine) ToText(buf []byte) []byte {
 
 	// Get the last setted index in the write array.
 	var last int
-	for i := len(l.wmask) - 1; i > 0; i-- {
+	for i := int(LogLineNumFields) - 1; i > 0; i-- {
 		if l.wmask[i] != 0 {
 			last = i
 			break

@@ -304,4 +304,99 @@ func TestLogLineToText(t *testing.T) {
 			t.Fatalf("want: %s got: %s", want, b)
 		}
 	})
+
+	t.Run("set custom fields", func(t *testing.T) {
+		want := []byte{}
+
+		ll := LogLine{FieldSeparator: ','}
+		ll.Set(LogLineNumFields, []byte("custom1"))
+		ll.Set(LogLineNumFields+1, []byte("custom2"))
+		ll.Set(LogLineNumFields+NumFieldsBaker-1, []byte("customN"))
+		b := ll.ToText(nil)
+		if !bytes.Equal(b, want) {
+			t.Fatalf("want: %s got: %s", want, b)
+		}
+	})
+
+	t.Run("parse + set custom", func(t *testing.T) {
+		want := []byte("value,value,value")
+
+		ll := LogLine{FieldSeparator: ','}
+		ll.Parse(want, nil)
+		ll.Set(LogLineNumFields, []byte("custom1"))
+		b := ll.ToText(nil)
+		if !bytes.Equal(b, want) {
+			t.Fatalf("want: %s got: %s", want, b)
+		}
+	})
+
+	t.Run("parse max num fields + set custom", func(t *testing.T) {
+		values := make([]string, 0, LogLineNumFields)
+		for i := 0; i < int(LogLineNumFields); i++ {
+			values = append(values, "value")
+		}
+		want := []byte(strings.Join(values, ","))
+
+		ll := LogLine{FieldSeparator: ','}
+		ll.Parse(want, nil)
+		ll.Set(LogLineNumFields+10, []byte("custom10"))
+		b := ll.ToText(nil)
+		if !bytes.Equal(b, want) {
+			t.Fatalf("want: %s got: %s", want, b)
+		}
+	})
+}
+
+func TestLogLineCustomFields(t *testing.T) {
+	t.Run("parse error to many fields", func(t *testing.T) {
+		values := make([]string, 0, LogLineNumFields)
+		for i := 0; i < int(LogLineNumFields)+1; i++ {
+			values = append(values, "value")
+		}
+		want := []byte(strings.Join(values, ","))
+
+		ll := LogLine{FieldSeparator: ','}
+		err := ll.Parse(want, nil)
+		if err != errLogLineTooManyFields {
+			t.Fatalf("want: %s got: %s", errLogLineTooManyFields, err)
+		}
+	})
+
+	t.Run("set/get custom fields", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: ','}
+
+		want := []byte("custom1")
+		idx := LogLineNumFields
+		ll.Set(idx, want)
+		got := ll.Get(idx)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s, want: %s", got, want)
+
+		}
+
+		want = []byte("customN")
+		idx = LogLineNumFields + NumFieldsBaker - 1
+		ll.Set(idx, want)
+		got = ll.Get(idx)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s, want: %s", got, want)
+		}
+
+		// Custom fields should not be serialized.
+		got = ll.ToText(nil)
+		if !bytes.Equal(got, []byte{}) {
+			t.Fatalf("got: %s, should be empty", got)
+		}
+	})
+}
+
+func TestLogLineSetPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("%s should panic", t.Name())
+		}
+	}()
+
+	ll := LogLine{FieldSeparator: ','}
+	ll.Set(LogLineNumFields+NumFieldsBaker, []byte("value"))
 }
