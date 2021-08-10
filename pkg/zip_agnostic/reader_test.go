@@ -31,7 +31,7 @@ func TestReader(t *testing.T) {
 
 			r, err := NewReader(f)
 			if err != nil {
-				t.Fatalf("zagnosticReader returns %v", err)
+				t.Fatalf("Reader returns %v", err)
 			}
 			got, err := io.ReadAll(r)
 			if err != nil {
