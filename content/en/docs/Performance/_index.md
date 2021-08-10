@@ -25,13 +25,12 @@ many references to
 
 On an AWS EC2 instance of size `c5.2xlarge`, Baker can read zstandard records from S3, uncompress
 them and apply a basic filtering logic, compressing them back on local files using ~90% of capacity
-of each vCPU (8 in total) and
-~3.5GB of RAM.  
+of each vCPU (8 in total) and ~3.5GB of RAM.  
 
 It reads and writes a total of 94 million records in less than 9 minutes, that's 178k records per
 second.
 
-On a `c5.2xlarge` instance (48 vCPUs) the same test takes 2 minutes, so that's a speed of 775k
+On a `c5.12xlarge` instance (48 vCPUs) the same test takes 2 minutes, so that's a speed of 775k
 records per second.
 
 For this test we use 711 zstd compressed files for a total of 17 GB of compressed size and 374 GB
