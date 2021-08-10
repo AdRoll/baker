@@ -297,6 +297,9 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 		}
 
 		defer func() {
+			if ticker != nil {
+				ticker.Stop()
+			}
 			ctxLog.WithFields(log.Fields{"current": curPath}).Info("FileWriter worker terminating")
 
 			// Close the last file and upload it.
@@ -337,9 +340,6 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 
 			case line, ok := <-fw.in:
 				if !ok {
-					if ticker != nil {
-						ticker.Stop()
-					}
 					return
 				}
 				if _, err := curw.Write(line); err != nil {
