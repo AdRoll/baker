@@ -90,11 +90,12 @@ func TestFileWriterConfig(t *testing.T) {
 // concatenation of the path components.
 func testFileWriterCompareInOut(numRecords int, wait, rotate time.Duration, comps ...string) func(*testing.T) {
 	return func(t *testing.T) {
+		tmpDir := t.TempDir()
 		cfg := baker.OutputParams{
 			Fields: []baker.FieldIndex{1},
 			ComponentParams: baker.ComponentParams{
 				DecodedConfig: &output.FileWriterConfig{
-					PathString:     filepath.Join(append([]string{t.TempDir()}, comps...)...),
+					PathString:     filepath.Join(append([]string{tmpDir}, comps...)...),
 					RotateInterval: rotate,
 				},
 			},
@@ -125,9 +126,12 @@ func testFileWriterCompareInOut(numRecords int, wait, rotate time.Duration, comp
 		}()
 
 		// Drain the channel containing the uploaded paths.
-		var uploaded []string
+		uploaded := make(map[string]struct{})
 		for p := range upch {
-			uploaded = append(uploaded, p)
+			if _, ok := uploaded[p]; ok {
+				t.Errorf("file uploaded twice: %q", p)
+			}
+			uploaded[p] = struct{}{}
 		}
 
 		if err := <-errc; err != nil {
@@ -138,7 +142,7 @@ func testFileWriterCompareInOut(numRecords int, wait, rotate time.Duration, comp
 		// records present in the file(s) sent to the uploader.
 		uploadedRecords := make(map[int]string)
 
-		for _, p := range uploaded {
+		for p := range uploaded {
 			f, err := os.Open(p)
 			if err != nil {
 				t.Fatalf("can't open uploaded path: %s", err)
@@ -181,6 +185,21 @@ func testFileWriterCompareInOut(numRecords int, wait, rotate time.Duration, comp
 		if !reflect.DeepEqual(sentRecords, uploadedRecords) {
 			t.Errorf("total mismatch: %d records found in uploaded files, sent %d", len(uploadedRecords), len(sentRecords))
 		}
+
+		// Obtain a list of all produced files.
+		list, err := dirtree.Sprint(tmpDir, dirtree.Type("f"), dirtree.PrintMode(0))
+		if err != nil {
+			t.Fatalf("can't list output directory: %s", err)
+		}
+		produced := make(map[string]struct{})
+		for _, fname := range strings.Split(strings.TrimSpace(list), "\n") {
+			produced[filepath.Join(tmpDir, fname)] = struct{}{}
+		}
+
+		// Check all produced files have been uploaded
+		if !reflect.DeepEqual(produced, uploaded) {
+			t.Errorf("uploaded and produced files do not match:\n\nuploaded:\n%+v\n\nproduced:\n%+v\n", uploaded, produced)
+		}
 	}
 }
 
@@ -197,28 +216,28 @@ func TestFileWriterCompareInOut(t *testing.T) {
 		comps      []string
 	}{
 		{
-			name:       "year-month-rotation/out=gz",
+			name:       "year-month-rotation-out.gz",
 			numRecords: 500,
 			wait:       1 * time.Millisecond,
 			rotate:     time.Second,
 			comps:      []string{"{{.Year}}", "{{.Month}}", "{{.Rotation}}-out.csv.gz"},
 		},
 		{
-			name:       "year-month/out=gz",
+			name:       "year-month-out.gz",
 			numRecords: 500,
 			wait:       0,
 			rotate:     time.Second,
 			comps:      []string{"{{.Year}}", "{{.Month}}", "out.csv.gz"},
 		},
 		{
-			name:       "year-month-rotation/out=zst",
+			name:       "year-month-rotation-out.zst",
 			numRecords: 500,
 			wait:       1 * time.Millisecond,
 			rotate:     time.Second,
 			comps:      []string{"{{.Year}}", "{{.Month}}", "{{.Rotation}}-out.csv.zst"},
 		},
 		{
-			name:       "year-month/out=zst",
+			name:       "year-month-out.zst",
 			numRecords: 500,
 			wait:       0,
 			rotate:     time.Second,
@@ -232,7 +251,7 @@ func TestFileWriterCompareInOut(t *testing.T) {
 			comps:      []string{"disable-rotation.out.csv.zst"},
 		},
 		{
-			name:       "field0-out=zst",
+			name:       "field0-out.zst",
 			numRecords: 20,
 			wait:       1 * time.Millisecond,
 			rotate:     time.Second,
