@@ -238,8 +238,8 @@ func (t *Topology) Start() {
 		t.wgupl.Done()
 	}()
 
-	// Start the output. We might either have one channel per process
-	// (in case sharding is active), or just one channel (if there's no sharding)
+	// Start a number of output processes equal to the configured
+	// [output.procs], each of them reads from its own output channel.
 	for idx, out := range t.Output {
 		t.wgout.Add(1)
 		ch := t.outch[idx]
@@ -282,18 +282,18 @@ func (t *Topology) Start() {
 	}()
 }
 
-// Stop requires the currently running topology stop safely,
-// but ASAP. The stop request is forwarded to the input that
-// triggers the chain of stops from the components (managed
-// into Topology.Wait)
+// Stop requires the currently running topology stop safely, but ASAP.
+//
+// The stop request is forwarded to the input that triggers the chain of stops
+// from the components (managed into Topology.Wait).
 func (t *Topology) Stop() {
 	t.Input.Stop()
 }
 
-// Wait until the topology shuts itself down. This can happen
-// because the input component exits (in a batch topology), or
-// in response to a SIGINT signal, that is handled as a clean
-// shutdown request.
+// Wait until the topology shuts itself down.
+//
+// This can happen because the input component exits (in a batch topology), or
+// in response to a SIGINT signal, that is handled as a clean shutdown request.
 func (t *Topology) Wait() {
 	t.wginp.Wait()
 	close(t.inch)
@@ -309,13 +309,12 @@ func (t *Topology) Wait() {
 }
 
 // Return the global (sticky) error state of the topology.
-// Calling this function makes sense after Wait() is complete
-// (before that, it is potentially subject to races).
-// Errors from the input components are returned here, because
-// they are considered fatals for the topology; all other
-// errors (like transient network stuff during output) are not
-// considered fatal, and are supposed to be handled within
-// the components themselves.
+//
+// Calling this function makes sense after Wait() is complete (before that, it
+// is potentially subject to races). Errors from the input components are
+// returned here, because they are considered fatals for the topology; all other
+// errors (like transient network stuff during output) are not considered fatal,
+// and are supposed to be handled within the components themselves.
 func (t *Topology) Error() error {
 	if err := t.inerr.Load(); err != nil {
 		return err.(error)

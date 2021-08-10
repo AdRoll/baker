@@ -1,0 +1,8 @@
+d            crc=n/a      AAA
+f 30135b     crc=1cd69ab0 AAA/out.csv
+d            crc=n/a      BBB
+f 30235b     crc=f2009114 BBB/out.csv
+d            crc=n/a      CCC
+f 29363b     crc=db005744 CCC/out.csv
+d            crc=n/a      DDD
+f 29813b     crc=a5bcb3ea DDD/out.csv
