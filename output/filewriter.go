@@ -46,12 +46,12 @@ Supported placeholders:
 When choosing configuration values for your FileWriter, it's important to keep in mind
 the following rules:
 
-1. a file should only ever be accessed by a single worker at a time
+ 1. A file should only ever be accessed by a single worker at a time.
 
 If you use multiple output processes, you should use {{.Index}} or {{.UUID}} 
 so that generated filenames are guaranteed to be different for each workers.
 
- 2. rotation should never generate the same path twice
+ 2. Rotation should never generate the same path twice.
  
 To avoid a file to be overwritten by its successor in the rotation, you should ensure
 that 2 files generated at a distance of RotateInterval will have different filenames.
@@ -69,7 +69,12 @@ path:
 
     PathString = "/path/to/file-{{.Hour}}-{{.Minute}}.log.gz" 
     RotateInterval = 1s
-`
+
+ 3. Only use {{.Field0}} if you trust the records you consume.
+
+By using {{.Field0}} the files produces will have a path containing whatever value
+is found. It could contain characters that are not valid to appear in a path. That also
+means that the number of files (and workers) depend on the cardinality of that field.`
 
 var FileWriterDesc = baker.OutputDesc{
 	Name:   "FileWriter",
@@ -119,6 +124,11 @@ func NewFileWriter(cfg baker.OutputParams) (baker.Output, error) {
 		return nil, errors.New("if {{.Field0}} is given, at least one field must be given in [output.fields]")
 	}
 
+	// Compile the template. Trying to check the validity of the path without
+	// creating it is futile as this is very much os-dependent, plus, if
+	// PathString contains {{.Field0}}, then the generated path can very much
+	// contains anything, but we'd only know this at runtime. So it's reasonable
+	// to handle such errors in fileWorker.makePath.
 	var err error
 	if fw.tmpl, err = template.New("fileWorkerType").Parse(dcfg.PathString); err != nil {
 		return nil, fmt.Errorf("FileWorker: invalid PathString template: %s", err)
