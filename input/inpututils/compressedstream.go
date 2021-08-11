@@ -53,33 +53,39 @@ const (
 // a file given its filename and returns a io.ReadCloser instance for
 // that file.
 type CompressedInput struct {
+	// atomically-accessed, keep on top for 64-bit alignment.
+	stopping          int64
+	numProcessedLines int64
+
 	Opener func(fn string) (io.ReadCloser, int64, time.Time, *url.URL, error)
 	Sizer  func(fn string) (int64, error)
 	Done   chan bool
 
-	files    chan string
-	pool     sync.Pool
-	data     chan<- *baker.Data
-	stopNow  chan struct{}
-	stopping int64
+	files   chan string
+	pool    sync.Pool
+	data    chan<- *baker.Data
+	stopNow chan struct{}
 
-	stats             *inputStats
-	numProcessedLines int64
+	stats *inputStats
 }
 
 type inputStats struct {
-	beginTime      time.Time
+	// atomically-accessed, keep on top for 64-bit alignment.
 	totalFiles     int64
 	processedFiles int64
 	totalSize      int64
 	processedSize  int64
+
+	beginTime time.Time
 }
 
 type inputStatsReader struct {
+	// atomically-accessed, keep on top for 64-bit alignment.
+	n int64
+
 	s  *inputStats
 	r  io.ReadCloser
 	sz int64
-	n  int64
 }
 
 func (i *inputStatsReader) Read(data []byte) (int, error) {
