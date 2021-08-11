@@ -107,9 +107,6 @@ func (cfg *ExternalMatchConfig) evaluateURLs() []string {
 }
 
 func NewExternalMatch(cfg baker.FilterParams) (baker.Filter, error) {
-	if cfg.DecodedConfig == nil {
-		cfg.DecodedConfig = &ExternalMatchConfig{}
-	}
 	dcfg := cfg.DecodedConfig.(*ExternalMatchConfig)
 	if err := dcfg.fillDefaults(); err != nil {
 		return nil, fmt.Errorf("ExternalMatch: invalid configuration: %v", err)
