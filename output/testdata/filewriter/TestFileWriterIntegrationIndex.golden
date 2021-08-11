@@ -1,0 +1,3 @@
+d            crc=n/a      0000
+d            crc=n/a      0000/subdir
+f 119546b    crc=b670960c 0000/subdir/out.csv
