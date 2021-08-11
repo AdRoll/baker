@@ -42,7 +42,7 @@ type ExternalMatchConfig struct {
 }
 
 type ExternalMatch struct {
-	Cfg *ExternalMatchConfig
+	cfg *ExternalMatchConfig
 
 	mx     sync.RWMutex
 	values map[string]struct{}
@@ -120,7 +120,7 @@ func NewExternalMatch(cfg baker.FilterParams) (baker.Filter, error) {
 		return nil, fmt.Errorf("ExternalMatch: invalid configuration: no such field %v", dcfg.FieldName)
 	}
 
-	f := &ExternalMatch{Cfg: dcfg}
+	f := &ExternalMatch{cfg: dcfg}
 	if err := f.updateValues(); err != nil {
 		return nil, fmt.Errorf("ExternalMatch: failed loading values: %v", err)
 	}
@@ -179,7 +179,7 @@ func (f *ExternalMatch) processURL(u string) (map[string]struct{}, error) {
 	log.WithField("url", u).Info("begin parsing file")
 	switch parsed.Scheme {
 	case "s3":
-		sess, err := session.NewSession(&aws.Config{Region: aws.String(f.Cfg.Region)})
+		sess, err := session.NewSession(&aws.Config{Region: aws.String(f.cfg.Region)})
 		if err != nil {
 			return nil, fmt.Errorf("error creating aws session: %v", err)
 		}
@@ -216,13 +216,13 @@ func (f *ExternalMatch) processURL(u string) (map[string]struct{}, error) {
 	}
 	defer zar.Close()
 
-	return valuesFromCSV(zar, f.Cfg.CSVColumn)
+	return valuesFromCSV(zar, f.cfg.CSVColumn)
 }
 
 func (f *ExternalMatch) updateValues() error {
 	values := make(map[string]struct{})
 
-	for _, rurl := range f.Cfg.evaluateURLs() {
+	for _, rurl := range f.cfg.evaluateURLs() {
 		m, err := f.processURL(rurl)
 		if err != nil {
 			return err
@@ -247,10 +247,10 @@ func (f *ExternalMatch) Stats() baker.FilterStats {
 
 func (f *ExternalMatch) Process(l baker.Record, next func(baker.Record)) {
 	f.mx.RLock()
-	_, ok := f.values[string(l.Get(f.Cfg.fidx))]
+	_, ok := f.values[string(l.Get(f.cfg.fidx))]
 	f.mx.RUnlock()
 
-	if ok != f.Cfg.KeepOnMatch {
+	if ok != f.cfg.KeepOnMatch {
 		atomic.AddInt64(&f.numFilteredLines, 1)
 		return
 	}
