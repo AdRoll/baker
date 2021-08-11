@@ -1,7 +1,7 @@
 ---
 title: "NotNull"
-weight: 19
-date: 2021-04-06
+weight: 20
+date: 2021-08-11
 ---
 {{% pageinfo color="primary" %}}
 

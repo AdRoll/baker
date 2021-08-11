@@ -122,7 +122,7 @@ and &lt;code&gt;FieldName&lt;/code&gt; functions.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;names&lt;/code&gt; is a list of strings declaring the names of the fields and their position in the record
 (that is inherited by the position of the name in the list).&lt;/p&gt;
 &lt;p&gt;So, to make an example:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[fields]
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[fields]
 names = [&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;foo&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;bar&amp;#34;&lt;/span&gt;]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;defines a structure of the records with two fields: &lt;code&gt;foo&lt;/code&gt; as first element and &lt;code&gt;bar&lt;/code&gt; as second.&lt;/p&gt;
 &lt;h4 id=&#34;validation-configuration&#34;&gt;Validation configuration&lt;/h4&gt;
@@ -135,7 +135,7 @@ The user could choose to not provide record validation at all or to implement a 
 validation function using a Go function specified in the &lt;a href=&#34;https://getbaker.io/docs/how-tos/baker_components/#validate&#34;&gt;Components&lt;/a&gt; struct.
 However, the validation could not be present both in the TOML and in the Components.&lt;/p&gt;
 &lt;p&gt;To make an example:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[validation]
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[validation]
 foo = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;^\w+$&amp;#34;&lt;/span&gt;
 bar = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;[0-9]+&amp;#34;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;defines that &lt;code&gt;foo&lt;/code&gt; field must be a not empty word and &lt;code&gt;bar&lt;/code&gt; field must contain a number.
@@ -163,7 +163,7 @@ to set specific configuration values to the selected component.&lt;/p&gt;
 required config is missing, Baker won&amp;rsquo;t start.&lt;/p&gt;
 &lt;p&gt;This is a minimalist Baker configuration TOML, reading records from files (&lt;code&gt;List&lt;/code&gt;), applying the
 &lt;code&gt;TimestampRange&lt;/code&gt; filter and writing the output to &lt;code&gt;DynamoDB&lt;/code&gt;, with some specific options:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[input]
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[input]
 name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;List&amp;#34;&lt;/span&gt;
 
     [input.config]
@@ -220,7 +220,7 @@ also used to add custom configurations to the TOML file (useful as Baker can be 
 a more complex project).&lt;/p&gt;
 &lt;p&gt;This is an example of a TOML file defining also some of those user defined configurations (along
 with the input and output configurations):&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[input]
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[input]
 name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;random&amp;#34;&lt;/span&gt;
 
 [output]
@@ -233,7 +233,7 @@ name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyConfiG&amp;#34;&lt;/sp
 	field1 = &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;
 	field2 = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;hello!&amp;#34;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Using &lt;code&gt;NewConfigFromToml&lt;/code&gt; is then possible to retrieve those configurations:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;cfg &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; strings.&lt;span style=&#34;color:#50fa7b&#34;&gt;NewReader&lt;/span&gt;(toml) &lt;span style=&#34;color:#6272a4&#34;&gt;// toml is the content of the toml file
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;cfg &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; strings.&lt;span style=&#34;color:#50fa7b&#34;&gt;NewReader&lt;/span&gt;(toml) &lt;span style=&#34;color:#6272a4&#34;&gt;// toml is the content of the toml file
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;
 &lt;span style=&#34;color:#6272a4&#34;&gt;// myConfig contains the user-defined configurations we expect from the toml file
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; myConfig &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
@@ -328,7 +328,7 @@ version, implementing the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/b
 To do so, you should create and fill a &lt;a href=&#34;https://getbaker.io/docs/how-tos/baker_components/&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt; struct.
 The only required field to set is the &lt;code&gt;CreateRecord&lt;/code&gt;, which returns a new instance of your custom record &lt;code&gt;struct&lt;/code&gt;.
 (see more details at &lt;a href=&#34;https://getbaker.io/docs/how-tos/baker_components/#createrecord&#34;&gt;CreateRecord&lt;/a&gt;).&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 	CreateRecord: &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;() baker.Record {
 		&lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;MyCustomRecord{}
 	},
@@ -374,7 +374,7 @@ lists all the &lt;a href=&#34;https://getbaker.io/docs/core-concepts/#record-and
 &lt;li&gt;an instance of &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;a TOML configuration file describing the topology we want to run&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;main&lt;/span&gt;() {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;main&lt;/span&gt;() {
 	comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Component {
 		&lt;span style=&#34;color:#6272a4&#34;&gt;// ...
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;	}
@@ -395,7 +395,7 @@ in &lt;code&gt;baker.Components&lt;/code&gt; can be used in the &lt;a href=&#34;
 &lt;li&gt;only a single &lt;strong&gt;filter&lt;/strong&gt; is set, a custom one we declared ourselves&lt;/li&gt;
 &lt;li&gt;all Baker &lt;strong&gt;outputs&lt;/strong&gt; are added in addition our own custom output&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; (
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; (
 	&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
 	&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker/input&amp;#34;&lt;/span&gt;
 	&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker/output&amp;#34;&lt;/span&gt;
@@ -412,7 +412,7 @@ comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;metrics&#34;&gt;Metrics&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;Metrics&lt;/code&gt; lists the metrics clients available when creating topologies.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; (
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; (
 	&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
 	&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker/metrics&amp;#34;&lt;/span&gt;
 )
@@ -426,7 +426,7 @@ comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 of the &lt;code&gt;baker.MetricsClient&lt;/code&gt; interface.&lt;/p&gt;
 &lt;p&gt;For more, see the page &lt;a href=&#34;https://getbaker.io/docs/core-concepts/metrics&#34;&gt;dedicated to metrics&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;user&#34;&gt;User&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
 
 comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 	User:    []baker.UserDesc{ &lt;span style=&#34;color:#6272a4&#34;&gt;/* list of user-specific structs */&lt;/span&gt;},
@@ -440,7 +440,7 @@ useful to Baker.&lt;/p&gt;
 &lt;a href=&#34;https://getbaker.io/docs/core-concepts/toml/#user-defined-configurations&#34;&gt;dedicated section&lt;/a&gt; in the Pipeline
 configuration page.&lt;/p&gt;
 &lt;h2 id=&#34;shardingfuncs&#34;&gt;ShardingFuncs&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
 
 shardingFuncs &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;make&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;map&lt;/span&gt;[baker.FieldIndex]baker.ShardingFunc)
 
@@ -452,7 +452,7 @@ comp &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;ShardingFuncs&lt;/code&gt; holds a dictionary associating field indexes to hash functions. When sharding
 is enabled, these hash functions are used to determine which shard a record is sent to.&lt;/p&gt;
 &lt;h2 id=&#34;validate&#34;&gt;Validate&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
 
 &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;validate&lt;/span&gt;(baker.Record) (&lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;, baker.FieldIndex) {
 	&lt;span style=&#34;color:#6272a4&#34;&gt;// ...
@@ -471,7 +471,7 @@ to all components so that they can use it at their will.&lt;/p&gt;
 &lt;a href=&#34;https://getbaker.io/docs/how-tos/pipeline_configuration/#validation-configuration&#34;&gt;&lt;code&gt;[validation]&lt;/code&gt;&lt;/a&gt; section of the TOML.
 Anyways, the user should specify the validation either in the Components or in the TOML.&lt;/p&gt;
 &lt;h2 id=&#34;createrecord&#34;&gt;CreateRecord&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
 
 &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;create&lt;/span&gt;() baker.Record {
 	&lt;span style=&#34;color:#6272a4&#34;&gt;// ...
@@ -488,7 +488,7 @@ used that creates a &lt;code&gt;LogLine&lt;/code&gt; with the &lt;strong&gt;comm
 happens when blobs of raw serialized data, provided by the &lt;code&gt;Input&lt;/code&gt; component, are parsed.&lt;/p&gt;
 &lt;p&gt;The function is also available for components needing to create new records.&lt;/p&gt;
 &lt;h2 id=&#34;fieldbyname&#34;&gt;FieldByName&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
 
 &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;fieldByName&lt;/span&gt;(name &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) (baker.FieldIndex, &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;) {
 	&lt;span style=&#34;color:#6272a4&#34;&gt;// ...
@@ -508,7 +508,7 @@ index of a field they need for filtering or processing, but it is also used inte
 Baker when sending fields to the output (when at least one field is selected in the output
 TOML configuration).&lt;/p&gt;
 &lt;h2 id=&#34;fieldnames&#34;&gt;FieldNames&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;github.com/AdRoll/baker&amp;#34;&lt;/span&gt;
 
 fieldNames &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; []&lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;{&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;field0&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;field1&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;field2&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;field3&amp;#34;&lt;/span&gt;}
 
@@ -565,7 +565,7 @@ information Baker will associate with each of the serialized Record contained in
 Typical information could be the time of retrieval, the filename (in case &lt;code&gt;Records&lt;/code&gt; come from a file), etc.&lt;/p&gt;
 &lt;h2 id=&#34;the-input-interface&#34;&gt;The Input interface&lt;/h2&gt;
 &lt;p&gt;New &lt;code&gt;Input&lt;/code&gt; components need to implement the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Input&#34;&gt;Input interface&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Input &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Input &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
 	&lt;span style=&#34;color:#50fa7b&#34;&gt;Run&lt;/span&gt;(output &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;chan&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;Data) &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;
 	&lt;span style=&#34;color:#50fa7b&#34;&gt;Stop&lt;/span&gt;()
 	&lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() InputStats
@@ -577,7 +577,7 @@ Typical information could be the time of retrieval, the filename (in case &lt;co
 for the input to recycle memory, for example if the input uses a &lt;code&gt;sync.Pool&lt;/code&gt; to create new
 instances of &lt;code&gt;baker.Data&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;inputdesc&#34;&gt;InputDesc&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; MyInputDesc = baker.InputDesc{
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; MyInputDesc = baker.InputDesc{
 	Name:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyInput&amp;#34;&lt;/span&gt;,
 	New:    NewMyInput,
 	Config: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;MyInputConfig{},
@@ -617,7 +617,7 @@ instantiate the component with valid configurations and intercept incorrect ones
 &lt;p&gt;In case we want to test the component calling the &lt;code&gt;Run&lt;/code&gt; function, this is an example of test where,
 after some initialization, the &lt;code&gt;input.Run&lt;/code&gt; function is called and the produced &lt;code&gt;Data&lt;/code&gt; is checked
 in a goroutine:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;TestMyInput&lt;/span&gt;(t &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;testing.T) {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;TestMyInput&lt;/span&gt;(t &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;testing.T) {
     ch &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;make&lt;/span&gt;(&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;chan&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;baker.Data)
     &lt;span style=&#34;color:#ff79c6&#34;&gt;defer&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;close&lt;/span&gt;(ch)
 
@@ -651,7 +651,7 @@ from the TOML configuration and then calling &lt;code&gt;NewConfigFromToml&lt;/c
 &lt;p&gt;The &lt;code&gt;Base&lt;/code&gt;, &lt;code&gt;Recorder&lt;/code&gt; and &lt;code&gt;RawRecorder&lt;/code&gt; outputs included in the
 &lt;a href=&#34;https://github.com/AdRoll/baker/tree/main/output/outputtest&#34;&gt;&lt;code&gt;outputtest&lt;/code&gt; package&lt;/a&gt; can be
 helpful here to obtain the output and check it:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;TestMyInput&lt;/span&gt;(t &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;testing.T) {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;TestMyInput&lt;/span&gt;(t &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;testing.T) {
     toml &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;`
 &lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;    [input]
 &lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;    name = &amp;#34;MyInput&amp;#34;
@@ -726,7 +726,7 @@ the available filters in &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/ba
 &lt;/ul&gt;
 &lt;h2 id=&#34;the-filter-interface&#34;&gt;The Filter interface&lt;/h2&gt;
 &lt;p&gt;New &lt;code&gt;Filter&lt;/code&gt; components need to implement the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Filter&#34;&gt;Filter interface&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Filter &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Filter &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
 	&lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(l Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record))
 	&lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() FilterStats
 }
@@ -735,7 +735,7 @@ the available filters in &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/ba
 &lt;li&gt;&lt;code&gt;Stats&lt;/code&gt; return statistics (&lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FilterStats&#34;&gt;FilterStats&lt;/a&gt;) about the filtering process&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;A very simple example of filter doing nothing is:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; MyFilter &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt;{}
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; MyFilter &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt;{}
 
 &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r baker.Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(baker.Record)) {
     &lt;span style=&#34;color:#50fa7b&#34;&gt;next&lt;/span&gt;(r)
@@ -747,7 +747,7 @@ the available filters in &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/ba
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;filterdesc&#34;&gt;FilterDesc&lt;/h2&gt;
 &lt;p&gt;To be included in the Baker filters, a filter must be described by a
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FilterDesc&#34;&gt;&lt;code&gt;FilterDesc&lt;/code&gt; object&lt;/a&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; MyFilterDesc = baker.FilterDesc{
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; MyFilterDesc = baker.FilterDesc{
 	Name:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyFilter&amp;#34;&lt;/span&gt;,
 	New:    NewMyFilter,
 	Config: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;MyFilterConfig{},
@@ -758,14 +758,14 @@ a costructor function (&lt;code&gt;New&lt;/code&gt;), a config object (used to p
 TOML file) and a help text.&lt;/p&gt;
 &lt;p&gt;In this case the filter can be used with this configuration in the
 &lt;a href=&#34;https://getbaker.io/docs/how-tos/pipeline_configuration/&#34;&gt;TOML file&lt;/a&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[[filter]]
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[[filter]]
 name = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyFilter&amp;#34;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;the-new-function&#34;&gt;The &lt;code&gt;New&lt;/code&gt; function&lt;/h3&gt;
 &lt;p&gt;The &lt;code&gt;New&lt;/code&gt; field in the &lt;code&gt;FilterDesc&lt;/code&gt; object should be to assigned to a function that returns a new &lt;code&gt;Filter&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Each filter must have a constructor function that receives a
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FilterParams&#34;&gt;FilterParams&lt;/a&gt; and returns the
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Filter&#34;&gt;Filter interface&lt;/a&gt; implemented by the filter:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;NewMyFilter&lt;/span&gt;(cfg baker.FilterParams) (baker.Filter, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;) {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;NewMyFilter&lt;/span&gt;(cfg baker.FilterParams) (baker.Filter, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;) {
 	&lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;MyFilter{}, &lt;span style=&#34;color:#ff79c6&#34;&gt;nil&lt;/span&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/examples/filtering/filter.go&#34;&gt;filtering example&lt;/a&gt;
@@ -774,13 +774,13 @@ shows a more complex constructor that also uses the &lt;code&gt;FilterParams&lt;
 &lt;p&gt;A filter requiring some configurations also has a config object, including as many keys as it
 needs and tagging each one with an &lt;code&gt;help&lt;/code&gt; tag, a string that contains what a user needs to know
 which values set for it:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; ClauseFilterConfig &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; ClauseFilterConfig &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt; {
 	Clause &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;`help:&amp;#34;Boolean formula describing which events to let through. If empty, let everything through.&amp;#34;`&lt;/span&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Other available tags are &lt;code&gt;required:&amp;quot;true|false&amp;quot;&lt;/code&gt; and &lt;code&gt;default:&amp;quot;&amp;lt;value&amp;gt;&amp;quot;&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;modify-record-fields&#34;&gt;Modify record fields&lt;/h2&gt;
 &lt;p&gt;A filter can change the value of the record fields before calling &lt;code&gt;next()&lt;/code&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
     &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; src FieldIndex = &lt;span style=&#34;color:#bd93f9&#34;&gt;10&lt;/span&gt;
     &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; dst FieldIndex = &lt;span style=&#34;color:#bd93f9&#34;&gt;10&lt;/span&gt;
     v &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; r.&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(src)
@@ -794,7 +794,7 @@ Record to process and &lt;code&gt;next&lt;/code&gt; is a closure assigned to the
 &lt;p&gt;Filters call &lt;code&gt;next(r)&lt;/code&gt; once they&amp;rsquo;re done with the record and desire to forward it, or simply
 do not call &lt;code&gt;next()&lt;/code&gt; if they want to discard the record.&lt;/p&gt;
 &lt;p&gt;When a filter discards a record it should also report it in the stats:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; MyFilter &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt;{
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; MyFilter &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt;{
     numFilteredLines  &lt;span style=&#34;color:#8be9fd&#34;&gt;int64&lt;/span&gt;
 }
 
@@ -831,7 +831,7 @@ Always use &lt;code&gt;Copy()&lt;/code&gt; or &lt;code&gt;CreateRecord()&lt;/cod
 &lt;h3 id=&#34;copy&#34;&gt;Copy()&lt;/h3&gt;
 &lt;p&gt;Filters can duplicate incoming records (with &lt;code&gt;record.Copy()&lt;/code&gt;), and thus have more records
 come out than records that came in.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
     &lt;span style=&#34;color:#6272a4&#34;&gt;// Call next the 1st time
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#50fa7b&#34;&gt;next&lt;/span&gt;(r)
 
@@ -847,7 +847,7 @@ The &lt;code&gt;CreateRecord&lt;/code&gt; function is available as part of the
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#FilterParams&#34;&gt;FilterParams&lt;/a&gt; argument of the
 &lt;a href=&#34;#filter-constructor&#34;&gt;filter constructor&lt;/a&gt;. If you plan to use it in the &lt;code&gt;Process&lt;/code&gt; function
 then store it to the filter object in the constructor as shown in this example:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; MyFilter &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt;{
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; MyFilter &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;struct&lt;/span&gt;{
     cfg baker.FilterParams
 }
 
@@ -870,7 +870,7 @@ then store it to the filter object in the constructor as shown in this example:&
 &lt;/ul&gt;
 &lt;p&gt;Testing the &lt;code&gt;New&lt;/code&gt; function means testing that we&amp;rsquo;re able to intercept wrong configurations.&lt;/p&gt;
 &lt;p&gt;An example, using the &lt;code&gt;NewMyFilter&lt;/code&gt; function, is:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;cfg &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.FilterParams{
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;cfg &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.FilterParams{
     ComponentParams: baker.ComponentParams{
         DecodedConfig: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;MyFilterConfig{},
     },
@@ -885,7 +885,7 @@ the test should also verify all possible values and corner cases.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;With the &lt;code&gt;filter&lt;/code&gt; instance, it&amp;rsquo;s then possible to test the &lt;code&gt;Process()&lt;/code&gt; function, providing a
 manually crafted Record and checking whether the function calls the &lt;code&gt;next()&lt;/code&gt; function:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;ll &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;baker.LogLine{FieldSeparator: &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;,&amp;#39;&lt;/span&gt;}
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;ll &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;baker.LogLine{FieldSeparator: &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;,&amp;#39;&lt;/span&gt;}
 &lt;span style=&#34;color:#6272a4&#34;&gt;// Set values to the record, triggering all the filter logic
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;// ll.Set(&amp;lt;someIndex&amp;gt;, []byte(&amp;#34;somevalue&amp;#34;))
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;kept &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;false&lt;/span&gt;
@@ -917,7 +917,7 @@ it within Baker via &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#C
 &lt;/ul&gt;
 &lt;h2 id=&#34;the-output-interface&#34;&gt;The Output interface&lt;/h2&gt;
 &lt;p&gt;New &lt;code&gt;Output&lt;/code&gt; components need to implement the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Output&#34;&gt;Output interface&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Output &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Output &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
 	&lt;span style=&#34;color:#50fa7b&#34;&gt;Run&lt;/span&gt;(in &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;-&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;chan&lt;/span&gt; OutputRecord, upch &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;chan&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;
 	&lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() OutputStats
 	&lt;span style=&#34;color:#50fa7b&#34;&gt;CanShard&lt;/span&gt;() &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt;
@@ -929,7 +929,7 @@ communicate to the Upload components what to upload.&lt;/p&gt;
 &lt;a href=&#34;https://getbaker.io/docs/how-tos/sharding/&#34;&gt;dedicated to the sharding&lt;/a&gt; to go deeper in the topic.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;Stats&lt;/code&gt; is used to report metrics, see the &lt;a href=&#34;https://getbaker.io/docs/how-tos/metrics/&#34;&gt;dedicated page&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;outputdesc&#34;&gt;OutputDesc&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; MyOutputDesc = baker.OutputDesc{
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; MyOutputDesc = baker.OutputDesc{
 	Name:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyOutput&amp;#34;&lt;/span&gt;,
 	New:    NewMyOutput,
     Config: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;MyOutputConfig{},
@@ -1004,7 +1004,7 @@ instantiate the component with valid configurations and intercept wrong ones&lt;
 &lt;p&gt;The last point is where we can go a bit deeper. A possible strategy is to create a new output
 instance using the &lt;code&gt;New&lt;/code&gt; function, passing it the &lt;strong&gt;in&lt;/strong&gt; (from Baker to the component) and &lt;strong&gt;out&lt;/strong&gt;
 (from the component to the upload) channels and use those channels to interact with the output.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;TestMyOutput&lt;/span&gt;(t &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;testing.T) {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;TestMyOutput&lt;/span&gt;(t &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;testing.T) {
     cfg &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;...&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// define cfg with component configuration
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    output &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;NewMyOutput&lt;/span&gt;(cfg) &lt;span style=&#34;color:#6272a4&#34;&gt;// use the contructor-like New function
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    
@@ -1063,7 +1063,7 @@ register it within Baker via &lt;a href=&#34;https://pkg.go.dev/github.com/AdRol
 &lt;p&gt;At the moment Baker only proposes a single &lt;code&gt;Upload&lt;/code&gt; component, &lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/upload/s3.go&#34;&gt;S3&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;the-upload-interface&#34;&gt;The Upload interface&lt;/h2&gt;
 &lt;p&gt;New &lt;code&gt;Upload&lt;/code&gt; components need to implement the &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Upload&#34;&gt;Upload interface&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Upload &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; Upload &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt; {
 	&lt;span style=&#34;color:#50fa7b&#34;&gt;Run&lt;/span&gt;(upch &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;-&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;chan&lt;/span&gt; &lt;span style=&#34;color:#8be9fd&#34;&gt;string&lt;/span&gt;) &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;
 	&lt;span style=&#34;color:#50fa7b&#34;&gt;Stop&lt;/span&gt;()
 	&lt;span style=&#34;color:#50fa7b&#34;&gt;Stats&lt;/span&gt;() UploadStats
@@ -1071,7 +1071,7 @@ register it within Baker via &lt;a href=&#34;https://pkg.go.dev/github.com/AdRol
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;Run&lt;/code&gt; function implements the component logic, it is passed a channel from which the upload
 receives absolute paths of the files to upload. These files are produced by the Output component.&lt;/p&gt;
 &lt;h2 id=&#34;uploaddesc&#34;&gt;UploadDesc&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; MyUploadDesc = baker.UploadDesc{
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; MyUploadDesc = baker.UploadDesc{
 	Name:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyUpload&amp;#34;&lt;/span&gt;,
 	New:    NewMyUpload,
 	Config: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;MyUploadConfig{},
@@ -1148,7 +1148,7 @@ configuration of a metrics client.
 the client you&amp;rsquo;re using.&lt;/p&gt;
 &lt;p&gt;For example, this is what the &lt;code&gt;[metrics]&lt;/code&gt; section would look like with the &lt;em&gt;Datadog&lt;/em&gt;
 metrics client:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[metrics]
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[metrics]
 name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;datadog&amp;#34;&lt;/span&gt;
 
     [metrics.config]
@@ -1168,7 +1168,7 @@ and how to register it within Baker so that it can be selected in the
 &lt;p&gt;In order to be selected from TOML, you should first register a
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsDesc&#34;&gt;&lt;code&gt;baker.MetricsDesc&lt;/code&gt;&lt;/a&gt;
 instance within &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; fooBarDesc = baker.MetricsDesc{
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;var&lt;/span&gt; fooBarDesc = baker.MetricsDesc{
 	Name:   &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;MyMetrics&amp;#34;&lt;/span&gt;,
 	Config: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;myyMetricsConfig{},
 	New:    newMyMetrics,
@@ -1178,7 +1178,7 @@ which is guaranteed to be of the type of the &lt;code&gt;Config&lt;/code&gt; fie
 should either return a ready to use
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient&#34;&gt;&lt;code&gt;baker.MetricsClient&lt;/code&gt;&lt;/a&gt;
 or an error saying why it can&amp;rsquo;t.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;newMyMetrics&lt;/span&gt;(icfg &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt;{}) (baker.MetricsClient, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;)
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;newMyMetrics&lt;/span&gt;(icfg &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;interface&lt;/span&gt;{}) (baker.MetricsClient, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;how-to-publish-statistics-from-a-component&#34;&gt;How to publish statistics from a component&lt;/h2&gt;
 &lt;p&gt;All components need to implement a &lt;code&gt;Stats&lt;/code&gt; method where they can expose metrics, called
 by Baker once per second. Each of the different component types support a set of predefined
@@ -1271,7 +1271,7 @@ our filter and call
 the returned &lt;code&gt;MetricsBag&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;An important point is that Baker may call &lt;code&gt;Process&lt;/code&gt; and &lt;code&gt;Stats&lt;/code&gt; from different goroutines
 so access to the shared data must be properly synchronized (atomic, lock, channel, etc.)&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; (f &lt;span style=&#34;color:#ff79c6&#34;&gt;*&lt;/span&gt;MyFilter) &lt;span style=&#34;color:#50fa7b&#34;&gt;Process&lt;/span&gt;(r Record, next &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record)) {
     &lt;span style=&#34;color:#6272a4&#34;&gt;// Perform http request
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;
     f.mu.&lt;span style=&#34;color:#50fa7b&#34;&gt;Lock&lt;/span&gt;() &lt;span style=&#34;color:#6272a4&#34;&gt;// keep track of its duration
@@ -1308,7 +1308,7 @@ pipeline to report metrics. During construction, components receive the
 provides a set of methods to report the most common type of metric types (&lt;em&gt;gauges&lt;/em&gt;,
 &lt;em&gt;counters&lt;/em&gt; and &lt;em&gt;histograms&lt;/em&gt;)&lt;/p&gt;
 &lt;p&gt;Let&amp;rsquo;s now consider we want to publish additional tags alongside the duration slice of our previous &lt;code&gt;MetricsBag&lt;/code&gt; example.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;NewMyFilter&lt;/span&gt;(cfg baker.InputParams) (baker.Input, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;) {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;NewMyFilter&lt;/span&gt;(cfg baker.InputParams) (baker.Input, &lt;span style=&#34;color:#8be9fd&#34;&gt;error&lt;/span&gt;) {
     &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; MyFilter{metrics: cfg.Metrics}
 }
 
@@ -1351,7 +1351,7 @@ degradation.&lt;/p&gt;
         
         
         &lt;p&gt;While running, Baker dumps statistics on stdout every second. This is an example line:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;Stats: 1s[w:29425 r:29638] total[w:411300 r:454498 u:1831] speed[w:27420 r:30299] errors[p:0 i:0 f:0 o:0 u:0]
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;Stats: 1s[w:29425 r:29638] total[w:411300 r:454498 u:1831] speed[w:27420 r:30299] errors[p:0 i:0 f:0 o:0 u:0]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The first bracket shows the current read and write speed, i.e. the records that entered the
 pipeline (reads) and the records that successfully exited from it (writes).&lt;/p&gt;
 &lt;p&gt;The second bracket is the total since the process was launched (the &lt;code&gt;u:&lt;/code&gt; key is the number of
@@ -1392,7 +1392,7 @@ of the field we wish to use to partition the records space.&lt;/p&gt;
 and set the number of instances to 4 (i.e 4 shards). In our case, Baker is
 going to extract and hash the &lt;code&gt;name&lt;/code&gt; field of each &lt;code&gt;Record&lt;/code&gt; to determine which
 of the 4 &lt;code&gt;Filewriter&lt;/code&gt; instances a &lt;code&gt;Record&lt;/code&gt; is sent to:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[input]
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[input]
 ...
 
 [[filter]]
@@ -1439,10 +1439,10 @@ configuration, to the code eventually running when these elements are used
 inside a topology.&lt;/p&gt;
 &lt;p&gt;Sharding functions that may be used in topologies are stored inside of
 the &lt;code&gt;ShardingFuncs&lt;/code&gt; field of &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#Components&#34;&gt;&lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;ShardingFuncs &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;map&lt;/span&gt;[baker.FieldIndex]ShardingFunc
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;ShardingFuncs &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;map&lt;/span&gt;[baker.FieldIndex]ShardingFunc
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And a &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#ShardingFunc&#34;&gt;&lt;code&gt;ShardingFunc&lt;/code&gt;&lt;/a&gt;
 is a hash function that returns an &lt;code&gt;uint64&lt;/code&gt; &lt;code&gt;for baker.Record&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; ShardingFunc &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;type&lt;/span&gt; ShardingFunc &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt;(Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Finally, filling &lt;code&gt;ShardingFuncs&lt;/code&gt; is a matter of associating a shardable field to
 the sharding function that implements the hashing of that field.&lt;/p&gt;
 &lt;h2 id=&#34;putting-it-all-together&#34;&gt;Putting it all together&lt;/h2&gt;
@@ -1452,14 +1452,14 @@ named &lt;code&gt;timestamp&lt;/code&gt;, &lt;code&gt;city&lt;/code&gt; and &lt;
 sharding on these two fields, but note that only one of them can be chosen
 for a given topology.&lt;/p&gt;
 &lt;p&gt;This is how implementing sharding for such a schema would look probably like:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;const&lt;/span&gt; (
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;const&lt;/span&gt; (
     FieldTimestamp baker.FieldIndex = &lt;span style=&#34;color:#bd93f9&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// timestamp is unix epoch timestamp
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    FieldCity baker.FieldIndex      = &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// city name
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    FieldCountry baker.FieldIndex   = &lt;span style=&#34;color:#bd93f9&#34;&gt;2&lt;/span&gt; &lt;span style=&#34;color:#6272a4&#34;&gt;// 2 chars country code
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This is an hypothetical function to hash records based on the &lt;code&gt;timestamp&lt;/code&gt; field
 which only contains integers:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashTimestamp&lt;/span&gt;(r baker.Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt; {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashTimestamp&lt;/span&gt;(r baker.Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt; {
     &lt;span style=&#34;color:#6272a4&#34;&gt;// We know the timestamp is an integer, so we use that 
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#6272a4&#34;&gt;// to efficiently compute a hash from it.
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    buf &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; r.&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(FieldTimestamp)
@@ -1470,7 +1470,7 @@ which only contains integers:&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And this is how hashing records based on a 2-char &lt;code&gt;country&lt;/code&gt; code field would
 look like:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashCountry&lt;/span&gt;(r baker.Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt; {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;hashCountry&lt;/span&gt;(r baker.Record) &lt;span style=&#34;color:#8be9fd&#34;&gt;uint64&lt;/span&gt; {
     &lt;span style=&#34;color:#6272a4&#34;&gt;// We know the country is made of 2 characters, so we use that 
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#6272a4&#34;&gt;// fact to efficiently compute a hash from it.
 &lt;/span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    buf &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; r.&lt;span style=&#34;color:#50fa7b&#34;&gt;Get&lt;/span&gt;(FieldCountry)
@@ -1509,12 +1509,12 @@ possible by disabling concurrency (&lt;a href=&#34;#guarantee-records-order&#34;
 listed in the topology &lt;a href=&#34;https://getbaker.io/docs/core-concepts/toml/&#34;&gt;TOML configuration file&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;By default, though, Baker executes multiple concurrent filter chains (the default value is 16)&lt;/p&gt;
 &lt;p&gt;Filterchain concurrency can be set defining the &lt;code&gt;procs&lt;/code&gt; key in the &lt;code&gt;[filterchain]&lt;/code&gt; section:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[filterchain]
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[filterchain]
 procs=&lt;span style=&#34;color:#bd93f9&#34;&gt;16&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Setting the value to &lt;strong&gt;procs=1&lt;/strong&gt; disables the filter chain concurrency.&lt;/p&gt;
 &lt;h3 id=&#34;concurrent-output&#34;&gt;Concurrent output&lt;/h3&gt;
 &lt;p&gt;The output concurrency can be set defining the &lt;code&gt;procs&lt;/code&gt; key in the &lt;code&gt;[output]&lt;/code&gt; section:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[output]
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[output]
 procs=&lt;span style=&#34;color:#bd93f9&#34;&gt;32&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The default value is &lt;strong&gt;32&lt;/strong&gt;.&lt;br&gt;
 To disable concurrency, set &lt;strong&gt;procs=1&lt;/strong&gt;.&lt;/p&gt;

@@ -1,7 +1,7 @@
 ---
 title: "SQS"
 weight: 5
-date: 2021-04-06
+date: 2021-08-11
 ---
 {{% pageinfo color="primary" %}}
 
