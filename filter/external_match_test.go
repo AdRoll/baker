@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/AdRoll/baker"
-	"github.com/AdRoll/baker/testutil"
 )
 
 func TestExternalMatchConfigFillDefaults(t *testing.T) {
@@ -199,7 +198,7 @@ row-2-col-0,row-2-col-1
 	}
 
 	cfg := ExternalMatchConfig{
-		Files:          []string{testutil.PathToURI(filepath.Join(tmpDir, "%s", "values.csv"))},
+		Files:          []string{pathToURI(filepath.Join(tmpDir, "%s", "values.csv"))},
 		DateTimeLayout: "2006/01/02",
 		// Compute number of hours between now and lastmonth.
 		TimeSubtract: now.Sub(lastMonth),
@@ -285,7 +284,7 @@ func TestExternalMatchRefreshValues(t *testing.T) {
 		ComponentParams: baker.ComponentParams{
 			FieldByName: func(fname string) (baker.FieldIndex, bool) { return 0, true },
 			DecodedConfig: &ExternalMatchConfig{
-				Files:        []string{testutil.PathToURI(tmpPath)},
+				Files:        []string{pathToURI(tmpPath)},
 				FieldName:    "field",
 				RefreshEvery: refreshEvery,
 				KeepOnMatch:  true,
@@ -318,4 +317,8 @@ func TestExternalMatchRefreshValues(t *testing.T) {
 	if kept {
 		t.Error("second call to Process() has kept the record, should have been discarded")
 	}
+}
+
+func pathToURI(p string) string {
+	return "file://" + filepath.ToSlash(p)
 }
