@@ -26,7 +26,7 @@ func RecordConformanceTest(t *testing.T, create func() Record) {
 		}
 	})
 
-	t.Run("update-value", func(t *testing.T) {
+	t.Run("set-twice", func(t *testing.T) {
 		r := create()
 		r.Set(0, []byte("stuff"))
 		r.Set(0, []byte("other stuff"))

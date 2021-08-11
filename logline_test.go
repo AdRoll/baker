@@ -493,7 +493,7 @@ func TestLogLineGet(t *testing.T) {
 		for i := FieldIndex(3); i < LogLineNumFields+NumFieldsBaker; i++ {
 			got := ll.Get(i)
 			if len(got) != 0 {
-				t.Errorf("got: %s want: ''", got)
+				t.Errorf("ll.Get(%d) = %q, want nil", i, got)
 			}
 		}
 	})
@@ -513,6 +513,8 @@ func TestLogLineGet(t *testing.T) {
 	})
 
 	t.Run("out of range", func(t *testing.T) {
+		fidx := LogLineNumFields + NumFieldsBaker
+
 		defer func() {
 			if r := recover(); r == nil {
 				t.Errorf("Get(%d) should panic", fidx)
@@ -520,12 +522,14 @@ func TestLogLineGet(t *testing.T) {
 		}()
 
 		ll := LogLine{FieldSeparator: ','}
-		ll.Get(LogLineNumFields + NumFieldsBaker)
+		ll.Get(fidx)
 	})
 }
 
 func TestLogLineSetPanic(t *testing.T) {
 	t.Run("index out of range", func(t *testing.T) {
+		fidx := LogLineNumFields + NumFieldsBaker
+
 		defer func() {
 			if r := recover(); r == nil {
 				t.Errorf("Set(%d) should panic", fidx)
@@ -533,27 +537,30 @@ func TestLogLineSetPanic(t *testing.T) {
 		}()
 
 		ll := LogLine{FieldSeparator: ','}
-		ll.Set(LogLineNumFields+NumFieldsBaker, []byte("value"))
+		ll.Set(fidx, []byte("value"))
 	})
 
 	t.Run("max fields written", func(t *testing.T) {
+		var fidx FieldIndex
+
 		defer func() {
 			if r := recover(); r != nil {
-				t.Errorf("Set(%d) should panic", fidx)
+				t.Errorf("Set(%d) should not panic: %q", fidx, r)
 			}
 		}()
 
 		ll := LogLine{FieldSeparator: ','}
 		// Maximum of 254 changed fields.
 		for i := 0; i < 255; i++ {
-			ll.Set(FieldIndex(i), []byte("value"))
+			fidx = FieldIndex(i)
+			ll.Set(fidx, []byte("value"))
 		}
 	})
 
 	t.Run("too many field written", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
-				t.Errorf("Set(%d) should panic", fidx)
+				t.Errorf("Set(%d) should panic", 1000)
 			}
 		}()
 
