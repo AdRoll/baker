@@ -83,10 +83,6 @@ func writeTestLog(tb testing.TB, w io.Writer, numlines int) {
 	}
 }
 
-func pathToURI(p string) string {
-	return "file://" + filepath.ToSlash(p)
-}
-
 func TestListBasic(t *testing.T) {
 	dir, rmdir := testutil.TempDir(t)
 	defer rmdir()
@@ -96,12 +92,12 @@ func TestListBasic(t *testing.T) {
 	makeTestLog(t, dir, "test500.log.gz", 500)
 	makeTestLog(t, dir, "test1233.log.gz", 1233)
 	ioutil.WriteFile(filepath.Join(dir, "testlist600"),
-		[]byte(pathToURI(filepath.Join(dir, "test100.log.gz"))+"\n"+
-			pathToURI(filepath.Join(dir, "test500.log.gz"))+"\n"),
+		[]byte(testutil.PathToURI(filepath.Join(dir, "test100.log.gz"))+"\n"+
+			testutil.PathToURI(filepath.Join(dir, "test500.log.gz"))+"\n"),
 		0777)
 	ioutil.WriteFile(filepath.Join(dir, "buglist"),
-		[]byte(pathToURI(filepath.Join(dir, "test100.log.gz"))+"\n"+
-			pathToURI(filepath.Join(dir, "nonesisting.log.gz"))+"\n"),
+		[]byte(testutil.PathToURI(filepath.Join(dir, "test100.log.gz"))+"\n"+
+			testutil.PathToURI(filepath.Join(dir, "nonesisting.log.gz"))+"\n"),
 		0777)
 
 	var tests = []struct {
@@ -135,9 +131,9 @@ func TestListBasic(t *testing.T) {
 	for _, test := range tests {
 		for idx := range test.Files {
 			if test.Files[idx][0] == '@' {
-				test.Files[idx] = "@" + pathToURI(filepath.Join(dir, test.Files[idx][1:]))
+				test.Files[idx] = "@" + testutil.PathToURI(filepath.Join(dir, test.Files[idx][1:]))
 			} else {
-				test.Files[idx] = pathToURI(filepath.Join(dir, test.Files[idx]))
+				test.Files[idx] = testutil.PathToURI(filepath.Join(dir, test.Files[idx]))
 			}
 		}
 		cfg := baker.InputParams{
