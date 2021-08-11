@@ -194,6 +194,10 @@ func (cfg *DynamoDBConfig) fillDefaults() {
 // DynamoDB is a class to do optimized batched writes to a single DynamoDB table
 // with a fixed schema (same number of columns for all records).
 type DynamoDB struct {
+	// atomically-accessed, keep on top for 64-bit alignment.
+	totaln int64 // total processed lines
+	errn   int64 // number of lines that were skipped because of errors
+
 	TableName string
 	Fields    []baker.FieldIndex
 	Columns   []string
@@ -207,8 +211,6 @@ type DynamoDB struct {
 	pkeys    [nRequests]string
 	timer    *time.Timer
 	reqn     int
-	totaln   int64 // total processed lines
-	errn     int64 // number of lines that were skipped because of errors
 }
 
 // NewDynamoDB create a new DynamoDB output.
