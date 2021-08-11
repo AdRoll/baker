@@ -475,18 +475,18 @@ func TestLogLineCustomFields(t *testing.T) {
 }
 
 func TestLogLineGet(t *testing.T) {
-	t.Run("no set value1", func(t *testing.T) {
+	t.Run("zero value + get", func(t *testing.T) {
 		ll := LogLine{FieldSeparator: ','}
 
 		for i := FieldIndex(0); i < LogLineNumFields+NumFieldsBaker; i++ {
 			got := ll.Get(i)
 			if got != nil {
-				t.Errorf("got: %s, want: ''", got)
+				t.Errorf("ll.Get(%d) = %q, want nil", i, got)
 			}
 		}
 	})
 
-	t.Run("no set value2", func(t *testing.T) {
+	t.Run("parse + get", func(t *testing.T) {
 		ll := LogLine{FieldSeparator: ','}
 		ll.Parse([]byte("value,value,value"), nil)
 
@@ -498,7 +498,7 @@ func TestLogLineGet(t *testing.T) {
 		}
 	})
 
-	t.Run("no set value3", func(t *testing.T) {
+	t.Run("3 x set + get", func(t *testing.T) {
 		ll := LogLine{FieldSeparator: ','}
 		ll.Set(FieldIndex(0), []byte("value"))
 		ll.Set(FieldIndex(1), []byte("value"))
@@ -507,7 +507,7 @@ func TestLogLineGet(t *testing.T) {
 		for i := FieldIndex(3); i < LogLineNumFields+NumFieldsBaker; i++ {
 			got := ll.Get(i)
 			if len(got) != 0 {
-				t.Errorf("got: %s want: ''", got)
+				t.Errorf("ll.Get(%d) = %q, want nil", i, got)
 			}
 		}
 	})
@@ -515,7 +515,7 @@ func TestLogLineGet(t *testing.T) {
 	t.Run("out of range", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
-				t.Errorf("got: %s want: panic", r)
+				t.Errorf("Get(%d) should panic", fidx)
 			}
 		}()
 
@@ -528,7 +528,7 @@ func TestLogLineSetPanic(t *testing.T) {
 	t.Run("index out of range", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
-				t.Errorf("got: %s want: panic", t.Name())
+				t.Errorf("Set(%d) should panic", fidx)
 			}
 		}()
 
@@ -536,10 +536,10 @@ func TestLogLineSetPanic(t *testing.T) {
 		ll.Set(LogLineNumFields+NumFieldsBaker, []byte("value"))
 	})
 
-	t.Run("change all fields", func(t *testing.T) {
+	t.Run("max fields written", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r != nil {
-				t.Errorf("got: %s want: no panic", r)
+				t.Errorf("Set(%d) should panic", fidx)
 			}
 		}()
 
@@ -550,10 +550,10 @@ func TestLogLineSetPanic(t *testing.T) {
 		}
 	})
 
-	t.Run("too many field changed", func(t *testing.T) {
+	t.Run("too many field written", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
-				t.Errorf("got: %s want: panic", r)
+				t.Errorf("Set(%d) should panic", fidx)
 			}
 		}()
 
