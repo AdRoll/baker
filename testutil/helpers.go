@@ -3,7 +3,6 @@ package testutil
 import (
 	"io/ioutil"
 	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/sirupsen/logrus"
@@ -97,9 +96,4 @@ func LessLogging() (reset func()) {
 	lvl := logrus.GetLevel()
 	logrus.SetLevel(logrus.ErrorLevel)
 	return func() { logrus.SetLevel(lvl) }
-}
-
-// PathToUri converts a file path to an URI. Compatible with both Windows and Linux paths.
-func PathToURI(p string) string {
-	return "file://" + filepath.ToSlash(p)
 }
