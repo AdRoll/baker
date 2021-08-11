@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -171,7 +172,6 @@ func (f *ExternalMatch) processURL(u string) (map[string]struct{}, error) {
 	}
 
 	var r io.Reader
-	path := parsed.Path
 
 	log.WithField("url", u).Info("begin parsing file")
 	switch parsed.Scheme {
@@ -182,7 +182,7 @@ func (f *ExternalMatch) processURL(u string) (map[string]struct{}, error) {
 		}
 		resp, err := s3.New(sess).GetObject(&s3.GetObjectInput{
 			Bucket: aws.String(parsed.Host),
-			Key:    aws.String(path),
+			Key:    aws.String(parsed.Path),
 		})
 		if err != nil {
 			return nil, fmt.Errorf("error downloading file: %v", err)
@@ -192,6 +192,7 @@ func (f *ExternalMatch) processURL(u string) (map[string]struct{}, error) {
 		r = resp.Body
 
 	case "file":
+		path := filepath.Join(parsed.Host, parsed.Path) // On Windows Host contains the drive letter.
 		f, err := os.Open(path)
 		if err != nil {
 			return nil, fmt.Errorf("error opening file: %v", err)

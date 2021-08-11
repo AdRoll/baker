@@ -3,13 +3,12 @@ package filter
 import (
 	"fmt"
 	"os"
-	"path"
 	"path/filepath"
-	"strings"
 	"testing"
 	"time"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/testutil"
 )
 
 func TestExternalMatchConfigFillDefaults(t *testing.T) {
@@ -192,7 +191,7 @@ row-2-col-0,row-2-col-1
 	padInt := func(i int) string { return fmt.Sprintf("%02d", i) }
 	lastMonth := now.AddDate(0, -1, 0)
 	tmpPath := filepath.Join(tmpDir, padInt(lastMonth.Year()), padInt(int(lastMonth.Month())), padInt(lastMonth.Day()), "values.csv")
-	if err := os.MkdirAll(path.Dir(tmpPath), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(tmpPath), os.ModePerm); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(tmpPath, []byte(content), os.ModePerm); err != nil {
@@ -200,7 +199,7 @@ row-2-col-0,row-2-col-1
 	}
 
 	cfg := ExternalMatchConfig{
-		Files:          []string{strings.Join([]string{"file:/", tmpDir, "%s", "values.csv"}, string(filepath.Separator))},
+		Files:          []string{testutil.PathToURI(filepath.Join(tmpDir, "%s", "values.csv"))},
 		DateTimeLayout: "2006/01/02",
 		// Compute number of hours between now and lastmonth.
 		TimeSubtract: now.Sub(lastMonth),
@@ -286,7 +285,7 @@ func TestExternalMatchRefreshValues(t *testing.T) {
 		ComponentParams: baker.ComponentParams{
 			FieldByName: func(fname string) (baker.FieldIndex, bool) { return 0, true },
 			DecodedConfig: &ExternalMatchConfig{
-				Files:        []string{"file://" + tmpPath},
+				Files:        []string{testutil.PathToURI(tmpPath)},
 				FieldName:    "field",
 				RefreshEvery: refreshEvery,
 				KeepOnMatch:  true,
