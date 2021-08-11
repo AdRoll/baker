@@ -133,22 +133,27 @@ func TestLogLineRecordConformance(t *testing.T) {
 	RecordConformanceTest(t, createLogLine)
 }
 
-func TestLogLineParseCustomSeparator(t *testing.T) {
+func TestLogLineParse(t *testing.T) {
 	t.Run("default comma separator", func(t *testing.T) {
 		text := []byte("value1,value2,,value4")
 		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(text, nil)
-		if !bytes.Equal(ll.Get(0), []byte("value1")) {
-			t.Fatalf("want: %v, got: %v", "value1", ll.Get(0))
+
+		got, want := ll.Get(0), []byte("value1")
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %v want: %v", got, want)
 		}
-		if !bytes.Equal(ll.Get(1), []byte("value2")) {
-			t.Fatalf("want: %v, got: %v", "value2", ll.Get(1))
+		got, want = ll.Get(1), []byte("value2")
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %v want: %v", got, want)
 		}
-		if !bytes.Equal(ll.Get(2), []byte("")) {
-			t.Fatalf("want: %v, got: %v", "", ll.Get(2))
+		got, want = ll.Get(2), []byte("")
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %v want: %v", got, want)
 		}
-		if !bytes.Equal(ll.Get(3), []byte("value4")) {
-			t.Fatalf("want: %v, got: %v", "value4", ll.Get(3))
+		got, want = ll.Get(3), []byte("value4")
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %v want: %v", got, want)
 		}
 	})
 
@@ -156,17 +161,39 @@ func TestLogLineParseCustomSeparator(t *testing.T) {
 		text := []byte("value1.value2..value4")
 		ll := LogLine{FieldSeparator: '.'}
 		ll.Parse(text, nil)
-		if !bytes.Equal(ll.Get(0), []byte("value1")) {
-			t.Fatalf("want: %v, got: %v", "value1", ll.Get(0))
+
+		got, want := ll.Get(0), []byte("value1")
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %v want: %v", got, want)
 		}
-		if !bytes.Equal(ll.Get(1), []byte("value2")) {
-			t.Fatalf("want: %v, got: %v", "value2", ll.Get(1))
+		got, want = ll.Get(1), []byte("value2")
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %v want: %v", got, want)
 		}
-		if !bytes.Equal(ll.Get(2), []byte("")) {
-			t.Fatalf("want: %v, got: %v", "", ll.Get(2))
+		got, want = ll.Get(2), []byte("")
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %v want: %v", got, want)
 		}
-		if !bytes.Equal(ll.Get(3), []byte("value4")) {
-			t.Fatalf("want: %v, got: %v", "value4", ll.Get(3))
+		got, want = ll.Get(3), []byte("value4")
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %v want: %v", got, want)
+		}
+	})
+
+	t.Run("nil", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: '.'}
+		ll.Parse(nil, nil)
+
+		for i := FieldIndex(0); i < LogLineNumFields+NumFieldsBaker; i++ {
+			got := ll.Get(i)
+			if len(got) != 0 {
+				t.Errorf("idx=%d: got: %s want nil", i, got)
+			}
+		}
+
+		got := ll.ToText(nil)
+		if len(got) != 0 {
+			t.Errorf("got: %v want: nil", got)
 		}
 	})
 }
@@ -180,7 +207,7 @@ func TestLogLineToText(t *testing.T) {
 		text := ll.ToText(nil)
 		exp := []byte("value1,value2,,value4")
 		if !bytes.Equal(text, exp) {
-			t.Fatalf("want: %s got: %s", exp, text)
+			t.Errorf("got: %s want: %s", text, exp)
 		}
 	})
 
@@ -192,15 +219,15 @@ func TestLogLineToText(t *testing.T) {
 		text := ll.ToText(nil)
 		exp := []byte("value1.value2..value4")
 		if !bytes.Equal(text, exp) {
-			t.Fatalf("want: %s got: %s", exp, text)
+			t.Errorf("got: %s want: %s", text, exp)
 		}
 	})
 
 	t.Run("empty logline", func(t *testing.T) {
 		ll := LogLine{FieldSeparator: ','}
-		b := ll.ToText(nil)
-		if !bytes.Equal(b, []byte("")) {
-			t.Fatalf("want: '' got: %s", b)
+		got := ll.ToText(nil)
+		if !bytes.Equal(got, []byte("")) {
+			t.Errorf("got: %s want: ''", got)
 		}
 	})
 
@@ -209,9 +236,9 @@ func TestLogLineToText(t *testing.T) {
 
 		ll := LogLine{FieldSeparator: ','}
 		ll.Set(2, []byte("value2"))
-		b := ll.ToText(nil)
-		if !bytes.Equal(b, want) {
-			t.Fatalf("want: %s got: %s", want, b)
+		got := ll.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
 		}
 	})
 
@@ -220,9 +247,66 @@ func TestLogLineToText(t *testing.T) {
 
 		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(want, nil)
-		b := ll.ToText(nil)
-		if !bytes.Equal(b, want) {
-			t.Fatalf("want: %s got: %s", want, b)
+		got := ll.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
+		}
+	})
+
+	t.Run("parse with buffer", func(t *testing.T) {
+		want := []byte("value,value,value")
+
+		ll := LogLine{FieldSeparator: ','}
+		ll.Parse(want, nil)
+
+		// correct size
+		buf := make([]byte, 0, len(want))
+		got := ll.ToText(buf)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s, want: %s", got, want)
+		}
+
+		// smaller
+		buf = make([]byte, 0, len(want)/2)
+		got = ll.ToText(buf)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s, want: %s", got, want)
+		}
+
+		// bigger
+		buf = make([]byte, 0, len(want)*2)
+		got = ll.ToText(buf)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s, want: %s", got, want)
+		}
+	})
+
+	t.Run("set with buffer", func(t *testing.T) {
+		want := []byte(",,value2,")
+
+		ll := LogLine{FieldSeparator: ','}
+		ll.Set(2, []byte("value2"))
+		ll.Set(3, []byte(""))
+
+		// correct size
+		buf := make([]byte, 0, len(want))
+		got := ll.ToText(buf)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
+		}
+
+		// smaller
+		buf = make([]byte, 0, len(want)/2)
+		got = ll.ToText(buf)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
+		}
+
+		// bigger
+		buf = make([]byte, 0, len(want)*2)
+		got = ll.ToText(buf)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
 		}
 	})
 
@@ -233,9 +317,9 @@ func TestLogLineToText(t *testing.T) {
 		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(text, nil)
 		ll.Set(0, []byte("value2"))
-		b := ll.ToText(nil)
-		if !bytes.Equal(b, want) {
-			t.Fatalf("want: %s got: %s", want, b)
+		got := ll.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s, want: %s", got, want)
 		}
 	})
 
@@ -246,9 +330,9 @@ func TestLogLineToText(t *testing.T) {
 		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(text, nil)
 		ll.Set(5, []byte("value2"))
-		b := ll.ToText(nil)
-		if !bytes.Equal(b, want) {
-			t.Fatalf("want: %s got: %s", want, b)
+		got := ll.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
 		}
 	})
 
@@ -261,9 +345,9 @@ func TestLogLineToText(t *testing.T) {
 
 		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(want, nil)
-		b := ll.ToText(nil)
-		if !bytes.Equal(b, want) {
-			t.Fatalf("want: %s got: %s", want, b)
+		got := ll.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
 
 		}
 	})
@@ -280,9 +364,9 @@ func TestLogLineToText(t *testing.T) {
 		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(text, nil)
 		ll.Set(50, []byte("other"))
-		b := ll.ToText(nil)
-		if !bytes.Equal(b, want) {
-			t.Fatalf("want: %s got: %s", want, b)
+		got := ll.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
 
 		}
 	})
@@ -299,9 +383,9 @@ func TestLogLineToText(t *testing.T) {
 		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(text, nil)
 		ll.Set(LogLineNumFields-1, []byte("other"))
-		b := ll.ToText(nil)
-		if !bytes.Equal(b, want) {
-			t.Fatalf("want: %s got: %s", want, b)
+		got := ll.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
 		}
 	})
 
@@ -312,9 +396,9 @@ func TestLogLineToText(t *testing.T) {
 		ll.Set(LogLineNumFields, []byte("custom1"))
 		ll.Set(LogLineNumFields+1, []byte("custom2"))
 		ll.Set(LogLineNumFields+NumFieldsBaker-1, []byte("customN"))
-		b := ll.ToText(nil)
-		if !bytes.Equal(b, want) {
-			t.Fatalf("want: %s got: %s", want, b)
+		got := ll.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
 		}
 	})
 
@@ -324,9 +408,9 @@ func TestLogLineToText(t *testing.T) {
 		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(want, nil)
 		ll.Set(LogLineNumFields, []byte("custom1"))
-		b := ll.ToText(nil)
-		if !bytes.Equal(b, want) {
-			t.Fatalf("want: %s got: %s", want, b)
+		got := ll.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
 		}
 	})
 
@@ -340,9 +424,9 @@ func TestLogLineToText(t *testing.T) {
 		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(want, nil)
 		ll.Set(LogLineNumFields+10, []byte("custom10"))
-		b := ll.ToText(nil)
-		if !bytes.Equal(b, want) {
-			t.Fatalf("want: %s got: %s", want, b)
+		got := ll.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
 		}
 	})
 }
@@ -358,7 +442,7 @@ func TestLogLineCustomFields(t *testing.T) {
 		ll := LogLine{FieldSeparator: ','}
 		err := ll.Parse(want, nil)
 		if err != errLogLineTooManyFields {
-			t.Fatalf("want: %s got: %s", errLogLineTooManyFields, err)
+			t.Errorf("got: %s want: %s", err, errLogLineTooManyFields)
 		}
 	})
 
@@ -370,7 +454,7 @@ func TestLogLineCustomFields(t *testing.T) {
 		ll.Set(idx, want)
 		got := ll.Get(idx)
 		if !bytes.Equal(got, want) {
-			t.Errorf("got: %s, want: %s", got, want)
+			t.Errorf("got: %s want: %s", got, want)
 
 		}
 
@@ -379,14 +463,64 @@ func TestLogLineCustomFields(t *testing.T) {
 		ll.Set(idx, want)
 		got = ll.Get(idx)
 		if !bytes.Equal(got, want) {
-			t.Errorf("got: %s, want: %s", got, want)
+			t.Errorf("got: %s want: %s", got, want)
 		}
 
 		// Custom fields should not be serialized.
 		got = ll.ToText(nil)
 		if !bytes.Equal(got, []byte{}) {
-			t.Fatalf("got: %s, should be empty", got)
+			t.Errorf("got: %s want: ''", got)
 		}
+	})
+}
+
+func TestLogLineGet(t *testing.T) {
+	t.Run("no set value1", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: ','}
+
+		for i := FieldIndex(0); i < LogLineNumFields+NumFieldsBaker; i++ {
+			got := ll.Get(i)
+			if got != nil {
+				t.Errorf("got: %s, want: ''", got)
+			}
+		}
+	})
+
+	t.Run("no set value2", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: ','}
+		ll.Parse([]byte("value,value,value"), nil)
+
+		for i := FieldIndex(3); i < LogLineNumFields+NumFieldsBaker; i++ {
+			got := ll.Get(i)
+			if len(got) != 0 {
+				t.Errorf("got: %s want: ''", got)
+			}
+		}
+	})
+
+	t.Run("no set value3", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: ','}
+		ll.Set(FieldIndex(0), []byte("value"))
+		ll.Set(FieldIndex(1), []byte("value"))
+		ll.Set(FieldIndex(2), []byte("value"))
+
+		for i := FieldIndex(3); i < LogLineNumFields+NumFieldsBaker; i++ {
+			got := ll.Get(i)
+			if len(got) != 0 {
+				t.Errorf("got: %s want: ''", got)
+			}
+		}
+	})
+
+	t.Run("out of range", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("got: %s want: panic", r)
+			}
+		}()
+
+		ll := LogLine{FieldSeparator: ','}
+		ll.Get(LogLineNumFields + NumFieldsBaker)
 	})
 }
 
@@ -394,7 +528,7 @@ func TestLogLineSetPanic(t *testing.T) {
 	t.Run("index out of range", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
-				t.Errorf("%s should panic", t.Name())
+				t.Errorf("got: %s want: panic", t.Name())
 			}
 		}()
 
@@ -402,17 +536,33 @@ func TestLogLineSetPanic(t *testing.T) {
 		ll.Set(LogLineNumFields+NumFieldsBaker, []byte("value"))
 	})
 
-	t.Run("too many field changed", func(t *testing.T) {
+	t.Run("change all fields", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r != nil {
-				t.Errorf("got: %s, want: no panic", r)
+				t.Errorf("got: %s want: no panic", r)
 			}
 		}()
 
 		ll := LogLine{FieldSeparator: ','}
-		// Maximum of 254 values.
+		// Maximum of 254 changed fields.
 		for i := 0; i < 255; i++ {
 			ll.Set(FieldIndex(i), []byte("value"))
 		}
+	})
+
+	t.Run("too many field changed", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("got: %s want: panic", r)
+			}
+		}()
+
+		ll := LogLine{FieldSeparator: ','}
+		// Maximum of 254 changed fields.
+		for i := 0; i < 255; i++ {
+			ll.Set(FieldIndex(i), []byte("value"))
+		}
+		// One more.
+		ll.Set(FieldIndex(1000), []byte("value"))
 	})
 }
