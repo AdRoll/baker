@@ -68,7 +68,7 @@ available for downloading &lt;a href=&#34;https://getbaker.io/tutorial-base-data
 &lt;h2 id=&#34;baker-configuration&#34;&gt;Baker configuration&lt;/h2&gt;
 &lt;p&gt;An essential thing to do is to create a configuration file for Baker, in
 &lt;a href=&#34;https://github.com/toml-lang/toml&#34;&gt;TOML&lt;/a&gt; format, selecting the aforementioned components:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[fields]
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[fields]
 names = [&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;review_num&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;brand&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;variety&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;style&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;country&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;stars&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;top_ten&amp;#34;&lt;/span&gt;]
 
 [input]
@@ -106,7 +106,7 @@ name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;S3&amp;#34;&lt;/span&gt;
 &lt;p&gt;Baker is a Go library. To use it, it is required to create a Go &lt;code&gt;main()&lt;/code&gt; function,
 &lt;a href=&#34;https://getbaker.io/docs/how-tos/baker_components/&#34;&gt;define a &lt;code&gt;baker.Components&lt;/code&gt;&lt;/a&gt; object and pass it to
 &lt;a href=&#34;https://pkg.go.dev/github.com/AdRoll/baker#MainCLI&#34;&gt;&lt;code&gt;baker.MainCLI()&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;package&lt;/span&gt; main
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;package&lt;/span&gt; main
 
 &lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; (
 	&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;log&amp;#34;&lt;/span&gt;
@@ -124,7 +124,7 @@ name=&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;S3&amp;#34;&lt;/span&gt;
 &lt;p&gt;The only required fields in &lt;code&gt;baker.Components&lt;/code&gt; are the components that we need to use (the complete
 guide to &lt;code&gt;baker.Components&lt;/code&gt; is &lt;a href=&#34;https://getbaker.io/docs/how-tos/baker_components/&#34;&gt;here&lt;/a&gt;).&lt;/p&gt;
 &lt;p&gt;The simplest and more generic way to add the components to Baker is to add all of them:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;components &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;components &lt;span style=&#34;color:#ff79c6&#34;&gt;:=&lt;/span&gt; baker.Components{
     Inputs:      input.All,
     Filters:     filter.All,
     Outputs:     output.All,
@@ -133,7 +133,7 @@ guide to &lt;code&gt;baker.Components&lt;/code&gt; is &lt;a href=&#34;https://ge
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The complete program (that is available in the
 &lt;a href=&#34;https://github.com/AdRoll/baker/blob/main/tutorials/basic/main.go&#34;&gt;&lt;code&gt;tutorials/&lt;/code&gt; folder&lt;/a&gt; in
 the Baker repository) is the following:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;package&lt;/span&gt; main
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;package&lt;/span&gt; main
 
 &lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; (
 	&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;log&amp;#34;&lt;/span&gt;
@@ -157,19 +157,19 @@ the Baker repository) is the following:&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;run-the-program&#34;&gt;Run the program&lt;/h2&gt;
 &lt;p&gt;Once the code and the configuration files are ready, we can run the topology:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ go build -o myProgram ./main.go 
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ go build -o myProgram ./main.go 
 &lt;span style=&#34;color:#6272a4&#34;&gt;# Test it works as expected&lt;/span&gt;
 $ ./myProgram -help
 &lt;span style=&#34;color:#6272a4&#34;&gt;# run the topology&lt;/span&gt;
 $ ./myProgram topology.toml
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Among the messages that Baker prints on stdout, the stats messages are particularly interesting:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;Stats: 1s&lt;span style=&#34;color:#ff79c6&#34;&gt;[&lt;/span&gt;w:0 r:0&lt;span style=&#34;color:#ff79c6&#34;&gt;]&lt;/span&gt; total&lt;span style=&#34;color:#ff79c6&#34;&gt;[&lt;/span&gt;w:41 r:2584 u:11&lt;span style=&#34;color:#ff79c6&#34;&gt;]&lt;/span&gt; speed&lt;span style=&#34;color:#ff79c6&#34;&gt;[&lt;/span&gt;w:20 r:1292&lt;span style=&#34;color:#ff79c6&#34;&gt;]&lt;/span&gt; errors&lt;span style=&#34;color:#ff79c6&#34;&gt;[&lt;/span&gt;p:0 i:0 f:2543 o:0 u:0&lt;span style=&#34;color:#ff79c6&#34;&gt;]&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;Stats: 1s&lt;span style=&#34;color:#ff79c6&#34;&gt;[&lt;/span&gt;w:0 r:0&lt;span style=&#34;color:#ff79c6&#34;&gt;]&lt;/span&gt; total&lt;span style=&#34;color:#ff79c6&#34;&gt;[&lt;/span&gt;w:41 r:2584 u:11&lt;span style=&#34;color:#ff79c6&#34;&gt;]&lt;/span&gt; speed&lt;span style=&#34;color:#ff79c6&#34;&gt;[&lt;/span&gt;w:20 r:1292&lt;span style=&#34;color:#ff79c6&#34;&gt;]&lt;/span&gt; errors&lt;span style=&#34;color:#ff79c6&#34;&gt;[&lt;/span&gt;p:0 i:0 f:2543 o:0 u:0&lt;span style=&#34;color:#ff79c6&#34;&gt;]&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Take a look at the &lt;a href=&#34;https://getbaker.io/docs/how-tos/read_stats/&#34;&gt;dedicated page&lt;/a&gt; to learn how to read the values.&lt;/p&gt;
 &lt;h2 id=&#34;verify-the-result&#34;&gt;Verify the result&lt;/h2&gt;
 &lt;p&gt;The resulting files are split into multiple folders, one for each country, and then uploaded.&lt;/p&gt;
 &lt;p&gt;The &lt;a href=&#34;https://getbaker.io/docs/components/uploads/s3/&#34;&gt;&lt;code&gt;S3&lt;/code&gt;&lt;/a&gt; upload removes the files from the local disk once uploaded,
 so you&amp;rsquo;ll only find empty directories in the output destination folder:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;~ ls -l /tmp/out/
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;~ ls -l /tmp/out/
 drwxrwxr-x   - username &lt;span style=&#34;color:#bd93f9&#34;&gt;16&lt;/span&gt; Nov 11:43 China
 drwxrwxr-x   - username &lt;span style=&#34;color:#bd93f9&#34;&gt;16&lt;/span&gt; Nov 11:43 Hong Kong
 drwxrwxr-x   - username &lt;span style=&#34;color:#bd93f9&#34;&gt;16&lt;/span&gt; Nov 11:43 Indonesia
@@ -182,7 +182,7 @@ drwxrwxr-x   - username &lt;span style=&#34;color:#bd93f9&#34;&gt;16&lt;/span&gt
 drwxrwxr-x   - username &lt;span style=&#34;color:#bd93f9&#34;&gt;16&lt;/span&gt; Nov 11:43 Thailand
 drwxrwxr-x   - username &lt;span style=&#34;color:#bd93f9&#34;&gt;16&lt;/span&gt; Nov 11:43 USA
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The files have been uploaded to S3:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;~ aws s3 ls --recursive s3://myBucket/ramens/
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;~ aws s3 ls --recursive s3://myBucket/ramens/
 2020-11-16 11:43:59        &lt;span style=&#34;color:#bd93f9&#34;&gt;115&lt;/span&gt; ramens/China/ramens.csv.gz
 2020-11-16 11:43:59         &lt;span style=&#34;color:#bd93f9&#34;&gt;83&lt;/span&gt; ramens/Hong Kong/ramens.csv.gz
 2020-11-16 11:43:59        &lt;span style=&#34;color:#bd93f9&#34;&gt;223&lt;/span&gt; ramens/Indonesia/ramens.csv.gz

@@ -20,23 +20,29 @@
 <link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
 
-<title>Export metrics | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="Export metrics" />
-<meta property="og:description" content="How to export metrics from Baker
-" />
+<title>ExternalMatch | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="ExternalMatch" />
+<meta property="og:description" content="Read the API documentation »
+ Filter ExternalMatch Overview Discards records which fields matches values read from a CSV, which is possibly periodically refreshed. CSV files can be compressed (gz or zstd) or not.
+Configuration Keys available in the [filter.config] section:
+   Name Type Default Required Description     Region string &ldquo;us-west-2&rdquo; false AWS region to pass to S3 client (only for files with s3:// prefix)   Files array of strings [] true URL(s) of CSV file(s) containing the strings to match (s3[n]:// or file://)." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://getbaker.io/docs/how-tos/metrics/" /><meta property="article:section" content="docs" />
-<meta property="article:published_time" content="2020-11-03T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-11-03T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
+<meta property="og:url" content="https://getbaker.io/docs/components/filters/externalmatch/" /><meta property="article:section" content="docs" />
+<meta property="article:published_time" content="2021-08-11T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-08-11T00:00:00+00:00" /><meta property="og:site_name" content="Baker, high performance modular pipelines for the Big Data era" />
 
-<meta itemprop="name" content="Export metrics">
-<meta itemprop="description" content="How to export metrics from Baker
-"><meta itemprop="datePublished" content="2020-11-03T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-11-03T00:00:00+00:00" />
-<meta itemprop="wordCount" content="1197">
+<meta itemprop="name" content="ExternalMatch">
+<meta itemprop="description" content="Read the API documentation »
+ Filter ExternalMatch Overview Discards records which fields matches values read from a CSV, which is possibly periodically refreshed. CSV files can be compressed (gz or zstd) or not.
+Configuration Keys available in the [filter.config] section:
+   Name Type Default Required Description     Region string &ldquo;us-west-2&rdquo; false AWS region to pass to S3 client (only for files with s3:// prefix)   Files array of strings [] true URL(s) of CSV file(s) containing the strings to match (s3[n]:// or file://)."><meta itemprop="datePublished" content="2021-08-11T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-08-11T00:00:00+00:00" />
+<meta itemprop="wordCount" content="205">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Export metrics"/>
-<meta name="twitter:description" content="How to export metrics from Baker
-"/>
+<meta name="twitter:title" content="ExternalMatch"/>
+<meta name="twitter:description" content="Read the API documentation »
+ Filter ExternalMatch Overview Discards records which fields matches values read from a CSV, which is possibly periodically refreshed. CSV files can be compressed (gz or zstd) or not.
+Configuration Keys available in the [filter.config] section:
+   Name Type Default Required Description     Region string &ldquo;us-west-2&rdquo; false AWS region to pass to S3 client (only for files with s3:// prefix)   Files array of strings [] true URL(s) of CSV file(s) containing the strings to match (s3[n]:// or file://)."/>
 
 
 
@@ -281,10 +287,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Components</a>
+    <a  href="/docs/components/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Components</a>
   </li>
   <ul>
-    <li class="collapse " id="docscomponents">
+    <li class="collapse show" id="docscomponents">
       
       
       
@@ -351,10 +357,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/components/filters/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Filters</a>
+    <a  href="/docs/components/filters/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Filters</a>
   </li>
   <ul>
-    <li class="collapse " id="docscomponentsfilters">
+    <li class="collapse show" id="docscomponentsfilters">
       
       
       
@@ -403,7 +409,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersexternalmatch" href="/docs/components/filters/externalmatch/">ExternalMatch</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docscomponentsfiltersexternalmatch" href="/docs/components/filters/externalmatch/">ExternalMatch</a>
       
       
       
@@ -594,10 +600,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">How-Tos</a>
+    <a  href="/docs/how-tos/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">How-Tos</a>
   </li>
   <ul>
-    <li class="collapse show" id="docshow-tos">
+    <li class="collapse " id="docshow-tos">
       
       
       
@@ -652,7 +658,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docshow-tosmetrics" href="/docs/how-tos/metrics/">Export metrics</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docshow-tosmetrics" href="/docs/how-tos/metrics/">Export metrics</a>
       
       
       
@@ -733,8 +739,8 @@
 
 
 
-<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/How%20Tos/metrics.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/adroll/baker/issues/new?title=Export%20metrics" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/adroll/baker/edit/gh-pages/content/en/docs/Components/Filters/ExternalMatch.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/adroll/baker/issues/new?title=ExternalMatch" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 </div>
 
@@ -745,15 +751,10 @@
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#configuring-metrics-in-toml">Configuring metrics in TOML</a>
+    <li><a href="#filter-externalmatch">Filter <em>ExternalMatch</em></a>
       <ul>
-        <li><a href="#disabling-metrics">Disabling metrics</a></li>
-      </ul>
-    </li>
-    <li><a href="#implementing-a-custom-metricsclient">Implementing a custom MetricsClient</a></li>
-    <li><a href="#how-to-publish-statistics-from-a-component">How to publish statistics from a component</a>
-      <ul>
-        <li><a href="#report-custom-metrics">Report custom metrics</a></li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#configuration">Configuration</a></li>
       </ul>
     </li>
   </ul>
@@ -779,6 +780,9 @@
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://getbaker.io/docs/">Documentation</a>
 </li>
@@ -787,14 +791,21 @@
 
 
 <li class="breadcrumb-item" >
-	<a href="https://getbaker.io/docs/how-tos/">How-Tos</a>
+	<a href="https://getbaker.io/docs/components/">Components</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://getbaker.io/docs/components/filters/">Filters</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://getbaker.io/docs/how-tos/metrics/">Export metrics</a>
+	<a href="https://getbaker.io/docs/components/filters/externalmatch/">ExternalMatch</a>
 </li>
 
 	</ol>
@@ -802,218 +813,94 @@
 
             
 <div class="td-content">
-	<h1>Export metrics</h1>
-    <div class="lead">How to export metrics from Baker</div>
+	<h1>ExternalMatch</h1>
+    
 	       
-	<p>Baker can publish various kind of <a href="/docs/core-concepts/#metrics">metrics</a> that may
-be used to monitor a pipeline in execution. The metrics exported range from numbers
-giving an high-level overview of the ongoing pipeline (total processed records,
-current speed in records per second, etc.) or per-component metrics such as the
-number of files read or written, to performance statistics published by the Go
-runtime in order to monitor lower level information (objects, memory, garbage
-collection, etc.).</p>
-<h2 id="configuring-metrics-in-toml">Configuring metrics in TOML</h2>
-<p>Baker configuration TOML files may have a <code>[metrics]</code> section dedicated to the
-configuration of a metrics client.
-<code>[metrics.name]</code> specifies the metrics client to use, from the list of all registered
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>baker.MetricsClient</code></a>.
-<code>[metrics.config]</code> specifies some configuration settings which are specific to
-the client you&rsquo;re using.</p>
-<p>For example, this is what the <code>[metrics]</code> section would look like with the <em>Datadog</em>
-metrics client:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[metrics]
-name=<span style="color:#f1fa8c">&#34;datadog&#34;</span>
+	
 
-    [metrics.config]
-    host=<span style="color:#f1fa8c">&#34;localhost:8125&#34;</span>                  <span style="color:#6272a4"># address of the dogstatsd client to which send metrics to</span>
-    prefix=<span style="color:#f1fa8c">&#34;myapp.baker.&#34;</span>                  <span style="color:#6272a4"># prefix for all exported metric names</span>
-    send_logs=<span style="color:#ff79c6">true</span>                         <span style="color:#6272a4"># whether we should log messages (as Dogstatd events) or not </span>
-    tags=[<span style="color:#f1fa8c">&#34;env:prod&#34;</span>, <span style="color:#f1fa8c">&#34;region:eu-west-1&#34;</span>]  <span style="color:#6272a4"># extra tags to associate to all exported metrics </span>
-</code></pre></div><h3 id="disabling-metrics">Disabling metrics</h3>
-<p>If you don&rsquo;t want to publish any metrics, it&rsquo;s enough to not provide the <code>[metrics]</code> TOML
-section in Baker configuration file.</p>
-<h2 id="implementing-a-custom-metricsclient">Implementing a custom MetricsClient</h2>
-<p>The <a href="https://github.com/AdRoll/baker/tree/main/examples/metrics">metrics example</a> shows an
-example implementation of
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>baker.MetricsClient</code></a>
-and how to register it within Baker so that it can be selected in the
-<code>[metrics.name]</code> TOML section.</p>
-<p>In order to be selected from TOML, you should first register a
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsDesc"><code>baker.MetricsDesc</code></a>
-instance within <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>baker.Components</code></a>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> fooBarDesc = baker.MetricsDesc{
-	Name:   <span style="color:#f1fa8c">&#34;MyMetrics&#34;</span>,
-	Config: <span style="color:#ff79c6">&amp;</span>myyMetricsConfig{},
-	New:    newMyMetrics,
-}
-</code></pre></div><p>where <code>newMyMetrics</code> is a constructor-like function receiving an <code>interface{}</code>,
-which is guaranteed to be of the type of the <code>Config</code> field value. This function
-should either return a ready to use
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>baker.MetricsClient</code></a>
-or an error saying why it can&rsquo;t.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">newMyMetrics</span>(icfg <span style="color:#8be9fd;font-style:italic">interface</span>{}) (baker.MetricsClient, <span style="color:#8be9fd">error</span>)
-</code></pre></div><h2 id="how-to-publish-statistics-from-a-component">How to publish statistics from a component</h2>
-<p>All components need to implement a <code>Stats</code> method where they can expose metrics, called
-by Baker once per second. Each of the different component types support a set of predefined
-metrics. In particular, the following counters are defined:</p>
-<ul>
-<li><a href="https://pkg.go.dev/github.com/AdRoll/baker#InputStats">Input</a>:
-<ul>
-<li><code>NumProcessedLines</code>, the total number of processed records since the component creation.</li>
-</ul>
-</li>
-<li><a href="https://pkg.go.dev/github.com/AdRoll/baker#FilterStats">Filter</a>:
-<ul>
-<li><code>NumFilteredLines</code>, the number of filtered out (i.e. discarded) records.</li>
-</ul>
-</li>
-<li><a href="https://pkg.go.dev/github.com/AdRoll/baker#OutputStats">Output</a>:
-<ul>
-<li><code>NumProcessedLines</code>, the total number of processed records since the component creation.</li>
-<li><code>NumErrorLines</code>, the number of records that have produced an error.</li>
-</ul>
-</li>
-<li><a href="https://pkg.go.dev/github.com/AdRoll/baker#UploadStats">Upload</a>:
-<ul>
-<li><code>NumProcessedFiles</code>, the total number of processed files since the component creation.</li>
-<li><code>NumErrorFiles</code>, the number of files that have produced an error.</li>
-</ul>
-</li>
-</ul>
-<p>Due to historical reasons, these fields have the word <em>lines</em> in them but they do
-mean the number of records.</p>
-<p>The code example of
-<a href="https://getbaker.io/docs/how-tos/create_filter/#processing-records">how-to-create-filter</a>
-shows how to correctly report metrics in a custom Filter.</p>
-<h3 id="report-custom-metrics">Report custom metrics</h3>
-<p>In addition to the record counters described above, components can report custom metrics
-giving a more specific view about the component health or performance.
-Baker supports two ways of exposing custom metrics:</p>
-<ul>
-<li>Returning a
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag"><code>baker.MetricsBag</code></a>
-instance from the <code>Stats</code> method.</li>
-<li>Directly using the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>baker.MetricsClient</code></a> in
-the component code.</li>
-</ul>
-<p>The two mechanisms follow the pull vs push approaches, respectively.</p>
-<p>The <code>MetricsBag</code> should be returned by the <code>Stats</code> method along with the default
-statistics and is collected once per second by Baker.</p>
-<p>The <code>MetricsClient</code> instance configured by your topology is passed to your
-component during instantiation, in the <code>ComponentsParam</code> structure. You can copy it
-so as to use it at any point in your component code since well-behaved <code>MetricsClient</code>
-implementations are safe for concurrent use by multiple goroutines.</p>
-<p>Both <code>MetricsBag</code> and <code>MetricsClient</code> Metrics support the most common metric types,
-namely:</p>
-<ul>
-<li><code>RawCounter</code>: a cumulative counter that can only increase.</li>
-<li><code>DeltaCounter</code>: the total number of event occurrences in a unit time.</li>
-<li><code>Gauge</code>: a snapshot of an event in the last unit time.</li>
-<li><code>Histogram</code>: statistical distribution of a set of values in one unit of time.</li>
-<li><code>Duration</code> or <code>Timing</code>: like a histogram but with time durations.</li>
-</ul>
-<p>If there is no particular requirement the <code>MetricsBag</code> approach is preferred. Indeed,
-the <code>MetricsBag</code> pull approach is simpler and it better integrates with the
-other default metric gathering.
-In addition to that, the <code>MetricsClient</code> requires special attention to avoid too
-many calls to the client during record processing.
-Indeed, the <code>MetricsClient</code> is a low-level and direct way to communicate with your
-metrics system, thus it permits extra flexibility, but it skips the additional
-aggregation/buffering layer of the <code>MetricsBag</code>.</p>
-<p>Moreover, the <code>MetricsClient</code> supports also the runtime tagging of the published metrics.
-Tags (or labels) are additional dimensions on metrics and allow them to be filtered,
-aggregated, and compared in different visualizations.
-Therefore, if tags are only known at runtime and you need to add dynamic tags to your metrics,
-the <code>MetricsClient</code> should be used rather than <code>MetricsBag</code> (see the
-<a href="/docs/how-tos/metrics/#metricsclient-example">MetricsClient example</a>).</p>
-<p>In summary, the go-to way is to implement custom statistics with a <code>MetricsBag</code>, but
-there are some situations where a <code>MetricsClient</code> is preferred, for example:</p>
-<ul>
-<li>Your component needs to publish the metrics using a set of tag that changes at runtime.</li>
-<li>You can&rsquo;t centralize metrics collection in the <code>Stats</code> method since the metrics
-to expose are produced by different worker goroutines running inside your component
-multiple goroutines.</li>
-</ul>
-<h4 id="metricsbag-example">MetricsBag Example</h4>
-<p>Let&rsquo;s say our filter needs to perform HTTP requests in order to decide whether a
-record should be discarded, we might want to keep track of the requests' durations
-in an histogram. In this case, we would probably record a slice of <code>time.Duration</code> in
-our filter and call
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsBag.AddTimings"><code>AddTimings</code></a> on
-the returned <code>MetricsBag</code>.</p>
-<p>An important point is that Baker may call <code>Process</code> and <code>Stats</code> from different goroutines
-so access to the shared data must be properly synchronized (atomic, lock, channel, etc.)</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
-    <span style="color:#6272a4">// Perform http request
-</span><span style="color:#6272a4"></span>
-    f.mu.<span style="color:#50fa7b">Lock</span>() <span style="color:#6272a4">// keep track of its duration
-</span><span style="color:#6272a4"></span>    f.requestDurations = <span style="color:#8be9fd;font-style:italic">append</span>(f.requestDurations, duration)
-    f.mu.<span style="color:#50fa7b">Unlock</span>()
+<div class="pageinfo pageinfo-primary">
+<p><strong>Read the <a href="https://pkg.go.dev/github.com/AdRoll/baker/filter#ExternalMatch">API documentation »</a></strong></p>
 
-    <span style="color:#ff79c6">if</span> (<span style="color:#6272a4">/* filter logic*/</span>) {
-        <span style="color:#6272a4">// Discard record
-</span><span style="color:#6272a4"></span>        atomic.<span style="color:#50fa7b">AddInt64</span>(<span style="color:#ff79c6">&amp;</span>f.filteredLines, <span style="color:#bd93f9">1</span>)
-        <span style="color:#ff79c6">return</span>
-    }
-}
+</div>
 
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Stats</span>() baker.FilterStats {
-    <span style="color:#6272a4">// Copy the slice of durations
-</span><span style="color:#6272a4"></span>    f.mu.<span style="color:#50fa7b">Lock</span>()
-    requestDurations <span style="color:#ff79c6">:=</span> f.requestDurations[:]
-    f.mu.<span style="color:#50fa7b">Unlock</span>()
-
-    bag <span style="color:#ff79c6">:=</span> <span style="color:#8be9fd;font-style:italic">make</span>(baker.MetricsBag)
-    bag.<span style="color:#50fa7b">AddTimings</span>(<span style="color:#f1fa8c">&#34;myfilter_http_request_duration&#34;</span>, requestDurations)
-    <span style="color:#ff79c6">return</span> baker.FilterStats{
-        NumFilteredLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.filteredLines),
-        Metrics: bag,
-    }
-}
-</code></pre></div><h4 id="metricsclient-example">MetricsClient Example</h4>
-<p>Once a
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>baker.MetricsClient</code></a>
-instance has been successfully created, it&rsquo;s made available to and can be used by a Baker
-pipeline to report metrics. During construction, components receive the
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>MetricsClient</code></a> instance.
-<a href="https://pkg.go.dev/github.com/AdRoll/baker#MetricsClient"><code>baker.MetricsClient</code></a>
-provides a set of methods to report the most common type of metric types (<em>gauges</em>,
-<em>counters</em> and <em>histograms</em>)</p>
-<p>Let&rsquo;s now consider we want to publish additional tags alongside the duration slice of our previous <code>MetricsBag</code> example.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">NewMyFilter</span>(cfg baker.InputParams) (baker.Input, <span style="color:#8be9fd">error</span>) {
-    <span style="color:#ff79c6">return</span> MyFilter{metrics: cfg.Metrics}
-}
-
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Process</span>(r Record, next <span style="color:#8be9fd;font-style:italic">func</span>(Record)) {
- <span style="color:#6272a4">/*... */</span>
-}
-
-<span style="color:#8be9fd;font-style:italic">func</span> (f <span style="color:#ff79c6">*</span>MyFilter) <span style="color:#50fa7b">Stats</span>() baker.FilterStats {
-    f.mu.<span style="color:#50fa7b">Lock</span>()
-    <span style="color:#ff79c6">for</span> _, duration <span style="color:#ff79c6">:=</span> <span style="color:#ff79c6">range</span> f.requestDurations {
-        f.metrics.<span style="color:#50fa7b">DurationWithTags</span>(
-            <span style="color:#f1fa8c">&#34;myfilter_http_request_duration&#34;</span>, 
-            duration, 
-            []<span style="color:#8be9fd">string</span>{<span style="color:#f1fa8c">&#34;tag1&#34;</span>, <span style="color:#f1fa8c">&#34;tag2&#34;</span>},
-        )
-    }
-    f.mu.<span style="color:#50fa7b">Unlock</span>()
-
-    <span style="color:#ff79c6">return</span> baker.FilterStats{
-        NumFilteredLines: atomic.<span style="color:#50fa7b">LoadInt64</span>(<span style="color:#ff79c6">&amp;</span>f.filteredLines),
-    }
-}
-</code></pre></div><p>Here, we chose to use the <code>MetricsClient</code> in the <code>Stats</code> method to limit the number of
-calls to the client. Indeed, since <code>Stats</code> gets called once per second, the <code>MetricsClient</code> is
-also called once per second. We could have directly called <code>DurationWithTags</code> from the
-<code>Process</code> method but we would have probably - depending on the frequency of incoming
-records - called it way more often, and this could have potentially introduce some performance
-degradation.</p>
+<h2 id="filter-externalmatch">Filter <em>ExternalMatch</em></h2>
+<h3 id="overview">Overview</h3>
+<p>Discards records which fields matches values read from a CSV, which is possibly periodically refreshed. CSV files can be compressed (gz or zstd) or not.</p>
+<h3 id="configuration">Configuration</h3>
+<p>Keys available in the <code>[filter.config]</code> section:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th style="text-align:center">Type</th>
+<th style="text-align:center">Default</th>
+<th style="text-align:center">Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Region</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">&ldquo;us-west-2&rdquo;</td>
+<td style="text-align:center">false</td>
+<td>AWS region to pass to S3 client (only for files with s3:// prefix)</td>
+</tr>
+<tr>
+<td>Files</td>
+<td style="text-align:center">array of strings</td>
+<td style="text-align:center">[]</td>
+<td style="text-align:center">true</td>
+<td>URL(s) of CSV file(s) containing the strings to match (s3[n]:// or file://). If %s is present, it&rsquo;s replaced, at download time, with the result of calling time.Now().Format(DateTimeLayout).</td>
+</tr>
+<tr>
+<td>DateTimeLayout</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">&quot;&quot;</td>
+<td style="text-align:center">false</td>
+<td>Go date time string layout replacing %s in Files, evaluated just before downloading Files. See <a href="https://pkg.go.dev/time#Time.Format">https://pkg.go.dev/time#Time.Format</a></td>
+</tr>
+<tr>
+<td>TimeSubtract</td>
+<td style="text-align:center">duration</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">false</td>
+<td>Duration to subtract from time.Now() when evaluating DateTimeLayout. See <a href="https://pkg.go.dev/time#ParseDuration">https://pkg.go.dev/time#ParseDuration</a></td>
+</tr>
+<tr>
+<td>RefreshEvery</td>
+<td style="text-align:center">duration</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">false</td>
+<td>Period at which Files are refreshed (downloaded again), if not set, Files are never refreshed</td>
+</tr>
+<tr>
+<td>CSVColumn</td>
+<td style="text-align:center">int</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">false</td>
+<td>0-based index of the CSV column containing the values to consider</td>
+</tr>
+<tr>
+<td>FieldName</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">&quot;&quot;</td>
+<td style="text-align:center">true</td>
+<td>Name of the record field to consider for the match</td>
+</tr>
+<tr>
+<td>KeepOnMatch</td>
+<td style="text-align:center">bool</td>
+<td style="text-align:center">false</td>
+<td style="text-align:center">false</td>
+<td>If true, keep records if field at FieldName matches any of the CSV values. If false, discard records if field matches any of the CSV values.</td>
+</tr>
+</tbody>
+</table>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 3, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified August 11, 2021
 </div>
 </div>
 
