@@ -490,7 +490,7 @@ func TestLogLineCustomFields(t *testing.T) {
 		ll := LogLine{FieldSeparator: ','}
 		err := ll.Parse(want, nil)
 		if err != errLogLineTooManyFields {
-			t.Errorf("got: %s want: %s", err, errLogLineTooManyFields)
+			t.Errorf("ll.Parse()= %q, want error %q", err, errLogLineTooManyFields)
 		}
 	})
 
@@ -502,7 +502,7 @@ func TestLogLineCustomFields(t *testing.T) {
 		ll.Set(idx, want)
 		got := ll.Get(idx)
 		if !bytes.Equal(got, want) {
-			t.Errorf("got: %s want: %s", got, want)
+			t.Errorf("ll.Get(%d)= %q, want %q", idx, got, want)
 
 		}
 
@@ -511,13 +511,13 @@ func TestLogLineCustomFields(t *testing.T) {
 		ll.Set(idx, want)
 		got = ll.Get(idx)
 		if !bytes.Equal(got, want) {
-			t.Errorf("got: %s want: %s", got, want)
+			t.Errorf("ll.Get(%d)= %q, want %q", idx, got, want)
 		}
 
 		// Custom fields should not be serialized.
 		got = ll.ToText(nil)
 		if !bytes.Equal(got, []byte{}) {
-			t.Errorf("got: %s want: ''", got)
+			t.Errorf("ll.ToText()= %q, want ''", got)
 		}
 	})
 }
