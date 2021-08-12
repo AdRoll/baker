@@ -2,6 +2,7 @@ package baker
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -9,7 +10,8 @@ import (
 // This tests ensure parse does not crash when it meets a log line
 // with too many separators.
 func TestLogLineParse_separators(t *testing.T) {
-	maxSeparators := int(LogLineNumFields - 1)
+	// logline can has maximum 3000 fields and 3000 separator.
+	maxSeparators := int(LogLineNumFields)
 	tests := []struct {
 		name  string
 		nseps int
@@ -352,6 +354,28 @@ func TestLogLineToText(t *testing.T) {
 		}
 	})
 
+	t.Run("parse max num fields + trailing sep", func(t *testing.T) {
+		// Create a buffer with 3000 field and 2999 separators.
+		values := make([]string, 0, LogLineNumFields)
+		for i := 0; i < int(LogLineNumFields); i++ {
+			values = append(values, "value"+fmt.Sprint(i))
+		}
+		want := []byte(strings.Join(values, ","))
+
+		// Add a trailing separator plus garbage.
+		text := make([]byte, len(want))
+		copy(text, want)
+		text = append(text, []byte(",garbage")...)
+
+		ll := LogLine{FieldSeparator: ','}
+		ll.Parse(text, nil)
+		got := ll.ToText(nil)
+
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %q want: %q", got, want)
+		}
+	})
+
 	t.Run("parse max num fields and set", func(t *testing.T) {
 		values := make([]string, 0, LogLineNumFields)
 		for i := 0; i < int(LogLineNumFields); i++ {
@@ -429,12 +453,36 @@ func TestLogLineToText(t *testing.T) {
 			t.Errorf("got: %s want: %s", got, want)
 		}
 	})
+
+	t.Run("parse max num fields + trailing sep + set custom", func(t *testing.T) {
+		// Create a buffer with 3000 field and 2999 separators.
+		values := make([]string, 0, LogLineNumFields)
+		for i := 0; i < int(LogLineNumFields); i++ {
+			values = append(values, "value"+fmt.Sprint(i))
+		}
+		want := []byte(strings.Join(values, ","))
+
+		// Add a trailing separator plus garbage.
+		text := make([]byte, len(want))
+		copy(text, want)
+		text = append(text, []byte(",garbage")...)
+
+		ll := LogLine{FieldSeparator: ','}
+		ll.Parse(text, nil)
+		ll.Set(LogLineNumFields, []byte("custom1"))
+		ll.Set(LogLineNumFields+9, []byte("custom10"))
+		got := ll.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("got: %s want: %s", got, want)
+		}
+	})
 }
 
 func TestLogLineCustomFields(t *testing.T) {
 	t.Run("parse error to many fields", func(t *testing.T) {
 		values := make([]string, 0, LogLineNumFields)
-		for i := 0; i < int(LogLineNumFields)+1; i++ {
+		// Create a buffer with 3002 fields and 3001 separators.
+		for i := 0; i < int(LogLineNumFields)+2; i++ {
 			values = append(values, "value")
 		}
 		want := []byte(strings.Join(values, ","))

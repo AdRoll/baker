@@ -4,6 +4,8 @@ import "errors"
 
 const (
 	// LogLineNumFields is the maximum number of standard fields in a log line.
+	// This is also the maximum number of field separators, a valid log line can
+	// have also a tralling separator.
 	LogLineNumFields FieldIndex = 3000
 	// NumFieldsBaker is an additional list of custom fields, not present
 	// in the input logline nor in the output, that can be set during processing.
@@ -118,17 +120,24 @@ func (l *LogLine) Parse(text []byte, meta Metadata) error {
 	fc := FieldIndex(1)
 	for i, ch := range text {
 		if ch == l.FieldSeparator {
-			// We return an error if we reach the penultimate 'idx' array position.
-			// The last position needs to be used to store the total length of the buffer.
-			if fc >= LogLineNumFields {
+			// We return an error if we reach the last 'idx' array position.
+			// Log lines with trailing separator are consider valid.
+			if fc > LogLineNumFields {
 				return errLogLineTooManyFields
 			}
 			l.idx[fc] = int32(i)
 			fc++
 		}
 	}
-	// Set the length of the buffer as the last value and leave the rest of the array zeroed.
-	l.idx[fc] = int32(len(text))
+
+	// Truncate the buffer after the last valid field, if we are parsing a log line
+	// with a trailing separator. In the other case set the length of the buffer
+	// as the last value and leave the rest of the array zeroed.
+	if fc > LogLineNumFields {
+		text = text[:l.idx[fc-1]]
+	} else {
+		l.idx[fc] = int32(len(text))
+	}
 
 	l.data = text
 	if meta != nil {
