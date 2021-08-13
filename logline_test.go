@@ -675,3 +675,59 @@ func TestLogLineSetPanic(t *testing.T) {
 		ll.Set(FieldIndex(1000), []byte("value"))
 	})
 }
+
+func TestLogLineCopy(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: ','}
+		cpy := ll.Copy()
+		if got := cpy.ToText(nil); got != nil {
+			t.Errorf("cpy.ToText() = %q, want nil", got)
+		}
+	})
+	t.Run("parse", func(t *testing.T) {
+		want := bytes.Repeat([]byte("some,random,fields,,,,"), 100)
+		ll := LogLine{FieldSeparator: ','}
+		ll.Parse(want, nil)
+		cpy := ll.Copy()
+		got := cpy.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("cpy.ToText() = %q\n want nil", got)
+		}
+	})
+	t.Run("set", func(t *testing.T) {
+		want := []byte("value,value,,value")
+		ll := LogLine{FieldSeparator: ','}
+		ll.Set(0, []byte("value"))
+		ll.Set(1, []byte("value"))
+		ll.Set(3, []byte("value"))
+		ll.Set(LogLineNumFields, []byte("custom0"))
+		cpy := ll.Copy()
+		got := cpy.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("cpy.ToText() = %q\n want %q", got, want)
+		}
+		got = cpy.Get(LogLineNumFields)
+		if !bytes.Equal(got, []byte("custom0")) {
+			t.Errorf("cpy.Get(LogLineNumFields) = %q\n want %q", got, want)
+		}
+	})
+	t.Run("parse and set", func(t *testing.T) {
+		text := bytes.Repeat([]byte("some,random,fields,,,,"), 100)
+		want := make([]byte, 0)
+		want = append(want, []byte("value")...)
+		want = append(want, text[4:]...)
+		ll := LogLine{FieldSeparator: ','}
+		ll.Parse(want, nil)
+		ll.Set(0, []byte("value"))
+		ll.Set(LogLineNumFields+10, []byte("custom10"))
+		cpy := ll.Copy()
+		got := cpy.ToText(nil)
+		if !bytes.Equal(got, want) {
+			t.Errorf("cpy.ToText() = %q\nwant %q", got, want)
+		}
+		got = cpy.Get(LogLineNumFields + 10)
+		if !bytes.Equal(got, []byte("custom10")) {
+			t.Errorf("cpy.Get(LogLineNumFields) = %q\n want %q", got, want)
+		}
+	})
+}
