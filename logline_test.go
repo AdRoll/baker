@@ -10,7 +10,7 @@ import (
 // This tests ensure parse does not crash when it meets a log line
 // with too many separators.
 func TestLogLineParse_separators(t *testing.T) {
-	// logline can has maximum 3000 fields and 3000 separator.
+	// Logline can has maximum 3000 fields and 3000 separator.
 	maxSeparators := int(LogLineNumFields)
 	tests := []struct {
 		name  string
@@ -196,6 +196,29 @@ func TestLogLineParse(t *testing.T) {
 		got := ll.ToText(nil)
 		if len(got) != 0 {
 			t.Errorf("got: %v want: nil", got)
+		}
+	})
+
+	t.Run("parse max num fields + trailing sep", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: ','}
+		// Create a buffer with 3000 field and 3000 separators.
+		text := bytes.Repeat([]byte("value,"), 3000)
+
+		err := ll.Parse(text, nil)
+		if err != nil {
+			t.Errorf("ll.Parse()=%q want no error", err)
+		}
+	})
+
+	t.Run("parse max num fields + extra field", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: ','}
+		// Create a buffer with 3001 field and 3000 separators.
+		text := bytes.Repeat([]byte("value,"), 3000)
+		text = append(text, []byte("garbage")...)
+
+		err := ll.Parse(text, nil)
+		if err == nil {
+			t.Errorf("ll.Parse()= no error want %q", errLogLineTooManyFields)
 		}
 	})
 }
@@ -440,7 +463,7 @@ func TestLogLineToText(t *testing.T) {
 		}
 		want := []byte(strings.Join(values, ","))
 
-		// Add a trailing separator plus garbage.
+		// Add a trailing separator.
 		text := make([]byte, len(want))
 		copy(text, want)
 		text = append(text, []byte(",")...)
@@ -462,7 +485,7 @@ func TestLogLineToText(t *testing.T) {
 		}
 		want := []byte(strings.Join(values, ","))
 
-		// Add a trailing separator plus garbage.
+		// Add a trailing separator.
 		text := make([]byte, len(want))
 		copy(text, want)
 		text = append(text, []byte(",")...)
@@ -481,8 +504,8 @@ func TestLogLineToText(t *testing.T) {
 func TestLogLineCustomFields(t *testing.T) {
 	t.Run("parse error to many fields", func(t *testing.T) {
 		values := make([]string, 0, LogLineNumFields)
-		// Create a buffer with 3002 fields and 3001 separators.
-		for i := 0; i < int(LogLineNumFields)+2; i++ {
+		// Create a buffer with 3001 fields and 3000 separators.
+		for i := 0; i < int(LogLineNumFields)+1; i++ {
 			values = append(values, "value")
 		}
 		want := []byte(strings.Join(values, ","))
