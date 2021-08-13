@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Accepts `FileWriter` configuration with `{{.Field0}}` even with more than 1 field [#181](https://github.com/AdRoll/baker/pull/181)
 - Fixed race condition in `FileWriter`. Rewrite `fileWorker` [#186](https://github.com/AdRoll/baker/pull/186)
 - Logline `ToText` method returns always a consistent output [#184](https://github.com/AdRoll/baker/pull/184)
+- Logline `Copy` was omitting custom fields. [#191](https://github.com/AdRoll/baker/pull/191)
 
 ### Security
 
