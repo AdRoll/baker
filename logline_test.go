@@ -354,28 +354,6 @@ func TestLogLineToText(t *testing.T) {
 		}
 	})
 
-	t.Run("parse max num fields + trailing sep", func(t *testing.T) {
-		// Create a buffer with 3000 field and 2999 separators.
-		values := make([]string, 0, LogLineNumFields)
-		for i := 0; i < int(LogLineNumFields); i++ {
-			values = append(values, "value"+fmt.Sprint(i))
-		}
-		want := []byte(strings.Join(values, ","))
-
-		// Add a trailing separator plus garbage.
-		text := make([]byte, len(want))
-		copy(text, want)
-		text = append(text, []byte(",garbage")...)
-
-		ll := LogLine{FieldSeparator: ','}
-		ll.Parse(text, nil)
-		got := ll.ToText(nil)
-
-		if !bytes.Equal(got, want) {
-			t.Errorf("got: %q want: %q", got, want)
-		}
-	})
-
 	t.Run("parse max num fields and set", func(t *testing.T) {
 		values := make([]string, 0, LogLineNumFields)
 		for i := 0; i < int(LogLineNumFields); i++ {
@@ -454,6 +432,28 @@ func TestLogLineToText(t *testing.T) {
 		}
 	})
 
+	t.Run("parse max num fields + trailing sep", func(t *testing.T) {
+		// Create a buffer with 3000 field and 2999 separators.
+		values := make([]string, 0, LogLineNumFields)
+		for i := 0; i < int(LogLineNumFields); i++ {
+			values = append(values, "value"+fmt.Sprint(i))
+		}
+		want := []byte(strings.Join(values, ","))
+
+		// Add a trailing separator plus garbage.
+		text := make([]byte, len(want))
+		copy(text, want)
+		text = append(text, []byte(",")...)
+
+		ll := LogLine{FieldSeparator: ','}
+		ll.Parse(text, nil)
+		got := ll.ToText(nil)
+
+		if !bytes.Equal(got, want) {
+			t.Errorf("got:\n%s\n\nwant:\n%s\n", got, want)
+		}
+	})
+
 	t.Run("parse max num fields + trailing sep + set custom", func(t *testing.T) {
 		// Create a buffer with 3000 field and 2999 separators.
 		values := make([]string, 0, LogLineNumFields)
@@ -465,7 +465,7 @@ func TestLogLineToText(t *testing.T) {
 		// Add a trailing separator plus garbage.
 		text := make([]byte, len(want))
 		copy(text, want)
-		text = append(text, []byte(",garbage")...)
+		text = append(text, []byte(",")...)
 
 		ll := LogLine{FieldSeparator: ','}
 		ll.Parse(text, nil)
@@ -473,7 +473,7 @@ func TestLogLineToText(t *testing.T) {
 		ll.Set(LogLineNumFields+9, []byte("custom10"))
 		got := ll.ToText(nil)
 		if !bytes.Equal(got, want) {
-			t.Errorf("got: %s want: %s", got, want)
+			t.Errorf("got:\n%s\n\nwant:\n%s\n", got, want)
 		}
 	})
 }
