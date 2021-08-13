@@ -115,7 +115,7 @@ fields=["fielda", "fieldb"]
 			b.Fatalf("topology error: %v", err)
 		}
 
-		const wantRaw = "hello,world,,"
+		const wantRaw = "hello,world"
 		for _, ll := range topo.Output[0].(*outputtest.Recorder).Records {
 			if ll.Fields[0] != "hello" || ll.Fields[1] != "world" {
 				b.Fatalf("ll.Fields[0], ll.Fields[1] = %q, %q, want %q, %q", ll.Fields[0], ll.Fields[1], "hello", "world")
