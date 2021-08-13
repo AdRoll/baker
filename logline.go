@@ -122,7 +122,10 @@ func (l *LogLine) Parse(text []byte, meta Metadata) error {
 		if text[i] == l.FieldSeparator {
 			if fc >= LogLineNumFields {
 				// We reject log lines having more than LogLineNumFields fields.
-				if fc > LogLineNumFields || i != len(text)-1 {
+				if fc > LogLineNumFields {
+					return errLogLineTooManyFields
+				}
+				if i != len(text)-1 {
 					return errLogLineTooManyFields
 				}
 				// We accept a final separator after LogLineNumFields but we trim it now.
