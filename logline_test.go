@@ -3,6 +3,7 @@ package baker
 import (
 	"bytes"
 	"fmt"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -541,6 +542,36 @@ func TestLogLineCustomFields(t *testing.T) {
 		got = ll.ToText(nil)
 		if !bytes.Equal(got, []byte{}) {
 			t.Errorf("ll.ToText()= %q, want ''", got)
+		}
+	})
+
+	t.Run("zerovalue + copy custom fields", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: ','}
+		for i := FieldIndex(LogLineNumFields); i < FieldIndex(LogLineNumFields+NumFieldsBaker); i++ {
+			ll.Set(i, []byte("custom"+strconv.Itoa(int(i))))
+		}
+
+		cpy := ll.Copy()
+		for i := FieldIndex(LogLineNumFields); i < FieldIndex(LogLineNumFields+NumFieldsBaker); i++ {
+			got, want := cpy.Get(i), []byte("custom"+strconv.Itoa(int(i)))
+			if !bytes.Equal(got, want) {
+				t.Fatalf("ll.Get(%d) = %q, want %q", i, got, want)
+			}
+		}
+	})
+	t.Run("parse + copy custom fields", func(t *testing.T) {
+		ll := LogLine{FieldSeparator: ','}
+		ll.Parse([]byte("some,random,fields,,,,"), nil)
+		for i := FieldIndex(LogLineNumFields); i < FieldIndex(LogLineNumFields+NumFieldsBaker); i++ {
+			ll.Set(i, []byte("custom"+strconv.Itoa(int(i))))
+		}
+
+		cpy := ll.Copy()
+		for i := FieldIndex(LogLineNumFields); i < FieldIndex(LogLineNumFields+NumFieldsBaker); i++ {
+			got, want := cpy.Get(i), []byte("custom"+strconv.Itoa(int(i)))
+			if !bytes.Equal(got, want) {
+				t.Fatalf("ll.Get(%d) = %q, want %q", i, got, want)
+			}
 		}
 	})
 }

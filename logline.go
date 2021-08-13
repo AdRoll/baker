@@ -257,6 +257,15 @@ func (l *LogLine) Copy() Record {
 		cpylen := len(l.data) + len(l.data)/5
 		text := l.ToText(make([]byte, 0, cpylen))
 		cpy.Parse(text, md)
+
+		// Copy custom fields if necessary.
+		for i := LogLineNumFields; i < LogLineNumFields+NumFieldsBaker; i++ {
+			if fbuf := l.Get(i); fbuf != nil {
+				fcpy := make([]byte, len(fbuf))
+				copy(fcpy, fbuf)
+				cpy.Set(i, fcpy)
+			}
+		}
 		return cpy
 	}
 
