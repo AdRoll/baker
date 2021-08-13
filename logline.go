@@ -122,14 +122,14 @@ func (l *LogLine) Parse(text []byte, meta Metadata) error {
 		if ch == l.FieldSeparator {
 			if fc >= LogLineNumFields {
 				if fc > LogLineNumFields {
+					// There are more than 'LogLineNumFields' fields separators.
 					return errLogLineTooManyFields
 				}
 				if i != len(text)-1 {
-					// there are other bytes after the last separator so
-					// there are too many fields
+					// There are other bytes after the last trailing separator.
 					return errLogLineTooManyFields
 				}
-				// the last byte is a separator, placed at the end of the last field we accept.
+				// The last byte is a separator, placed at the end of the last field we accept.
 				text = text[:i]
 				break
 			}
@@ -138,9 +138,7 @@ func (l *LogLine) Parse(text []byte, meta Metadata) error {
 		}
 	}
 
-	// Truncate the buffer after the last valid field, if we are parsing a log line
-	// with a trailing separator. In the other case set the length of the buffer
-	// as the last value and leave the rest of the array zeroed.
+	// Set the length of the buffer as the last value and leave the rest of the array zeroed.
 	l.idx[fc] = int32(len(text))
 
 	l.data = text
