@@ -26,6 +26,16 @@ func RecordConformanceTest(t *testing.T, create func() Record) {
 		}
 	})
 
+	t.Run("set-twice", func(t *testing.T) {
+		r := create()
+		r.Set(0, []byte("stuff"))
+		r.Set(0, []byte("other stuff"))
+		got := r.Get(0)
+		if !bytes.Equal(got, []byte("other stuff")) {
+			t.Errorf("r.Get(0) = %q, want %q", got, "other stuff")
+		}
+	})
+
 	t.Run("valid-after-clear", func(t *testing.T) {
 		r := create()
 		r.Set(0, []byte("stuff"))

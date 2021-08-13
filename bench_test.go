@@ -115,7 +115,7 @@ fields=["fielda", "fieldb"]
 			b.Fatalf("topology error: %v", err)
 		}
 
-		const wantRaw = "hello,world,,"
+		const wantRaw = "hello,world"
 		for _, ll := range topo.Output[0].(*outputtest.Recorder).Records {
 			if ll.Fields[0] != "hello" || ll.Fields[1] != "world" {
 				b.Fatalf("ll.Fields[0], ll.Fields[1] = %q, %q, want %q, %q", ll.Fields[0], ll.Fields[1], "hello", "world")
@@ -132,16 +132,97 @@ fields=["fielda", "fieldb"]
 var sink interface{}
 
 func BenchmarkLogLineParse(b *testing.B) {
-	var ll baker.Record
-	ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
-	buf := bytes.Repeat([]byte(`hello,world,,`), 200)
+	fields := make([][]byte, 0, baker.LogLineNumFields)
+	for i := 0; i < int(baker.LogLineNumFields); i++ {
+		fields = append(fields, []byte("xxxxxxxxxx"))
+	}
 	md := baker.Metadata{"foo": "bar"}
 
-	b.ReportAllocs()
-	for n := 0; n < b.N; n++ {
-		ll.Parse(buf, md)
+	nparse := []int{1, 50, 500, 1000, 2000, 3000}
+	for _, nparse := range nparse {
+		b.Run(fmt.Sprintf("len=%d", nparse), func(b *testing.B) {
+			text := []byte(bytes.Join(fields[:nparse], []byte(",")))
+
+			var ll baker.Record
+			ll = &baker.LogLine{FieldSeparator: ','}
+
+			b.ReportAllocs()
+			b.ResetTimer()
+			for n := 0; n < b.N; n++ {
+				ll.Parse(text, md)
+			}
+			sink = ll
+		})
 	}
-	sink = ll
+}
+
+func BenchmarkLogLineToTextFromSet(b *testing.B) {
+	nset := []int{1, 5, 50, 100, 254}
+	for _, nset := range nset {
+		b.Run(fmt.Sprintf("set=%d", nset), func(b *testing.B) {
+			ll := baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+			for i := 0; i < nset; i++ {
+				ll.Set(baker.FieldIndex(i), []byte("xxxxxxxxxx"))
+			}
+
+			b.ReportAllocs()
+			b.ResetTimer()
+			for n := 0; n < b.N; n++ {
+				_ = ll.ToText(nil)
+			}
+		})
+	}
+}
+func BenchmarkLogLineToTextFromParse(b *testing.B) {
+	fields := make([][]byte, 0, baker.LogLineNumFields)
+	for i := 0; i < int(baker.LogLineNumFields); i++ {
+		fields = append(fields, []byte("xxxxxxxxxx"))
+	}
+
+	nparse := []int{1, 50, 500, 1000, 2000, 3000}
+	for _, nparse := range nparse {
+		b.Run(fmt.Sprintf("parse=%d", nparse), func(b *testing.B) {
+			text := bytes.Join(fields[:nparse], []byte(","))
+
+			ll := baker.LogLine{FieldSeparator: ','}
+			ll.Parse(text, nil)
+
+			b.ReportAllocs()
+			b.ResetTimer()
+			for n := 0; n < b.N; n++ {
+				_ = ll.ToText(nil)
+			}
+		})
+	}
+}
+func BenchmarkLogLineToTextFromParseSet(b *testing.B) {
+	fields := make([][]byte, 0, baker.LogLineNumFields)
+	for i := 0; i < int(baker.LogLineNumFields); i++ {
+		fields = append(fields, []byte("xxxxxxxxxx"))
+	}
+
+	nparse := []int{100, 1000, 3000}
+	nset := []int{5, 50, 100, 254}
+	for _, nparse := range nparse {
+		for _, nset := range nset {
+			b.Run(fmt.Sprintf("parse=%d,set=%d", nparse, nset), func(b *testing.B) {
+				text := bytes.Join(fields[:nparse], []byte(","))
+
+				ll := baker.LogLine{FieldSeparator: ','}
+				ll.Parse(text, nil)
+
+				for i := 0; i < nset; i++ {
+					ll.Set(baker.FieldIndex(i), []byte("newvalue"))
+				}
+
+				b.ReportAllocs()
+				b.ResetTimer()
+				for n := 0; n < b.N; n++ {
+					_ = ll.ToText(nil)
+				}
+			})
+		}
+	}
 }
 
 func BenchmarkLogLineCopy(b *testing.B) {

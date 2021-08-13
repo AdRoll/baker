@@ -4,6 +4,8 @@ import "errors"
 
 const (
 	// LogLineNumFields is the maximum number of standard fields in a log line.
+	// This is also the maximum number of field separators, a valid log line can
+	// have also a tralling separator.
 	LogLineNumFields FieldIndex = 3000
 	// NumFieldsBaker is an additional list of custom fields, not present
 	// in the input logline nor in the output, that can be set during processing.
@@ -11,7 +13,7 @@ const (
 	// outputs) on a per-record basis.
 	NumFieldsBaker FieldIndex = 100
 
-	// DefaultLogLineFieldSeparator defines the default field separator, which is the comma
+	// DefaultLogLineFieldSeparator defines the default field separator, which is the comma.
 	DefaultLogLineFieldSeparator byte = 44
 )
 
@@ -50,7 +52,7 @@ type LogLine struct {
 	// LogLine.Set()).
 	// wcnt is the 1-based counter of how many fields were modified;
 	// wdata is the dense storage for those modifications (so we allow for a
-	// total of 256 different fields being written to).
+	// total of 254 different fields being written to).
 	// wmask is a table indexed by each possible field index, that contains:
 	//   * 0 if the field was not modified (so the current value can be fetched
 	//     by idx/data)
@@ -71,7 +73,7 @@ type LogLine struct {
 	FieldSeparator byte
 }
 
-// Get the value of a field (either standard or custom)
+// Get the value of a field (either standard or custom).
 func (l *LogLine) Get(f FieldIndex) []byte {
 	if idx := l.wmask[f]; idx != 0 {
 		return l.wdata[idx]
@@ -88,7 +90,7 @@ func (l *LogLine) Get(f FieldIndex) []byte {
 	return l.data[s:e]
 }
 
-// Set changes the value of a field (either standard or custom) to a new value
+// Set changes the value of a field (either standard or custom) to a new value.
 func (l *LogLine) Set(f FieldIndex, data []byte) {
 	if l.wmask[f] != 0 {
 		l.wdata[l.wmask[f]] = data
@@ -116,23 +118,30 @@ var errLogLineTooManyFields = errors.New("LogLine has too many fields")
 func (l *LogLine) Parse(text []byte, meta Metadata) error {
 	l.idx[0] = -1
 	fc := FieldIndex(1)
-	for i, ch := range text {
-		if ch == l.FieldSeparator {
-			if fc > LogLineNumFields {
-				return errLogLineTooManyFields
+	for i := 0; i < len(text); i++ {
+		if text[i] == l.FieldSeparator {
+			if fc >= LogLineNumFields {
+				// We reject log lines having more than LogLineNumFields fields.
+				if fc > LogLineNumFields {
+					return errLogLineTooManyFields
+				}
+				if i != len(text)-1 {
+					return errLogLineTooManyFields
+				}
+				// We accept a final separator after LogLineNumFields but we trim it now.
+				text = text[:i]
+				break
 			}
 			l.idx[fc] = int32(i)
 			fc++
 		}
 	}
-	for ; fc <= LogLineNumFields; fc++ {
-		l.idx[fc] = int32(len(text))
-	}
-	l.data = text
-	if meta != nil {
-		l.meta = meta
-	}
 
+	// Set the length of the buffer as the last value and leave the rest of the
+	// array zeroed.
+	l.idx[fc] = int32(len(text))
+	l.data = text
+	l.meta = meta
 	return nil
 }
 
@@ -147,24 +156,40 @@ func (l *LogLine) ToText(buf []byte) []byte {
 		blen, bcap, dlen := len(buf), cap(buf), len(l.data)
 		avail := bcap - blen
 		if avail < dlen {
-			// not enough capacity: create a new buffer big enough to hold the
+			// Not enough capacity: create a new buffer big enough to hold the
 			// previous buffer data, which we copy into, and the log line data.
 			newbuf := make([]byte, blen+dlen)
 			copy(newbuf, buf)
 			buf = newbuf
 		} else {
-			// we have the capacity, just reslice to the desired length.
+			// We have the capacity, just reslice to the desired length.
 			buf = buf[:blen+dlen]
 		}
 		copy(buf[blen:], l.data)
 		return buf
 	}
 
-	var lastw int
-	for i := len(l.wmask) - 1; i > 0; i-- {
+	// Get the last setted index in the write array.
+	var last int
+	for i := int(LogLineNumFields) - 1; i > 0; i-- {
 		if l.wmask[i] != 0 {
-			lastw = i
+			last = i
 			break
+		}
+	}
+
+	// Get the last index in the data buffer.
+	if l.data != nil {
+		var lastr int
+		for i := len(l.idx) - 1; i > 0; i-- {
+			if l.idx[i] != 0 {
+				lastr = i - 1
+				break
+			}
+		}
+		// Update last value.
+		if last < lastr {
+			last = lastr
 		}
 	}
 
@@ -174,6 +199,7 @@ func (l *LogLine) ToText(buf []byte) []byte {
 	for i := uint8(1); i <= l.wcnt; i++ {
 		wlen += len(l.wdata[i])
 	}
+	wlen += int(l.wcnt) - 1 // Add 1 additional byte per separator.
 
 	blen, bcap, dlen := len(buf), cap(buf), len(l.data)
 	avail := bcap - blen
@@ -183,16 +209,17 @@ func (l *LogLine) ToText(buf []byte) []byte {
 		buf = newbuf
 	}
 
-	done := false
-	for fc := FieldIndex(0); fc < LogLineNumFields && !done; fc++ {
+	for fc := FieldIndex(0); fc < LogLineNumFields; fc++ {
 		buf = append(buf, l.Get(fc)...)
+		if fc >= FieldIndex(last) {
+			break
+		}
 		buf = append(buf, l.FieldSeparator)
-		done = fc > FieldIndex(lastw) && (l.data == nil || l.idx[fc] == -1)
 	}
 	return buf
 }
 
-// Clear clears the logline
+// Clear clears the logline.
 func (l *LogLine) Clear() {
 	*l = LogLine{FieldSeparator: l.FieldSeparator}
 }
@@ -209,7 +236,7 @@ func (l *LogLine) Cache() *Cache {
 
 // Copy creates and returns a copy of the current log line.
 func (l *LogLine) Copy() Record {
-	// Copy metadata
+	// Copy metadata.
 	md := make(Metadata)
 	for k, v := range l.meta {
 		md[k] = v
