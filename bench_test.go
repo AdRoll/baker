@@ -159,8 +159,8 @@ func BenchmarkLogLineParse(b *testing.B) {
 func BenchmarkLogLineToTextFromSet(b *testing.B) {
 	nset := []int{1, 50, 100, 254}
 	for _, nset := range nset {
-		ll := baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
 		b.Run(fmt.Sprintf("set=%d", nset), func(b *testing.B) {
+			ll := baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
 			for i := 0; i < nset; i++ {
 				ll.Set(baker.FieldIndex(i), []byte("xxxxxxxxxx"))
 			}
