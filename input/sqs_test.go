@@ -2,85 +2,64 @@ package input
 
 import (
 	"testing"
+
+	"github.com/AdRoll/baker"
 )
 
 func TestSQSParseMessage(t *testing.T) {
 	tests := []struct {
-		format           sqsFormatType
-		message          string
-		wantPath, wantTS string
-		wantErr          bool
+		format     string
+		message    string
+		expression string
+		wantPath   string
+		wantErr    bool
 	}{
 		{
-			format:   sqsFormatPlain,
+			format:   "plain",
 			message:  "s3://some-bucket/with/stuff/inside",
 			wantPath: "s3://some-bucket/with/stuff/inside",
 		},
 		{
-			format: sqsFormatSNS,
+			format: "sns",
 			message: `{
 				"Type" : "Notification",
 				"Message" : "s3://another-bucket/path/to/file",
 				"Timestamp" : "2023-05-22T23:21:09.550Z"
 			}`,
 			wantPath: "s3://another-bucket/path/to/file",
-			wantTS:   "2023-05-22T23:21:09.550Z",
+		},
+		{
+			format:     "json",
+			expression: "Foo.Bar",
+			message: `{
+				"Type": "Notification",
+				"Foo": {
+				  "Bar": "s3://another-bucket/path/to/file"
+				}
+			  }`,
+			wantPath: "s3://another-bucket/path/to/file",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(string(tt.format), func(t *testing.T) {
-			s := SQS{
-				Cfg: &SQSConfig{
-					format: tt.format,
+			in, err := NewSQS(baker.InputParams{
+				ComponentParams: baker.ComponentParams{
+					DecodedConfig: &SQSConfig{
+						MessageFormat:     string(tt.format),
+						MessageExpression: tt.expression,
+					},
 				},
+			})
+			if err != nil {
+				t.Fatal(err)
 			}
-
-			path, ts, err := s.parseMessage(&tt.message, nil)
+			s := in.(*SQS)
+			path, err := s.parse(tt.message)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("parseMessage() error = %q, wantErr %t", err, tt.wantErr)
 			}
 			if path != tt.wantPath {
 				t.Errorf("parseMessage() path = %q, want %q", path, tt.wantPath)
-			}
-			if ts != tt.wantTS {
-				t.Errorf("parseMessage() timestamp = %q, want %q", ts, tt.wantTS)
-			}
-		})
-	}
-}
-
-func TestSQSConfig_fillDefaults(t *testing.T) {
-	tests := []struct {
-		format  string
-		expr    string
-		want    sqsFormatType
-		wantErr bool
-	}{
-		{format: "", want: sqsFormatSNS},
-		{format: "SnS", want: sqsFormatSNS},
-		{format: "sns", want: sqsFormatSNS},
-		{format: "plain", want: sqsFormatPlain},
-		{format: "PLAIN", want: sqsFormatPlain},
-		{format: "json", expr: "some_expression", want: sqsFormatJSON},
-		{format: "jSON", expr: "some_expression", want: sqsFormatJSON},
-		{format: "jSON", wantErr: true},
-		{format: " plain", wantErr: true},
-		{format: "foobar", wantErr: true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.format, func(t *testing.T) {
-			cfg := &SQSConfig{
-				MessageFormat:     tt.format,
-				MessageExpression: tt.expr,
-			}
-			if err := cfg.fillDefaults(); (err != nil) != tt.wantErr {
-				t.Fatalf("SQSConfig.fillDefaults() error = %q, wantErr %t", err, tt.wantErr)
-			}
-			if tt.wantErr {
-				return
-			}
-			if cfg.format != tt.want {
-				t.Errorf("SQSConfig.fillDefaults() format = %q, want %q", cfg.format, tt.want)
 			}
 		})
 	}
