@@ -262,7 +262,6 @@ func (u *S3) uploadDirectory() error {
 				}
 				err := s3UploadFile(u.uploader, u.Cfg.Bucket, u.Cfg.Prefix, u.Cfg.StagingPath, fpath)
 				if err == nil {
-					atomic.AddInt64(&u.queuedn, int64(-1))
 					break
 				}
 
@@ -273,6 +272,8 @@ func (u *S3) uploadDirectory() error {
 				}
 				log.WithError(err).WithFields(log.Fields{"retry#": i + 1}).Error("failed upload")
 			}
+			// Decrease the queued elements counter both in case of success and not fatal error.
+			atomic.AddInt64(&u.queuedn, int64(-1))
 		}(fpath)
 		return nil
 	})
