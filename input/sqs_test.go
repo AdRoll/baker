@@ -1,83 +1,52 @@
 package input
 
 import (
-	"fmt"
 	"testing"
 )
 
-func TestParseMessagePlain(t *testing.T) {
-	S3Bucket := ""
-	Cfg := &SQSConfig{
-		MessageFormat: "plain",
-		Bucket:        S3Bucket,
+func TestSQSParseMessage(t *testing.T) {
+	tests := []struct {
+		format           sqsFormatType
+		message          string
+		wantPath, wantTS string
+		wantErr          bool
+	}{
+		{
+			format:   sqsFormatPlain,
+			message:  "s3://some-bucket/with/stuff/inside",
+			wantPath: "s3://some-bucket/with/stuff/inside",
+		},
+		{
+			format: sqsFormatSNS,
+			message: `{
+				"Type" : "Notification",
+				"Message" : "s3://another-bucket/path/to/file",
+				"Timestamp" : "2023-05-22T23:21:09.550Z"
+			}`,
+			wantPath: "s3://another-bucket/path/to/file",
+			wantTS:   "2023-05-22T23:21:09.550Z",
+		},
 	}
+	for _, tt := range tests {
+		t.Run(string(tt.format), func(t *testing.T) {
+			s := SQS{
+				Cfg: &SQSConfig{
+					format: tt.format,
+				},
+			}
 
-	s := &SQS{
-		Cfg: Cfg,
+			path, ts, err := s.parseMessage(&tt.message, nil)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("parseMessage() error = %q, wantErr %t", err, tt.wantErr)
+			}
+			if path != tt.wantPath {
+				t.Errorf("parseMessage() path = %q, want %q", path, tt.wantPath)
+			}
+			if ts != tt.wantTS {
+				t.Errorf("parseMessage() timestamp = %q, want %q", ts, tt.wantTS)
+			}
+		})
 	}
-
-	Message := "s3://some-bucket/log/2015-01-23/l-20150123.gz"
-	ActualPath, ActualTs, err := s.parseMessage(&Message, nil)
-	assertEqual(t, Message, ActualPath)
-	assertEqual(t, "", ActualTs)
-	assertEqual(t, nil, err)
-}
-
-func TestParseMessageSNSFullS3Url(t *testing.T) {
-	S3Bucket := ""
-	Cfg := &SQSConfig{
-		MessageFormat: "sns",
-		Bucket:        S3Bucket,
-	}
-
-	s := &SQS{
-		Cfg: Cfg,
-	}
-
-	Message := `{
-  "Type" : "Notification",
-  "Message" : "s3://some-bucket/log/2015-01-23/l-20150123.gz",
-  "Timestamp" : "2020-05-22T23:21:09.550Z"
-}
-`
-	ExpectedPath := "s3://some-bucket/log/2015-01-23/l-20150123.gz"
-	ExpectedTs := "2020-05-22T23:21:09.550Z"
-	ActualPath, ActualTs, err := s.parseMessage(&Message, nil)
-	assertEqual(t, ExpectedPath, ActualPath)
-	assertEqual(t, ExpectedTs, ActualTs)
-	assertEqual(t, nil, err)
-}
-
-func TestParseMessageSNSParsedUrl(t *testing.T) {
-	S3Bucket := "baker-omfg"
-	Cfg := &SQSConfig{
-		MessageFormat: "sns",
-		Bucket:        S3Bucket,
-	}
-
-	s := &SQS{
-		Cfg: Cfg,
-	}
-
-	Message := `{
-  "Type" : "Notification",
-  "Message" : "s3://some-bucket/log/2015-01-23/l-20150123.gz",
-  "Timestamp" : "2020-05-22T23:21:09.550Z"
-}
-`
-	ExpectedPath := "log/2015-01-23/l-20150123.gz"
-	ExpectedTs := "2020-05-22T23:21:09.550Z"
-	ActualPath, ActualTs, err := s.parseMessage(&Message, nil)
-	assertEqual(t, ExpectedPath, ActualPath)
-	assertEqual(t, ExpectedTs, ActualTs)
-	assertEqual(t, nil, err)
-}
-
-func assertEqual(t *testing.T, a interface{}, b interface{}) {
-	if a == b {
-		return
-	}
-	t.Fatal(fmt.Sprintf("Assert: %v != %v", a, b))
 }
 
 func TestSQSConfig_fillDefaults(t *testing.T) {
