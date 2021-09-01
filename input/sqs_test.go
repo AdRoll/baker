@@ -79,3 +79,34 @@ func assertEqual(t *testing.T, a interface{}, b interface{}) {
 	}
 	t.Fatal(fmt.Sprintf("Assert: %v != %v", a, b))
 }
+
+func TestSQSConfig_fillDefaults(t *testing.T) {
+	tests := []struct {
+		format  string
+		want    sqsFormatType
+		wantErr bool
+	}{
+		{format: "", want: sqsFormatSNS},
+		{format: "SnS", want: sqsFormatSNS},
+		{format: "sns", want: sqsFormatSNS},
+		{format: "plain", want: sqsFormatPlain},
+		{format: "PLAIN", want: sqsFormatPlain},
+		{format: "s3::objectcreated", want: sqsFormatS3ObjectCreated},
+		{format: "s3::ObjectCreated", want: sqsFormatS3ObjectCreated},
+		{format: " plain", wantErr: true},
+		{format: "foobar", wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.format, func(t *testing.T) {
+			cfg := &SQSConfig{
+				MessageFormat: tt.format,
+			}
+			if err := cfg.fillDefaults(); (err != nil) != tt.wantErr {
+				t.Fatalf("SQSConfig.fillDefaults() error = %q, wantErr %t", err, tt.wantErr)
+			}
+			if cfg.format != tt.want {
+				t.Errorf("SQSConfig.fillDefaults() format = %q, want %q", cfg.format, tt.want)
+			}
+		})
+	}
+}
