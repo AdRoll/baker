@@ -72,7 +72,6 @@ type SQS struct {
 	Cfg            *SQSConfig
 	FilePathRegexp *regexp.Regexp
 	svc            *sqs.SQS
-	wg             sync.WaitGroup
 	done           chan bool
 
 	minSnsTimestamp time.Time
