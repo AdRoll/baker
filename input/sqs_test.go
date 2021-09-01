@@ -52,6 +52,7 @@ func TestSQSParseMessage(t *testing.T) {
 func TestSQSConfig_fillDefaults(t *testing.T) {
 	tests := []struct {
 		format  string
+		expr    string
 		want    sqsFormatType
 		wantErr bool
 	}{
@@ -60,18 +61,23 @@ func TestSQSConfig_fillDefaults(t *testing.T) {
 		{format: "sns", want: sqsFormatSNS},
 		{format: "plain", want: sqsFormatPlain},
 		{format: "PLAIN", want: sqsFormatPlain},
-		{format: "s3::objectcreated", want: sqsFormatS3ObjectCreated},
-		{format: "s3::ObjectCreated", want: sqsFormatS3ObjectCreated},
+		{format: "json", expr: "some_expression", want: sqsFormatJSON},
+		{format: "jSON", expr: "some_expression", want: sqsFormatJSON},
+		{format: "jSON", wantErr: true},
 		{format: " plain", wantErr: true},
 		{format: "foobar", wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.format, func(t *testing.T) {
 			cfg := &SQSConfig{
-				MessageFormat: tt.format,
+				MessageFormat:     tt.format,
+				MessageExpression: tt.expr,
 			}
 			if err := cfg.fillDefaults(); (err != nil) != tt.wantErr {
 				t.Fatalf("SQSConfig.fillDefaults() error = %q, wantErr %t", err, tt.wantErr)
+			}
+			if tt.wantErr {
+				return
 			}
 			if cfg.format != tt.want {
 				t.Errorf("SQSConfig.fillDefaults() format = %q, want %q", cfg.format, tt.want)
