@@ -8,11 +8,10 @@ import (
 
 func TestSQSParseMessage(t *testing.T) {
 	tests := []struct {
-		format     string
-		message    string
-		expression string
-		wantPath   string
-		wantErr    bool
+		name                        string
+		format, message, expression string
+		wantPath                    string
+		wantConfigErr, wantParseErr bool
 	}{
 		{
 			format:   "plain",
@@ -129,9 +128,77 @@ func TestSQSParseMessage(t *testing.T) {
 			}`,
 			wantPath: "s3://mybucket/path/to/a/csv/file/in/a/bucket/file.csv.log.zst",
 		},
+
+		// config errors
+		{
+			name:          "json format but empty expression",
+			format:        "json",
+			expression:    "",
+			message:       "whatever",
+			wantPath:      "whatever",
+			wantConfigErr: true,
+		},
+		{
+			name:          "json format with incorrect jmespath",
+			format:        "json",
+			expression:    "incorrect jmespath expression ",
+			message:       "whatever",
+			wantPath:      "whatever",
+			wantConfigErr: true,
+		},
+		{
+			format:        "unknown format",
+			message:       "whatever",
+			wantPath:      "whatever",
+			wantConfigErr: true,
+		},
+
+		// parse errors
+		{
+			name:       "invalid json payload",
+			format:     "json",
+			expression: "Foo.Bar",
+			message: `
+			{
+				"Type": "Notification",
+				"Foo": {
+				  "Bar": 
+				}
+			}`,
+			wantParseErr: true,
+		},
+		{
+			name:       "field not found",
+			format:     "json",
+			expression: "Foo.Bar",
+			message: `
+			{
+				"Type": "Notification",
+				"Foo": {}
+			}`,
+			wantParseErr: true,
+		},
+		{
+			name:       "field of wrong type",
+			format:     "json",
+			expression: "Foo.Bar",
+			message: `
+			{
+				"Type": "Notification",
+				"Foo": {
+					"Bar": 123456
+				}
+			}`,
+			wantParseErr: true,
+		},
 	}
 	for _, tt := range tests {
-		t.Run(string(tt.format), func(t *testing.T) {
+		tname := tt.name
+		if tname == "" {
+			tname = string(tt.format)
+		}
+
+		t.Run(tname, func(t *testing.T) {
 			in, err := NewSQS(baker.InputParams{
 				ComponentParams: baker.ComponentParams{
 					DecodedConfig: &SQSConfig{
@@ -140,13 +207,20 @@ func TestSQSParseMessage(t *testing.T) {
 					},
 				},
 			})
-			if err != nil {
-				t.Fatal(err)
+			if (err != nil) != tt.wantConfigErr {
+				t.Fatalf("NewSQS() error = %q, wantConfigErr %t", err, tt.wantConfigErr)
 			}
+			if tt.wantConfigErr {
+				return
+			}
+
 			s := in.(*SQS)
 			path, err := s.parse(tt.message)
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("parseMessage() error = %q, wantErr %t", err, tt.wantErr)
+			if (err != nil) != tt.wantParseErr {
+				t.Fatalf("parseMessage() error = %q, wantParseErr %t", err, tt.wantParseErr)
+			}
+			if tt.wantParseErr {
+				return
 			}
 			if path != tt.wantPath {
 				t.Errorf("parseMessage() path = %q, want %q", path, tt.wantPath)
