@@ -85,9 +85,8 @@ type SQS struct {
 	svc  *sqs.SQS
 	done chan bool
 
-	minSnsTimestamp time.Time
-	filepathRx      *regexp.Regexp
-	parse           parseSQSMessageFunc
+	filepathRx *regexp.Regexp
+	parse      parseSQSMessageFunc
 }
 
 func NewSQS(cfg baker.InputParams) (baker.Input, error) {
@@ -116,7 +115,6 @@ func NewSQS(cfg baker.InputParams) (baker.Input, error) {
 		Cfg:             dcfg,
 		svc:             svc,
 		filepathRx:      filepathRx,
-		minSnsTimestamp: time.Time{},
 		done:            make(chan bool),
 		parse:           parseFunc,
 	}
