@@ -26,7 +26,7 @@ var SQSDesc = baker.InputDesc{
 	New:    NewSQS,
 	Config: &SQSConfig{},
 	Help: `This input listens on multiple SQS queues for new incoming files on S3.
-It can be used with SQS queues subscribed to SNS topics (raw_message_delivery subscription).
+It can be used with SQS queues subscribed to SNS topics (with raw_message_delivery subscription) and supports arbitrary payload (plain or json).
 It never exits.
 
 Supported formats (MessageFormat):
