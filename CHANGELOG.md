@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add the Crypt filter [#177](https://github.com/AdRoll/baker/pull/177)
 - Bump vmware-go-kcl and gozstd [#181](https://github.com/AdRoll/baker/pull/181)
 - Speedup `LogLine.ToText` and `Parse` methods [#184](https://github.com/AdRoll/baker/pull/184)
+- `SQS` input supports arbitrary JSON payload [#193](https://github.com/AdRoll/baker/pull/193)
 
 ### Deprecated
 
