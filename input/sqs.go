@@ -103,20 +103,22 @@ func NewSQS(cfg baker.InputParams) (baker.Input, error) {
 		}
 	}
 
-	sess := session.New(&aws.Config{Region: aws.String(dcfg.AwsRegion)})
-	svc := sqs.New(sess)
+	sess, err := session.NewSession(&aws.Config{Region: aws.String(dcfg.AwsRegion)})
+	if err != nil {
+		return nil, fmt.Errorf("SQS: can't create aws session: %v", err)
+	}
 
 	parseFunc, err := sqsParseFunction(dcfg)
 	if err != nil {
 		return nil, fmt.Errorf("SQS: can't configure message parsing")
 	}
 	sqs := &SQS{
-		s3Input:         inpututils.NewS3Input(dcfg.AwsRegion, dcfg.Bucket),
-		Cfg:             dcfg,
-		svc:             svc,
-		filepathRx:      filepathRx,
-		done:            make(chan bool),
-		parse:           parseFunc,
+		s3Input:    inpututils.NewS3Input(dcfg.AwsRegion, dcfg.Bucket),
+		Cfg:        dcfg,
+		svc:        sqs.New(sess),
+		filepathRx: filepathRx,
+		done:       make(chan bool),
+		parse:      parseFunc,
 	}
 	return sqs, nil
 }
