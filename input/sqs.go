@@ -207,6 +207,11 @@ func (s *SQS) pollQueue(ctx context.Context, sqsurl string) {
 				ctxLog.WithError(err).Error("error parsing message")
 				continue
 			}
+
+			// Try to unescape URL. Voluntarily ignore an error here since the
+			// result might be a valid URL anyway.
+			s3FilePath, _ = url.QueryUnescape(s3FilePath)
+
 			// Skip the file if it doesn't match the filter provided.
 			if s.filepathRx == nil || s.filepathRx.MatchString(s3FilePath) {
 				// FIXME: we should check if the bucket matches what was configured
