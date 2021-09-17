@@ -10,15 +10,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AdRoll/baker"
-	"github.com/AdRoll/baker/input/inpututils"
-	"github.com/AdRoll/baker/pkg/awsutils"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/jmespath/go-jmespath"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/input/inpututils"
+	"github.com/AdRoll/baker/pkg/awsutils"
 )
 
 var SQSDesc = baker.InputDesc{
@@ -146,14 +146,14 @@ func sqsParseFunction(cfg *SQSConfig) (parseSQSMessageFunc, error) {
 			dec := json.NewDecoder(strings.NewReader(s))
 			var js interface{}
 			if err := dec.Decode(&js); err != nil {
-				return "", fmt.Errorf("can't decode json from SNS message")
+				return "", fmt.Errorf("can't decode json from SQS message")
 			}
 			iface, err := jsexpr.Search(js)
 			if err != nil {
-				return "", fmt.Errorf("can't extract path from SNS message")
+				return "", fmt.Errorf("can't extract path from SQS message")
 			}
 			if iface == nil {
-				return "", fmt.Errorf("can't find S3 path field in SNS message")
+				return "", fmt.Errorf("can't find S3 path field in SQS message")
 			}
 			s3Path, ok := iface.(string)
 			if !ok {
@@ -162,7 +162,7 @@ func sqsParseFunction(cfg *SQSConfig) (parseSQSMessageFunc, error) {
 
 			u, err := url.Parse(s3Path)
 			if err != nil {
-				return "", fmt.Errorf("can't parse received URL in SNS message: %v", err)
+				return "", fmt.Errorf("can't parse received URL in SQS message: %v", err)
 			}
 			// If bucket was not provided, use it from the S3 path.
 			if cfg.Bucket == "" {
