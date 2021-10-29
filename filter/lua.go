@@ -217,8 +217,7 @@ func registerLUATypes(l *lua.LState, comp baker.ComponentParams) {
 
 func (t *LUA) Stats() baker.FilterStats {
 	return baker.FilterStats{
-		NumProcessedLines: atomic.LoadInt64(&t.nprocessed),
-		NumFilteredLines:  atomic.LoadInt64(&t.nfiltered),
+		NumFilteredLines: atomic.LoadInt64(&t.nfiltered),
 	}
 }
 
