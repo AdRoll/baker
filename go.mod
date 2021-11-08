@@ -1,6 +1,6 @@
 module github.com/AdRoll/baker
 
-go 1.14
+go 1.16
 
 require (
 	github.com/DataDog/datadog-go v3.2.0+incompatible
