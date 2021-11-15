@@ -2,6 +2,7 @@ package filter
 
 import (
 	"fmt"
+	"log"
 	"runtime"
 	"sync"
 	"sync/atomic"
@@ -126,6 +127,8 @@ type LUAConfig struct {
 
 // LUA allows to run a baker filter from an external script written in lua.
 type LUA struct {
+	nfiltered int64 // for filter stats
+
 	mu sync.Mutex
 	l  *lua.LState // lua state used during all the baker filter lifetime
 
@@ -134,7 +137,6 @@ type LUA struct {
 	luaProcess lua.LValue // lua filter function
 	recordMt   lua.LValue // lua record type meta table
 
-	nprocessed, nfiltered int64 // for filter stats
 }
 
 // NewLUA returns a new LUA filter.
@@ -180,14 +182,6 @@ func NewLUA(cfg baker.FilterParams) (baker.Filter, error) {
 func registerLUATypes(l *lua.LState, comp baker.ComponentParams) {
 	registerLUARecordType(l)
 
-	// Registers the 'createRecord' lua function.
-	l.SetGlobal("createRecord", l.NewFunction(func(L *lua.LState) int {
-		rec := comp.CreateRecord()
-		ud := recordToLua(l, rec)
-		L.Push(ud)
-		return 1
-	}))
-
 	l.SetGlobal("validateRecord", l.NewFunction(func(L *lua.LState) int {
 		luar := fastcheckLuaRecord(l, 1)
 		ok, fidx := comp.ValidateRecord(luar.r)
@@ -221,40 +215,42 @@ func (t *LUA) Stats() baker.FilterStats {
 	}
 }
 
+// TODO(arl) Look at https://github.com/yuin/gopher-lua#the-lstate-pool-pattern
+
 // Process forwards records to the lua-written filter.
 func (t *LUA) Process(rec baker.Record, next func(baker.Record)) {
-	atomic.AddInt64(&t.nprocessed, 1)
-
-	t.mu.Lock()
-	defer t.mu.Unlock()
-
-	nextCalled := false
-	luaNext := t.l.NewFunction(func(L *lua.LState) int {
-		next(fastcheckLuaRecord(L, 1).r)
-		nextCalled = true
-		return 0
-	})
-
 	// Wrap the incoming record into an lua user data having the 'record' type meta-table.
+	t.mu.Lock()
 	ud := t.l.NewUserData()
 	t.l.SetMetatable(ud, t.recordMt)
 	ud.Value = &luaRecord{r: rec}
 
 	err := t.l.CallByParam(lua.P{
 		Fn:      t.luaProcess,
-		NRet:    0,
+		NRet:    2,
 		Protect: true,
-	}, ud, luaNext)
+	}, ud)
+	t.mu.Unlock()
 
-	// TODO: should not panic here and instead increment a filter-specific
-	// metric that tracks the number of lua runtime errors.
 	if err != nil {
+		// this should cause panic at runtime
 		panic(err)
 	}
 
-	if !nextCalled {
-		atomic.AddInt64(&t.nfiltered, 1)
+	keep := t.l.Get(-2).(lua.LBool)
+	luaErr := t.l.Get(-1)
+	t.l.Pop(2)
+	if luaErr != lua.LNil {
+		log.Printf("error from lua function: %v", luaErr.(lua.LString))
+		return
 	}
+
+	if !keep {
+		atomic.AddInt64(&t.nfiltered, 1)
+		return
+	}
+
+	next(rec)
 }
 
 // lua record methods
@@ -301,7 +297,6 @@ func fastcheckLuaRecord(L *lua.LState, n int) *luaRecord {
 var luaRecordMethods = map[string]lua.LGFunction{
 	"get":   luaRecordGet,
 	"set":   luaRecordSet,
-	"copy":  luaRecordCopy,
 	"clear": luaRecordClear,
 }
 
@@ -330,17 +325,6 @@ func luaRecordSet(L *lua.LState) int {
 	luar.r.Set(baker.FieldIndex(fidx), []byte(val))
 
 	return 0
-}
-
-// record:copy() record
-func luaRecordCopy(L *lua.LState) int {
-	luar := fastcheckLuaRecord(L, 1)
-
-	cpy := luar.r.Copy()
-	ud := recordToLua(L, cpy)
-	L.Push(ud)
-
-	return 1
 }
 
 // record:clear()
