@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 // TempDir is a test helper that creates a temporary directory, returns its
@@ -78,9 +78,9 @@ func TempFile(tb testing.TB) (file string, rmfile func()) {
 //      // logging is disabled for the whole test
 //  }
 func DisableLogging() (reset func()) {
-	lvl := logrus.GetLevel()
-	logrus.SetLevel(logrus.PanicLevel)
-	return func() { logrus.SetLevel(lvl) }
+	lvl := log.GetLevel()
+	log.SetLevel(log.PanicLevel)
+	return func() { log.SetLevel(lvl) }
 }
 
 // LessLogging is a test helper that decreases logging (in fact it sets its
@@ -93,7 +93,7 @@ func DisableLogging() (reset func()) {
 //      // logging is set to Error for the whole test
 //  }
 func LessLogging() (reset func()) {
-	lvl := logrus.GetLevel()
-	logrus.SetLevel(logrus.ErrorLevel)
-	return func() { logrus.SetLevel(lvl) }
+	lvl := log.GetLevel()
+	log.SetLevel(log.ErrorLevel)
+	return func() { log.SetLevel(lvl) }
 }
