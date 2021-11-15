@@ -108,33 +108,10 @@ func TestLUAFilter(t *testing.T) {
 			},
 		},
 		{
-			name:   "_createRecord",
-			record: "abc,def,ghi",
-			want: [][3]string{
-				{"hey", "ho", "let's go!"},
-				{"abc", "def", "ghi"},
-			},
-		},
-		{
-			name:   "_validateRecord",
-			record: "ciao,,",
-			want: [][3]string{
-				{"good", "", ""},
-			},
-		},
-		{
 			name:   "clearRecord",
 			record: "foo,bar,baz",
 			want: [][3]string{
 				{"", "", ""},
-			},
-		},
-		{
-			name:   "copyRecord",
-			record: "foo,bar,baz",
-			want: [][3]string{
-				{"foo", "bar", "1"},
-				{"foo", "bar", "2"},
 			},
 		},
 
