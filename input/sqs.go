@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/aws/aws-sdk-go/service/sqs/sqsiface"
 	"github.com/jmespath/go-jmespath"
 	log "github.com/sirupsen/logrus"
 
@@ -87,7 +88,7 @@ type SQS struct {
 	s3Input *inpututils.S3Input
 
 	Cfg  *SQSConfig
-	svc  *sqs.SQS
+	svc  sqsiface.SQSAPI
 	done chan bool
 
 	filepathRx *regexp.Regexp
