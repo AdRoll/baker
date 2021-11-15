@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add the `Slice` filter [#175](https://github.com/AdRoll/baker/pull/175)
+- Clarify role of SQS.Bucket and add integration tests filter [#196](https://github.com/AdRoll/baker/pull/196)
 
 ### Changed
 
