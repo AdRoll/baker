@@ -248,10 +248,16 @@ func TestSQSParseMessage(t *testing.T) {
 }
 
 type sqsIntegrationTestCase struct {
-	name          string
-	queuePrefixes []string
-	messages      map[string][]sqs.Message
+	name string // Test case name
 
+	// SQS input configuration
+	queuePrefixes []string // QueuePrefixes configuration parameter
+	bucket        string   // Bucket configuration parameter
+
+	// SQS service configuration
+	messages map[string][]sqs.Message // for each queue name, the messages we'll receive (cf mockSQSClient)
+
+	// Test checks
 	wantRecords []string // records we want, order doesn't matter
 }
 
@@ -267,6 +273,7 @@ func TestSQS(t *testing.T) {
 		{
 			name:          "multiple queues and buckets",
 			queuePrefixes: []string{"queue-a", "queue-b", "queue-c"},
+			bucket:        "bucket-a",
 			messages: map[string][]sqs.Message{
 				"queue-a": {
 					sqsMessage("s3://bucket-a/path/to/file/1.zst"),
@@ -290,6 +297,21 @@ func TestSQS(t *testing.T) {
 				"bucket-c,path/to,2.zst",
 			},
 		},
+		{
+			name:          "use provided bucket",
+			queuePrefixes: []string{"queue-a"},
+			bucket:        "bucket-a",
+			messages: map[string][]sqs.Message{
+				"queue-a": {
+					sqsMessage("path/to/file/1.zst"),
+					sqsMessage("path/to/file/2.zst"),
+				},
+			},
+			wantRecords: []string{
+				"bucket-a,path/to,1.zst",
+				"bucket-a,path/to,2.zst",
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -309,7 +331,7 @@ field_separator=","
 [input]
 Name="sqs"
 [input.config]
-Bucket="bucket-a"
+Bucket=%q
 MessageFormat="plain"
 QueuePrefixes=[%v]
 FilePathFilter=".*"
@@ -331,7 +353,7 @@ fields=["bucket", "path", "filename"]
 			prefixes = append(prefixes, `"`+pref+`"`)
 		}
 
-		r := strings.NewReader(fmt.Sprintf(toml, strings.Join(prefixes, ",")))
+		r := strings.NewReader(fmt.Sprintf(toml, tc.bucket, strings.Join(prefixes, ",")))
 		cfg, err := baker.NewConfigFromToml(r, comp)
 		if err != nil {
 			t.Fatal(err)
