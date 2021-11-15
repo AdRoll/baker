@@ -97,3 +97,13 @@ func LessLogging() (reset func()) {
 	log.SetLevel(log.ErrorLevel)
 	return func() { log.SetLevel(lvl) }
 }
+
+// SetLogLevel sets the global log level for the execution of the current tb.
+// Though setting the log level is safe for use from concurrent goroutines, it's
+// not advised to use SetLogLevel in parallel tests/benchmark, i.e. using
+// t.Parallel().
+func SetLogLevel(tb testing.TB, level log.Level) {
+	cur := log.GetLevel()
+	log.SetLevel(level)
+	tb.Cleanup(func() { log.SetLevel(cur) })
+}
