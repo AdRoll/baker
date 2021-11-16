@@ -1,9 +1,27 @@
 package input
 
 import (
+	"bytes"
+	"fmt"
+	"io"
+	"io/fs"
+	"net/url"
+	"os"
+	"reflect"
+	"strings"
+	"sync"
 	"testing"
+	"time"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/request"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/sqs"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/output/outputtest"
+	"github.com/AdRoll/baker/testutil"
 )
 
 func TestSQSParseMessage(t *testing.T) {
@@ -227,4 +245,259 @@ func TestSQSParseMessage(t *testing.T) {
 			}
 		})
 	}
+}
+
+type sqsIntegrationTestCase struct {
+	name string // Test case name
+
+	// SQS input configuration
+	queuePrefixes []string // QueuePrefixes configuration parameter
+	bucket        string   // Bucket configuration parameter
+
+	// SQS service configuration
+	messages map[string][]sqs.Message // for each queue name, the messages we'll receive (cf mockSQSClient)
+
+	// Test checks
+	wantRecords []string // records we want, order doesn't matter
+}
+
+func TestSQS(t *testing.T) {
+	if testing.Verbose() {
+		testutil.SetLogLevel(t, log.DebugLevel)
+	}
+
+	// Return an sqs.Message (can't use struct literal since aws use *string everywhere)
+	sqsMessage := func(body string) sqs.Message { return sqs.Message{Body: &body} }
+
+	tests := []sqsIntegrationTestCase{
+		{
+			name:          "multiple queues and buckets",
+			queuePrefixes: []string{"queue-a", "queue-b", "queue-c"},
+			bucket:        "bucket-a",
+			messages: map[string][]sqs.Message{
+				"queue-a": {
+					sqsMessage("s3://bucket-a/path/to/file/1.zst"),
+					sqsMessage("s3://bucket-a/path/to/file/2.zst"),
+				},
+				"queue-b": {
+					sqsMessage("s3://bucket-b/path/to/file/1.zst"),
+					sqsMessage("s3://bucket-b/path/to/file/2.zst"),
+				},
+				"queue-c": {
+					sqsMessage("s3://bucket-c/path/to/file/1.zst"),
+					sqsMessage("s3://bucket-c/path/to/file/2.zst"),
+				},
+			},
+			wantRecords: []string{
+				"bucket-a,path/to,1.zst",
+				"bucket-a,path/to,2.zst",
+				"bucket-b,path/to,1.zst",
+				"bucket-b,path/to,2.zst",
+				"bucket-c,path/to,1.zst",
+				"bucket-c,path/to,2.zst",
+			},
+		},
+		{
+			name:          "use provided bucket",
+			queuePrefixes: []string{"queue-a"},
+			bucket:        "bucket-a",
+			messages: map[string][]sqs.Message{
+				"queue-a": {
+					sqsMessage("path/to/file/1.zst"),
+					sqsMessage("path/to/file/2.zst"),
+				},
+			},
+			wantRecords: []string{
+				"bucket-a,path/to,1.zst",
+				"bucket-a,path/to,2.zst",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, testIntegrationSQS(tt))
+	}
+}
+
+func testIntegrationSQS(tc sqsIntegrationTestCase) func(t *testing.T) {
+	return func(t *testing.T) {
+		toml := `
+[fields]
+Names=["bucket", "path", "filename"]
+
+[csv]
+field_separator=","
+
+[input]
+Name="sqs"
+[input.config]
+Bucket=%q
+MessageFormat="plain"
+QueuePrefixes=[%v]
+FilePathFilter=".*"
+
+[output]
+Name="RawRecorder"
+Procs=1
+fields=["bucket", "path", "filename"]
+`
+
+		/* Configure the pipeline */
+		comp := baker.Components{
+			Inputs:  []baker.InputDesc{SQSDesc},
+			Outputs: []baker.OutputDesc{outputtest.RawRecorderDesc},
+		}
+
+		prefixes := []string{}
+		for _, pref := range tc.queuePrefixes {
+			prefixes = append(prefixes, `"`+pref+`"`)
+		}
+
+		r := strings.NewReader(fmt.Sprintf(toml, tc.bucket, strings.Join(prefixes, ",")))
+		cfg, err := baker.NewConfigFromToml(r, comp)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		topo, err := baker.NewTopologyFromConfig(cfg)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// Replace aws services interfaces with mocks.
+		topo.Input.(*SQS).svc = &mockSQSClient{
+			queues: tc.messages,
+		}
+		topo.Input.(*SQS).s3Input.SetS3API(newMockedS3FromFS(os.DirFS("testdata/sqstest")))
+
+		/* Run the pipeline */
+		topo.Start()
+		time.Sleep(2 * time.Second)
+		topo.Stop()
+		topo.Wait()
+		if err := topo.Error(); err != nil {
+			t.Fatalf("topology error: %v", err)
+		}
+
+		/* Checks */
+		out := topo.Output[0].(*outputtest.Recorder)
+
+		want := make(map[string]struct{})
+		for _, r := range tc.wantRecords {
+			want[r] = struct{}{}
+		}
+
+		got := make(map[string]struct{})
+		for _, r := range out.Records {
+			got[string(r.Record)] = struct{}{}
+		}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got records:\n%+v\n\nwant:\n%+v", got, want)
+		}
+	}
+}
+
+// mockSQSClient emulates the set of aws SQS API interface methods used for the
+// SQS input. The 'queues' field should be filled with a map where the key is
+// the SQS queue name and the value is a list of messages that queue returns,
+// one by one.
+type mockSQSClient struct {
+	*sqs.SQS
+
+	mu     sync.Mutex
+	queues map[string][]sqs.Message
+}
+
+func (c *mockSQSClient) ListQueuesWithContext(ctx aws.Context, input *sqs.ListQueuesInput, options ...request.Option) (*sqs.ListQueuesOutput, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	var queueURLs []*string
+	for name := range c.queues {
+		if strings.HasPrefix(name, *input.QueueNamePrefix) {
+			u := "https://sqs.us-west-2.amazonaws.com/123456789012/" + name
+			queueURLs = append(queueURLs, &u)
+		}
+	}
+
+	out := &sqs.ListQueuesOutput{QueueUrls: queueURLs}
+	log.WithFields(log.Fields{"sqs": "ListQueuesWithContext", "input": *input, "out": *out}).Debug()
+	return out, nil
+}
+
+// ReceiveMessageWithContext sends the first message for the requested queue, if
+// any, then removes it from the queue.
+func (c *mockSQSClient) ReceiveMessageWithContext(ctx aws.Context, input *sqs.ReceiveMessageInput, options ...request.Option) (*sqs.ReceiveMessageOutput, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	time.Sleep(50 * time.Millisecond)
+
+	u, err := url.Parse(*input.QueueUrl)
+	if err != nil {
+		return nil, err
+	}
+	ucomps := strings.Split(u.Path, "/")
+	queueName := ucomps[len(ucomps)-1]
+	msgs, ok := c.queues[queueName]
+	if !ok {
+		return nil, fmt.Errorf("queue %v not found", queueName)
+	}
+
+	out := &sqs.ReceiveMessageOutput{
+		Messages: []*sqs.Message{},
+	}
+
+	if len(msgs) > 0 {
+		// Pops the first message out of the queue.
+		var first sqs.Message
+		first, msgs = msgs[0], msgs[1:]
+		out.Messages = append(out.Messages, &first)
+		c.queues[queueName] = msgs
+	}
+
+	log.WithFields(log.Fields{"sqs": "ReceiveMessageWithContext", "input": *input, "out": *out}).Debug()
+	return out, nil
+}
+
+// DeleteMessageWithContext does nothing since messages are removed from the
+// queue as soon as they're requested.
+func (c *mockSQSClient) DeleteMessageWithContext(ctx aws.Context, input *sqs.DeleteMessageInput, options ...request.Option) (*sqs.DeleteMessageOutput, error) {
+	return nil, nil
+}
+
+// mockedS3FS emulates the GetObject method of an AWS S3 interface by returning
+// the content of files from the provided file system.
+type mockedS3FS struct {
+	*s3.S3
+	fs fs.FS
+}
+
+func newMockedS3FromFS(fs fs.FS) *mockedS3FS {
+	return &mockedS3FS{fs: fs}
+}
+
+func (c *mockedS3FS) GetObject(input *s3.GetObjectInput) (*s3.GetObjectOutput, error) {
+	log.WithFields(log.Fields{"s3": "GetObject", "input": *input, "out": nil}).Debug()
+
+	path := fmt.Sprintf("%s/%s", *input.Bucket, *input.Key)
+	buf, err := fs.ReadFile(c.fs, path)
+	if err != nil {
+		return nil, fmt.Errorf("mockedS3FS, error s3.GetObject with path %v: %v", path, err)
+	}
+	fi, err := fs.Stat(c.fs, path)
+	if err != nil {
+		return nil, fmt.Errorf("mockedS3FS, can't stat %v: %v", path, err)
+	}
+	mtime := fi.ModTime()
+	length := int64(len(buf))
+
+	out := s3.GetObjectOutput{
+		Body:          io.NopCloser(bytes.NewReader(buf)),
+		ContentLength: &length,
+		LastModified:  &mtime,
+	}
+
+	return &out, nil
 }

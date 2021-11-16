@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 )
 
 type S3Input struct {
@@ -17,7 +18,7 @@ type S3Input struct {
 
 	Bucket string
 
-	svc *s3.S3
+	svc s3iface.S3API
 }
 
 func NewS3Input(region, bucket string) *S3Input {
@@ -30,6 +31,11 @@ func NewS3Input(region, bucket string) *S3Input {
 	}
 	s.CompressedInput = NewCompressedInput(s.openS3File, s.sizeS3File, make(chan bool, 1))
 	return s
+}
+
+// SetS3API allows to replace the S3API, for tests.
+func (s3 *S3Input) SetS3API(s3API s3iface.S3API) {
+	s3.svc = s3API
 }
 
 // ProcessDirectory enqueues all files matching a specific prefix for

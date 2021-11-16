@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/aws/aws-sdk-go/service/sqs/sqsiface"
 	"github.com/jmespath/go-jmespath"
 	log "github.com/sirupsen/logrus"
 
@@ -25,7 +26,7 @@ var SQSDesc = baker.InputDesc{
 	Name:   "SQS",
 	New:    NewSQS,
 	Config: &SQSConfig{},
-	Help: `This input listens on multiple SQS queues for new incoming files on S3.
+	Help: `This input listens on multiple SQS queues for paths to S3 files.
 It can be used with SQS queues subscribed to SNS topics (with raw_message_delivery subscription) and supports arbitrary payload (plain or json).
 It never exits.
 
@@ -39,7 +40,7 @@ Supported formats (MessageFormat):
 
 type SQSConfig struct {
 	AwsRegion         string   `help:"AWS region to connect to" default:"us-west-2"`
-	Bucket            string   `help:"S3 Bucket to use for processing" default:""`
+	Bucket            string   `help:"S3 Bucket to use if paths do not have one" default:""`
 	QueuePrefixes     []string `help:"Prefixes of the names of the SQS queues to monitor" required:"true"`
 	MessageFormat     string   `help:"SQS message format. See help string for supported formats" default:"sns"`
 	MessageExpression string   `help:"The expression to extract an S3 path from arbitrary message formats"`
@@ -87,7 +88,7 @@ type SQS struct {
 	s3Input *inpututils.S3Input
 
 	Cfg  *SQSConfig
-	svc  *sqs.SQS
+	svc  sqsiface.SQSAPI
 	done chan bool
 
 	filepathRx *regexp.Regexp
