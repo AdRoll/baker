@@ -1,6 +1,6 @@
 code.cloudfoundry.org/bytefmt v0.0.0-20190710193110-1eb035ffe2b6/go.mod h1:wN/zk7mhREp/oviagqUXY3EwuHhWyOvAdsn5Y4CzOrc=
-github.com/AdRoll/baker v0.1.0-alpha.0.20210811125026-9a87cc49afbb h1:Oeu5dm6hZTWIaky/ytFSropUEmNxG8IWmF8w8YYlvQw=
-github.com/AdRoll/baker v0.1.0-alpha.0.20210811125026-9a87cc49afbb/go.mod h1:OKihVgIPiIrnv3EBSd5S1M483gFVZx46nd2USFKTFSg=
+github.com/AdRoll/baker v0.1.0-alpha.0.20211116162641-a19495060fcf h1:atW673sPCWBWiIedzm1GrVVL/UaaPQ/QAss1NT1kZwg=
+github.com/AdRoll/baker v0.1.0-alpha.0.20211116162641-a19495060fcf/go.mod h1:f2yEW/klxEHAmtfOcQc0fnZsXB0SP2crakktsa8iEY4=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
