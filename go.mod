@@ -19,7 +19,7 @@ require (
 	github.com/pierrec/lz4/v3 v3.3.2
 	github.com/rasky/toml v0.1.1-0.20160309013025-90bcb678a72a
 	github.com/sirupsen/logrus v1.8.1
-	github.com/valyala/gozstd v1.9.0
+	github.com/valyala/gozstd v1.14.2
 	github.com/vmware/vmware-go-kcl v0.0.0-20210126043010-022ec8d9de8f
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e
 )
