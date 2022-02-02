@@ -16,54 +16,54 @@ func TestRegexMatch(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			fields:  []string{"foo"},
+			fields:  []string{"field0"},
 			regexs:  nil,
 			wantErr: true,
 		},
 		{
 			fields:  []string{"non-existent"},
-			regexs:  []string{"foo"},
+			regexs:  []string{"field0"},
 			wantErr: true,
 		},
 		{
 			record: "abc,def,ghi",
-			fields: []string{"foo"},
+			fields: []string{"field0"},
 			regexs: []string{"^abc$"},
 			want:   true,
 		},
 		{
 			record: "abc,def,ghi",
-			fields: []string{"foo"},
+			fields: []string{"field0"},
 			regexs: []string{"^ab"},
 			want:   true,
 		},
 		{
 			record: "abc,def,ghi",
-			fields: []string{"bar"},
+			fields: []string{"field1"},
 			regexs: []string{"e"},
 			want:   true,
 		},
 		{
 			record: "abc,def,ghi",
-			fields: []string{"foo"},
+			fields: []string{"field0"},
 			regexs: []string{"^ab$"},
 			want:   false,
 		},
 		{
 			record: "abc,def,ghi",
-			fields: []string{"foo", "baz"},
+			fields: []string{"field0", "field2"},
 			regexs: []string{"^ab$", "ghi"},
 			want:   false,
 		},
 		{
 			record: "abc,def,ghi",
-			fields: []string{"foo", "bar", "baz"},
+			fields: []string{"field0", "field1", "field2"},
 			regexs: []string{"^ab$", ".*", `[a-z]{2}i`},
 			want:   false,
 		},
 		{
 			record: "abc,def,ghi",
-			fields: []string{"foo", "bar", "baz"},
+			fields: []string{"field0", "field1", "field2"},
 			regexs: []string{"^abc$", ".*", `[a-z]{2}i`},
 			want:   true,
 		},
@@ -71,11 +71,11 @@ func TestRegexMatch(t *testing.T) {
 
 	fieldByName := func(name string) (baker.FieldIndex, bool) {
 		switch name {
-		case "foo":
+		case "field0":
 			return 0, true
-		case "bar":
+		case "field1":
 			return 1, true
-		case "baz":
+		case "field2":
 			return 2, true
 		}
 		return 0, false
