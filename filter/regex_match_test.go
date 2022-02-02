@@ -17,16 +17,6 @@ func TestRegexMatch(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			fields:  []string{"field0"},
-			regexs:  nil,
-			wantErr: true,
-		},
-		{
-			fields:  []string{"non-existent"},
-			regexs:  []string{"field0"},
-			wantErr: true,
-		},
-		{
 			record: "abc,def,ghi",
 			fields: []string{"field0"},
 			regexs: []string{"^abc$"},
@@ -67,6 +57,18 @@ func TestRegexMatch(t *testing.T) {
 			fields: []string{"field0", "field1", "field2"},
 			regexs: []string{"^abc$", ".*", `[a-z]{2}i`},
 			want:   true,
+		},
+
+		// error cases
+		{
+			fields:  []string{"field0"},
+			regexs:  nil,
+			wantErr: true,
+		},
+		{
+			fields:  []string{"non-existent"},
+			regexs:  []string{"field0"},
+			wantErr: true,
 		},
 	}
 
