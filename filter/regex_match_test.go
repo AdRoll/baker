@@ -12,6 +12,7 @@ func TestRegexMatch(t *testing.T) {
 		record  string
 		fields  []string
 		regexs  []string
+		invert  bool
 		want    bool // true: kept, false: discarded
 		wantErr bool
 	}{
@@ -82,13 +83,14 @@ func TestRegexMatch(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(fmt.Sprintf("fields=%v regexs=%v", tt.fields, tt.regexs), func(t *testing.T) {
+		t.Run(fmt.Sprintf("fields=%v/regexs=%v/invert=%t", tt.fields, tt.regexs, tt.invert), func(t *testing.T) {
 			f, err := NewRegexMatch(baker.FilterParams{
 				ComponentParams: baker.ComponentParams{
 					FieldByName: fieldByName,
 					DecodedConfig: &RegexMatchConfig{
-						Fields: tt.fields,
-						Regexs: tt.regexs,
+						Fields:      tt.fields,
+						Regexs:      tt.regexs,
+						InvertMatch: tt.invert,
 					},
 				},
 			})
