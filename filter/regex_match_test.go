@@ -13,50 +13,86 @@ func TestRegexMatch(t *testing.T) {
 		fields  []string
 		regexs  []string
 		invert  bool
-		want    bool // true: kept, false: discarded
+		keep    bool // true: kept, false: discarded
 		wantErr bool
 	}{
 		{
 			record: "abc,def,ghi",
 			fields: []string{"field0"},
 			regexs: []string{"^abc$"},
-			want:   true,
+			keep:   true,
+		},
+		{
+			record: `goodstuff,def,ghi`,
+			fields: []string{"field0"},
+			regexs: []string{"good"},
+			keep:   true,
 		},
 		{
 			record: "abc,def,ghi",
 			fields: []string{"field0"},
 			regexs: []string{"^ab"},
-			want:   true,
+			keep:   true,
 		},
 		{
 			record: "abc,def,ghi",
 			fields: []string{"field1"},
 			regexs: []string{"e"},
-			want:   true,
+			keep:   true,
 		},
 		{
 			record: "abc,def,ghi",
 			fields: []string{"field0"},
 			regexs: []string{"^ab$"},
-			want:   false,
+			keep:   false,
 		},
 		{
 			record: "abc,def,ghi",
 			fields: []string{"field0", "field2"},
 			regexs: []string{"^ab$", "ghi"},
-			want:   false,
+			keep:   false,
 		},
 		{
 			record: "abc,def,ghi",
 			fields: []string{"field0", "field1", "field2"},
 			regexs: []string{"^ab$", ".*", `[a-z]{2}i`},
-			want:   false,
+			keep:   false,
 		},
 		{
 			record: "abc,def,ghi",
 			fields: []string{"field0", "field1", "field2"},
 			regexs: []string{"^abc$", ".*", `[a-z]{2}i`},
-			want:   true,
+			keep:   true,
+		},
+
+		// inverted
+		{
+			record: `good,def,ghi`,
+			fields: []string{"field0"},
+			regexs: []string{"bad"},
+			invert: true,
+			keep:   true,
+		},
+		{
+			record: `["badstuff"],good,ghi`,
+			fields: []string{"field0", "field1"},
+			regexs: []string{"bad", "bad"},
+			invert: true,
+			keep:   false,
+		},
+		{
+			record: `["good"],bad,ghi`,
+			fields: []string{"field0", "field1"},
+			regexs: []string{"bad", "bad"},
+			invert: true,
+			keep:   false,
+		},
+		{
+			record: `good,good,ghi`,
+			fields: []string{"field0", "field1"},
+			regexs: []string{"bad", "bad"},
+			invert: true,
+			keep:   true,
 		},
 
 		// error cases
@@ -113,8 +149,8 @@ func TestRegexMatch(t *testing.T) {
 
 			f.Process(l, func(baker.Record) { kept = true })
 
-			if kept != tt.want {
-				t.Errorf("got record kept=%t, want %t", kept, tt.want)
+			if kept != tt.keep {
+				t.Errorf("got record kept=%t, want %t", kept, tt.keep)
 			}
 		})
 	}
