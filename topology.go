@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"sync"
 	"sync/atomic"
 
@@ -390,5 +391,27 @@ func (t *Topology) runFilterChain() {
 		// Give back memory to the input component; it might be able to
 		// recycle it, thus avoiding generating too much garbage
 		t.Input.FreeMem(bakerData)
+	}
+}
+
+// makeUnivocal ensure each string in slist is univocal, appending '_2' to
+// duplicates, '_3' to triplicates, and so on. Non-repeated strings are not
+// modified, as well as the first repeated strings.
+//
+// NOTE: this is a best effort, we don't try to deal with tricky corner cases.
+func makeUnivocal(slist []string) {
+	// First pass to find duplicates.
+	m := make(map[string]int)
+	for _, s := range slist {
+		m[s]++
+	}
+
+	// Second pass to rename repeated names. Start from the back so we can use
+	// the total number of repeated elements as index.
+	for i := len(slist) - 1; i >= 0; i-- {
+		if idx := m[slist[i]] - 1; idx > 0 {
+			m[slist[i]]--
+			slist[i] += "_" + strconv.Itoa(idx+1)
+		}
 	}
 }
