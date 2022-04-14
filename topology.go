@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 
@@ -20,6 +21,8 @@ type Topology struct {
 	Output  []Output
 	Upload  Upload
 	Metrics MetricsClient
+
+	filterNames []string // univocal filter names
 
 	inerr     atomic.Value
 	inch      chan *Data
@@ -111,7 +114,9 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 			return nil, fmt.Errorf("error creating filter: %v", err)
 		}
 		tp.Filters = append(tp.Filters, fil)
+		tp.filterNames = append(tp.filterNames, strings.ToLower(cfg.Filter[idx].Name))
 	}
+	makeUnivocal(tp.filterNames)
 
 	// * Create outputs
 	if len(cfg.Output.Fields) == 0 && !tp.rawOutput {
