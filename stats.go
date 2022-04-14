@@ -13,10 +13,11 @@ import (
 
 // A StatsDumper gathers statistics about all baker components of topology.
 type StatsDumper struct {
-	t       *Topology
-	start   time.Time
-	w       io.Writer     // stats destination
-	metrics MetricsClient // metrics implementation to use
+	t          *Topology
+	start      time.Time
+	w          io.Writer     // stats destination
+	metrics    MetricsClient // metrics implementation to use
+	filterTags [][]string
 
 	lock             sync.Mutex
 	prevwlines       int64
@@ -29,7 +30,18 @@ type StatsDumper struct {
 // topology and writing stats on standard output. It also exports metrics
 // via the Metrics interface configured with the Topology, if any.
 func NewStatsDumper(t *Topology) (sd *StatsDumper) {
-	return &StatsDumper{t: t, w: os.Stdout, metrics: t.Metrics}
+	// Prepare filter tags now since they won't change.
+	ftags := make([][]string, len(t.Filters))
+	for i := range ftags {
+		ftags[i] = []string{"filter_name:" + t.filterNames[i]}
+	}
+
+	return &StatsDumper{
+		t:          t,
+		w:          os.Stdout,
+		metrics:    t.Metrics,
+		filterTags: ftags,
+	}
 }
 
 // SetWriter sets the writer into which stats are written.
@@ -56,9 +68,10 @@ func (sd *StatsDumper) dumpNow() {
 
 	var filtered int64
 	filteredMap := make(map[string]int64)
-	for _, f := range t.Filters {
+	for fidx, f := range t.Filters {
 		stats := f.Stats()
 		if stats.NumFilteredLines > 0 {
+			sd.metrics.RawCountWithTags("filtered_lines", stats.NumFilteredLines, sd.filterTags[fidx])
 			filtered += stats.NumFilteredLines
 			filteredMap[fmt.Sprintf("%T", f)] += filtered
 		}
@@ -144,7 +157,6 @@ func (sd *StatsDumper) dumpNow() {
 	if filtered > 0 {
 		fmt.Fprintf(sd.w, "--- Filtered lines: %v\n", filteredMap)
 	}
-	sd.metrics.RawCount("filtered_lines", filtered)
 
 	// Go stats
 	sd.metrics.Gauge("runtime.numgoroutines", float64(runtime.NumGoroutine()))
