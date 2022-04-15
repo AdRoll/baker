@@ -54,9 +54,6 @@ func (sd *StatsDumper) dumpNow() {
 
 	t := sd.t
 	nsec := int64(time.Now().UTC().Sub(sd.start).Seconds())
-	if nsec == 0 {
-		return
-	}
 
 	istats := t.Input.Stats()
 	currlines := istats.NumProcessedLines
@@ -125,10 +122,16 @@ func (sd *StatsDumper) dumpNow() {
 		}
 	}
 
+	var wspeed, rspeed int64
+	if nsec != 0 {
+		wspeed = curwlines / nsec
+		rspeed = currlines / nsec
+	}
+
 	fmt.Fprintf(sd.w, "Stats: 1s[w:%d r:%d] total[w:%d r:%d u:%d] speed[w:%d r:%d] errors[p:%d i:%d f:%d o:%d u:%d]\n",
 		curwlines-sd.prevwlines, currlines-sd.prevrlines,
 		curwlines, currlines, numUploads,
-		curwlines/nsec, currlines/nsec,
+		wspeed, rspeed,
 		parseErrors,
 		invalid,
 		filtered,

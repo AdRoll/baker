@@ -134,30 +134,30 @@ func (m mockMetrics) DurationWithTags(name string, value time.Duration, tags []s
 func (m mockMetrics) Close() error                                                     { return nil }
 
 func TestStatsDumper(t *testing.T) {
-	// Check that the StatsDumper correctly reports the metrics gathered from the components.
-	// The tests check both the reports printed to the standard output and metrics published to the MetricClient.
+	// Check that the StatsDumper correctly reports the metrics gathered from
+	// the components. The tests check both the reports printed to the standard
+	// output and metrics published to the MetricClient.
 
 	wantMetrics := map[string]interface{}{
 		// default published metrics
-		"c:processed_lines": int64(53 + 53),
-		"c:uploads":         int64(17),
-		"c:upload_errors":   int64(3),
-		"c:error_lines":     int64(0 + 0 + (8 + 8 + 8) + (7 + 7)), // invalid + parseErrors + filtered + outErrors
-		"c:filtered_lines":  int64(8 + 8 + 8),
+		"c:processed_lines": []int64{53 + 53},
+		"c:uploads":         []int64{17},
+		"c:upload_errors":   []int64{3},
+		"c:error_lines":     []int64{0 + 0 + (8 + 8 + 8) + (7 + 7)}, // invalid + parseErrors + filtered + outErrors
 
 		// custom input metric
-		"c:input.raw_count":     int64(10),
-		"d:input.delta_counter": int64(1),
-		"g:input.gauge":         float64(math.Pi),
+		"c:input.raw_count":     []int64{10},
+		"d:input.delta_counter": []int64{1},
+		"g:input.gauge":         []float64{math.Pi},
 		"h:input.hist":          []float64{1, 2, 3},
 		"t:input.timings": []time.Duration{
 			1 * time.Second, 10 * time.Second, 100 * time.Second,
 		},
 
 		// custom filter metric
-		"c:filter.raw_count":     int64(4 + 4 + 4),
-		"d:filter.delta_counter": int64(3 + 3 + 3),
-		"g:filter.gauge":         float64((math.Pi*2 + math.Pi*2 + math.Pi*2) / 3),
+		"c:filter.raw_count":     []int64{12},
+		"d:filter.delta_counter": []int64{9},
+		"g:filter.gauge":         []float64{(math.Pi*2 + math.Pi*2 + math.Pi*2) / 3},
 		"h:filter.hist": []float64{
 			4, 5, 6, 7, // first filter
 			4, 5, 6, 7, // second filter
@@ -170,9 +170,9 @@ func TestStatsDumper(t *testing.T) {
 		},
 
 		// custom output metrics
-		"c:output.raw_count":     int64(3 + 3),
-		"d:output.delta_counter": int64(7 + 7),
-		"g:output.gauge":         float64((math.Pi*3 + math.Pi*3) / 2),
+		"c:output.raw_count":     []int64{6},
+		"d:output.delta_counter": []int64{14},
+		"g:output.gauge":         []float64{(math.Pi*3 + math.Pi*3) / 2},
 		"h:output.hist": []float64{
 			8, 9, 10, 11, // first output
 			8, 9, 10, 11, // second output
@@ -183,21 +183,91 @@ func TestStatsDumper(t *testing.T) {
 		},
 
 		// custom upload metric
-		"c:upload.raw_count":     int64(12),
-		"d:upload.delta_counter": int64(9),
-		"g:upload.gauge":         float64(math.Pi * 4),
+		"c:upload.raw_count":     []int64{12},
+		"d:upload.delta_counter": []int64{9},
+		"g:upload.gauge":         []float64{math.Pi * 4},
 		"h:upload.hist":          []float64{8, 9, 10, 11},
 		"t:upload.timings": []time.Duration{
 			1 * time.Microsecond, 10 * time.Microsecond, 100 * time.Microsecond,
 		},
 	}
 
-	tp := &baker.Topology{
-		Input:   &statsInput{},
-		Filters: []baker.Filter{&statsFilter{}, &statsFilter{}, &statsFilter{}},
-		Output:  []baker.Output{&statsOutput{}, &statsOutput{}},
-		Upload:  &statsUpload{},
-		Metrics: mockMetrics{},
+	toml := `
+[input]
+name="statsInput"
+
+[[filter]]
+name="statsFilter"
+
+[[filter]]
+name="statsFilter"
+
+[[filter]]
+name="statsFilter"
+
+[output]
+name="statsOutput"
+procs=2
+fields=["field0"]
+
+[upload]
+name="statsUpload"
+
+[metrics]
+name="MockMetrics"
+`
+	components := baker.Components{
+		Inputs: []baker.InputDesc{{Name: "statsInput",
+			Config: &struct{}{},
+			New: func(baker.InputParams) (baker.Input, error) {
+				return statsInput{}, nil
+			},
+		}},
+		Filters: []baker.FilterDesc{{Name: "statsFilter",
+			Config: &struct{}{},
+			New: func(baker.FilterParams) (baker.Filter, error) {
+				return statsFilter{}, nil
+			},
+		}},
+		Outputs: []baker.OutputDesc{{Name: "statsOutput",
+			Config: &struct{}{},
+			New: func(baker.OutputParams) (baker.Output, error) {
+				return statsOutput{}, nil
+			},
+		}},
+		Uploads: []baker.UploadDesc{{Name: "statsUpload",
+			Config: &struct{}{},
+			New: func(baker.UploadParams) (baker.Upload, error) {
+				return statsUpload{}, nil
+			},
+		}},
+		Metrics: []baker.MetricsDesc{{
+			Name:   "MockMetrics",
+			Config: &struct{}{},
+			New: func(interface{}) (baker.MetricsClient, error) {
+				return make(mockMetrics, 0), nil
+			},
+		}},
+		FieldByName: func(n string) (baker.FieldIndex, bool) {
+			switch n {
+			case "field0":
+				return 0, true
+			case "field1":
+				return 1, true
+			}
+			return 0, false
+		},
+		FieldNames: []string{"field0", "field1"},
+	}
+
+	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tp, err := baker.NewTopologyFromConfig(cfg)
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	sd := baker.NewStatsDumper(tp)
@@ -205,11 +275,9 @@ func TestStatsDumper(t *testing.T) {
 	sd.SetWriter(buf)
 
 	stop := sd.Run()
-	// StatsDumper does not print anything the first second.
-	time.Sleep(1050 * time.Millisecond)
 	stop()
 
-	// Check std output.
+	// Check StatsDumper output.
 	golden := filepath.Join("testdata", t.Name()+".golden")
 	if *testutil.UpdateGolden {
 		ioutil.WriteFile(golden, buf.Bytes(), os.ModePerm)
@@ -217,11 +285,10 @@ func TestStatsDumper(t *testing.T) {
 	}
 	testutil.DiffWithGolden(t, buf.Bytes(), golden)
 
-	// Check published metrics. MockMetrics should contain each metric twice, the first
-	// collected after 1 second and the other after stop.
+	// Check published metrics.
 	for k, want := range wantMetrics {
 		mc := tp.Metrics.(mockMetrics)
-		get, ok := mc[k]
+		got, ok := mc[k]
 		if !ok {
 			t.Errorf("metric %v not found", k)
 			continue
@@ -229,28 +296,20 @@ func TestStatsDumper(t *testing.T) {
 
 		switch k[0] {
 		case 'c', 'd':
-			w := want.(int64)
-			g := get.([]int64)
-			if len(g) != 2 || g[0] != w || g[1] != w {
-				t.Errorf("metric %v: want %v, get %v", k[2:], w, g[0])
+			if !reflect.DeepEqual(got, want) {
+				t.Errorf("metric %v: got %v, want %v", k, got, want)
 			}
 		case 'g':
-			w := want.(float64)
-			g := get.([]float64)
-			if len(g) != 2 || g[0] != w || g[1] != w {
-				t.Errorf("metric %v: want %v, get %v", k[2:], w, g[0])
+			if !reflect.DeepEqual(got, want) {
+				t.Errorf("metric %v: got %v, want %v", k, got, want)
 			}
 		case 'h':
-			w := append(want.([]float64), want.([]float64)...)
-			g := get.([]float64)
-			if !reflect.DeepEqual(w, g) {
-				t.Errorf("metric %v: want %v, get %v", k[2:], w, g)
+			if !reflect.DeepEqual(got, want) {
+				t.Errorf("metric %v: got %v, want %v", k[2:], got, want)
 			}
 		case 't':
-			w := append(want.([]time.Duration), want.([]time.Duration)...)
-			g := get.([]time.Duration)
-			if !reflect.DeepEqual(w, g) {
-				t.Errorf("metric %v: want %v, get %v", k[2:], w, g)
+			if !reflect.DeepEqual(got, want) {
+				t.Errorf("metric %v: got %v, want %v", k[2:], got, want)
 			}
 		default:
 			t.Fatalf("wantMetrics map malformed")
@@ -260,7 +319,7 @@ func TestStatsDumper(t *testing.T) {
 
 func TestStatsDumperInvalidRecords(t *testing.T) {
 	// This test controls the correct integration of the StatsDumper with the
-	// Topology  by counting the number of invalid fields, that is the number
+	// Topology by counting the number of invalid fields, that is the number
 	// of fields which do not pass the user-specificed validation function, as
 	// reported by the StatsDumper, after the topology has finished its execution.
 	toml := `
