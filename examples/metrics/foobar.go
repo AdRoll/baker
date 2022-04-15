@@ -19,6 +19,8 @@ type fooBarMetricsCfg struct {
 	Port int
 }
 
+var _ baker.MetricsClient = fooBarMetrics{}
+
 type fooBarMetrics struct{}
 
 func newFooBarMetrics(icfg interface{}) (baker.MetricsClient, error) {
@@ -70,3 +72,8 @@ func (fooBarMetrics) Duration(name string, value time.Duration) {}
 // DurationWithTags adds a duration to an histogram and associates that
 // duration with a set of tags.
 func (fooBarMetrics) DurationWithTags(name string, value time.Duration, tags []string) {}
+
+// Close releases resources allocated by the metrics client such as
+// connections or files and flushes potentially buffered data that has not
+// been processed yet. Once closed the MetricsClient shoudld not be reused.
+func (fooBarMetrics) Close() error { return nil }

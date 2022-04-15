@@ -70,6 +70,11 @@ func newClient(icfg interface{}) (baker.MetricsClient, error) {
 	return dd, nil
 }
 
+// Close closes the underlying connection with the Datadog client.
+func (c *Client) Close() error {
+	return c.dog.Close()
+}
+
 // Gauge sets the value of a metric of type gauge. A Gauge represents a
 // single numerical data point that can arbitrarily go up and down.
 func (c *Client) Gauge(name string, value float64) {

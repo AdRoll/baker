@@ -89,6 +89,8 @@ func (statsUpload) Stats() baker.UploadStats {
 	}
 }
 
+var _ baker.MetricsClient = mockMetrics{}
+
 type mockMetrics map[string]interface{}
 
 func (m mockMetrics) Gauge(name string, value float64) {
@@ -129,6 +131,7 @@ func (m mockMetrics) RawCountWithTags(name string, value int64, tags []string)  
 func (m mockMetrics) DeltaCountWithTags(name string, delta int64, tags []string)       {}
 func (m mockMetrics) HistogramWithTags(name string, value float64, tags []string)      {}
 func (m mockMetrics) DurationWithTags(name string, value time.Duration, tags []string) {}
+func (m mockMetrics) Close() error                                                     { return nil }
 
 func TestStatsDumper(t *testing.T) {
 	// Check that the StatsDumper correctly reports the metrics gathered from the components.

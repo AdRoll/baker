@@ -17,6 +17,8 @@ package baker
 
 import (
 	"fmt"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Main runs the topology corresponding to the provided configuration.
@@ -48,6 +50,10 @@ func Main(cfg *Config) error {
 
 	// Stop the stats dumping goroutine (this also prints stats one last time).
 	stopStats()
+
+	if err := topology.Metrics.Close(); err != nil {
+		logrus.WithError(err).Warnf("error closing metrics client")
+	}
 
 	return topology.Error()
 }
