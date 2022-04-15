@@ -288,10 +288,9 @@ func (t *Topology) Start() {
 	}()
 }
 
-// Stop requires the currently running topology stop safely, but ASAP.
-//
-// The stop request is forwarded to the input that triggers the chain of stops
-// from the components (managed into Topology.Wait).
+// Stop requires the currently running topology to stop safely, but as soon as
+// possible. The stop request is handled by the input component. You can call
+// Wait() in order to wait for all records to have been processed.
 func (t *Topology) Stop() {
 	t.Input.Stop()
 }

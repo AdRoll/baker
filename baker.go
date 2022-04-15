@@ -8,7 +8,7 @@ Using the functions in the package one can build and run a Topology, reading its
 from a TOML file.
 
 The package doesn't include any component. They can be found in their respective packages
-(baker/input, baker/filter, baker/output and baker/upload).
+(./input, ./filter, ./output and ./upload).
 
 The README file in the project repository provides additional information and examples:
 https://github.com/AdRoll/baker/blob/main/README.md
