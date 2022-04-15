@@ -167,7 +167,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 			return nil, fmt.Errorf("invalid field: %q", cfg.Output.Sharding)
 		}
 
-		tp.shard, ok = cfg.shardingFuncs[field]
+		tp.shard = cfg.shardingFuncs[field]
 		if tp.shard == nil {
 			return nil, fmt.Errorf("field not supported for sharding: %q", cfg.Output.Sharding)
 		}
