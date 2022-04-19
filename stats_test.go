@@ -2,11 +2,13 @@ package baker_test
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"math"
 	"os"
 	"path/filepath"
 	"reflect"
+	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -89,112 +91,136 @@ func (statsUpload) Stats() baker.UploadStats {
 	}
 }
 
-type mockMetrics map[string]interface{}
+var _ baker.MetricsClient = &mockMetrics{}
 
-func (m mockMetrics) Gauge(name string, value float64) {
-	if _, ok := m["g:"+name]; !ok {
-		m["g:"+name] = []float64{}
-	}
-	m["g:"+name] = append(m["g:"+name].([]float64), value)
-}
-
-func (m mockMetrics) RawCount(name string, value int64) {
-	if _, ok := m["c:"+name]; !ok {
-		m["c:"+name] = []int64{}
-	}
-	m["c:"+name] = append(m["c:"+name].([]int64), value)
-}
-func (m mockMetrics) DeltaCount(name string, delta int64) {
-	if _, ok := m["d:"+name]; !ok {
-		m["d:"+name] = []int64{}
-	}
-	m["d:"+name] = append(m["d:"+name].([]int64), delta)
-}
-func (m mockMetrics) Histogram(name string, value float64) {
-	if _, ok := m["h:"+name]; !ok {
-		m["h:"+name] = []float64{}
-	}
-	m["h:"+name] = append(m["h:"+name].([]float64), value)
-}
-func (m mockMetrics) Duration(name string, value time.Duration) {
-	if _, ok := m["t:"+name]; !ok {
-		m["t:"+name] = []time.Duration{}
-	}
-	m["t:"+name] = append(m["t:"+name].([]time.Duration), value)
+// mockMetrics is a metrics client that stores all single calls made to itself,
+// and sort them so that it's easy to compare output in a mechanical way.
+type mockMetrics struct {
+	buf bytes.Buffer
 }
 
-// skip
-func (m mockMetrics) GaugeWithTags(name string, value float64, tags []string)          {}
-func (m mockMetrics) RawCountWithTags(name string, value int64, tags []string)         {}
-func (m mockMetrics) DeltaCountWithTags(name string, delta int64, tags []string)       {}
-func (m mockMetrics) HistogramWithTags(name string, value float64, tags []string)      {}
-func (m mockMetrics) DurationWithTags(name string, value time.Duration, tags []string) {}
+// showMetrics returns the api calls which text representation has the provided
+// prefix, or all of them if the prefix is "".
+// NOTE: ignore go runtime metrics.
+func (m *mockMetrics) showMetrics(prefix string) []string {
+	keep := make([]string, 0)
+	for _, s := range strings.Split(m.buf.String(), "\n") {
+		if len(strings.TrimSpace(s)) != 0 && !strings.Contains(s, "name=runtime.") {
+			if len(prefix) == 0 || strings.HasPrefix(s, prefix) {
+				keep = append(keep, s)
+			}
+		}
+	}
+
+	sort.Strings(keep)
+	return keep
+}
+
+func (m *mockMetrics) Gauge(name string, value float64) {
+	fmt.Fprintf(&m.buf, "gauge|name=%s|value=%v\n", name, value)
+}
+func (m *mockMetrics) RawCount(name string, value int64) {
+	fmt.Fprintf(&m.buf, "rawcount|name=%s|value=%v\n", name, value)
+}
+func (m *mockMetrics) DeltaCount(name string, delta int64) {
+	fmt.Fprintf(&m.buf, "delta|name=%s|value=%v\n", name, delta)
+}
+func (m *mockMetrics) Histogram(name string, value float64) {
+	fmt.Fprintf(&m.buf, "hist|name=%s|value=%v\n", name, value)
+}
+func (m *mockMetrics) Duration(name string, value time.Duration) {
+	fmt.Fprintf(&m.buf, "duration|name=%s|value=%v\n", name, value)
+}
+
+func (m *mockMetrics) GaugeWithTags(name string, value float64, tags []string) {
+	for _, t := range tags {
+		fmt.Fprintf(&m.buf, "gauge|name=%s|value=%v|tag=%s\n", name, value, t)
+	}
+}
+func (m *mockMetrics) RawCountWithTags(name string, value int64, tags []string) {
+	for _, t := range tags {
+		fmt.Fprintf(&m.buf, "rawcount|name=%s|value=%v|tag=%s\n", name, value, t)
+	}
+}
+func (m *mockMetrics) DeltaCountWithTags(name string, delta int64, tags []string) {
+	for _, t := range tags {
+		fmt.Fprintf(&m.buf, "delta|name=%s|value=%v|tag=%s\n", name, delta, t)
+	}
+}
+func (m *mockMetrics) HistogramWithTags(name string, value float64, tags []string) {
+	for _, t := range tags {
+		fmt.Fprintf(&m.buf, "hist|name=%s|value=%v|tag=%s\n", name, value, t)
+	}
+}
+func (m *mockMetrics) DurationWithTags(name string, value time.Duration, tags []string) {
+	for _, t := range tags {
+		fmt.Fprintf(&m.buf, "duration|name=%s|value=%v|tag=%s\n", name, value, t)
+	}
+}
+func (m *mockMetrics) Close() error { return nil }
 
 func TestStatsDumper(t *testing.T) {
-	// Check that the StatsDumper correctly reports the metrics gathered from the components.
-	// The tests check both the reports printed to the standard output and metrics published to the MetricClient.
+	// Check that the StatsDumper correctly reports the metrics gathered from
+	// the components. The tests check both the reports printed to the standard
+	// output and metrics published to the MetricClient.
+	toml := `
+[input]
+name="statsInput"
 
-	wantMetrics := map[string]interface{}{
-		// default published metrics
-		"c:processed_lines": int64(53 + 53),
-		"c:uploads":         int64(17),
-		"c:upload_errors":   int64(3),
-		"c:error_lines":     int64(0 + 0 + (8 + 8 + 8) + (7 + 7)), // invalid + parseErrors + filtered + outErrors
-		"c:filtered_lines":  int64(8 + 8 + 8),
+[[filter]]
+name="statsFilter"
 
-		// custom input metric
-		"c:input.raw_count":     int64(10),
-		"d:input.delta_counter": int64(1),
-		"g:input.gauge":         float64(math.Pi),
-		"h:input.hist":          []float64{1, 2, 3},
-		"t:input.timings": []time.Duration{
-			1 * time.Second, 10 * time.Second, 100 * time.Second,
-		},
+[[filter]]
+name="statsFilter"
 
-		// custom filter metric
-		"c:filter.raw_count":     int64(4 + 4 + 4),
-		"d:filter.delta_counter": int64(3 + 3 + 3),
-		"g:filter.gauge":         float64((math.Pi*2 + math.Pi*2 + math.Pi*2) / 3),
-		"h:filter.hist": []float64{
-			4, 5, 6, 7, // first filter
-			4, 5, 6, 7, // second filter
-			4, 5, 6, 7, // third filter
-		},
-		"t:filter.timings": []time.Duration{
-			1 * time.Minute, 10 * time.Minute, 100 * time.Minute, // first filter
-			1 * time.Minute, 10 * time.Minute, 100 * time.Minute, // second filter
-			1 * time.Minute, 10 * time.Minute, 100 * time.Minute, // third filter
-		},
+[[filter]]
+name="statsFilter"
 
-		// custom output metrics
-		"c:output.raw_count":     int64(3 + 3),
-		"d:output.delta_counter": int64(7 + 7),
-		"g:output.gauge":         float64((math.Pi*3 + math.Pi*3) / 2),
-		"h:output.hist": []float64{
-			8, 9, 10, 11, // first output
-			8, 9, 10, 11, // second output
-		},
-		"t:output.timings": []time.Duration{
-			1 * time.Hour, 10 * time.Hour, 100 * time.Hour, // first output
-			1 * time.Hour, 10 * time.Hour, 100 * time.Hour, // second output
-		},
+[output]
+name="statsOutput"
+procs=2
+fields=["field0"]
 
-		// custom upload metric
-		"c:upload.raw_count":     int64(12),
-		"d:upload.delta_counter": int64(9),
-		"g:upload.gauge":         float64(math.Pi * 4),
-		"h:upload.hist":          []float64{8, 9, 10, 11},
-		"t:upload.timings": []time.Duration{
-			1 * time.Microsecond, 10 * time.Microsecond, 100 * time.Microsecond,
-		},
+[upload]
+name="statsUpload"
+
+[metrics]
+name="MockMetrics"
+`
+	components := baker.Components{
+		Inputs: []baker.InputDesc{{Name: "statsInput",
+			Config: &struct{}{},
+			New:    func(baker.InputParams) (baker.Input, error) { return statsInput{}, nil },
+		}},
+		Filters: []baker.FilterDesc{{Name: "statsFilter",
+			Config: &struct{}{},
+			New:    func(baker.FilterParams) (baker.Filter, error) { return statsFilter{}, nil },
+		}},
+		Outputs: []baker.OutputDesc{{Name: "statsOutput",
+			Config: &struct{}{},
+			New:    func(baker.OutputParams) (baker.Output, error) { return statsOutput{}, nil },
+		}},
+		Uploads: []baker.UploadDesc{{Name: "statsUpload",
+			Config: &struct{}{},
+			New:    func(baker.UploadParams) (baker.Upload, error) { return statsUpload{}, nil },
+		}},
+		Metrics: []baker.MetricsDesc{{
+			Name:   "MockMetrics",
+			Config: &struct{}{},
+			New:    func(interface{}) (baker.MetricsClient, error) { return &mockMetrics{}, nil },
+		}},
+		FieldByName: func(n string) (baker.FieldIndex, bool) { return 0, true },
+		FieldNames:  []string{"foo", "bar"},
 	}
 
-	tp := &baker.Topology{
-		Input:   &statsInput{},
-		Filters: []baker.Filter{&statsFilter{}, &statsFilter{}, &statsFilter{}},
-		Output:  []baker.Output{&statsOutput{}, &statsOutput{}},
-		Upload:  &statsUpload{},
-		Metrics: mockMetrics{},
+	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tp, err := baker.NewTopologyFromConfig(cfg)
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	sd := baker.NewStatsDumper(tp)
@@ -202,64 +228,35 @@ func TestStatsDumper(t *testing.T) {
 	sd.SetWriter(buf)
 
 	stop := sd.Run()
-	// StatsDumper does not print anything the first second.
-	time.Sleep(1050 * time.Millisecond)
 	stop()
 
-	// Check std output.
-	golden := filepath.Join("testdata", t.Name()+".golden")
+	// Check StatsDumper output. We first what, by default, gets written to
+	// standard output.
+	golden := filepath.Join("testdata", t.Name()+".stdout.golden")
 	if *testutil.UpdateGolden {
 		ioutil.WriteFile(golden, buf.Bytes(), os.ModePerm)
 		t.Logf("updated: %q", golden)
 	}
 	testutil.DiffWithGolden(t, buf.Bytes(), golden)
 
-	// Check published metrics. MockMetrics should contain each metric twice, the first
-	// collected after 1 second and the other after stop.
-	for k, want := range wantMetrics {
-		mc := tp.Metrics.(mockMetrics)
-		get, ok := mc[k]
-		if !ok {
-			t.Errorf("metric %v not found", k)
-			continue
-		}
-
-		switch k[0] {
-		case 'c', 'd':
-			w := want.(int64)
-			g := get.([]int64)
-			if len(g) != 2 || g[0] != w || g[1] != w {
-				t.Errorf("metric %v: want %v, get %v", k[2:], w, g[0])
-			}
-		case 'g':
-			w := want.(float64)
-			g := get.([]float64)
-			if len(g) != 2 || g[0] != w || g[1] != w {
-				t.Errorf("metric %v: want %v, get %v", k[2:], w, g[0])
-			}
-		case 'h':
-			w := append(want.([]float64), want.([]float64)...)
-			g := get.([]float64)
-			if !reflect.DeepEqual(w, g) {
-				t.Errorf("metric %v: want %v, get %v", k[2:], w, g)
-			}
-		case 't':
-			w := append(want.([]time.Duration), want.([]time.Duration)...)
-			g := get.([]time.Duration)
-			if !reflect.DeepEqual(w, g) {
-				t.Errorf("metric %v: want %v, get %v", k[2:], w, g)
-			}
-		default:
-			t.Fatalf("wantMetrics map malformed")
-		}
+	// We then check the metrics the StatsDumper sent to the configured metrics
+	// client.
+	mc := tp.Metrics.(*mockMetrics)
+	golden = filepath.Join("testdata", t.Name()+".metrics.golden")
+	out := []byte(strings.Join(mc.showMetrics(""), "\n"))
+	if *testutil.UpdateGolden {
+		ioutil.WriteFile(golden, out, os.ModePerm)
+		t.Logf("updated: %q", golden)
 	}
+	testutil.DiffWithGolden(t, out, golden)
 }
 
 func TestStatsDumperInvalidRecords(t *testing.T) {
 	// This test controls the correct integration of the StatsDumper with the
-	// Topology  by counting the number of invalid fields, that is the number
-	// of fields which do not pass the user-specificed validation function, as
-	// reported by the StatsDumper, after the topology has finished its execution.
+	// Topology by counting the number of invalid fields, that is the number of
+	// fields which do not pass the user-specificed validation function, as
+	// reported by the StatsDumper, after the topology has finished its
+	// execution.
 	toml := `
 [input]
 name="logline"
@@ -299,7 +296,7 @@ name="MockMetrics"
 			Name:   "MockMetrics",
 			Config: &struct{}{},
 			New: func(interface{}) (baker.MetricsClient, error) {
-				return make(mockMetrics, 0), nil
+				return &mockMetrics{}, nil
 			},
 		}},
 	}
@@ -341,8 +338,6 @@ name="MockMetrics"
 		t.Fatal(err)
 	}
 
-	// The StatsDumper needs at least one second to print anything.
-	time.Sleep(1050 * time.Millisecond)
 	stop()
 
 	// Clean the stats dumper output.
@@ -360,21 +355,15 @@ name="MockMetrics"
 		t.Errorf("StatsDumper validation error line doesn't contain %q\nline:\n\t%q", out[1], wantS)
 	}
 
-	// Check published metrics.
-	mc := topo.Metrics.(mockMetrics)
-	wantN := int64(4)
-	v, ok := mc["c:error_lines"]
-	if !ok || v.([]int64)[0] != wantN || v.([]int64)[1] != wantN {
-		t.Errorf("want %v, get %v", wantN, v.([]int64)[0])
+	// Check published 'error_lines' metrics.
+	mc := topo.Metrics.(*mockMetrics)
+	got := mc.showMetrics("rawcount|name=error_lines")
+	want := []string{
+		"rawcount|name=error_lines.field0|value=2",
+		"rawcount|name=error_lines.field1|value=2",
+		"rawcount|name=error_lines|value=4",
 	}
-	wantN = int64(2)
-	v, ok = mc["c:error_lines.field0"]
-	if !ok || v.([]int64)[0] != wantN || v.([]int64)[1] != wantN {
-		t.Errorf("want %v, get %v", wantN, v.([]int64)[0])
-	}
-	wantN = int64(2)
-	v, ok = mc["c:error_lines.field1"]
-	if !ok || v.([]int64)[0] != wantN || v.([]int64)[1] != wantN {
-		t.Errorf("want %v, get %v", wantN, v.([]int64)[0])
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("error lines =\n%+v\nwant =\n%+v", got, want)
 	}
 }

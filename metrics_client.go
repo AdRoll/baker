@@ -53,4 +53,9 @@ type MetricsClient interface {
 	// DurationWithTags adds a duration to an histogram and associates that
 	// duration with a set of tags.
 	DurationWithTags(name string, value time.Duration, tags []string)
+
+	// Close releases resources allocated by the metrics client such as
+	// connections or files and flushes potentially buffered data that has not
+	// been processed yet. Once closed the MetricsClient shoudld not be reused.
+	Close() error
 }

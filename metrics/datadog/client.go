@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DataDog/datadog-go/statsd"
+	"github.com/DataDog/datadog-go/v5/statsd"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/AdRoll/baker"
@@ -50,12 +50,13 @@ func newClient(icfg interface{}) (baker.MetricsClient, error) {
 		cfg.Host = "127.0.0.1:8125"
 	}
 
-	dog, err := statsd.NewBuffered(cfg.Host, 256)
+	dog, err := statsd.New(cfg.Host,
+		statsd.WithNamespace(cfg.Prefix),
+		statsd.WithTags(cfg.Tags),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("can't create datadog metrics client: %s", err)
 	}
-	dog.Namespace = cfg.Prefix
-	dog.Tags = cfg.Tags
 
 	dd := &Client{
 		dog:      dog,
@@ -68,6 +69,11 @@ func newClient(icfg interface{}) (baker.MetricsClient, error) {
 	}
 
 	return dd, nil
+}
+
+// Close closes the underlying connection with the Datadog client.
+func (c *Client) Close() error {
+	return c.dog.Close()
 }
 
 // Gauge sets the value of a metric of type gauge. A Gauge represents a

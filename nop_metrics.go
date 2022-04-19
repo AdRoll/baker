@@ -2,6 +2,8 @@ package baker
 
 import "time"
 
+var _ MetricsClient = NopMetrics{}
+
 // NopMetrics implements a metrics.Client that does nothing.
 type NopMetrics struct{}
 
@@ -15,3 +17,4 @@ func (NopMetrics) Histogram(name string, value float64)                         
 func (NopMetrics) HistogramWithTags(name string, value float64, tags []string)      {}
 func (NopMetrics) Duration(name string, value time.Duration)                        {}
 func (NopMetrics) DurationWithTags(name string, value time.Duration, tags []string) {}
+func (NopMetrics) Close() error                                                     { return nil }

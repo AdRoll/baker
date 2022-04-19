@@ -8,7 +8,7 @@ Using the functions in the package one can build and run a Topology, reading its
 from a TOML file.
 
 The package doesn't include any component. They can be found in their respective packages
-(baker/input, baker/filter, baker/output and baker/upload).
+(./input, ./filter, ./output and ./upload).
 
 The README file in the project repository provides additional information and examples:
 https://github.com/AdRoll/baker/blob/main/README.md
@@ -17,6 +17,8 @@ package baker
 
 import (
 	"fmt"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Main runs the topology corresponding to the provided configuration.
@@ -48,6 +50,10 @@ func Main(cfg *Config) error {
 
 	// Stop the stats dumping goroutine (this also prints stats one last time).
 	stopStats()
+
+	if err := topology.Metrics.Close(); err != nil {
+		logrus.WithError(err).Warnf("error closing metrics client")
+	}
 
 	return topology.Error()
 }

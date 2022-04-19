@@ -1,13 +1,19 @@
 package datadog
 
 import (
+	"bytes"
+	"fmt"
+	"io/ioutil"
 	"net"
-	"reflect"
+	"os"
+	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/AdRoll/baker/testutil"
 	"github.com/sirupsen/logrus"
 )
 
@@ -81,52 +87,44 @@ func TestClientMetrics(t *testing.T) {
 		c.RawCountWithTags("raw-count-with-tags", 18, []string{"tag5:5", "tag6:6"})
 
 		logrus.WithFields(logrus.Fields{"field1": 27, "field2": "spiral"}).Warn("warn log message")
-
+		if err := c.Close(); err != nil {
+			t.Fatalf("close error: %v", err)
+		}
 		time.Sleep(500 * time.Millisecond)
 		close(quit)
 		<-done
 
-		want := []string{"prefix.delta:1|c|#basetag1:abc,basetag2:xyz",
-			"prefix.delta-with-tags:2|c|#basetag1:abc,basetag2:xyz,tag1:1,tag2:2",
-			"prefix.duration:3.000000|ms|#basetag1:abc,basetag2:xyz",
-			"prefix.duration-with-tags:4.000000|ms|#basetag1:abc,basetag2:xyz,tag2:2,tag3:3",
-			"prefix.gauge:5|g|#basetag1:abc,basetag2:xyz",
-			"prefix.gauge-with-tags:6|g|#basetag1:abc,basetag2:xyz,tag3:3,tag4:4",
-			"prefix.histogram:7|h|#basetag1:abc,basetag2:xyz",
-			"prefix.histogram:8|h|#basetag1:abc,basetag2:xyz",
-			"prefix.histogram:9|h|#basetag1:abc,basetag2:xyz",
-			"prefix.histogram:10|h|#basetag1:abc,basetag2:xyz",
-			"prefix.histogram:11|h|#basetag1:abc,basetag2:xyz",
-			"prefix.histogram-with-tags:12|h|#basetag1:abc,basetag2:xyz,tag4:4,tag5:5",
-			"prefix.histogram-with-tags:13|h|#basetag1:abc,basetag2:xyz,tag4:4,tag5:5",
-			"prefix.histogram-with-tags:14|h|#basetag1:abc,basetag2:xyz,tag4:4,tag5:5",
-			"prefix.histogram-with-tags:15|h|#basetag1:abc,basetag2:xyz,tag4:4,tag5:5",
-			"prefix.histogram-with-tags:16|h|#basetag1:abc,basetag2:xyz,tag4:4,tag5:5",
-			"prefix.raw-count:17|c|#basetag1:abc,basetag2:xyz",
-			"prefix.raw-count-with-tags:18|c|#basetag1:abc,basetag2:xyz,tag5:5,tag6:6",
-		}
-
-		// It's unlikely, but still possible, that we received multiple packets
-		// But we anyway want to split the packets on '\n' and remove them.
+		// It's unlikely, but still possible, that we received multiple packets,
+		// in which case we need to split them.
+		var re = regexp.MustCompile(`\|c:[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}`)
 		var got []string
 		for _, p := range packets {
 			for _, s := range strings.Split(p, "\n") {
-				// Look for the tag section and order tags
-				pos := strings.Index(s, "|#")
-				if pos == -1 {
-					t.Errorf("didn't find tag section in %q", s)
+				if strings.TrimSpace(s) == "" {
+					continue
 				}
+				// Remove the tag id added by datadog client on each tag.
+				s := re.ReplaceAllString(s, "")
+				// Look for the tag section and order tags so we get a deterministic output
+				pos := strings.Index(s, "|#")
 				tags := strings.Split(s[pos+2:], ",")
 				sort.Strings(tags)
-
-				m := s[:pos] + "|#" + strings.Join(tags, ",")
-				got = append(got, m)
+				got = append(got, s[:pos]+"|#"+strings.Join(tags, ","))
 			}
 		}
+		sort.Strings(got)
 
-		if !reflect.DeepEqual(got, want) {
-			t.Errorf("received %v, want %v", packets, want)
+		buf := bytes.Buffer{}
+		for _, l := range got {
+			fmt.Fprintln(&buf, l)
 		}
+
+		golden := filepath.Join("testdata", "TestClientMetrics.metrics.golden")
+		if *testutil.UpdateGolden {
+			ioutil.WriteFile(golden, buf.Bytes(), os.ModePerm)
+			t.Logf("updated: %q", golden)
+		}
+		testutil.DiffWithGolden(t, buf.Bytes(), golden)
 	})
 
 	t.Run("logs", func(t *testing.T) {
@@ -162,12 +160,15 @@ func TestClientMetrics(t *testing.T) {
 			SendLogs: true,
 		}
 
-		_, err := newClient(cfg)
+		c, err := newClient(cfg)
 		if err != nil {
 			t.Fatalf("can't create datadog metrics client: %v", err)
 		}
 
 		logrus.WithFields(logrus.Fields{"field1": 27, "field2": "spiral"}).Warn("warn log message")
+		if err := c.Close(); err != nil {
+			t.Fatalf("close error: %v", err)
+		}
 
 		time.Sleep(500 * time.Millisecond)
 		close(quit)

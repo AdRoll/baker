@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 
@@ -19,6 +21,8 @@ type Topology struct {
 	Output  []Output
 	Upload  Upload
 	Metrics MetricsClient
+
+	filterNames []string // univocal filter names
 
 	inerr     atomic.Value
 	inch      chan *Data
@@ -110,7 +114,9 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 			return nil, fmt.Errorf("error creating filter: %v", err)
 		}
 		tp.Filters = append(tp.Filters, fil)
+		tp.filterNames = append(tp.filterNames, strings.ToLower(cfg.Filter[idx].Name))
 	}
+	makeUnivocal(tp.filterNames)
 
 	// * Create outputs
 	if len(cfg.Output.Fields) == 0 && !tp.rawOutput {
@@ -161,7 +167,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 			return nil, fmt.Errorf("invalid field: %q", cfg.Output.Sharding)
 		}
 
-		tp.shard, ok = cfg.shardingFuncs[field]
+		tp.shard = cfg.shardingFuncs[field]
 		if tp.shard == nil {
 			return nil, fmt.Errorf("field not supported for sharding: %q", cfg.Output.Sharding)
 		}
@@ -282,10 +288,9 @@ func (t *Topology) Start() {
 	}()
 }
 
-// Stop requires the currently running topology stop safely, but ASAP.
-//
-// The stop request is forwarded to the input that triggers the chain of stops
-// from the components (managed into Topology.Wait).
+// Stop requires the currently running topology to stop safely, but as soon as
+// possible. The stop request is handled by the input component. You can call
+// Wait() in order to wait for all records to have been processed.
 func (t *Topology) Stop() {
 	t.Input.Stop()
 }
@@ -390,5 +395,27 @@ func (t *Topology) runFilterChain() {
 		// Give back memory to the input component; it might be able to
 		// recycle it, thus avoiding generating too much garbage
 		t.Input.FreeMem(bakerData)
+	}
+}
+
+// makeUnivocal ensure each string in slist is univocal, appending '_2' to
+// duplicates, '_3' to triplicates, and so on. Non-repeated strings are not
+// modified, as well as the first repeated strings.
+//
+// NOTE: this is a best effort, we don't try to deal with tricky corner cases.
+func makeUnivocal(slist []string) {
+	// First pass to find duplicates.
+	m := make(map[string]int)
+	for _, s := range slist {
+		m[s]++
+	}
+
+	// Second pass to rename repeated names. Start from the back so we can use
+	// the total number of repeated elements as index.
+	for i := len(slist) - 1; i >= 0; i-- {
+		if idx := m[slist[i]] - 1; idx > 0 {
+			m[slist[i]]--
+			slist[i] += "_" + strconv.Itoa(idx+1)
+		}
 	}
 }

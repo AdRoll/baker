@@ -2,6 +2,7 @@ package baker
 
 import (
 	"net/url"
+	"reflect"
 	"sync"
 	"testing"
 	"time"
@@ -69,5 +70,47 @@ func TestRunFilterChainMetadata(t *testing.T) {
 			"last_modified": lastModified,
 			"url":           url,
 		},
+	}
+}
+
+func Test_makeUnivocal(t *testing.T) {
+	tests := []struct {
+		name string
+		s    []string
+		want []string
+	}{
+		{
+			name: "empty slice",
+			s:    []string{},
+			want: []string{},
+		},
+		{
+			name: "already univocal",
+			s:    []string{"a", "b", "c"},
+			want: []string{"a", "b", "c"},
+		},
+		{
+			name: "duplicate",
+			s:    []string{"a", "b", "b"},
+			want: []string{"a", "b", "b_2"},
+		},
+		{
+			name: "all similar",
+			s:    []string{"a", "a", "a"},
+			want: []string{"a", "a_2", "a_3"},
+		},
+		{
+			name: "real world case",
+			s:    []string{"string_match", "external_match", "not_null", "not_null", "url_escape", "regex_match", "regex_match", "not_null"},
+			want: []string{"string_match", "external_match", "not_null", "not_null_2", "url_escape", "regex_match", "regex_match_2", "not_null_3"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			makeUnivocal(tt.s)
+			if !reflect.DeepEqual(tt.s, tt.want) {
+				t.Errorf("got %+v, want %+v", tt.s, tt.want)
+			}
+		})
 	}
 }
