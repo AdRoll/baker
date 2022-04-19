@@ -2,13 +2,11 @@ package baker_test
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"math"
 	"os"
 	"path/filepath"
 	"reflect"
-	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -91,74 +89,6 @@ func (statsUpload) Stats() baker.UploadStats {
 	}
 }
 
-var _ baker.MetricsClient = &mockMetrics{}
-
-// mockMetrics is a metrics client that stores all single calls made to itself,
-// and sort them so that it's easy to compare output in a mechanical way.
-type mockMetrics struct {
-	buf bytes.Buffer
-}
-
-// showMetrics returns the api calls which text representation has the provided
-// prefix, or all of them if the prefix is "".
-// NOTE: ignore go runtime metrics.
-func (m *mockMetrics) showMetrics(prefix string) []string {
-	keep := make([]string, 0)
-	for _, s := range strings.Split(m.buf.String(), "\n") {
-		if len(strings.TrimSpace(s)) != 0 && !strings.Contains(s, "name=runtime.") {
-			if len(prefix) == 0 || strings.HasPrefix(s, prefix) {
-				keep = append(keep, s)
-			}
-		}
-	}
-
-	sort.Strings(keep)
-	return keep
-}
-
-func (m *mockMetrics) Gauge(name string, value float64) {
-	fmt.Fprintf(&m.buf, "gauge|name=%s|value=%v\n", name, value)
-}
-func (m *mockMetrics) RawCount(name string, value int64) {
-	fmt.Fprintf(&m.buf, "rawcount|name=%s|value=%v\n", name, value)
-}
-func (m *mockMetrics) DeltaCount(name string, delta int64) {
-	fmt.Fprintf(&m.buf, "delta|name=%s|value=%v\n", name, delta)
-}
-func (m *mockMetrics) Histogram(name string, value float64) {
-	fmt.Fprintf(&m.buf, "hist|name=%s|value=%v\n", name, value)
-}
-func (m *mockMetrics) Duration(name string, value time.Duration) {
-	fmt.Fprintf(&m.buf, "duration|name=%s|value=%v\n", name, value)
-}
-
-func (m *mockMetrics) GaugeWithTags(name string, value float64, tags []string) {
-	for _, t := range tags {
-		fmt.Fprintf(&m.buf, "gauge|name=%s|value=%v|tag=%s\n", name, value, t)
-	}
-}
-func (m *mockMetrics) RawCountWithTags(name string, value int64, tags []string) {
-	for _, t := range tags {
-		fmt.Fprintf(&m.buf, "rawcount|name=%s|value=%v|tag=%s\n", name, value, t)
-	}
-}
-func (m *mockMetrics) DeltaCountWithTags(name string, delta int64, tags []string) {
-	for _, t := range tags {
-		fmt.Fprintf(&m.buf, "delta|name=%s|value=%v|tag=%s\n", name, delta, t)
-	}
-}
-func (m *mockMetrics) HistogramWithTags(name string, value float64, tags []string) {
-	for _, t := range tags {
-		fmt.Fprintf(&m.buf, "hist|name=%s|value=%v|tag=%s\n", name, value, t)
-	}
-}
-func (m *mockMetrics) DurationWithTags(name string, value time.Duration, tags []string) {
-	for _, t := range tags {
-		fmt.Fprintf(&m.buf, "duration|name=%s|value=%v|tag=%s\n", name, value, t)
-	}
-}
-func (m *mockMetrics) Close() error { return nil }
-
 func TestStatsDumper(t *testing.T) {
 	// Check that the StatsDumper correctly reports the metrics gathered from
 	// the components. The tests check both the reports printed to the standard
@@ -204,11 +134,7 @@ name="MockMetrics"
 			Config: &struct{}{},
 			New:    func(baker.UploadParams) (baker.Upload, error) { return statsUpload{}, nil },
 		}},
-		Metrics: []baker.MetricsDesc{{
-			Name:   "MockMetrics",
-			Config: &struct{}{},
-			New:    func(interface{}) (baker.MetricsClient, error) { return &mockMetrics{}, nil },
-		}},
+		Metrics:     []baker.MetricsDesc{testutil.MockMetricsDesc},
 		FieldByName: func(n string) (baker.FieldIndex, bool) { return 0, true },
 		FieldNames:  []string{"foo", "bar"},
 	}
@@ -241,9 +167,9 @@ name="MockMetrics"
 
 	// We then check the metrics the StatsDumper sent to the configured metrics
 	// client.
-	mc := tp.Metrics.(*mockMetrics)
+	mc := tp.Metrics.(*testutil.MockMetrics)
 	golden = filepath.Join("testdata", t.Name()+".metrics.golden")
-	out := []byte(strings.Join(mc.showMetrics(""), "\n"))
+	out := []byte(strings.Join(mc.PublishedMetrics(""), "\n"))
 	if *testutil.UpdateGolden {
 		ioutil.WriteFile(golden, out, os.ModePerm)
 		t.Logf("updated: %q", golden)
@@ -292,13 +218,7 @@ name="MockMetrics"
 			}
 			return true, 0
 		},
-		Metrics: []baker.MetricsDesc{{
-			Name:   "MockMetrics",
-			Config: &struct{}{},
-			New: func(interface{}) (baker.MetricsClient, error) {
-				return &mockMetrics{}, nil
-			},
-		}},
+		Metrics: []baker.MetricsDesc{testutil.MockMetricsDesc},
 	}
 
 	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
@@ -356,8 +276,8 @@ name="MockMetrics"
 	}
 
 	// Check published 'error_lines' metrics.
-	mc := topo.Metrics.(*mockMetrics)
-	got := mc.showMetrics("rawcount|name=error_lines")
+	mc := topo.Metrics.(*testutil.MockMetrics)
+	got := mc.PublishedMetrics("rawcount|name=error_lines")
 	want := []string{
 		"rawcount|name=error_lines.field0|value=2",
 		"rawcount|name=error_lines.field1|value=2",
