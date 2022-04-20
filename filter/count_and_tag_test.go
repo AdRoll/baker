@@ -20,7 +20,7 @@ func TestCountAndTag(t *testing.T) {
 		{
 			metric:      "some_metric",
 			field:       "field",
-			defTagValue: "",
+			defTagValue: "<some_default>",
 			fieldValues: []string{"foo", "bar", "baz", "foo"},
 			want: []string{
 				"delta|name=some_metric|value=1|tag=field:bar",
@@ -32,24 +32,24 @@ func TestCountAndTag(t *testing.T) {
 		{
 			metric:      "some_metric",
 			field:       "field",
-			defTagValue: "",
+			defTagValue: "<some_default>",
 			fieldValues: []string{"", "", "", "foo"},
 			want: []string{
-				"delta|name=some_metric|value=1",
-				"delta|name=some_metric|value=1",
-				"delta|name=some_metric|value=1",
+				"delta|name=some_metric|value=1|tag=field:<some_default>",
+				"delta|name=some_metric|value=1|tag=field:<some_default>",
+				"delta|name=some_metric|value=1|tag=field:<some_default>",
 				"delta|name=some_metric|value=1|tag=field:foo",
 			},
 		},
 		{
 			metric:      "some_metric",
 			field:       "field",
-			defTagValue: "<none>",
+			defTagValue: "<some_default>",
 			fieldValues: []string{"", "", "", "foo"},
 			want: []string{
-				"delta|name=some_metric|value=1|tag=field:<none>",
-				"delta|name=some_metric|value=1|tag=field:<none>",
-				"delta|name=some_metric|value=1|tag=field:<none>",
+				"delta|name=some_metric|value=1|tag=field:<some_default>",
+				"delta|name=some_metric|value=1|tag=field:<some_default>",
+				"delta|name=some_metric|value=1|tag=field:<some_default>",
 				"delta|name=some_metric|value=1|tag=field:foo",
 			},
 		},
@@ -74,9 +74,9 @@ func TestCountAndTag(t *testing.T) {
 					},
 					Metrics: &metrics,
 					DecodedConfig: &CountAndTagConfig{
-						Metric:          tt.metric,
-						Field:           tt.field,
-						DefaultTagValue: tt.defTagValue,
+						Metric:       tt.metric,
+						Field:        tt.field,
+						DefaultValue: tt.defTagValue,
 					},
 				},
 			}
