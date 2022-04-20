@@ -57,23 +57,22 @@ func TestCountAndTag(t *testing.T) {
 		// error
 		{
 			metric:      "some_metric",
-			field:       "something",
+			field:       "something", // unknown field
 			defTagValue: "<none>",
 			fieldValues: []string{""},
 			wantError:   true,
 		},
 	}
 
-	// Only 'field' is a valid field value
-	fieldByName := func(name string) (baker.FieldIndex, bool) { return 0, name == "field" }
-
 	for _, tt := range tests {
 		t.Run("", func(t *testing.T) {
 			metrics := testutil.MockMetrics{}
 			params := baker.FilterParams{
 				ComponentParams: baker.ComponentParams{
-					FieldByName: fieldByName,
-					Metrics:     &metrics,
+					FieldByName: func(name string) (baker.FieldIndex, bool) {
+						return 0, name == "field" // Only 'field' exists
+					},
+					Metrics: &metrics,
 					DecodedConfig: &CountAndTagConfig{
 						Metric:          tt.metric,
 						Field:           tt.field,

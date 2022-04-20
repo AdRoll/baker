@@ -10,16 +10,17 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-// MockMetricsDesc can be used in-lieu of actual metrics client for use in tests.
+// MockMetricsDesc describes the MockMetrics metrics client.
 var MockMetricsDesc = baker.MetricsDesc{
 	Name:   "MockMetrics",
 	Config: &struct{}{},
 	New:    newMockMetrics,
 }
 
-// MockMetrics is a metrics client that stores single calls made to the set of
-// methods implementing the baker.MetricsClient interface, and sort them so that
-// they're easy to compare mechanically, in tests.
+// MockMetrics is a metrics client to be used in tests only, which stores single
+// calls made to the set of methods implementing the baker.MetricsClient
+// interface, and sort them so that they're easy to compare mechanically, in
+// tests.
 type MockMetrics struct {
 	buf bytes.Buffer
 }
