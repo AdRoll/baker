@@ -309,7 +309,7 @@ func TestExternalMatchRefreshValues(t *testing.T) {
 	}
 
 	// Wait twice the amount of time after which the file should have been
-	// refreshed, to account for distrorted CPU time on shared CI machines.
+	// refreshed, to account for distorted CPU time on shared CI machines.
 	time.Sleep(2 * refreshEvery)
 
 	kept = false
@@ -317,6 +317,8 @@ func TestExternalMatchRefreshValues(t *testing.T) {
 	if kept {
 		t.Error("second call to Process() has kept the record, should have been discarded")
 	}
+	// Terminate the filter internal goroutine.
+	close(f.quit)
 }
 
 func pathToURI(p string) string {

@@ -49,6 +49,7 @@ type ExternalMatch struct {
 	values map[string]struct{}
 
 	numFilteredLines int64
+	quit             chan struct{} // used to stop the 'refresh' goroutine
 }
 
 func (cfg *ExternalMatchConfig) fillDefaults() error {
@@ -118,7 +119,7 @@ func NewExternalMatch(cfg baker.FilterParams) (baker.Filter, error) {
 		return nil, fmt.Errorf("ExternalMatch: invalid configuration: no such field %v", dcfg.FieldName)
 	}
 
-	f := &ExternalMatch{cfg: dcfg}
+	f := &ExternalMatch{cfg: dcfg, quit: make(chan struct{})}
 	if err := f.updateValues(); err != nil {
 		return nil, fmt.Errorf("ExternalMatch: failed loading values: %v", err)
 	}
@@ -127,9 +128,15 @@ func NewExternalMatch(cfg baker.FilterParams) (baker.Filter, error) {
 		go func() {
 			tick := time.NewTicker(dcfg.RefreshEvery)
 			for {
-				<-tick.C
-				if err := f.updateValues(); err != nil {
-					log.WithError(err).Error("ExternalMatch: failed reloading values")
+				select {
+				// Terminate this goroutine. For now, this is only useful in
+				// tests, to avoid race conditions at test cleanup.
+				case <-f.quit:
+					return
+				case <-tick.C:
+					if err := f.updateValues(); err != nil {
+						log.WithError(err).Error("ExternalMatch: failed reloading values")
+					}
 				}
 			}
 		}()
