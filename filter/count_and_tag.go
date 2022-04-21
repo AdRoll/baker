@@ -7,12 +7,17 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-const countAndTagHelp = `Publish a metric that simply counts all records that pass through, and breaks them down, with metrics tags, by the value of a configured field.
-Records having an empty string as Field value are counted nonetheless, using the value configured as DefaultValue as tag value.
+const countAndTagHelp = `Publishes a metric that simply counts the number of records passing through, updating a metric of type counter.
+In addition, the metric is also tagged with the value of a given, configured, field.
+Records having an empty Field value are counted and tagged nonetheless, but they are tagged under the configured tag value: DefaultValue.
 
-NOTE: a special attention should be given in the selection of the Field used to tag records.
-For example, high-cardinality tags might cause performance degradation during tag ingestion/visualization, or even incur additional cost.
-As such, depending on the origin of the possible Field values, it might be worth filtering the data out.
+#### NOTE
+A special attention should be given to the Field used to tag records.
+For example, high-cardinality tags might cause performance degradation during tag ingestion and/or visualization and, depending on the metrics client you're using, could incur additional cost.
+Something else to keep in mind is that not all values might be valid for the metrics client/system you're using. This filter does not try in any way to validate those.
+
+Finally, it's good to keep in mind that metrics, like other means of observability (logs, tracing, etc.), are provided as best effort and should not influence the program outcome.
+As such, it's important to have strong guarantees about the set of possible values for the configured Field, or else it could be necessary to perform some filtering prior to place this filter in your pipeline.
 `
 
 var CountAndTagDesc = baker.FilterDesc{
@@ -23,9 +28,9 @@ var CountAndTagDesc = baker.FilterDesc{
 }
 
 type CountAndTagConfig struct {
-	Metric       string `help:"Name of the metric, of type counter, this filter publishes" required:"true"`
-	Field        string `help:"Field to read to get tag values" required:"true"`
-	DefaultValue string `help:"Default tag value under which records having empty Field are counted" required:"true"`
+	Metric       string `help:"Name of the metric of type counter published by this filter" required:"true"`
+	Field        string `help:"Field which value is used to to break down the metric by tag values" required:"true"`
+	DefaultValue string `help:"Default tag value to use when the value of the configured field is empty" required:"true"`
 }
 
 type CountAndTag struct {
