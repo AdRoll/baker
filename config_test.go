@@ -224,10 +224,10 @@ func (r dummyRecord) ToText(buf []byte) []byte {
 	return []byte("")
 }
 func (r dummyRecord) Copy() Record {
-	return Record(r.Copy())
+	return nil
 }
 func (r dummyRecord) Clear() {
-	r.Clear()
+	panic("unimplemented")
 }
 func (r dummyRecord) Get(i FieldIndex) []byte {
 	v, ok := r[i]
@@ -260,10 +260,10 @@ func Test_assignValidationMapping(t *testing.T) {
 
 	cfgValidation := ConfigValidation{"name0": "^val$", "name1": "^val$"}
 	validate := func(r Record) (bool, FieldIndex) {
-		if "val" != string(r.Get(0)) {
+		if string(r.Get(0)) != "val" {
 			return false, 0
 		}
-		if "val" != string(r.Get(1)) {
+		if string(r.Get(1)) != "val" {
 			return false, 1
 		}
 		return true, 0
