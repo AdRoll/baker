@@ -9,6 +9,7 @@ require (
 	github.com/aws/aws-sdk-go v1.41.7
 	github.com/bmizerany/perks v0.0.0-20141205001514-d9a9656a3a4b
 	github.com/charmbracelet/glamour v0.3.1-0.20211115172440-7def5b54736c
+	github.com/dustin/go-humanize v1.0.1-0.20220316001817-d5090ed65664
 	github.com/fernet/fernet-go v0.0.0-20191111064656-eff2850e6001
 	github.com/google/uuid v1.3.0
 	github.com/jmespath/go-jmespath v0.4.0
