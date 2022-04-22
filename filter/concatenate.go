@@ -35,20 +35,20 @@ func NewConcatenate(cfg baker.FilterParams) (baker.Filter, error) {
 	for _, fieldName := range dcfg.Fields {
 		i, ok := cfg.FieldByName(fieldName)
 		if !ok {
-			return nil, fmt.Errorf("Can't resolve field %s", fieldName)
+			return nil, fmt.Errorf("can't resolve field %s", fieldName)
 		}
 		fields = append(fields, i)
 	}
 
 	target, ok := cfg.FieldByName(dcfg.Target)
 	if !ok {
-		return nil, fmt.Errorf("Can't resolve target field %s", dcfg.Target)
+		return nil, fmt.Errorf("can't resolve target field %s", dcfg.Target)
 	}
 
 	var separator []byte
 	if dcfg.Separator != "" {
 		if len(dcfg.Separator) != 1 || dcfg.Separator[0] > unicode.MaxASCII {
-			return nil, errors.New("Separator must either be empty or a single ASCII, non-nil char")
+			return nil, errors.New("separator must either be empty or a single ASCII, non-nil char")
 		}
 		separator = append(separator, dcfg.Separator[0])
 	}
