@@ -114,7 +114,7 @@ func NewS3(cfg baker.UploadParams) (baker.Upload, error) {
 
 	sess, err := session.NewSession(&aws.Config{Region: aws.String(dcfg.Region)})
 	if err != nil {
-		return nil, fmt.Errorf("upload.s3: error creating s3 session: %v", err)
+		return nil, fmt.Errorf("upload.s3: error creating aws session: %v", err)
 	}
 	return &S3{
 		Cfg:      dcfg,

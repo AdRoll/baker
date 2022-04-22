@@ -118,8 +118,14 @@ func NewSQS(cfg baker.InputParams) (baker.Input, error) {
 	if err != nil {
 		return nil, fmt.Errorf("SQS: can't configure message parsing")
 	}
+
+	s3Input, err := inpututils.NewS3Input(dcfg.AwsRegion, dcfg.Bucket)
+	if err != nil {
+		return nil, fmt.Errorf("SQS: %v", err)
+	}
+
 	sqs := &SQS{
-		s3Input:    inpututils.NewS3Input(dcfg.AwsRegion, dcfg.Bucket),
+		s3Input:    s3Input,
 		Cfg:        dcfg,
 		svc:        sqs.New(sess),
 		filepathRx: filepathRx,

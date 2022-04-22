@@ -21,16 +21,19 @@ type S3Input struct {
 	svc s3iface.S3API
 }
 
-func NewS3Input(region, bucket string) *S3Input {
-	sess := session.New(&aws.Config{Region: aws.String(region)})
-	svc := s3.New(sess)
+func NewS3Input(region, bucket string) (*S3Input, error) {
+	sess, err := session.NewSession(&aws.Config{Region: aws.String(region)})
+	if err != nil {
+		return nil, fmt.Errorf("can't create aws session: %v", err)
+	}
 
+	svc := s3.New(sess)
 	s := &S3Input{
 		Bucket: bucket,
 		svc:    svc,
 	}
 	s.CompressedInput = NewCompressedInput(s.openS3File, s.sizeS3File, make(chan bool, 1))
-	return s
+	return s, nil
 }
 
 // SetS3API allows to replace the S3API, for tests.

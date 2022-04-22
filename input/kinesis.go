@@ -61,7 +61,11 @@ func NewKinesis(cfg baker.InputParams) (baker.Input, error) {
 		return nil, fmt.Errorf("Kinesis: %s", err)
 	}
 
-	sess := session.New(&aws.Config{Region: aws.String(dcfg.AwsRegion)})
+	sess, err := session.NewSession(&aws.Config{Region: aws.String(dcfg.AwsRegion)})
+	if err != nil {
+		return nil, fmt.Errorf("Kinesis: can't create aws session %s", err)
+	}
+
 	kin := kinesis.New(sess)
 
 	s := &Kinesis{
