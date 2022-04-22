@@ -90,9 +90,7 @@ func (s *Kinesis) refreshShards() error {
 	}
 	var shards []*kinesis.Shard
 	err := s.svc.DescribeStreamPages(params, func(page *kinesis.DescribeStreamOutput, lastPage bool) bool {
-		for _, shard := range page.StreamDescription.Shards {
-			shards = append(shards, shard)
-		}
+		shards = append(shards, page.StreamDescription.Shards...)
 		return !lastPage
 	})
 	if err != nil {
@@ -181,8 +179,7 @@ func (s *Kinesis) ProcessRecords(shard *kinesis.Shard) error {
 		}
 
 		nextShardIterator = resp1.NextShardIterator
-		total := time.Now().Sub(start)
-		time.Sleep(s.Cfg.IdleTime - total)
+		time.Sleep(s.Cfg.IdleTime - time.Since(start))
 	}
 	return err
 }
