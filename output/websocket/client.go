@@ -38,7 +38,7 @@ func getFieldIdInReturn(name string, cfg Conf) (int, error) {
 			return i, nil
 		}
 	}
-	return 0, errors.New("No Field")
+	return 0, errors.New("no Field")
 }
 
 // Create new ws client.

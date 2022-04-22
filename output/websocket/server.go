@@ -52,10 +52,6 @@ func (s *Server) SendAll(msg []string) {
 	s.sendAllCh <- msg
 }
 
-func (s *Server) done() {
-	close(s.doneCh)
-}
-
 func (s *Server) err(err error) {
 	s.errCh <- err
 }
