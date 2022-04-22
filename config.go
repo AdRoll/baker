@@ -176,7 +176,7 @@ func (c *Config) fillCreateRecordDefault() error {
 		if c.CSV.FieldSeparator != "" {
 			sep := []rune(c.CSV.FieldSeparator)
 			if len(sep) != 1 || sep[0] > unicode.MaxASCII {
-				return fmt.Errorf("Separator must be a 1-byte string or hex char")
+				return fmt.Errorf("separator must be a 1-byte string or hex char")
 			}
 			fieldSeparator = byte(sep[0])
 		}
@@ -281,7 +281,7 @@ func decodeAndCheckConfig(md toml.MetaData, compCfg interface{}) error {
 func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 	f, err := replaceEnvVars(f, os.Getenv)
 	if err != nil {
-		return nil, fmt.Errorf("Can't replace config with env vars: %v", err)
+		return nil, fmt.Errorf("can't replace config with env vars: %v", err)
 	}
 
 	// Parse che configuration. Part of the configuration will be
@@ -419,12 +419,6 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 
 	// Fill-in with missing defaults
 	return &cfg, cfg.fillDefaults()
-}
-
-// hasConfig returns true if the underlying structure has at least one field.
-func hasConfig(cfg interface{}) bool {
-	tf := reflect.TypeOf(cfg).Elem()
-	return tf.NumField() != 0
 }
 
 // assignFieldMapping verifies that field mapping has been set once, but only
