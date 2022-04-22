@@ -3,13 +3,12 @@ package testutil
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
 
 func CopyDirectory(scrDir, dest string) error {
-	entries, err := ioutil.ReadDir(scrDir)
+	entries, err := os.ReadDir(scrDir)
 	if err != nil {
 		return err
 	}
@@ -38,7 +37,11 @@ func CopyDirectory(scrDir, dest string) error {
 			}
 		}
 
-		if err := os.Chmod(destPath, entry.Mode()); err != nil {
+		fi, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		if err := os.Chmod(destPath, fi.Mode()); err != nil {
 			return err
 		}
 	}

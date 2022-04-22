@@ -1,7 +1,7 @@
 package baker_test
 
 import (
-	"io/ioutil"
+	"io"
 	"reflect"
 	"testing"
 
@@ -64,7 +64,7 @@ func TestPrintHelp(t *testing.T) {
 		Outputs: output.All,
 		Uploads: upload.All,
 	}
-	err := baker.PrintHelp(ioutil.Discard, "*", comp, baker.HelpFormatMarkdown)
+	err := baker.PrintHelp(io.Discard, "*", comp, baker.HelpFormatMarkdown)
 	if err != nil {
 		t.Fatalf("PrintHelp return err: %v, want nil", err)
 	}

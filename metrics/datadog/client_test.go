@@ -3,7 +3,6 @@ package datadog
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"path/filepath"
@@ -121,7 +120,7 @@ func TestClientMetrics(t *testing.T) {
 
 		golden := filepath.Join("testdata", "TestClientMetrics.metrics.golden")
 		if *testutil.UpdateGolden {
-			ioutil.WriteFile(golden, buf.Bytes(), os.ModePerm)
+			os.WriteFile(golden, buf.Bytes(), os.ModePerm)
 			t.Logf("updated: %q", golden)
 		}
 		testutil.DiffWithGolden(t, buf.Bytes(), golden)

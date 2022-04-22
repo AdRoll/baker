@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -18,14 +18,14 @@ func DiffWithGolden(t *testing.T, src []byte, golden string) {
 
 	// update golden files if necessary
 	if *UpdateGolden {
-		if err := ioutil.WriteFile(golden, src, 0644); err != nil {
+		if err := os.WriteFile(golden, src, 0644); err != nil {
 			t.Errorf("can't update golden file %s: %v", golden, err)
 		}
 		return
 	}
 
 	// get golden
-	goldbuf, err := ioutil.ReadFile(golden)
+	goldbuf, err := os.ReadFile(golden)
 	if err != nil {
 		t.Errorf("can't read golden file %s: %v", golden, err)
 		return

@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"net/http/httptest"
@@ -95,11 +94,11 @@ func TestListBasic(t *testing.T) {
 	makeTestLog(t, dir, "test100.log.gz", 100)
 	makeTestLog(t, dir, "test500.log.gz", 500)
 	makeTestLog(t, dir, "test1233.log.gz", 1233)
-	ioutil.WriteFile(filepath.Join(dir, "testlist600"),
+	os.WriteFile(filepath.Join(dir, "testlist600"),
 		[]byte(pathToURI(filepath.Join(dir, "test100.log.gz"))+"\n"+
 			pathToURI(filepath.Join(dir, "test500.log.gz"))+"\n"),
 		0777)
-	ioutil.WriteFile(filepath.Join(dir, "buglist"),
+	os.WriteFile(filepath.Join(dir, "buglist"),
 		[]byte(pathToURI(filepath.Join(dir, "test100.log.gz"))+"\n"+
 			pathToURI(filepath.Join(dir, "nonesisting.log.gz"))+"\n"),
 		0777)
@@ -369,7 +368,7 @@ func mockS3Service(t *testing.T, generatedFiles, generatedRecords int, getManife
 		defer m.Unlock()
 		r.HTTPResponse = &http.Response{
 			StatusCode: 200,
-			Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+			Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 		}
 
 		switch data := r.Data.(type) {
@@ -396,11 +395,11 @@ func mockS3Service(t *testing.T, generatedFiles, generatedRecords int, getManife
 				manifestCalled = true
 				data.ContentLength = aws.Int64(int64(len(manifest)))
 				data.LastModified = lastModified
-				data.Body = ioutil.NopCloser(bytes.NewReader(manifest))
+				data.Body = io.NopCloser(bytes.NewReader(manifest))
 			} else {
 				data.ContentLength = aws.Int64(int64(len(compressedRecord)))
 				data.LastModified = lastModified
-				data.Body = ioutil.NopCloser(bytes.NewReader(compressedRecord))
+				data.Body = io.NopCloser(bytes.NewReader(compressedRecord))
 			}
 		}
 	})

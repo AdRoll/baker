@@ -1,7 +1,7 @@
 package baker
 
 import (
-	"io/ioutil"
+	"io"
 	"strings"
 	"testing"
 )
@@ -95,7 +95,7 @@ func TestEnvVarBaseReplace(t *testing.T) {
 	if err != nil {
 		t.Fatalf("replaceEnvVars err: %v", err)
 	}
-	buf, _ := ioutil.ReadAll(s)
+	buf, _ := io.ReadAll(s)
 
 	if want != string(buf) {
 		t.Fatalf("wrong toml: %s", string(buf))

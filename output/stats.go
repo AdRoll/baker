@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math"
 	"os"
 	"strconv"
@@ -331,7 +330,7 @@ func (s *Stats) createStatsCSV() error {
 		fmt.Fprintf(buf, "section,%s,distribution of number of log lines per distinct %s value\n", fname, fname)
 		s.fields[i].print(buf, s.cfg.FieldNames)
 	}
-	return ioutil.WriteFile(s.csvPath, buf.Bytes(), os.ModePerm)
+	return os.WriteFile(s.csvPath, buf.Bytes(), os.ModePerm)
 
 }
 

@@ -1,7 +1,6 @@
 package testutil
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -24,7 +23,7 @@ func TempDir(tb testing.TB) (dir string, rmdir func()) {
 	tb.Helper()
 
 	var err error
-	if dir, err = ioutil.TempDir("", tb.Name()); err != nil {
+	if dir, err = os.MkdirTemp("", tb.Name()); err != nil {
 		tb.Fatalf("can't create temp directory: %v", err)
 	}
 
@@ -51,7 +50,7 @@ func TempDir(tb testing.TB) (dir string, rmdir func()) {
 func TempFile(tb testing.TB) (file string, rmfile func()) {
 	tb.Helper()
 
-	f, err := ioutil.TempFile("", tb.Name())
+	f, err := os.CreateTemp("", tb.Name())
 	if err != nil {
 		tb.Fatalf("can't create temp file: %v", err)
 	}

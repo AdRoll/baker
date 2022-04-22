@@ -3,7 +3,6 @@ package splitwriter
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -183,7 +182,7 @@ func TestSplitWriter(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for f, data := range tt.previous {
-				if err := ioutil.WriteFile(filepath.Join(dir, f), []byte(data), 0666); err != nil {
+				if err := os.WriteFile(filepath.Join(dir, f), []byte(data), 0666); err != nil {
 					t.Fatal(err)
 				}
 			}
