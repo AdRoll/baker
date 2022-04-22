@@ -70,6 +70,12 @@ path:
     PathString = "/path/to/file-{{.Hour}}-{{.Minute}}.log.gz" 
     RotateInterval = 1s
 
+If you use RotateSize you should also probably include {{.Rotation}}, to generate different 
+different paths:
+
+    PathString = "/path/to/file-{{.Rotation}}.log.gz" 
+    RotateSize = "128MB"
+
  3. Only use {{.Field0}} if you trust the records you consume.
 
 By using {{.Field0}} the files produces will have a path containing whatever value
@@ -85,10 +91,30 @@ var FileWriterDesc = baker.OutputDesc{
 }
 
 type FileWriterConfig struct {
-	PathString           string        `help:"Template describing names of the generated files. See top-level documentation for supported placeholders.."`
-	RotateInterval       time.Duration `help:"Time interval between 2 successive file rotations. -1 disabled rotation." default:"60s"`
-	ZstdCompressionLevel int           `help:"Zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
-	ZstdWindowLog        int           `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
+	PathString           string          `help:"Template describing names of the generated files. See top-level documentation for supported placeholders.."`
+	RotateInterval       time.Duration   `help:"Time interval between 2 successive file rotations. -1 disables interval-based rotation." default:"60s"`
+	RotateSize           baker.SizeBytes `help:"File which when reached triggers a file rotation. Can be cumulated with RotateInterval. 0 to disable" default:"0"`
+	ZstdCompressionLevel int             `help:"Zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
+	ZstdWindowLog        int             `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
+}
+
+func (cfg *FileWriterConfig) fillDefaults() {
+	if cfg.PathString == "" {
+		cfg.PathString = "/tmp/baker/ologs/logs/{{.Year}}/{{.Month}}/{{.Day}}/baker/{{.Year}}{{.Month}}{{.Day}}-{{.Hour}}{{.Minute}}{{.Second}}.{{.Index}}.log.gz"
+	}
+
+	switch cfg.RotateInterval {
+	case -1:
+		// no time-interval-based rotation
+		cfg.RotateInterval = 0
+	case 0:
+		// default value
+		cfg.RotateInterval = 60 * time.Second
+	}
+
+	if cfg.ZstdCompressionLevel == 0 {
+		cfg.ZstdCompressionLevel = 3
+	}
 }
 
 type FileWriter struct {
@@ -198,20 +224,6 @@ func (w *FileWriter) Stats() baker.OutputStats {
 
 func (w *FileWriter) CanShard() bool {
 	return false
-}
-
-func (cfg *FileWriterConfig) fillDefaults() {
-	if cfg.PathString == "" {
-		cfg.PathString = "/tmp/baker/ologs/logs/{{.Year}}/{{.Month}}/{{.Day}}/baker/{{.Year}}{{.Month}}{{.Day}}-{{.Hour}}{{.Minute}}{{.Second}}.{{.Index}}.log.gz"
-	}
-	var z time.Duration
-	if cfg.RotateInterval == z {
-		cfg.RotateInterval = 60 * time.Second
-	}
-
-	if cfg.ZstdCompressionLevel == 0 {
-		cfg.ZstdCompressionLevel = 3
-	}
 }
 
 // fileWorker manages writes to a file and its periodic rotation.
