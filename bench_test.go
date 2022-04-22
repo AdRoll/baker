@@ -143,8 +143,7 @@ func BenchmarkLogLineParse(b *testing.B) {
 		b.Run(fmt.Sprintf("len=%d", nparse), func(b *testing.B) {
 			text := []byte(bytes.Join(fields[:nparse], []byte(",")))
 
-			var ll baker.Record
-			ll = &baker.LogLine{FieldSeparator: ','}
+			ll := &baker.LogLine{FieldSeparator: ','}
 
 			b.ReportAllocs()
 			b.ResetTimer()
@@ -227,8 +226,7 @@ func BenchmarkLogLineToTextFromParseSet(b *testing.B) {
 
 func BenchmarkLogLineCopy(b *testing.B) {
 	b.Run("set=0", func(b *testing.B) {
-		var ll baker.Record
-		ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+		ll := &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
 		buf := bytes.Repeat([]byte(`hello,world,,`), 200)
 		ll.Parse(buf, nil)
 
@@ -245,8 +243,7 @@ func BenchmarkLogLineCopy(b *testing.B) {
 	})
 
 	b.Run("set=1", func(b *testing.B) {
-		var ll baker.Record
-		ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+		ll := &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
 		buf := bytes.Repeat([]byte(`hello,world,,`), 200)
 		ll.Parse(buf, nil)
 		ll.Set(0, []byte("foobar"))
@@ -264,8 +261,7 @@ func BenchmarkLogLineCopy(b *testing.B) {
 	})
 
 	b.Run("set=10", func(b *testing.B) {
-		var ll baker.Record
-		ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+		ll := &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
 		buf := bytes.Repeat([]byte(`hello,world,,`), 200)
 		ll.Parse(buf, nil)
 		ll.Set(0, []byte("foobar"))
@@ -292,8 +288,7 @@ func BenchmarkLogLineCopy(b *testing.B) {
 	})
 
 	b.Run("set=20", func(b *testing.B) {
-		var ll baker.Record
-		ll = &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+		ll := &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
 		buf := bytes.Repeat([]byte(`hello,world,,`), 200)
 		ll.Parse(buf, nil)
 		ll.Set(0, []byte("foobar"))
