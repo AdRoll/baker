@@ -16,11 +16,11 @@ import (
 	"time"
 
 	"github.com/arl/dirtree"
+	"github.com/arl/zt"
 
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/input"
 	"github.com/AdRoll/baker/output"
-	"github.com/AdRoll/baker/pkg/zip_agnostic"
 	"github.com/AdRoll/baker/testutil"
 )
 
@@ -167,7 +167,7 @@ func testFileWriterCompareInOut(numRecords int, wait, rotate time.Duration, comp
 				continue
 			}
 
-			zr, err := zip_agnostic.NewReader(f)
+			zr, err := zt.NewReader(f)
 			if err != nil {
 				t.Fatalf("can't open uploaded path: %s", err)
 			}
@@ -493,7 +493,7 @@ func decompressFilesInDir(tb testing.TB, root string) []string {
 			return fmt.Errorf("can't open input file: %v", err)
 		}
 		defer inf.Close()
-		zr, err := zip_agnostic.NewReader(inf)
+		zr, err := zt.NewReader(inf)
 		if err != nil {
 			return fmt.Errorf("can't read input file: %v", err)
 		}

@@ -13,13 +13,13 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/arl/zt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/AdRoll/baker"
-	"github.com/AdRoll/baker/pkg/zip_agnostic"
 )
 
 var ExternalMatchDesc = baker.FilterDesc{
@@ -213,9 +213,9 @@ func (f *ExternalMatch) processURL(u string) (map[string]struct{}, error) {
 		panic("unexpected scheme")
 	}
 
-	// Wrap the reader into a zip-agnostic reader to indifferently read gzip,
+	// Wrap the reader into a zt reader to transparently read gzip,
 	// zstd or non compressed CSV data.
-	zar, err := zip_agnostic.NewReader(r)
+	zar, err := zt.NewReader(r)
 	if err != nil {
 		return nil, fmt.Errorf("can't read from %s: %s", u, err)
 	}
