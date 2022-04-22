@@ -48,7 +48,7 @@ func init() {
 	BakerTransport.MaxIdleConnsPerHost = 256
 }
 
-func (dg *dynamoGlobals) Get(region string) *dynamodb.DynamoDB {
+func (dg *dynamoGlobals) Get(region string) (*dynamodb.DynamoDB, error) {
 	dg.lock.Lock()
 	defer dg.lock.Unlock()
 
@@ -56,9 +56,9 @@ func (dg *dynamoGlobals) Get(region string) *dynamodb.DynamoDB {
 		dg.db = make(map[string]*dynamodb.DynamoDB)
 	}
 	if db, found := dg.db[region]; found {
-		return db
+		return db, nil
 	}
-	sess := session.New(&aws.Config{
+	sess, err := session.NewSession(&aws.Config{
 		Region:                        aws.String(region),
 		CredentialsChainVerboseErrors: aws.Bool(true),
 		DisableParamValidation:        aws.Bool(true),
@@ -66,9 +66,12 @@ func (dg *dynamoGlobals) Get(region string) *dynamodb.DynamoDB {
 			Transport: BakerTransport,
 		},
 	})
+	if err != nil {
+		return nil, fmt.Errorf("can't create aws session: %v", err)
+	}
 	db := dynamodb.New(sess)
 	dg.db[region] = db
-	return db
+	return db, nil
 }
 
 var DynamoGlobals dynamoGlobals
@@ -250,7 +253,10 @@ func NewDynamoDB(cfg baker.OutputParams) (baker.Output, error) {
 		if !awsutils.IsValidRegion(region) {
 			return nil, fmt.Errorf("invalid region name: %q", region)
 		}
-		db := DynamoGlobals.Get(region)
+		db, err := DynamoGlobals.Get(region)
+		if err != nil {
+			return nil, fmt.Errorf("can't instantiate dynamodb region %v: %v", region, err)
+		}
 		b.dbprocs = append(b.dbprocs, newDynamoProcess(db, region, dcfg.MaxBackoff))
 	}
 
