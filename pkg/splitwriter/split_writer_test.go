@@ -273,7 +273,7 @@ func TestSplitWriterErr(t *testing.T) {
 	})
 
 	t.Run("doFirstSplit error on remove", func(t *testing.T) {
-		if "windows" != runtime.GOOS {
+		if runtime.GOOS != "windows" {
 			t.Skip("Cannot produce an error on file remove on a not windows platform")
 		}
 
