@@ -203,7 +203,6 @@ type DynamoDB struct {
 	Columns   []string
 	Cfg       *DynamoDBConfig
 
-	limiter  *ratelimit.Bucket
 	lock     sync.Mutex
 	dbprocs  []*dynamoProcess
 	reqinput *dynamodb.BatchWriteItemInput

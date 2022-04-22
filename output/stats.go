@@ -191,7 +191,6 @@ func (s *timestampStats) add(ll baker.Record) {
 	}
 
 	s.qt.Insert(float64(ts))
-	return
 }
 
 func (s *timestampStats) print(w io.Writer) error {
@@ -269,7 +268,7 @@ func NewStats(cfg baker.OutputParams) (baker.Output, error) {
 		var ok bool
 		idx, ok = cfg.FieldByName(dcfg.TimestampField)
 		if !ok {
-			return nil, fmt.Errorf("Cannot find field %s", dcfg.TimestampField)
+			return nil, fmt.Errorf("cannot find field %s", dcfg.TimestampField)
 		}
 	}
 

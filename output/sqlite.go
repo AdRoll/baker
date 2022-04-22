@@ -187,13 +187,13 @@ func (c *SQLite) setup() error {
 	// transaction.
 	c.tx, err = c.conn.Begin()
 	if err != nil {
-		return fmt.Errorf("Cannot start transaction: %s", err)
+		return fmt.Errorf("cannot start transaction: %s", err)
 	}
 
 	// Run the pre-run commands
 	if err = runSQLCommands(c.tx, c.cfg.PreRun); err != nil {
 		c.tx.Rollback()
-		return fmt.Errorf("Cannot run pre-SQL commands: %s", err)
+		return fmt.Errorf("cannot run pre-SQL commands: %s", err)
 	}
 
 	return nil
