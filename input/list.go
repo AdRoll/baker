@@ -178,7 +178,12 @@ func NewList(cfg baker.InputParams) (baker.Input, error) {
 	dcfg := cfg.DecodedConfig.(*ListConfig)
 	dcfg.fillDefaults()
 
-	s3end := s3.New(session.New(&aws.Config{Region: aws.String(dcfg.Region)}))
+	sess, err := session.NewSession(&aws.Config{Region: aws.String(dcfg.Region)})
+	if err != nil {
+		return nil, fmt.Errorf("list: can't create aws session: %v", err)
+	}
+
+	s3end := s3.New(sess)
 	l := &List{
 		svc: s3end,
 		Cfg: dcfg,
@@ -325,7 +330,7 @@ func (s *List) processList(fn string) error {
 						}
 					}
 
-					if *(resp.IsTruncated) == false {
+					if !*(resp.IsTruncated) {
 						return
 					}
 					nextToken = resp.NextContinuationToken
