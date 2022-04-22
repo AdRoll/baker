@@ -137,7 +137,6 @@ func New(cfg Config) (*BufferCache, error) {
 	c.onFlush = func(buf []byte) {
 		cfg.OnFlush(buf)
 		c.nflushes++
-		return
 	}
 	return c, nil
 }

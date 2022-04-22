@@ -65,8 +65,6 @@ func (c *compressor) grow() {
 	c.buf = c.buf[:cap(c.buf)]
 }
 
-const uncompressedBufferSize = compressedBufferSize * 10
-
 // a decompressor is an lz4 decompressor that is optimized for reducing memory
 // allocations.
 type decompressor struct {
