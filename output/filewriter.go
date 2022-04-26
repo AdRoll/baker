@@ -305,6 +305,32 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 		return nil, fmt.Errorf("can't create file: %v", err)
 	}
 
+	// Perform rotation. Close, upload and swap curw with a newly
+	// created file, after evaluating the path template.
+	rotate := func() {
+		if err := curw.Close(); err != nil {
+			ctxLog.WithError(err).WithField("current", curPath).Error("FileWriter worker error closing file")
+		}
+
+		upch <- curPath
+
+		fw.rotateIdx++
+		newPath, err := fw.makePath(tmpl)
+		if err != nil {
+			// TODO(arl): when sticky error will be in place, do not
+			// log.Fatal here but set the sticky error instead.
+			ctxLog.WithError(err).WithField("current", curPath).Fatal("FileWriter worker can't create file")
+		}
+
+		ctxLog.WithFields(log.Fields{"current": curPath, "new": newPath}).Info("FileWriter worker file rotation")
+		if curw, err = newFile(newPath); err != nil {
+			// TODO(arl): when sticky error will be in place, do not
+			// log.Fatal here but set the sticky error instead.
+			ctxLog.WithError(err).WithField("current", curPath).Fatal("FileWriter worker can't create file")
+		}
+		curPath = newPath
+	}
+
 	go func() {
 		var (
 			tick     <-chan time.Time
@@ -332,30 +358,7 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 		for {
 			select {
 			case <-tick:
-				// Perform rotation. Close, upload and swap curw with a newly
-				// created file, after evaluating the path template.
-
-				if err := curw.Close(); err != nil {
-					ctxLog.WithError(err).WithField("current", curPath).Error("FileWriter worker error closing file")
-				}
-
-				upch <- curPath
-
-				fw.rotateIdx++
-				newPath, err := fw.makePath(tmpl)
-				if err != nil {
-					// TODO(arl): when sticky error will be in place, do not
-					// log.Fatal here but set the sticky error instead.
-					ctxLog.WithError(err).WithField("current", curPath).Fatal("FileWriter worker can't create file")
-				}
-
-				ctxLog.WithFields(log.Fields{"current": curPath, "new": newPath}).Info("FileWriter worker file rotation")
-				if curw, err = newFile(newPath); err != nil {
-					// TODO(arl): when sticky error will be in place, do not
-					// log.Fatal here but set the sticky error instead.
-					ctxLog.WithError(err).WithField("current", curPath).Fatal("FileWriter worker can't create file")
-				}
-				curPath = newPath
+				rotate()
 
 			case line, ok := <-fw.in:
 				if !ok {
