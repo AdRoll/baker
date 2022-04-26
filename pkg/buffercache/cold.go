@@ -76,16 +76,6 @@ func (c *coldCache) metrics() *coldCacheMetrics {
 	}
 }
 
-// fillRatio returns the fill ratio of the bucket, that is the ratio of
-// occupied cells over total cells.
-func (b *bucket) fillRatio() float32 {
-	ncells := 0
-	for j := range b.freecells {
-		ncells += bits.OnesCount64(b.freecells[j])
-	}
-	return float32(ncells) / float32(64*len(b.freecells))
-}
-
 type bucket struct {
 	data      []byte // buffer, virtually split in cells
 	cellbytes int    // number of bytes in a cell

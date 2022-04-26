@@ -2,7 +2,7 @@ package upload
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path"
 	"strings"
 	"testing"
@@ -38,7 +38,7 @@ func (o *customOutput) Run(in <-chan baker.OutputRecord, upch chan<- string) err
 	nfiles := 0
 	for range in {
 		fpath := path.Join(o.path, nthFile(nfiles))
-		if err := ioutil.WriteFile(fpath, nil, 0664); err != nil {
+		if err := os.WriteFile(fpath, nil, 0664); err != nil {
 			return err
 		}
 		nfiles++

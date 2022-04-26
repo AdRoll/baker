@@ -37,12 +37,12 @@ func NewStringMatch(cfg baker.FilterParams) (baker.Filter, error) {
 	dcfg := cfg.DecodedConfig.(*StringMatchConfig)
 
 	if len(dcfg.Strings) == 0 {
-		return nil, fmt.Errorf("At least one string must be defined in Strings")
+		return nil, fmt.Errorf("at least one string must be defined in Strings")
 	}
 
 	fidx, ok := cfg.FieldByName(dcfg.Field)
 	if !ok {
-		return nil, fmt.Errorf("StringMatch: unknown field %s", dcfg.Field)
+		return nil, fmt.Errorf("stringMatch: unknown field %s", dcfg.Field)
 	}
 
 	var strings [][]byte

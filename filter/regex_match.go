@@ -68,7 +68,7 @@ func (f *RegexMatch) Stats() baker.FilterStats {
 }
 
 func (f *RegexMatch) match(l baker.Record) bool {
-	if f.invert == false {
+	if !f.invert {
 		for i := range f.fields {
 			if !f.res[i].Match(l.Get(f.fields[i])) {
 				// As soon as a field fails a match we can early return

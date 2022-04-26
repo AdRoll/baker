@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math"
 	"os"
 	"strconv"
@@ -192,7 +191,6 @@ func (s *timestampStats) add(ll baker.Record) {
 	}
 
 	s.qt.Insert(float64(ts))
-	return
 }
 
 func (s *timestampStats) print(w io.Writer) error {
@@ -270,7 +268,7 @@ func NewStats(cfg baker.OutputParams) (baker.Output, error) {
 		var ok bool
 		idx, ok = cfg.FieldByName(dcfg.TimestampField)
 		if !ok {
-			return nil, fmt.Errorf("Cannot find field %s", dcfg.TimestampField)
+			return nil, fmt.Errorf("cannot find field %s", dcfg.TimestampField)
 		}
 	}
 
@@ -331,7 +329,7 @@ func (s *Stats) createStatsCSV() error {
 		fmt.Fprintf(buf, "section,%s,distribution of number of log lines per distinct %s value\n", fname, fname)
 		s.fields[i].print(buf, s.cfg.FieldNames)
 	}
-	return ioutil.WriteFile(s.csvPath, buf.Bytes(), os.ModePerm)
+	return os.WriteFile(s.csvPath, buf.Bytes(), os.ModePerm)
 
 }
 

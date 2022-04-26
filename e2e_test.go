@@ -3,7 +3,6 @@ package baker
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"testing"
@@ -73,12 +72,12 @@ func testE2EFullTopology(pkg, toml, got, want string) func(t *testing.T) {
 }
 
 func diff(f1, f2 string) (bool, error) {
-	b1, err := ioutil.ReadFile(f1)
+	b1, err := os.ReadFile(f1)
 	if err != nil {
 		return false, fmt.Errorf("can't read file 1 %q: %s", f1, err)
 	}
 
-	b2, err := ioutil.ReadFile(f2)
+	b2, err := os.ReadFile(f2)
 	if err != nil {
 		return false, fmt.Errorf("can't read file 2 %q: %s", f2, err)
 	}

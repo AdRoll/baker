@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"io"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -19,7 +19,7 @@ func getCorpus() []byte {
 
 	var data []byte
 	for _, fn := range files {
-		body, err := ioutil.ReadFile(fn)
+		body, err := os.ReadFile(fn)
 		if err != nil {
 			panic(err)
 		} else {
@@ -46,7 +46,7 @@ func TestGzReader(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	data2, err := ioutil.ReadAll(r)
+	data2, err := io.ReadAll(r)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -66,7 +66,7 @@ func TestGzReadErrorEmpty(t *testing.T) {
 		return
 	}
 
-	_, err = ioutil.ReadAll(r)
+	_, err = io.ReadAll(r)
 	if err != nil {
 		// Error detected, OK
 		t.Log(err)
@@ -93,7 +93,7 @@ func TestGzReadErrorInvalid(t *testing.T) {
 		return
 	}
 
-	_, err = ioutil.ReadAll(r)
+	_, err = io.ReadAll(r)
 	if err != nil {
 		// Error detected, OK
 		t.Log(err)
@@ -129,7 +129,7 @@ func BenchmarkGzip(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		gz.Reset(bytes.NewReader(data))
-		io.Copy(ioutil.Discard, gz)
+		io.Copy(io.Discard, gz)
 	}
 }
 
@@ -152,6 +152,6 @@ func BenchmarkFastGzip(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		gz.Reset(bytes.NewReader(data))
-		io.Copy(ioutil.Discard, gz)
+		io.Copy(io.Discard, gz)
 	}
 }

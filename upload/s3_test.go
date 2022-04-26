@@ -3,7 +3,7 @@ package upload
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -66,7 +66,7 @@ func mockS3Service(wantErr bool) (svc *s3.S3, ops *[]string, params *[]interface
 
 		r.HTTPResponse = &http.Response{
 			StatusCode: 200,
-			Body:       ioutil.NopCloser(bytes.NewReader([]byte(respMsg))),
+			Body:       io.NopCloser(bytes.NewReader([]byte(respMsg))),
 		}
 
 		switch data := r.Data.(type) {
@@ -98,7 +98,7 @@ func prepareUploadS3TestFolder(t *testing.T, numFiles int) (string, []string) {
 	for i := 0; i < numFiles; i++ {
 		fname := filepath.Join(srcDir, fmt.Sprintf("test_file_%d", i))
 
-		if err := ioutil.WriteFile(fname, []byte("abc"), 0644); err != nil {
+		if err := os.WriteFile(fname, []byte("abc"), 0644); err != nil {
 			t.Fatalf("can't create temp file: %v", err)
 		}
 
@@ -408,7 +408,7 @@ func TestS3_move(t *testing.T) {
 	srcFile := filepath.Join(srcDir, "test_file")
 	trgtFile := filepath.Join(trgtDir, "test_file")
 
-	if err := ioutil.WriteFile(srcFile, []byte("abc"), 0644); err != nil {
+	if err := os.WriteFile(srcFile, []byte("abc"), 0644); err != nil {
 		t.Fatalf("can't create temp file: %v", err)
 	}
 

@@ -30,7 +30,10 @@ func TestS3ListChoosePathComponents(t *testing.T) {
 		{"s://:3://bucket7/dir/7", "", "", "", false},
 		{"dadwdwdwq  :dqw//Dwqdwqdwq   	", "", "", "", false},
 	}
-	s3Input := NewS3Input("some-region", "some-bucket")
+	s3Input, err := NewS3Input("some-region", "some-bucket")
+	if err != nil {
+		t.Fatal(err)
+	}
 	for _, testCase := range testCases {
 		path := testCase.path
 		expectedBucket := testCase.bucket
@@ -64,9 +67,11 @@ func TestS3ListChoosePathComponentsErrType(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s3Input := NewS3Input("some-region", "some-bucket")
-			_, _, _, err := s3Input.choosePathComponents(tt.url)
-			if err == nil {
+			s3Input, err := NewS3Input("some-region", "some-bucket")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if _, _, _, err = s3Input.choosePathComponents(tt.url); err == nil {
 				t.Errorf("url: %s, want: error, got: nil", tt.url)
 			}
 			if reflect.TypeOf(err) != reflect.TypeOf(tt.want) {

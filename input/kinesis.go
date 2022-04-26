@@ -61,7 +61,11 @@ func NewKinesis(cfg baker.InputParams) (baker.Input, error) {
 		return nil, fmt.Errorf("Kinesis: %s", err)
 	}
 
-	sess := session.New(&aws.Config{Region: aws.String(dcfg.AwsRegion)})
+	sess, err := session.NewSession(&aws.Config{Region: aws.String(dcfg.AwsRegion)})
+	if err != nil {
+		return nil, fmt.Errorf("Kinesis: can't create aws session %s", err)
+	}
+
 	kin := kinesis.New(sess)
 
 	s := &Kinesis{
@@ -86,9 +90,7 @@ func (s *Kinesis) refreshShards() error {
 	}
 	var shards []*kinesis.Shard
 	err := s.svc.DescribeStreamPages(params, func(page *kinesis.DescribeStreamOutput, lastPage bool) bool {
-		for _, shard := range page.StreamDescription.Shards {
-			shards = append(shards, shard)
-		}
+		shards = append(shards, page.StreamDescription.Shards...)
 		return !lastPage
 	})
 	if err != nil {
@@ -177,8 +179,7 @@ func (s *Kinesis) ProcessRecords(shard *kinesis.Shard) error {
 		}
 
 		nextShardIterator = resp1.NextShardIterator
-		total := time.Now().Sub(start)
-		time.Sleep(s.Cfg.IdleTime - total)
+		time.Sleep(s.Cfg.IdleTime - time.Since(start))
 	}
 	return err
 }

@@ -69,14 +69,14 @@ func (cfg *S3Config) fillDefaults() error {
 	}
 
 	if cfg.Retries < 0 {
-		return fmt.Errorf("Retries: invalid number: %v", cfg.Retries)
+		return fmt.Errorf("retries: invalid number: %v", cfg.Retries)
 	}
 	if cfg.Retries == 0 {
 		cfg.Retries = 3
 	}
 
 	if cfg.Concurrency < 0 {
-		return fmt.Errorf("Concurrency: invalid number: %v", cfg.Concurrency)
+		return fmt.Errorf("concurrency: invalid number: %v", cfg.Concurrency)
 	}
 	if cfg.Concurrency == 0 {
 		cfg.Concurrency = 5
@@ -93,7 +93,6 @@ type S3 struct {
 	Cfg *S3Config
 
 	uploader *s3manager.Uploader
-	ticker   *time.Ticker
 	wgUpload sync.WaitGroup
 	quit     chan struct{}
 	stopOnce sync.Once
@@ -110,13 +109,16 @@ func NewS3(cfg baker.UploadParams) (baker.Upload, error) {
 	}
 
 	if err := os.MkdirAll(dcfg.StagingPath, 0777); err != nil {
-		return nil, fmt.Errorf("staging path creation error: %v", err)
+		return nil, fmt.Errorf("upload.s3: staging path creation error: %v", err)
 	}
 
-	s3svc := s3.New(session.New(&aws.Config{Region: aws.String(dcfg.Region)}))
+	sess, err := session.NewSession(&aws.Config{Region: aws.String(dcfg.Region)})
+	if err != nil {
+		return nil, fmt.Errorf("upload.s3: error creating aws session: %v", err)
+	}
 	return &S3{
 		Cfg:      dcfg,
-		uploader: s3manager.NewUploaderWithClient(s3svc),
+		uploader: s3manager.NewUploaderWithClient(s3.New(sess)),
 		quit:     make(chan struct{}),
 	}, nil
 }

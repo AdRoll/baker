@@ -2,7 +2,6 @@ package baker_test
 
 import (
 	"bytes"
-	"io/ioutil"
 	"math"
 	"os"
 	"path/filepath"
@@ -160,7 +159,7 @@ name="MockMetrics"
 	// standard output.
 	golden := filepath.Join("testdata", t.Name()+".stdout.golden")
 	if *testutil.UpdateGolden {
-		ioutil.WriteFile(golden, buf.Bytes(), os.ModePerm)
+		os.WriteFile(golden, buf.Bytes(), os.ModePerm)
 		t.Logf("updated: %q", golden)
 	}
 	testutil.DiffWithGolden(t, buf.Bytes(), golden)
@@ -171,7 +170,7 @@ name="MockMetrics"
 	golden = filepath.Join("testdata", t.Name()+".metrics.golden")
 	out := []byte(strings.Join(mc.PublishedMetrics(""), "\n"))
 	if *testutil.UpdateGolden {
-		ioutil.WriteFile(golden, out, os.ModePerm)
+		os.WriteFile(golden, out, os.ModePerm)
 		t.Logf("updated: %q", golden)
 	}
 	testutil.DiffWithGolden(t, out, golden)

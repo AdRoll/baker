@@ -80,8 +80,7 @@ func TestLogLineToTextWithFieldsHigherThan256(t *testing.T) {
 }
 
 func TestLogLineMeta(t *testing.T) {
-	var ll Record
-	ll = &LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
+	ll := &LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
 	_, ok := ll.Meta("foo")
 	if ok {
 		t.Errorf("ll.Meta(%q) = _, %v;  want _, false", "foo", ok)
@@ -95,8 +94,7 @@ func TestLogLineMeta(t *testing.T) {
 }
 
 func TestLogLineCache(t *testing.T) {
-	var ll Record
-	ll = &LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
+	ll := &LogLine{FieldSeparator: DefaultLogLineFieldSeparator}
 
 	testCache := func() {
 		_, ok := ll.Cache().Get("foo")
