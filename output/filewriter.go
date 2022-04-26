@@ -256,11 +256,6 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 		useZstd = true
 	}
 
-	zstdParams := zstd.WriterParams{
-		CompressionLevel: cfg.ZstdCompressionLevel,
-		WindowLog:        cfg.ZstdWindowLog,
-	}
-
 	newFile := func(path string) (io.WriteCloser, error) {
 		f, err := os.Create(path)
 		if err != nil {
@@ -271,7 +266,10 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 
 		var wc io.WriteCloser
 		if useZstd {
-			zstdw := zstd.NewWriterParams(bufw, &zstdParams)
+			zstdw := zstd.NewWriterParams(bufw, &zstd.WriterParams{
+				CompressionLevel: cfg.ZstdCompressionLevel,
+				WindowLog:        cfg.ZstdWindowLog,
+			})
 			wc = makeWriteCloser(zstdw, zstdw.Close)
 		} else {
 			// Only way to for gzip.NewWriterLevel to fail is to pass an
@@ -308,8 +306,10 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 	}
 
 	go func() {
-		var tick <-chan time.Time
-		var ticker *time.Ticker
+		var (
+			tick     <-chan time.Time
+			ticker   *time.Ticker
+		)
 		if cfg.RotateInterval > 0 {
 			ticker = time.NewTicker(cfg.RotateInterval)
 			tick = ticker.C
