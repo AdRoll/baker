@@ -3,6 +3,7 @@ package output_test
 import (
 	"bufio"
 	"bytes"
+	_ "embed"
 	"fmt"
 	"io"
 	"io/fs"
@@ -17,9 +18,11 @@ import (
 
 	"github.com/arl/dirtree"
 	"github.com/arl/zt"
+	zstd "github.com/valyala/gozstd"
 
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/input"
+	"github.com/AdRoll/baker/input/inputtest"
 	"github.com/AdRoll/baker/output"
 	"github.com/AdRoll/baker/testutil"
 )
@@ -525,4 +528,109 @@ func decompressFilesInDir(tb testing.TB, root string) []string {
 	}
 
 	return decompressed
+}
+
+// inputCSV contains 2000 CSV lines.
+// Data in the following file has been generated from
+// https://www.convertcsv.com/generate-test-data.htm with the following
+// 'schema': pick(AAA|BBB|CCC|DDD), digit(22), first, last, email, state
+//go:embed testdata/filewriter/input.csv
+var inputCSV string
+
+const inputCSVNumLines = 2000
+
+func TestFileWriterRotateSize(t *testing.T) {
+	defer testutil.DisableLogging()()
+
+	tmpDir := t.TempDir()
+	toml := `
+		[csv]
+		field_separator=","
+
+		[fields]
+		names = ["kind", "digits", "first", "last", "email", "state"]
+
+		[input]
+		name = "channel"
+
+		[output]
+		fields = []
+		name = "filewriter"
+		procs = 1
+		[output.config]
+		pathstring = %q
+		rotatesize = "2MB"
+	`
+	if !testing.Verbose() {
+		defer testutil.LessLogging()()
+	}
+
+	toml = fmt.Sprintf(toml, filepath.Join(tmpDir, "out-{{.Rotation}}.zst"))
+
+	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml),
+		baker.Components{
+			Inputs:  []baker.InputDesc{inputtest.ChannelDesc},
+			Outputs: []baker.OutputDesc{output.FileWriterDesc},
+		})
+	if err != nil {
+		t.Fatal(err)
+	}
+	topo, err := baker.NewTopologyFromConfig(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	const bakerDataCount = 1000 // How many baker.Data blobs we'll send
+
+	in := topo.Input.(*inputtest.Channel)
+	go func() {
+		for i := 0; i < bakerDataCount; i++ {
+			*in <- baker.Data{Bytes: []byte(inputCSV)}
+		}
+		close(*in)
+	}()
+	topo.Start()
+	topo.Wait()
+
+	// Check the sizes of the created files are all within 1% of the setpoint of
+	// 2MB. Only the last file may have a smaller dimension. We don't check the
+	// number of files since that depends on the compression algorithm and is
+	// thus not stable.
+	files, err := dirtree.List(tmpDir, dirtree.Type("f"), dirtree.ModeAll)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	const (
+		sizeEpsilon = 0.01
+		rotateSize  = 2_000_000
+		minSize     = rotateSize * (1 - sizeEpsilon)
+		maxSize     = rotateSize * (1 + sizeEpsilon)
+	)
+	for i, f := range files {
+		if i != len(files)-1 && f.Size < minSize || f.Size > maxSize {
+			t.Errorf("file %q, size = %v want %f < size < %f", f.RelPath, f.Size, minSize, maxSize)
+		}
+	}
+
+	// Sum the the number of lines in all files.
+	nlines := 0
+	for _, f := range files {
+		f, err := os.Open(filepath.Join(tmpDir, f.RelPath))
+		if err != nil {
+			t.Fatal(err)
+		}
+		zr := zstd.NewReader(f)
+		scan := bufio.NewScanner(zr)
+		for scan.Scan() {
+			nlines++
+		}
+		if scan.Err() != nil {
+			t.Fatal(err)
+		}
+		zr.Release()
+	}
+	if nlines != bakerDataCount*inputCSVNumLines {
+		t.Errorf("total lines = %d, want %d", nlines, bakerDataCount*inputCSVNumLines)
+	}
 }
