@@ -93,7 +93,7 @@ var FileWriterDesc = baker.OutputDesc{
 type FileWriterConfig struct {
 	PathString           string          `help:"Template describing names of the generated files. See top-level documentation for supported placeholders.."`
 	RotateInterval       time.Duration   `help:"Time interval between 2 successive file rotations. -1 disables interval-based rotation." default:"60s"`
-	RotateSize           baker.SizeBytes `help:"File which when reached triggers a file rotation. Can be cumulated with RotateInterval. 0 to disable" default:"0"`
+	RotateSize           baker.SizeBytes `help:"File size which when reached triggers a file rotation. Can be cumulated with RotateInterval. 0 to disable. Examples: 12000, 12KB, 1MB, 1MiB, etc." default:"0"`
 	ZstdCompressionLevel int             `help:"Zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
 	ZstdWindowLog        int             `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
 }
