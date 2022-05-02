@@ -374,7 +374,7 @@ func (fw *fileWorker) newFile(path string) (io.WriteCloser, func() int64, error)
 		wc, _ = gzip.NewWriterLevel(countw, gzip.BestSpeed)
 	}
 
-	// Close the writers (the correct is important here):
+	// Close the writers (the order is important here):
 	// (zstd|gzip).Writer -> bufio.Writer -> os.File
 	close := func() error {
 		if err := wc.Close(); err != nil {
