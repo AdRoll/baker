@@ -70,6 +70,12 @@ path:
     PathString = "/path/to/file-{{.Hour}}-{{.Minute}}.log.gz" 
     RotateInterval = 1s
 
+If you use RotateSize you should also probably include {{.Rotation}}, to generate different 
+different paths:
+
+    PathString = "/path/to/file-{{.Rotation}}.log.gz" 
+    RotateSize = "128MB"
+
  3. Only use {{.Field0}} if you trust the records you consume.
 
 By using {{.Field0}} the files produces will have a path containing whatever value
@@ -85,10 +91,30 @@ var FileWriterDesc = baker.OutputDesc{
 }
 
 type FileWriterConfig struct {
-	PathString           string        `help:"Template describing names of the generated files. See top-level documentation for supported placeholders.."`
-	RotateInterval       time.Duration `help:"Time interval between 2 successive file rotations. -1 disabled rotation." default:"60s"`
-	ZstdCompressionLevel int           `help:"Zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
-	ZstdWindowLog        int           `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
+	PathString           string          `help:"Template describing names of the generated files. See top-level documentation for supported placeholders.."`
+	RotateInterval       time.Duration   `help:"Time interval between 2 successive file rotations. -1 disables interval-based rotation." default:"60s"`
+	RotateSize           baker.SizeBytes `help:"File size which when reached triggers a file rotation. Can be cumulated with RotateInterval. 0 to disable. Examples: 12000, 12KB, 1MB, 1MiB, etc." default:"0"`
+	ZstdCompressionLevel int             `help:"Zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
+	ZstdWindowLog        int             `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
+}
+
+func (cfg *FileWriterConfig) fillDefaults() {
+	if cfg.PathString == "" {
+		cfg.PathString = "/tmp/baker/ologs/logs/{{.Year}}/{{.Month}}/{{.Day}}/baker/{{.Year}}{{.Month}}{{.Day}}-{{.Hour}}{{.Minute}}{{.Second}}.{{.Index}}.log.gz"
+	}
+
+	switch cfg.RotateInterval {
+	case -1:
+		// no time-interval-based rotation
+		cfg.RotateInterval = 0
+	case 0:
+		// default value
+		cfg.RotateInterval = 60 * time.Second
+	}
+
+	if cfg.ZstdCompressionLevel == 0 {
+		cfg.ZstdCompressionLevel = 3
+	}
 }
 
 type FileWriter struct {
@@ -200,25 +226,13 @@ func (w *FileWriter) CanShard() bool {
 	return false
 }
 
-func (cfg *FileWriterConfig) fillDefaults() {
-	if cfg.PathString == "" {
-		cfg.PathString = "/tmp/baker/ologs/logs/{{.Year}}/{{.Month}}/{{.Day}}/baker/{{.Year}}{{.Month}}{{.Day}}-{{.Hour}}{{.Minute}}{{.Second}}.{{.Index}}.log.gz"
-	}
-	var z time.Duration
-	if cfg.RotateInterval == z {
-		cfg.RotateInterval = 60 * time.Second
-	}
-
-	if cfg.ZstdCompressionLevel == 0 {
-		cfg.ZstdCompressionLevel = 3
-	}
-}
-
 // fileWorker manages writes to a file and its periodic rotation.
 type fileWorker struct {
 	in   chan []byte
 	done chan struct{}
 
+	cfg            *FileWriterConfig
+	useZstd        bool
 	replFieldValue string
 	index          int
 	uid            string
@@ -233,75 +247,65 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 	fw := &fileWorker{
 		in:             make(chan []byte, 1),
 		done:           make(chan struct{}),
+		cfg:            cfg,
 		replFieldValue: replFieldValue,
 		index:          index,
 		uid:            uid,
 		rotateIdx:      0,
-	}
-
-	useZstd := false
-	if strings.HasSuffix(cfg.PathString, ".zst") || strings.HasSuffix(cfg.PathString, ".zstd") {
-		useZstd = true
-	}
-
-	zstdParams := zstd.WriterParams{
-		CompressionLevel: cfg.ZstdCompressionLevel,
-		WindowLog:        cfg.ZstdWindowLog,
-	}
-
-	newFile := func(path string) (io.WriteCloser, error) {
-		f, err := os.Create(path)
-		if err != nil {
-			return nil, err
-		}
-
-		bufw := bufio.NewWriterSize(f, fileWorkerChunkBuffer)
-
-		var wc io.WriteCloser
-		if useZstd {
-			zstdw := zstd.NewWriterParams(bufw, &zstdParams)
-			wc = makeWriteCloser(zstdw, zstdw.Close)
-		} else {
-			// Only way to for gzip.NewWriterLevel to fail is to pass an
-			// incorrect compression level.
-			wc, _ = gzip.NewWriterLevel(bufw, gzip.BestSpeed)
-		}
-
-		// Close the writers in order, as a stack of defer would do, with the
-		// difference that they'll be closed when the called call Close, not
-		// when the current function returns.
-		close := func() error {
-			if err := wc.Close(); err != nil {
-				return fmt.Errorf("compression error: %s", err)
-			}
-			if err := bufw.Flush(); err != nil {
-				return err
-			}
-			if err := f.Close(); err != nil {
-				return err
-			}
-			return nil
-		}
-
-		return makeWriteCloser(wc, close), nil
+		useZstd:        strings.HasSuffix(cfg.PathString, ".zst") || strings.HasSuffix(cfg.PathString, ".zstd"),
 	}
 
 	curPath, err := fw.makePath(tmpl)
 	if err != nil {
 		return nil, err
 	}
-	curw, err := newFile(curPath)
+	curw, bytesWritten, err := fw.newFile(curPath)
 	if err != nil {
 		return nil, fmt.Errorf("can't create file: %v", err)
 	}
 
-	go func() {
-		var tick <-chan time.Time
-		var ticker *time.Ticker
-		if cfg.RotateInterval > 0 {
-			ticker = time.NewTicker(cfg.RotateInterval)
-			tick = ticker.C
+	// Perform rotation. Close, upload and swap curw with a newly
+	// created file, after evaluating the path template.
+	rotate := func() {
+		if err := curw.Close(); err != nil {
+			ctxLog.WithError(err).WithField("current", curPath).Error("FileWriter worker error closing file")
 		}
+
+		upch <- curPath
+
+		fw.rotateIdx++
+		newPath, err := fw.makePath(tmpl)
+		if err != nil {
+			// TODO(arl): when sticky error will be in place, do not
+			// log.Fatal here but set the sticky error instead.
+			ctxLog.WithError(err).WithField("current", curPath).Fatal("FileWriter worker can't create file")
+		}
+
+		ctxLog.WithFields(log.Fields{"current": curPath, "new": newPath}).Info("FileWriter worker file rotation")
+		if curw, bytesWritten, err = fw.newFile(newPath); err != nil {
+			// TODO(arl): when sticky error will be in place, do not
+			// log.Fatal here but set the sticky error instead.
+			ctxLog.WithError(err).WithField("current", curPath).Fatal("FileWriter worker can't create file")
+		}
+		curPath = newPath
+	}
+
+	go func() {
+		var (
+			tick   <-chan time.Time
+			ticker *time.Ticker
+		)
+		restartTicker := func() {
+			if cfg.RotateInterval > 0 {
+				if ticker != nil {
+					// Actual restart? stop previous ticket to avoid resource leak.
+					ticker.Stop()
+				}
+				ticker = time.NewTicker(cfg.RotateInterval)
+				tick = ticker.C
+			}
+		}
+		restartTicker()
 
 		defer func() {
 			if ticker != nil {
@@ -320,30 +324,7 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 		for {
 			select {
 			case <-tick:
-				// Perform rotation. Close, upload and swap curw with a newly
-				// created file, after evaluating the path template.
-
-				if err := curw.Close(); err != nil {
-					ctxLog.WithError(err).WithField("current", curPath).Error("FileWriter worker error closing file")
-				}
-
-				upch <- curPath
-
-				fw.rotateIdx++
-				newPath, err := fw.makePath(tmpl)
-				if err != nil {
-					// TODO(arl): when sticky error will be in place, do not
-					// log.Fatal here but set the sticky error instead.
-					ctxLog.WithError(err).WithField("current", curPath).Fatal("FileWriter worker can't create file")
-				}
-
-				ctxLog.WithFields(log.Fields{"current": curPath, "new": newPath}).Info("FileWriter worker file rotation")
-				if curw, err = newFile(newPath); err != nil {
-					// TODO(arl): when sticky error will be in place, do not
-					// log.Fatal here but set the sticky error instead.
-					ctxLog.WithError(err).WithField("current", curPath).Fatal("FileWriter worker can't create file")
-				}
-				curPath = newPath
+				rotate()
 
 			case line, ok := <-fw.in:
 				if !ok {
@@ -352,15 +333,63 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 				if _, err := curw.Write(line); err != nil {
 					log.WithError(err).Error("FileWriter worker error writing to file")
 				}
-				const linesep = "\n"
-				if _, err := curw.Write([]byte(linesep)); err != nil {
+
+				const linesep = '\n'
+				if _, err := curw.Write([]byte{linesep}); err != nil {
 					log.WithError(err).Error("FileWriter worker error writing to file")
+				}
+
+				nwritten := bytesWritten()
+				if cfg.RotateSize != 0 && nwritten > int64(cfg.RotateSize) {
+					// Max size reached, we can rotate and reset the 'interval timer'.
+					rotate()
+					restartTicker()
 				}
 			}
 		}
 	}()
 
 	return fw, nil
+}
+
+func (fw *fileWorker) newFile(path string) (io.WriteCloser, func() int64, error) {
+	f, err := os.Create(path)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	bufw := bufio.NewWriterSize(f, fileWorkerChunkBuffer)
+	countw := newCountingWriter(bufw)
+
+	var wc io.WriteCloser
+	if fw.useZstd {
+		zstdw := zstd.NewWriterParams(countw, &zstd.WriterParams{
+			CompressionLevel: fw.cfg.ZstdCompressionLevel,
+			WindowLog:        fw.cfg.ZstdWindowLog,
+		})
+		wc = makeWriteCloser(zstdw, zstdw.Close)
+	} else {
+		// Only way to for gzip.NewWriterLevel to fail is to pass an
+		// incorrect compression level.
+		wc, _ = gzip.NewWriterLevel(countw, gzip.BestSpeed)
+	}
+
+	// Close the writers (the order is important here):
+	// (zstd|gzip).Writer -> bufio.Writer -> os.File
+	close := func() error {
+		if err := wc.Close(); err != nil {
+			return fmt.Errorf("compression error: %s", err)
+		}
+		if err := bufw.Flush(); err != nil {
+			return err
+		}
+		if err := f.Close(); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	return makeWriteCloser(wc, close), countw.BytesWritten, nil
 }
 
 func (fw *fileWorker) write(req []byte) {
@@ -422,4 +451,28 @@ type writeCloser struct {
 
 func (wc *writeCloser) Close() error {
 	return wc.close()
+}
+
+// countingWriter embeds a WriteCloser and exposes how many bytes have been
+// written into it. It's not safe for multiple goroutines to write into a single
+// countingWriter.
+type countingWriter struct {
+	io.Writer
+	count int64
+}
+
+// newCountingWriter function create new countingWriter
+func newCountingWriter(w io.Writer) *countingWriter {
+	return &countingWriter{Writer: w}
+}
+
+func (cw *countingWriter) Write(buf []byte) (int, error) {
+	n, err := cw.Writer.Write(buf)
+	cw.count += int64(n)
+	return n, err
+}
+
+// BytesWritten returns the number of bytes written into the underlying writer.
+func (cw *countingWriter) BytesWritten() int64 {
+	return cw.count
 }

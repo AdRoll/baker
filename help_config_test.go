@@ -17,6 +17,7 @@ type dummyConfig struct {
 	SliceOfIntsField      []int             `help:"ints field" required:"true" default:"[0, 1, 2, 3]"`
 	MapOfStringsToStrings map[string]string `help:"map of strings to strings field" required:"true" default:"{foo=\"bar\", bar=\"foo\"}"`
 	MapOfStringsToInt     map[string]int    `help:"map of strings to ints field" required:"true" default:"{foo=12, bar=2}"`
+	Bytes                 SizeBytes         `help:"bytes as int or string with SI or IEC unit" default:"120MB"`
 }
 
 var dummyKeys = []helpConfigKey{
@@ -83,6 +84,13 @@ var dummyKeys = []helpConfigKey{
 		required: true,
 		desc:     "map of strings to ints field",
 	},
+	{
+		name:     "Bytes",
+		typ:      "bytes as int or string with SI or IEC unit",
+		def:      `120MB`,
+		required: false,
+		desc:     "bytes as int or string with SI or IEC unit",
+	},
 }
 
 func TestGenerateHelp(t *testing.T) {
@@ -113,6 +121,7 @@ func TestGenerateHelp(t *testing.T) {
 				SliceOfIntsField:      []int{0, 1, 2, 3, 4, 5},
 				MapOfStringsToStrings: map[string]string{"foo": "bar", "bar": "foo"},
 				MapOfStringsToInt:     map[string]int{"foo": 12, "bar": 5},
+				Bytes:                 SizeBytes(120_000_000),
 			}},
 		},
 	}

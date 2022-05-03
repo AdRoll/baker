@@ -150,7 +150,6 @@ func newHelpConfigKeyFromField(f reflect.StructField) (helpConfigKey, error) {
 		def:      f.Tag.Get("default"),
 		required: f.Tag.Get("required") == "true",
 	}
-
 	switch f.Type.Kind() {
 	case reflect.Int:
 		h.typ = "int"
@@ -192,7 +191,13 @@ func newHelpConfigKeyFromField(f reflect.StructField) (helpConfigKey, error) {
 			return h, fmt.Errorf("config key %q: unsupported map with key type %s", f.Name, f.Type.Key())
 		}
 	default:
-		return h, fmt.Errorf("config key %q: unsupported type %s", f.Name, f.Type)
+		// Handle other accepted types here
+		switch f.Type.Name() {
+		case "SizeBytes":
+			h.typ = "bytes as int or string with SI or IEC unit"
+		default:
+			return h, fmt.Errorf("config key %q: unsupported type %s", f.Name, f.Type)
+		}
 	}
 
 	return h, nil

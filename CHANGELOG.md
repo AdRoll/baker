@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Clarify role of SQS.Bucket and add integration tests filter [#196](https://github.com/AdRoll/baker/pull/196)
 - Add filter_name tag to filtered_lines metric [#200](https://github.com/AdRoll/baker/pull/200)
 - Add CountAndTag filter [#201](https://github.com/AdRoll/baker/pull/201)
+- Add file size-based rotation for `FileWriter` output (`RotateSize` option) [#203](https://github.com/AdRoll/baker/pull/203)
 
 ### Changed
 
