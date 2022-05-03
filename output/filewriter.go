@@ -94,6 +94,7 @@ type FileWriterConfig struct {
 	PathString           string          `help:"Template describing names of the generated files. See top-level documentation for supported placeholders.."`
 	RotateInterval       time.Duration   `help:"Time interval between 2 successive file rotations. -1 disables interval-based rotation." default:"60s"`
 	RotateSize           baker.SizeBytes `help:"File size which when reached triggers a file rotation. Can be cumulated with RotateInterval. 0 to disable. Examples: 12000, 12KB, 1MB, 1MiB, etc." default:"0"`
+	DiscardEmptyFiles    bool            `help:"By default, if no records have been received at the moment of rotation (see RotateInterval) then created files are empty. If true, then empty files are discarded." default:"false"`
 	ZstdCompressionLevel int             `help:"Zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
 	ZstdWindowLog        int             `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
 }
@@ -237,6 +238,7 @@ type fileWorker struct {
 	index          int
 	uid            string
 	rotateIdx      int64
+	writtenOnce    bool
 }
 
 const fileWorkerChunkBuffer = 128 * 1024
@@ -253,6 +255,7 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 		uid:            uid,
 		rotateIdx:      0,
 		useZstd:        strings.HasSuffix(cfg.PathString, ".zst") || strings.HasSuffix(cfg.PathString, ".zstd"),
+		writtenOnce:    true,
 	}
 
 	curPath, err := fw.makePath(tmpl)
@@ -264,9 +267,16 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 		return nil, fmt.Errorf("can't create file: %v", err)
 	}
 
+	// Flag used to decide whether discarding empty files.
+
 	// Perform rotation. Close, upload and swap curw with a newly
 	// created file, after evaluating the path template.
 	rotate := func() {
+		if cfg.DiscardEmptyFiles && fw.writtenOnce {
+			// Do not rotate if nothing has been written.
+			return
+		}
+
 		if err := curw.Close(); err != nil {
 			ctxLog.WithError(err).WithField("current", curPath).Error("FileWriter worker error closing file")
 		}
@@ -298,7 +308,7 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 		restartTicker := func() {
 			if cfg.RotateInterval > 0 {
 				if ticker != nil {
-					// Actual restart? stop previous ticket to avoid resource leak.
+					// Actual restart? stop previous ticker to avoid resource leak.
 					ticker.Stop()
 				}
 				ticker = time.NewTicker(cfg.RotateInterval)
@@ -333,6 +343,7 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 				if _, err := curw.Write(line); err != nil {
 					log.WithError(err).Error("FileWriter worker error writing to file")
 				}
+				fw.writtenOnce = true
 
 				const linesep = '\n'
 				if _, err := curw.Write([]byte{linesep}); err != nil {
@@ -357,6 +368,7 @@ func (fw *fileWorker) newFile(path string) (io.WriteCloser, func() int64, error)
 	if err != nil {
 		return nil, nil, err
 	}
+	fw.writtenOnce = false
 
 	bufw := bufio.NewWriterSize(f, fileWorkerChunkBuffer)
 	countw := newCountingWriter(bufw)
