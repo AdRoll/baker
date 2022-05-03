@@ -370,7 +370,6 @@ func testFileWriterIntegrationCheckRecords(t *testing.T, pathString string, proc
 		if err := os.WriteFile(csvCpy, out, os.ModePerm); err != nil {
 			t.Fatal(err)
 		}
-
 	}
 }
 
@@ -629,6 +628,7 @@ func TestFileWriterRotateSize(t *testing.T) {
 			t.Fatal(err)
 		}
 		zr.Release()
+		f.Close()
 	}
 	if nlines != bakerDataCount*inputCSVNumLines {
 		t.Errorf("total lines = %d, want %d", nlines, bakerDataCount*inputCSVNumLines)
