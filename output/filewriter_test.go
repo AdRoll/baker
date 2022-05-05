@@ -214,8 +214,6 @@ func testFileWriterCompareInOut(numRecords int, wait, rotate time.Duration, comp
 }
 
 func TestFileWriterCompareInOut(t *testing.T) {
-	t.Parallel()
-
 	defer testutil.DisableLogging()()
 
 	tests := []struct {
@@ -670,7 +668,7 @@ func TestFileWriterDiscardEmptyFiles(t *testing.T) {
 		procs = 1
 		[output.config]
 		pathstring = %q
-		rotateInterval = "50ms"
+		rotateInterval = "150ms"
 		discardEmptyFiles = true
 	`
 	if !testing.Verbose() {
