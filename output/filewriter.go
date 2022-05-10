@@ -255,7 +255,7 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 		uid:            uid,
 		rotateIdx:      0,
 		useZstd:        strings.HasSuffix(cfg.PathString, ".zst") || strings.HasSuffix(cfg.PathString, ".zstd"),
-		writtenOnce:    true,
+		writtenOnce:    false,
 	}
 
 	curPath, err := fw.makePath(tmpl)
@@ -266,8 +266,6 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 	if err != nil {
 		return nil, fmt.Errorf("can't create file: %v", err)
 	}
-
-	// Flag used to decide whether discarding empty files.
 
 	// Perform rotation. Close, upload and swap curw with a newly
 	// created file, after evaluating the path template.
