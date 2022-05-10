@@ -18,7 +18,6 @@ import (
 
 	"github.com/arl/dirtree"
 	"github.com/arl/zt"
-	zstd "github.com/valyala/gozstd"
 
 	"github.com/AdRoll/baker"
 	"github.com/AdRoll/baker/input"
@@ -215,8 +214,6 @@ func testFileWriterCompareInOut(numRecords int, wait, rotate time.Duration, comp
 }
 
 func TestFileWriterCompareInOut(t *testing.T) {
-	t.Parallel()
-
 	defer testutil.DisableLogging()()
 
 	tests := []struct {
@@ -529,6 +526,26 @@ func decompressFilesInDir(tb testing.TB, root string) []string {
 	return decompressed
 }
 
+// countLines returns the number of lines in a file, either compressed (zstd/gz)
+// or uncompressed.
+func countLines(r io.Reader) (int, error) {
+	zr, err := zt.NewReader(r)
+	if err != nil {
+		return 0, fmt.Errorf("countLines: %w", err)
+	}
+	defer zr.Close()
+
+	nlines := 0
+	scan := bufio.NewScanner(zr)
+	for scan.Scan() {
+		nlines++
+	}
+	if scan.Err() != nil {
+		return nlines, fmt.Errorf("countLines: %w", scan.Err())
+	}
+	return nlines, nil
+}
+
 // inputCSV contains 2000 CSV lines.
 // Data in the following file has been generated from
 // https://www.convertcsv.com/generate-test-data.htm with the following
@@ -619,18 +636,90 @@ func TestFileWriterRotateSize(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		zr := zstd.NewReader(f)
-		scan := bufio.NewScanner(zr)
-		for scan.Scan() {
-			nlines++
-		}
-		if scan.Err() != nil {
+		n, err := countLines(f)
+		if err != nil {
 			t.Fatal(err)
 		}
-		zr.Release()
+		nlines += n
 		f.Close()
 	}
 	if nlines != bakerDataCount*inputCSVNumLines {
 		t.Errorf("total lines = %d, want %d", nlines, bakerDataCount*inputCSVNumLines)
+	}
+}
+
+func TestFileWriterDiscardEmptyFiles(t *testing.T) {
+	defer testutil.DisableLogging()()
+
+	tmpDir := t.TempDir()
+	toml := `
+		[csv]
+		field_separator=","
+
+		[fields]
+		names = ["kind", "digits", "first", "last", "email", "state"]
+
+		[input]
+		name = "channel"
+
+		[output]
+		fields = []
+		name = "filewriter"
+		procs = 1
+		[output.config]
+		pathstring = %q
+		rotateInterval = "150ms"
+		discardEmptyFiles = true
+	`
+	if !testing.Verbose() {
+		defer testutil.LessLogging()()
+	}
+
+	toml = fmt.Sprintf(toml, filepath.Join(tmpDir, "file-{{.Hour}}-{{.Minute}}-{{.Second}}.log.gz"))
+	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml),
+		baker.Components{
+			Inputs:  []baker.InputDesc{inputtest.ChannelDesc},
+			Outputs: []baker.OutputDesc{output.FileWriterDesc},
+		})
+	if err != nil {
+		t.Fatal(err)
+	}
+	topo, err := baker.NewTopologyFromConfig(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	in := topo.Input.(*inputtest.Channel)
+	go func() {
+		*in <- baker.Data{Bytes: []byte(";;;;\n")}
+		time.Sleep(time.Second)
+		close(*in)
+	}()
+
+	topo.Start()
+	topo.Wait()
+
+	files, err := dirtree.List(tmpDir, dirtree.Type("f"), dirtree.ModeAll)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(files) != 1 {
+		t.Fatalf("got %d files, want one and only one file", len(files))
+	}
+
+	f, err := os.Open(files[0].Path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+
+	n, err := countLines(f)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if n != 1 {
+		t.Fatalf("got %d lines in %q, want a single line", n, files[0].Path)
 	}
 }
