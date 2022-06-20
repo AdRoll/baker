@@ -56,6 +56,7 @@ type ConfigFilterChain struct {
 type ConfigFilter struct {
 	Name          string
 	DecodedConfig interface{}
+	DropOnError   bool // TODO(arl) handle this!
 
 	Config *toml.Primitive
 	desc   *FilterDesc
