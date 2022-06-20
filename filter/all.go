@@ -6,4 +6,6 @@ import (
 )
 
 // All is the list of all baker filters.
-var All = []baker.FilterDesc{}
+var All = []baker.FilterDesc{
+	URLEscapeDesc,
+}

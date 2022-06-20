@@ -25,7 +25,7 @@ type URLEscapeConfig struct {
 type URLEscape struct {
 	numFilteredLines int64
 	src, dst         baker.FieldIndex
-	process          func([]byte) []byte
+	process          func([]byte) ([]byte, error)
 }
 
 func NewURLEscape(cfg baker.FilterParams) (baker.Filter, error) {
@@ -45,17 +45,13 @@ func NewURLEscape(cfg baker.FilterParams) (baker.Filter, error) {
 		return nil, fmt.Errorf("unknwon field, DstField = %q", dcfg.SrcField)
 	}
 
-	process := func(s []byte) []byte {
-		return []byte(url.QueryEscape(string(s)))
+	process := func(s []byte) ([]byte, error) {
+		return []byte(url.QueryEscape(string(s))), nil
 	}
 	if dcfg.Unescape {
-		process = func(s []byte) []byte {
+		process = func(s []byte) ([]byte, error) {
 			u, err := url.QueryUnescape(string(s))
-			if err != nil {
-				return nil
-			}
-
-			return []byte(u)
+			return []byte(u), err
 		}
 	}
 
@@ -73,7 +69,11 @@ func (f *URLEscape) Stats() baker.FilterStats {
 	}
 }
 
-func (f *URLEscape) Process(l baker.Record, next func(baker.Record)) {
-	l.Set(f.dst, f.process(l.Get(f.src)))
-	next(l)
+func (f *URLEscape) Process(l baker.Record) error {
+	buf, err := f.process(l.Get(f.src))
+	if err != nil {
+		return err
+	}
+	l.Set(f.dst, buf)
+	return nil
 }
