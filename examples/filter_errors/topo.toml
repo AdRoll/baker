@@ -1,0 +1,35 @@
+[csv]
+field_separator = ","
+
+[fields]
+names = ["type", "cookie", "url"]
+
+[input]
+name = "List"
+[input.config]
+files = ["./testdata/input.query-url.csv.zst"]
+
+[[filter]]
+dropOnError = true
+name = "urlescape"
+[filter.config]
+DstField = "url"
+SrcField = "url"
+Unescape = true
+
+[[filter.error_handler]]
+name = "ClearFields"
+[filter.error_handler.config]
+fields = ["url"]
+
+[[filter.error_handler]]
+name = "Log"
+[filter.error_handler.config]
+fields = ["type", "url"]
+level = "warning"
+
+[output]
+name = "FileWriter"
+procs = 1
+[output.config]
+PathString = "./output.gz"
