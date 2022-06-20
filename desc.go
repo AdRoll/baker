@@ -8,6 +8,8 @@ type Components struct {
 	Outputs []OutputDesc // Outputs represents the list of available outputs
 	Uploads []UploadDesc // Uploads represents the list of available uploads
 
+	FilterErrorHandlers []FilterErrorHandlerDesc // FilterErrorHandlers represents the list of available error handler for filters.
+
 	Metrics []MetricsDesc // Metrics represents the list of available metrics clients
 	User    []UserDesc    // User represents the list of user-defined configurations
 
@@ -36,6 +38,11 @@ type InputParams struct {
 
 // FilterParams holds the parameters passed to Filter constructor.
 type FilterParams struct {
+	ComponentParams
+}
+
+// FilterErrorHandlerParams holds the parameters passed to FilterErrorHandler constructor.
+type FilterErrorHandlerParams struct {
 	ComponentParams
 }
 
@@ -78,6 +85,16 @@ type FilterDesc struct {
 	New    func(FilterParams) (Filter, error) // New is the constructor-like function called by the topology to create a new filter
 	Config interface{}                        // Config is the component configuration
 	Help   string                             // Help string
+}
+
+// FilterErrorHandlerDesc describes a FilterErrorHandlerDesc component to the topology.
+type FilterErrorHandlerDesc struct {
+	Name string // Name of the filter
+	// New    func(FilterParams) (Filter, error) // New is the constructor-like function called by the topology to create a new filter
+	New         func(FilterErrorHandlerParams) (FilterErrorHandler, error)
+	Config      interface{} // Config is the component configuration
+	DropOnError bool
+	Help        string // Help string
 }
 
 // OutputDesc describes an Output component to the topology.

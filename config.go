@@ -62,6 +62,16 @@ type ConfigFilter struct {
 	desc   *FilterDesc
 }
 
+// ConfigFilterErrorHandler specifies the configuration for a single filter
+// error handler component.
+type ConfigFilterErrorHandler struct {
+	Name          string
+	DecodedConfig interface{}
+
+	Config *toml.Primitive
+	desc   *FilterErrorHandlerDesc
+}
+
 // ConfigOutput specifies the configuration for the output component.
 type ConfigOutput struct {
 	Name string

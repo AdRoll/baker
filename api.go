@@ -101,7 +101,7 @@ type Filter interface {
 }
 
 type FilterErrorHandler interface {
-	HandleError(f Filter, l Record)
+	HandleError(filterName string, rec Record, err error)
 }
 
 // Output is the final end of a topology, it process the records that have
