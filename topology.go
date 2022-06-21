@@ -230,18 +230,26 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 	tp.upch = make(chan string)
 
 	// Create the filter chain
-	next := tp.filterChainEnd
-	for i := len(tp.Filters) - 1; i >= 0; i-- {
-		nf := next
-		f := tp.Filters[i]
-		next = func(l Record) {
-			f.Process(l, nf)
+	tp.chain = func(r Record) {
+		dropped := false
+		for ifil := 0; ifil < len(tp.Filters); ifil++ {
+			if err := tp.Filters[ifil].Process(r); err != nil {
+				for _, feh := range cfg.Filter[ifil].handlers {
+					feh.HandleError(cfg.Filter[ifil].Name, r, err)
+				}
+				if cfg.Filter[ifil].DropOnError {
+					// TODO(arl): increment filteredLines metrics (and remove it from FilterStats)
+					dropped = true
+					break
+				}
+			}
 		}
-	}
-	tp.chain = func(l Record) {
-		next(l)
-		l.Clear()
-		tp.linePool.Put(l)
+		if !dropped {
+			tp.filterChainEnd(r)
+		}
+
+		r.Clear()
+		tp.linePool.Put(r)
 	}
 
 	// Disable validation if required
