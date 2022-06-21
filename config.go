@@ -60,6 +60,9 @@ type ConfigFilter struct {
 
 	Config *toml.Primitive
 	desc   *FilterDesc
+
+	ErrorHandler         []*toml.Primitive `toml:"error_handler"`
+	DecodedErrorHandlers []ConfigFilterErrorHandler
 }
 
 // ConfigFilterErrorHandler specifies the configuration for a single filter
@@ -265,6 +268,9 @@ func decodeAndCheckConfig(md toml.MetaData, compCfg interface{}) error {
 	case ConfigMetrics:
 		cfg, dcfg = t.Config, t.DecodedConfig
 		name, typ = t.Name, "metrics"
+	case ConfigFilterErrorHandler:
+		cfg, dcfg = t.Config, t.DecodedConfig
+		name, typ = t.Name, "error_handler"
 	default:
 		panic(fmt.Sprintf("unexpected type %#v", cfg))
 	}
@@ -372,6 +378,28 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		cfg.Filter[idx].DecodedConfig = cloneConfig(cfg.Filter[idx].desc.Config)
 		if err := decodeAndCheckConfig(md, cfg.Filter[idx]); err != nil {
 			return nil, err
+		}
+
+		cfg.Filter[idx].DecodedErrorHandlers = make([]ConfigFilterErrorHandler, len(cfg.Filter[idx].ErrorHandler))
+
+		for ehidx := range cfg.Filter[idx].ErrorHandler {
+			// To decode the list of error handlers and their configuration,
+			// we'll first need to obtain the handler name. Once we have the
+			// name, we can deduce the rest from the error handler description.
+			var eh ConfigFilterErrorHandler
+			if err := md.PrimitiveDecode(*cfg.Filter[idx].ErrorHandler[ehidx], &eh); err != nil {
+				return nil, fmt.Errorf("toml decoding failed for filter[%d].error_handler[%d]: %v", idx, ehidx, err)
+			}
+
+			if eh.desc, err = comp.lookupFilterErrorHandlerDesc(eh.Name); err != nil {
+				return nil, err
+			}
+
+			eh.DecodedConfig = cloneConfig(eh.desc.Config)
+			if err := decodeAndCheckConfig(md, eh); err != nil {
+				return nil, err
+			}
+			cfg.Filter[idx].DecodedErrorHandlers[ehidx] = eh
 		}
 	}
 

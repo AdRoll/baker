@@ -1,5 +1,10 @@
 package baker
 
+import (
+	"fmt"
+	"strings"
+)
+
 // Components holds the descriptions of all components one can use
 // to build a topology.
 type Components struct {
@@ -19,6 +24,15 @@ type Components struct {
 
 	FieldByName func(string) (FieldIndex, bool) // FieldByName gets a field index by its name
 	FieldNames  []string                        // FieldNames holds field names, indexed by their FieldIndex
+}
+
+func (c *Components) lookupFilterErrorHandlerDesc(name string) (*FilterErrorHandlerDesc, error) {
+	for idx := range c.FilterErrorHandlers {
+		if strings.EqualFold(c.FilterErrorHandlers[idx].Name, name) {
+			return &c.FilterErrorHandlers[idx], nil
+		}
+	}
+	return nil, fmt.Errorf("filter error handler does not exist: %q", name)
 }
 
 // ComponentParams holds the common configuration parameters passed to components of all kinds.
