@@ -115,6 +115,34 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 		}
 		tp.Filters = append(tp.Filters, fil)
 		tp.filterNames = append(tp.filterNames, strings.ToLower(cfg.Filter[idx].Name))
+
+		// Add filter error handlers, if any.
+		for ehidx := range cfg.Filter[idx].DecodedErrorHandlers {
+			fehCfg := FilterErrorHandlerParams{
+				// TODO(arl): probably we don't need to pass createRecord nor
+				// ValidateRecords to filter error handlers.
+				ComponentParams{
+					DecodedConfig:  cfg.Filter[idx].DecodedErrorHandlers[ehidx].DecodedConfig,
+					FieldByName:    cfg.fieldByName,
+					FieldNames:     cfg.fieldNames,
+					CreateRecord:   cfg.createRecord,
+					ValidateRecord: cfg.validate,
+					Metrics:        tp.Metrics,
+				},
+			}
+
+			feh, err := cfg.Filter[idx].DecodedErrorHandlers[ehidx].desc.New(fehCfg)
+			if err != nil {
+				return nil, fmt.Errorf("error creating filter error handler: %v", err)
+			}
+			// TODO(arl): for now, we place the error handler in the config.
+			// However this should be owned by the filter, hence by the
+			// topology. Filter is an interface so we might need to add a kind
+			// of filter wrapper in the topology. A slice which would, to each
+			// index, associates the actual filter and the list of instantiated
+			// error handlers, if any.
+			cfg.Filter[idx].handlers = append(cfg.Filter[idx].handlers, feh)
+		}
 	}
 	makeUnivocal(tp.filterNames)
 

@@ -100,6 +100,7 @@ type Filter interface {
 	Stats() FilterStats
 }
 
+// TODO(arl) write comment...
 type FilterErrorHandler interface {
 	HandleError(filterName string, rec Record, err error)
 }
