@@ -93,10 +93,15 @@ type Filter interface {
 	// next() is guaranteed to be non-nil; for the last filter of the chain,
 	// it points to a function that wraps up the filtering chain and sends
 	// the Record to the output.
-	Process(l Record, next func(Record))
+	// TODO(arl) rewrite comment
+	Process(l Record) error
 
 	// Stats returns stats about the filter
 	Stats() FilterStats
+}
+
+type FilterErrorHandler interface {
+	HandleError(f Filter, l Record)
 }
 
 // Output is the final end of a topology, it process the records that have
@@ -123,10 +128,10 @@ type Output interface {
 // OutputRecord is the data structure sent to baker output components.
 //
 // It represents a Record in two possibile formats:
-//   * a list of pre-parsed fields, extracted from the record (as string).
+//   - a list of pre-parsed fields, extracted from the record (as string).
 //     This is useful when the output only cares about specific fields and does
 //     not need the full record.
-//   * the whole record, as processed and possibly modified by baker filters (as []byte).
+//   - the whole record, as processed and possibly modified by baker filters (as []byte).
 //
 // Fields sent to the output are described in the topology. This was designed
 // such as an output can work in different modes, by processing different
