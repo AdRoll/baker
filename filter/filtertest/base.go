@@ -6,5 +6,5 @@ import "github.com/AdRoll/baker"
 // and to redeclare one or more methods.
 type Base struct{}
 
-func (Base) Process(l baker.Record, next func(baker.Record)) {}
-func (Base) Stats() baker.FilterStats                        { return baker.FilterStats{} }
+func (Base) Process(l baker.Record) error { return nil }
+func (Base) Stats() baker.FilterStats     { return baker.FilterStats{} }
