@@ -325,3 +325,164 @@ func BenchmarkLogLineCopy(b *testing.B) {
 		}
 	})
 }
+
+func benchmarkFilterChain(b *testing.B, filterToml string, recordStr []string) {
+	const src = `
+[fields]
+names = ["fielda", "fieldb", "fieldc"]
+
+[filterchain]
+procs=1
+
+[input]
+name="records"
+
+# insert filter here
+%s
+
+[output]
+name="discard"
+procs=1
+fields = ["fielda", "fieldb", "fieldc"]
+`
+	toml := fmt.Sprintf(src, filterToml)
+
+	components := baker.Components{
+		Inputs:  []baker.InputDesc{inputtest.RecordsDesc},
+		Filters: filter.All,
+		Outputs: []baker.OutputDesc{discardOutputDesc},
+	}
+
+	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	const nlines = 10000
+	lines := make([]baker.Record, nlines)
+	for i := 0; i < nlines; i++ {
+		l := &baker.LogLine{FieldSeparator: baker.DefaultLogLineFieldSeparator}
+		if err := l.Parse([]byte(recordStr[i%len(recordStr)]), nil); err != nil {
+			b.Fatal(err)
+		}
+		lines[i] = l
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		// Setup and feed the input component
+		topo, err := baker.NewTopologyFromConfig(cfg)
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		in := topo.Input.(*inputtest.Records)
+		in.Records = lines
+
+		topo.Start()
+		topo.Wait()
+		if err := topo.Error(); err != nil {
+			b.Fatalf("topology error: %v", err)
+		}
+	}
+}
+
+// discardOutputDesc describes the discard output.
+var discardOutputDesc = baker.OutputDesc{
+	Name:   "discard",
+	New:    func(baker.OutputParams) (baker.Output, error) { return &discardOutput{}, nil },
+	Config: &struct{}{},
+	Raw:    false,
+}
+
+type discardOutput struct {
+	outputtest.Base
+}
+
+func (*discardOutput) Run(ch <-chan baker.OutputRecord, _ chan<- string) error {
+	for range ch {
+	}
+	return nil
+}
+
+func BenchmarkFilterChain(b *testing.B) {
+	b.Run("url-escape", func(b *testing.B) {
+		toml := `
+		[[filter]]
+		name="urlescape"
+		
+		[filter.config]
+		srcfield="fielda"
+		dstfield="fieldb"
+		`
+		// Simple 'pure' filter: url-escapes a field, writes the result in another.
+		// No error, no possibility of drop.
+		benchmarkFilterChain(b, toml, []string{
+			"foo,bar,baz",
+		})
+	})
+
+	b.Run("url-unescape", func(b *testing.B) {
+		toml := `
+		[[filter]]
+		name="urlescape"
+		dropOnError=true
+		
+		[filter.config]
+		srcfield="fielda"
+		dstfield="fieldb"
+		unescape = true
+		`
+		// Now the unescaping may fail, in which case the destination is cleared.
+		// No possibility of drop.
+		benchmarkFilterChain(b, toml, []string{
+			"%zzzzz,bar,baz", // fielda is not well-formed, it can't be 'unescaped'
+			"%6F,bar,baz",    // fielda is well formed 'url escaped'
+		})
+	})
+
+	b.Run("not-null/drop", func(b *testing.B) {
+		toml := `
+		[[filter]]
+		name="notnull"
+		
+		[filter.config]
+		fields= ["fielda"]
+		`
+		// NotNull filter drops a record if a field is null/empty.
+		benchmarkFilterChain(b, toml, []string{
+			",bar,baz", // fielda is empty, the record will be dropped
+		})
+	})
+
+	b.Run("not-null/drop20%", func(b *testing.B) {
+		toml := `
+		[[filter]]
+		name="notnull"
+		
+		[filter.config]
+		fields= ["fielda"]
+		`
+		// NotNull filter drops a record if a field is null/empty.
+		benchmarkFilterChain(b, toml, []string{
+			strings.Repeat("foo,bar,baz", 4), // not dropped
+			",bar,baz",                       // fielda is empty -> record is dropped 20% of the time
+		})
+	})
+
+	b.Run("not-null/drop2%", func(b *testing.B) {
+		toml := `
+		[[filter]]
+		name="notnull"
+		
+		[filter.config]
+		fields= ["fielda"]
+		`
+		// NotNull filter drops a record if a field is null/empty.
+		benchmarkFilterChain(b, toml, []string{
+			strings.Repeat("foo,bar,baz", 49), // not dropped
+			",bar,baz",                        // fielda is empty -> record is dropped 2% of the time
+		})
+	})
+}
