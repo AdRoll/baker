@@ -19,6 +19,7 @@ description: "All Baker components: inputs, filters, outputs and uploads"
 * [ClauseFilter](/docs/components/filters/clausefilter)
 * [ClearFields](/docs/components/filters/clearfields)
 * [Concatenate](/docs/components/filters/concatenate)
+* [CountAndTag](/docs/components/filters/countandtag)
 * [Crypt](/docs/components/filters/crypt)
 * [Dedup](/docs/components/filters/dedup)
 * [ExpandJSON](/docs/components/filters/expandjson)
@@ -37,6 +38,8 @@ description: "All Baker components: inputs, filters, outputs and uploads"
 * [StringMatch](/docs/components/filters/stringmatch)
 * [Timestamp](/docs/components/filters/timestamp)
 * [TimestampRange](/docs/components/filters/timestamprange)
+* [URLEscape](/docs/components/filters/urlescape)
+* [URLParam](/docs/components/filters/urlparam)
 
 ### **Outputs**
 

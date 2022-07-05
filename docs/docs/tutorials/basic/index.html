@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.87.0" />
+<meta name="generator" content="Hugo 0.101.0" />
 
 <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
 
@@ -44,8 +44,8 @@
 
 
 
-<link rel="preload" href="/scss/main.min.a869f8ae07c1235fe9e237787f8716ed71d54bf7ff307e0c349e5de5f23d9938.css" as="style">
-<link href="/scss/main.min.a869f8ae07c1235fe9e237787f8716ed71d54bf7ff307e0c349e5de5f23d9938.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.f03a4147ac3078d4dc5775e9c3c0a08b7cf17767d580640ea12c405b39f1d034.css" as="style">
+<link href="/scss/main.min.f03a4147ac3078d4dc5775e9c3c0a08b7cf17767d580640ea12c405b39f1d034.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -143,7 +143,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4bb2107953b72d55b8bdc9c04d838b40d80ec011e6c5eb6957aa44128409d7187f6703c68679ba675ac6d4e453ce10cb8aa50d4afa858e1fe3c3d21d88cfcb16.json"
+  data-offline-search-index-json-src="/offline-search-index.84877d81ba7c86c7b9a230c7fee62355d0f84eb6005778b6ec32c4b439f453ff0b61bcac797c079ab6aa25c7f04badf89e7a187cdf08673d029f94864102bcfb.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -174,7 +174,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4bb2107953b72d55b8bdc9c04d838b40d80ec011e6c5eb6957aa44128409d7187f6703c68679ba675ac6d4e453ce10cb8aa50d4afa858e1fe3c3d21d88cfcb16.json"
+  data-offline-search-index-json-src="/offline-search-index.84877d81ba7c86c7b9a230c7fee62355d0f84eb6005778b6ec32c4b439f453ff0b61bcac797c079ab6aa25c7f04badf89e7a187cdf08673d029f94864102bcfb.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -379,6 +379,12 @@
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscountandtag" href="/docs/components/filters/countandtag/">CountAndTag</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscrypt" href="/docs/components/filters/crypt/">Crypt</a>
       
       
@@ -482,6 +488,18 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterstimestamprange" href="/docs/components/filters/timestamprange/">TimestampRange</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersurlescape" href="/docs/components/filters/urlescape/">URLEscape</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersurlparam" href="/docs/components/filters/urlparam/">URLParam</a>
       
       
     </li>
@@ -849,133 +867,133 @@ available for downloading <a href="/tutorial-base-dataset.csv.gz">here</a>.</str
 <h2 id="baker-configuration">Baker configuration</h2>
 <p>An essential thing to do is to create a configuration file for Baker, in
 <a href="https://github.com/toml-lang/toml">TOML</a> format, selecting the aforementioned components:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[fields]
-names = [<span style="color:#f1fa8c">&#34;review_num&#34;</span>, <span style="color:#f1fa8c">&#34;brand&#34;</span>, <span style="color:#f1fa8c">&#34;variety&#34;</span>, <span style="color:#f1fa8c">&#34;style&#34;</span>, <span style="color:#f1fa8c">&#34;country&#34;</span>, <span style="color:#f1fa8c">&#34;stars&#34;</span>, <span style="color:#f1fa8c">&#34;top_ten&#34;</span>]
-
-[input]
-name = <span style="color:#f1fa8c">&#34;List&#34;</span>
-
-    [input.config]
-    Files = [<span style="color:#f1fa8c">&#34;/tmp/db.csv.gz&#34;</span>] <span style="color:#6272a4"># put the file wherever you like</span>
-
-[[filter]]
-name = <span style="color:#f1fa8c">&#34;NotNull&#34;</span>
-
-    [filter.config]
-    Fields = [<span style="color:#f1fa8c">&#34;top_ten&#34;</span>] <span style="color:#6272a4"># discard all records with an empty top_ten field</span>
-
-[output]
-name = <span style="color:#f1fa8c">&#34;FileWriter&#34;</span>
-procs = <span style="color:#bd93f9">1</span> <span style="color:#6272a4"># With our PathString, FileWriter doesn&#39;t support concurrency</span>
-fields = [<span style="color:#f1fa8c">&#34;country&#34;</span>]
-
-    [output.config]
-    PathString = <span style="color:#f1fa8c">&#34;/tmp/out/{{.Field0}}/ramens.csv.gz&#34;</span>
-
-[upload]
-name=<span style="color:#f1fa8c">&#34;S3&#34;</span>
-
-    [upload.config]
-    Region = <span style="color:#f1fa8c">&#34;us-east-1&#34;</span>
-    Bucket = <span style="color:#f1fa8c">&#34;myBucket&#34;</span>
-    Prefix = <span style="color:#f1fa8c">&#34;ramens/&#34;</span>
-    StagingPath = <span style="color:#f1fa8c">&#34;/tmp/staging/&#34;</span>
-    SourceBasePath = <span style="color:#f1fa8c">&#34;/tmp/out/&#34;</span>
-    Interval = <span style="color:#f1fa8c">&#34;60s&#34;</span>
-    ExitOnError = <span style="color:#ff79c6">true</span>
-</code></pre></div><h2 id="create-the-program">Create the program</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[fields]
+</span></span><span style="display:flex;"><span>names = [<span style="color:#f1fa8c">&#34;review_num&#34;</span>, <span style="color:#f1fa8c">&#34;brand&#34;</span>, <span style="color:#f1fa8c">&#34;variety&#34;</span>, <span style="color:#f1fa8c">&#34;style&#34;</span>, <span style="color:#f1fa8c">&#34;country&#34;</span>, <span style="color:#f1fa8c">&#34;stars&#34;</span>, <span style="color:#f1fa8c">&#34;top_ten&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[input]
+</span></span><span style="display:flex;"><span>name = <span style="color:#f1fa8c">&#34;List&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    [input.config]
+</span></span><span style="display:flex;"><span>    Files = [<span style="color:#f1fa8c">&#34;/tmp/db.csv.gz&#34;</span>] <span style="color:#6272a4"># put the file wherever you like</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[filter]]
+</span></span><span style="display:flex;"><span>name = <span style="color:#f1fa8c">&#34;NotNull&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    [filter.config]
+</span></span><span style="display:flex;"><span>    Fields = [<span style="color:#f1fa8c">&#34;top_ten&#34;</span>] <span style="color:#6272a4"># discard all records with an empty top_ten field</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[output]
+</span></span><span style="display:flex;"><span>name = <span style="color:#f1fa8c">&#34;FileWriter&#34;</span>
+</span></span><span style="display:flex;"><span>procs = <span style="color:#bd93f9">1</span> <span style="color:#6272a4"># With our PathString, FileWriter doesn&#39;t support concurrency</span>
+</span></span><span style="display:flex;"><span>fields = [<span style="color:#f1fa8c">&#34;country&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    [output.config]
+</span></span><span style="display:flex;"><span>    PathString = <span style="color:#f1fa8c">&#34;/tmp/out/{{.Field0}}/ramens.csv.gz&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[upload]
+</span></span><span style="display:flex;"><span>name=<span style="color:#f1fa8c">&#34;S3&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    [upload.config]
+</span></span><span style="display:flex;"><span>    Region = <span style="color:#f1fa8c">&#34;us-east-1&#34;</span>
+</span></span><span style="display:flex;"><span>    Bucket = <span style="color:#f1fa8c">&#34;myBucket&#34;</span>
+</span></span><span style="display:flex;"><span>    Prefix = <span style="color:#f1fa8c">&#34;ramens/&#34;</span>
+</span></span><span style="display:flex;"><span>    StagingPath = <span style="color:#f1fa8c">&#34;/tmp/staging/&#34;</span>
+</span></span><span style="display:flex;"><span>    SourceBasePath = <span style="color:#f1fa8c">&#34;/tmp/out/&#34;</span>
+</span></span><span style="display:flex;"><span>    Interval = <span style="color:#f1fa8c">&#34;60s&#34;</span>
+</span></span><span style="display:flex;"><span>    ExitOnError = <span style="color:#ff79c6">true</span>
+</span></span></code></pre></div><h2 id="create-the-program">Create the program</h2>
 <p>Baker is a Go library. To use it, it is required to create a Go <code>main()</code> function,
 <a href="/docs/how-tos/baker_components/">define a <code>baker.Components</code></a> object and pass it to
 <a href="https://pkg.go.dev/github.com/AdRoll/baker#MainCLI"><code>baker.MainCLI()</code></a>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#ff79c6">package</span> main
-
-<span style="color:#ff79c6">import</span> (
-	<span style="color:#f1fa8c">&#34;log&#34;</span>
-
-    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
-)
-
-<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">main</span>() {
-    components <span style="color:#ff79c6">:=</span> baker.Components{<span style="color:#6272a4">/* define components */</span>}
-    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">:=</span> baker.<span style="color:#50fa7b">MainCLI</span>(components); err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
-		log.<span style="color:#50fa7b">Fatal</span>(err)
-	}
-}
-</code></pre></div><h3 id="define-bakercomponents">Define baker.Components</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#ff79c6">package</span> main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#f1fa8c">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    components <span style="color:#ff79c6">:=</span> baker.Components{<span style="color:#6272a4">/* define components */</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">:=</span> baker.<span style="color:#50fa7b">MainCLI</span>(components); err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
+</span></span><span style="display:flex;"><span>		log.<span style="color:#50fa7b">Fatal</span>(err)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="define-bakercomponents">Define baker.Components</h3>
 <p>The only required fields in <code>baker.Components</code> are the components that we need to use (the complete
 guide to <code>baker.Components</code> is <a href="/docs/how-tos/baker_components/">here</a>).</p>
 <p>The simplest and more generic way to add the components to Baker is to add all of them:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">components <span style="color:#ff79c6">:=</span> baker.Components{
-    Inputs:      input.All,
-    Filters:     filter.All,
-    Outputs:     output.All,
-    Uploads:     upload.All,
-}
-</code></pre></div><p>The complete program (that is available in the
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>components <span style="color:#ff79c6">:=</span> baker.Components{
+</span></span><span style="display:flex;"><span>    Inputs:      input.All,
+</span></span><span style="display:flex;"><span>    Filters:     filter.All,
+</span></span><span style="display:flex;"><span>    Outputs:     output.All,
+</span></span><span style="display:flex;"><span>    Uploads:     upload.All,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The complete program (that is available in the
 <a href="https://github.com/AdRoll/baker/blob/main/tutorials/basic/main.go"><code>tutorials/</code> folder</a> in
 the Baker repository) is the following:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#ff79c6">package</span> main
-
-<span style="color:#ff79c6">import</span> (
-	<span style="color:#f1fa8c">&#34;log&#34;</span>
-
-    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
-    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/input&#34;</span>
-    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/filter&#34;</span>
-    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/output&#34;</span>
-    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/upload&#34;</span>
-)
-
-<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">main</span>() {
-    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">:=</span> baker.<span style="color:#50fa7b">MainCLI</span>(baker.Components{
-        Inputs:      input.All,
-        Filters:     filter.All,
-        Outputs:     output.All,
-        Uploads:     upload.All,
-    }); err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
-		log.<span style="color:#50fa7b">Fatal</span>(err)
-	}
-}
-</code></pre></div><h2 id="run-the-program">Run the program</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#ff79c6">package</span> main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#f1fa8c">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/input&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/filter&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/output&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/upload&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">:=</span> baker.<span style="color:#50fa7b">MainCLI</span>(baker.Components{
+</span></span><span style="display:flex;"><span>        Inputs:      input.All,
+</span></span><span style="display:flex;"><span>        Filters:     filter.All,
+</span></span><span style="display:flex;"><span>        Outputs:     output.All,
+</span></span><span style="display:flex;"><span>        Uploads:     upload.All,
+</span></span><span style="display:flex;"><span>    }); err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
+</span></span><span style="display:flex;"><span>		log.<span style="color:#50fa7b">Fatal</span>(err)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="run-the-program">Run the program</h2>
 <p>Once the code and the configuration files are ready, we can run the topology:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ go build -o myProgram ./main.go 
-<span style="color:#6272a4"># Test it works as expected</span>
-$ ./myProgram -help
-<span style="color:#6272a4"># run the topology</span>
-$ ./myProgram topology.toml
-</code></pre></div><p>Among the messages that Baker prints on stdout, the stats messages are particularly interesting:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">Stats: 1s<span style="color:#ff79c6">[</span>w:0 r:0<span style="color:#ff79c6">]</span> total<span style="color:#ff79c6">[</span>w:41 r:2584 u:11<span style="color:#ff79c6">]</span> speed<span style="color:#ff79c6">[</span>w:20 r:1292<span style="color:#ff79c6">]</span> errors<span style="color:#ff79c6">[</span>p:0 i:0 f:2543 o:0 u:0<span style="color:#ff79c6">]</span>
-</code></pre></div><p>Take a look at the <a href="/docs/how-tos/read_stats/">dedicated page</a> to learn how to read the values.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>$ go build -o myProgram ./main.go 
+</span></span><span style="display:flex;"><span><span style="color:#6272a4"># Test it works as expected</span>
+</span></span><span style="display:flex;"><span>$ ./myProgram -help
+</span></span><span style="display:flex;"><span><span style="color:#6272a4"># run the topology</span>
+</span></span><span style="display:flex;"><span>$ ./myProgram topology.toml
+</span></span></code></pre></div><p>Among the messages that Baker prints on stdout, the stats messages are particularly interesting:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Stats: 1s<span style="color:#ff79c6">[</span>w:0 r:0<span style="color:#ff79c6">]</span> total<span style="color:#ff79c6">[</span>w:41 r:2584 u:11<span style="color:#ff79c6">]</span> speed<span style="color:#ff79c6">[</span>w:20 r:1292<span style="color:#ff79c6">]</span> errors<span style="color:#ff79c6">[</span>p:0 i:0 f:2543 o:0 u:0<span style="color:#ff79c6">]</span>
+</span></span></code></pre></div><p>Take a look at the <a href="/docs/how-tos/read_stats/">dedicated page</a> to learn how to read the values.</p>
 <h2 id="verify-the-result">Verify the result</h2>
 <p>The resulting files are split into multiple folders, one for each country, and then uploaded.</p>
 <p>The <a href="/docs/components/uploads/s3/"><code>S3</code></a> upload removes the files from the local disk once uploaded,
 so you&rsquo;ll only find empty directories in the output destination folder:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">~ ls -l /tmp/out/
-drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 China
-drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Hong Kong
-drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Indonesia
-drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Japan
-drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Malaysia
-drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Myanmar
-drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Singapore
-drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 South Korea
-drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Taiwan
-drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Thailand
-drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 USA
-</code></pre></div><p>The files have been uploaded to S3:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">~ aws s3 ls --recursive s3://myBucket/ramens/
-2020-11-16 11:43:59        <span style="color:#bd93f9">115</span> ramens/China/ramens.csv.gz
-2020-11-16 11:43:59         <span style="color:#bd93f9">83</span> ramens/Hong Kong/ramens.csv.gz
-2020-11-16 11:43:59        <span style="color:#bd93f9">223</span> ramens/Indonesia/ramens.csv.gz
-2020-11-16 11:43:59        <span style="color:#bd93f9">236</span> ramens/Japan/ramens.csv.gz
-2020-11-16 11:43:59        <span style="color:#bd93f9">240</span> ramens/Malaysia/ramens.csv.gz
-2020-11-16 11:43:59         <span style="color:#bd93f9">99</span> ramens/Myanmar/ramens.csv.gz
-2020-11-16 11:43:59        <span style="color:#bd93f9">219</span> ramens/Singapore/ramens.csv.gz
-2020-11-16 11:43:59        <span style="color:#bd93f9">265</span> ramens/South Korea/ramens.csv.gz
-2020-11-16 11:43:59        <span style="color:#bd93f9">159</span> ramens/Taiwan/ramens.csv.gz
-2020-11-16 11:43:59        <span style="color:#bd93f9">181</span> ramens/Thailand/ramens.csv.gz
-2020-11-16 11:43:59         <span style="color:#bd93f9">94</span> ramens/USA/ramens.csv.gz
-</code></pre></div><h2 id="conclusion">Conclusion</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>~ ls -l /tmp/out/
+</span></span><span style="display:flex;"><span>drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 China
+</span></span><span style="display:flex;"><span>drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Hong Kong
+</span></span><span style="display:flex;"><span>drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Indonesia
+</span></span><span style="display:flex;"><span>drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Japan
+</span></span><span style="display:flex;"><span>drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Malaysia
+</span></span><span style="display:flex;"><span>drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Myanmar
+</span></span><span style="display:flex;"><span>drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Singapore
+</span></span><span style="display:flex;"><span>drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 South Korea
+</span></span><span style="display:flex;"><span>drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Taiwan
+</span></span><span style="display:flex;"><span>drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 Thailand
+</span></span><span style="display:flex;"><span>drwxrwxr-x   - username <span style="color:#bd93f9">16</span> Nov 11:43 USA
+</span></span></code></pre></div><p>The files have been uploaded to S3:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>~ aws s3 ls --recursive s3://myBucket/ramens/
+</span></span><span style="display:flex;"><span>2020-11-16 11:43:59        <span style="color:#bd93f9">115</span> ramens/China/ramens.csv.gz
+</span></span><span style="display:flex;"><span>2020-11-16 11:43:59         <span style="color:#bd93f9">83</span> ramens/Hong Kong/ramens.csv.gz
+</span></span><span style="display:flex;"><span>2020-11-16 11:43:59        <span style="color:#bd93f9">223</span> ramens/Indonesia/ramens.csv.gz
+</span></span><span style="display:flex;"><span>2020-11-16 11:43:59        <span style="color:#bd93f9">236</span> ramens/Japan/ramens.csv.gz
+</span></span><span style="display:flex;"><span>2020-11-16 11:43:59        <span style="color:#bd93f9">240</span> ramens/Malaysia/ramens.csv.gz
+</span></span><span style="display:flex;"><span>2020-11-16 11:43:59         <span style="color:#bd93f9">99</span> ramens/Myanmar/ramens.csv.gz
+</span></span><span style="display:flex;"><span>2020-11-16 11:43:59        <span style="color:#bd93f9">219</span> ramens/Singapore/ramens.csv.gz
+</span></span><span style="display:flex;"><span>2020-11-16 11:43:59        <span style="color:#bd93f9">265</span> ramens/South Korea/ramens.csv.gz
+</span></span><span style="display:flex;"><span>2020-11-16 11:43:59        <span style="color:#bd93f9">159</span> ramens/Taiwan/ramens.csv.gz
+</span></span><span style="display:flex;"><span>2020-11-16 11:43:59        <span style="color:#bd93f9">181</span> ramens/Thailand/ramens.csv.gz
+</span></span><span style="display:flex;"><span>2020-11-16 11:43:59         <span style="color:#bd93f9">94</span> ramens/USA/ramens.csv.gz
+</span></span></code></pre></div><h2 id="conclusion">Conclusion</h2>
 <p>This is it for this basic tutorial. You have learned:</p>
 <ul>
 <li>how to create a simple Baker program to process a CSV dataset with minimal filtering and
@@ -1029,7 +1047,7 @@ and learning more <a href="/docs/how-tos/">advanced topics</a>.</p>
         
       </div>
       <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
-        <small class="text-white">&copy; 2021 NextRoll, Inc. All Rights Reserved</small>
+        <small class="text-white">&copy; 2022 NextRoll, Inc. All Rights Reserved</small>
         <small class="ml-1"><a href="https://www.nextroll.com/privacy" target="_blank">Privacy Policy</a></small>
 	
 		
@@ -1053,7 +1071,7 @@ and learning more <a href="/docs/how-tos/">advanced topics</a>.</p>
 
 
 
-<script src="/js/main.min.63db3e552bd0543be17ce4a79a18b744e9cb72256bec42b540e3ab0cd43722d0.js" integrity="sha256-Y9s&#43;VSvQVDvhfOSnmhi3ROnLciVr7EK1QOOrDNQ3ItA=" crossorigin="anonymous"></script>
+<script src="/js/main.min.27af2a485b4359ac7a0cd4cb4a2d165c56770c59ef3a9330e8f38fbe3bdc2f97.js" integrity="sha256-J68qSFtDWax6DNTLSi0WXFZ3DFnvOpMw6POPvjvcL5c=" crossorigin="anonymous"></script>
 
 
 

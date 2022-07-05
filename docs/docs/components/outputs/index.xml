@@ -5,7 +5,7 @@
     <description>Recent content in Outputs on Baker, high performance modular pipelines for the Big Data era</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 17 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 05 Jul 2022 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/outputs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: DynamoDB</title>
       <link>https://getbaker.io/docs/components/outputs/dynamodb/</link>
-      <pubDate>Wed, 17 Nov 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/dynamodb/</guid>
       <description>
@@ -105,7 +105,7 @@ The first column (and field) must be the primary key.&lt;/p&gt;
     <item>
       <title>Docs: FileWriter</title>
       <link>https://getbaker.io/docs/components/outputs/filewriter/</link>
-      <pubDate>Wed, 17 Nov 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/filewriter/</guid>
       <description>
@@ -164,6 +164,11 @@ path:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;PathString = &amp;quot;/path/to/file-{{.Hour}}-{{.Minute}}.log.gz&amp;quot; 
 RotateInterval = 1s
 &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you use RotateSize you should also probably include {{.Rotation}}, to generate different
+different paths:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;PathString = &amp;quot;/path/to/file-{{.Rotation}}.log.gz&amp;quot; 
+RotateSize = &amp;quot;128MB&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;3&#34;&gt;
 &lt;li&gt;Only use {{.Field0}} if you trust the records you consume.&lt;/li&gt;
 &lt;/ol&gt;
@@ -195,7 +200,21 @@ means that the number of files (and workers) depend on the cardinality of that f
 &lt;td style=&#34;text-align:center&#34;&gt;duration&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;60s&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td&gt;Time interval between 2 successive file rotations. -1 disabled rotation.&lt;/td&gt;
+&lt;td&gt;Time interval between 2 successive file rotations. -1 disables interval-based rotation.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;RotateSize&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;bytes as int or string with SI or IEC unit&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;0&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
+&lt;td&gt;File size which when reached triggers a file rotation. Can be cumulated with RotateInterval. 0 to disable. Examples: 12000, 12KB, 1MB, 1MiB, etc.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DiscardEmptyFiles&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;bool&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
+&lt;td&gt;By default, if no records have been received at the moment of rotation (see RotateInterval) then created files are empty. If true, then empty files are discarded.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;ZstdCompressionLevel&lt;/td&gt;
@@ -220,7 +239,7 @@ means that the number of files (and workers) depend on the cardinality of that f
     <item>
       <title>Docs: Nop</title>
       <link>https://getbaker.io/docs/components/outputs/nop/</link>
-      <pubDate>Wed, 17 Nov 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/nop/</guid>
       <description>
@@ -246,7 +265,7 @@ means that the number of files (and workers) depend on the cardinality of that f
     <item>
       <title>Docs: OpLog</title>
       <link>https://getbaker.io/docs/components/outputs/oplog/</link>
-      <pubDate>Wed, 17 Nov 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/oplog/</guid>
       <description>
@@ -272,7 +291,7 @@ means that the number of files (and workers) depend on the cardinality of that f
     <item>
       <title>Docs: Stats</title>
       <link>https://getbaker.io/docs/components/outputs/stats/</link>
-      <pubDate>Wed, 17 Nov 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/stats/</guid>
       <description>
@@ -332,7 +351,7 @@ means that the number of files (and workers) depend on the cardinality of that f
     <item>
       <title>Docs: WebSocket</title>
       <link>https://getbaker.io/docs/components/outputs/websocket/</link>
-      <pubDate>Wed, 17 Nov 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/websocket/</guid>
       <description>

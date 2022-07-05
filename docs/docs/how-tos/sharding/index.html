@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.87.0" />
+<meta name="generator" content="Hugo 0.101.0" />
 
 <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
 
@@ -41,8 +41,8 @@
 
 
 
-<link rel="preload" href="/scss/main.min.a869f8ae07c1235fe9e237787f8716ed71d54bf7ff307e0c349e5de5f23d9938.css" as="style">
-<link href="/scss/main.min.a869f8ae07c1235fe9e237787f8716ed71d54bf7ff307e0c349e5de5f23d9938.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.f03a4147ac3078d4dc5775e9c3c0a08b7cf17767d580640ea12c405b39f1d034.css" as="style">
+<link href="/scss/main.min.f03a4147ac3078d4dc5775e9c3c0a08b7cf17767d580640ea12c405b39f1d034.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -140,7 +140,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4bb2107953b72d55b8bdc9c04d838b40d80ec011e6c5eb6957aa44128409d7187f6703c68679ba675ac6d4e453ce10cb8aa50d4afa858e1fe3c3d21d88cfcb16.json"
+  data-offline-search-index-json-src="/offline-search-index.84877d81ba7c86c7b9a230c7fee62355d0f84eb6005778b6ec32c4b439f453ff0b61bcac797c079ab6aa25c7f04badf89e7a187cdf08673d029f94864102bcfb.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -171,7 +171,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4bb2107953b72d55b8bdc9c04d838b40d80ec011e6c5eb6957aa44128409d7187f6703c68679ba675ac6d4e453ce10cb8aa50d4afa858e1fe3c3d21d88cfcb16.json"
+  data-offline-search-index-json-src="/offline-search-index.84877d81ba7c86c7b9a230c7fee62355d0f84eb6005778b6ec32c4b439f453ff0b61bcac797c079ab6aa25c7f04badf89e7a187cdf08673d029f94864102bcfb.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -376,6 +376,12 @@
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscountandtag" href="/docs/components/filters/countandtag/">CountAndTag</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscrypt" href="/docs/components/filters/crypt/">Crypt</a>
       
       
@@ -479,6 +485,18 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterstimestamprange" href="/docs/components/filters/timestamprange/">TimestampRange</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersurlescape" href="/docs/components/filters/urlescape/">URLEscape</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersurlparam" href="/docs/components/filters/urlparam/">URLParam</a>
       
       
     </li>
@@ -803,20 +821,20 @@ of the field we wish to use to partition the records space.</p>
 and set the number of instances to 4 (i.e 4 shards). In our case, Baker is
 going to extract and hash the <code>name</code> field of each <code>Record</code> to determine which
 of the 4 <code>Filewriter</code> instances a <code>Record</code> is sent to:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[input]
-...
-
-[[filter]]
-...
-
-[output]
-name=<span style="color:#f1fa8c">&#34;Filewriter&#34;</span>
-sharding=<span style="color:#f1fa8c">&#34;name&#34;</span>
-procs=<span style="color:#bd93f9">4</span>
-
-    [output.config]
-    ...
-</code></pre></div><h2 id="limitations">Limitations</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[input]
+</span></span><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[filter]]
+</span></span><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[output]
+</span></span><span style="display:flex;"><span>name=<span style="color:#f1fa8c">&#34;Filewriter&#34;</span>
+</span></span><span style="display:flex;"><span>sharding=<span style="color:#f1fa8c">&#34;name&#34;</span>
+</span></span><span style="display:flex;"><span>procs=<span style="color:#bd93f9">4</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    [output.config]
+</span></span><span style="display:flex;"><span>    ...
+</span></span></code></pre></div><h2 id="limitations">Limitations</h2>
 <p>Baker only supports sharding at the output level. Baker implements other
 strategies so that other types of components (input, filters and uploads)
 maximize the pipeline performance.</p>
@@ -850,11 +868,11 @@ configuration, to the code eventually running when these elements are used
 inside a topology.</p>
 <p>Sharding functions that may be used in topologies are stored inside of
 the <code>ShardingFuncs</code> field of <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>baker.Components</code></a>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">ShardingFuncs <span style="color:#8be9fd;font-style:italic">map</span>[baker.FieldIndex]ShardingFunc
-</code></pre></div><p>And a <a href="https://pkg.go.dev/github.com/AdRoll/baker#ShardingFunc"><code>ShardingFunc</code></a>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>ShardingFuncs <span style="color:#8be9fd;font-style:italic">map</span>[baker.FieldIndex]ShardingFunc
+</span></span></code></pre></div><p>And a <a href="https://pkg.go.dev/github.com/AdRoll/baker#ShardingFunc"><code>ShardingFunc</code></a>
 is a hash function that returns an <code>uint64</code> <code>for baker.Record</code></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> ShardingFunc <span style="color:#8be9fd;font-style:italic">func</span>(Record) <span style="color:#8be9fd">uint64</span>
-</code></pre></div><p>Finally, filling <code>ShardingFuncs</code> is a matter of associating a shardable field to
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">type</span> ShardingFunc <span style="color:#8be9fd;font-style:italic">func</span>(Record) <span style="color:#8be9fd">uint64</span>
+</span></span></code></pre></div><p>Finally, filling <code>ShardingFuncs</code> is a matter of associating a shardable field to
 the sharding function that implements the hashing of that field.</p>
 <h2 id="putting-it-all-together">Putting it all together</h2>
 <p>The following is an example of an hypothetical record schema with 3 fields
@@ -863,34 +881,34 @@ named <code>timestamp</code>, <code>city</code> and <code>country</code>. Let&rs
 sharding on these two fields, but note that only one of them can be chosen
 for a given topology.</p>
 <p>This is how implementing sharding for such a schema would look probably like:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">const</span> (
-    FieldTimestamp baker.FieldIndex = <span style="color:#bd93f9">0</span> <span style="color:#6272a4">// timestamp is unix epoch timestamp
-</span><span style="color:#6272a4"></span>    FieldCity baker.FieldIndex      = <span style="color:#bd93f9">1</span> <span style="color:#6272a4">// city name
-</span><span style="color:#6272a4"></span>    FieldCountry baker.FieldIndex   = <span style="color:#bd93f9">2</span> <span style="color:#6272a4">// 2 chars country code
-</span><span style="color:#6272a4"></span>)
-</code></pre></div><p>This is an hypothetical function to hash records based on the <code>timestamp</code> field
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">const</span> (
+</span></span><span style="display:flex;"><span>    FieldTimestamp baker.FieldIndex = <span style="color:#bd93f9">0</span> <span style="color:#6272a4">// timestamp is unix epoch timestamp
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    FieldCity baker.FieldIndex      = <span style="color:#bd93f9">1</span> <span style="color:#6272a4">// city name
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    FieldCountry baker.FieldIndex   = <span style="color:#bd93f9">2</span> <span style="color:#6272a4">// 2 chars country code
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>)
+</span></span></code></pre></div><p>This is an hypothetical function to hash records based on the <code>timestamp</code> field
 which only contains integers:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hashTimestamp</span>(r baker.Record) <span style="color:#8be9fd">uint64</span> {
-    <span style="color:#6272a4">// We know the timestamp is an integer, so we use that 
-</span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// to efficiently compute a hash from it.
-</span><span style="color:#6272a4"></span>    buf <span style="color:#ff79c6">:=</span> r.<span style="color:#50fa7b">Get</span>(FieldTimestamp)
-    ts, _ <span style="color:#ff79c6">:=</span> strconv.<span style="color:#50fa7b">Atoi</span>(<span style="color:#8be9fd;font-style:italic">string</span>(buf))
-
-    <span style="color:#6272a4">// Call super efficient integer hash function
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">return</span> <span style="color:#50fa7b">hashInt</span>(ts)
-}
-</code></pre></div><p>And this is how hashing records based on a 2-char <code>country</code> code field would
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hashTimestamp</span>(r baker.Record) <span style="color:#8be9fd">uint64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// We know the timestamp is an integer, so we use that 
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// to efficiently compute a hash from it.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    buf <span style="color:#ff79c6">:=</span> r.<span style="color:#50fa7b">Get</span>(FieldTimestamp)
+</span></span><span style="display:flex;"><span>    ts, _ <span style="color:#ff79c6">:=</span> strconv.<span style="color:#50fa7b">Atoi</span>(<span style="color:#8be9fd;font-style:italic">string</span>(buf))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// Call super efficient integer hash function
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">return</span> <span style="color:#50fa7b">hashInt</span>(ts)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>And this is how hashing records based on a 2-char <code>country</code> code field would
 look like:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hashCountry</span>(r baker.Record) <span style="color:#8be9fd">uint64</span> {
-    <span style="color:#6272a4">// We know the country is made of 2 characters, so we use that 
-</span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// fact to efficiently compute a hash from it.
-</span><span style="color:#6272a4"></span>    buf <span style="color:#ff79c6">:=</span> r.<span style="color:#50fa7b">Get</span>(FieldCountry)
-    country <span style="color:#ff79c6">:=</span> buf[:<span style="color:#bd93f9">2</span>]
-
-    <span style="color:#6272a4">// Call our super fast function that hashes 2 bytes.
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">return</span> <span style="color:#50fa7b">hash2bytes</span>(country)
-}
-</code></pre></div><p>You can find <a href="https://github.com/AdRoll/baker/tree/main/examples/sharding">here</a>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">hashCountry</span>(r baker.Record) <span style="color:#8be9fd">uint64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// We know the country is made of 2 characters, so we use that 
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// fact to efficiently compute a hash from it.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    buf <span style="color:#ff79c6">:=</span> r.<span style="color:#50fa7b">Get</span>(FieldCountry)
+</span></span><span style="display:flex;"><span>    country <span style="color:#ff79c6">:=</span> buf[:<span style="color:#bd93f9">2</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// Call our super fast function that hashes 2 bytes.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">return</span> <span style="color:#50fa7b">hash2bytes</span>(country)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>You can find <a href="https://github.com/AdRoll/baker/tree/main/examples/sharding">here</a>
 a full working example illustrating sharding in Baker.</p>
 
 	
@@ -936,7 +954,7 @@ a full working example illustrating sharding in Baker.</p>
         
       </div>
       <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
-        <small class="text-white">&copy; 2021 NextRoll, Inc. All Rights Reserved</small>
+        <small class="text-white">&copy; 2022 NextRoll, Inc. All Rights Reserved</small>
         <small class="ml-1"><a href="https://www.nextroll.com/privacy" target="_blank">Privacy Policy</a></small>
 	
 		
@@ -960,7 +978,7 @@ a full working example illustrating sharding in Baker.</p>
 
 
 
-<script src="/js/main.min.63db3e552bd0543be17ce4a79a18b744e9cb72256bec42b540e3ab0cd43722d0.js" integrity="sha256-Y9s&#43;VSvQVDvhfOSnmhi3ROnLciVr7EK1QOOrDNQ3ItA=" crossorigin="anonymous"></script>
+<script src="/js/main.min.27af2a485b4359ac7a0cd4cb4a2d165c56770c59ef3a9330e8f38fbe3bdc2f97.js" integrity="sha256-J68qSFtDWax6DNTLSi0WXFZ3DFnvOpMw6POPvjvcL5c=" crossorigin="anonymous"></script>
 
 
 

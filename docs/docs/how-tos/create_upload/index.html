@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.87.0" />
+<meta name="generator" content="Hugo 0.101.0" />
 
 <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
 
@@ -23,7 +23,7 @@
 <title>Create a custom upload component | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="Create a custom upload component" />
 <meta property="og:description" content="The last (optional) component of a Baker pipeline is the Upload, whose job is to, precisely, upload local files produced by the output component.
 To create an upload component and make it available to Baker, one must:
- Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  At the moment Baker only proposes a single Upload component, S3.
+Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components. At the moment Baker only proposes a single Upload component, S3.
 The Upload interface New Upload components need to implement the Upload interface." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://getbaker.io/docs/how-tos/create_upload/" /><meta property="article:section" content="docs" />
@@ -33,7 +33,7 @@ The Upload interface New Upload components need to implement the Upload interfac
 <meta itemprop="name" content="Create a custom upload component">
 <meta itemprop="description" content="The last (optional) component of a Baker pipeline is the Upload, whose job is to, precisely, upload local files produced by the output component.
 To create an upload component and make it available to Baker, one must:
- Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  At the moment Baker only proposes a single Upload component, S3.
+Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components. At the moment Baker only proposes a single Upload component, S3.
 The Upload interface New Upload components need to implement the Upload interface."><meta itemprop="datePublished" content="2020-11-11T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-11-11T00:00:00+00:00" />
 <meta itemprop="wordCount" content="524">
@@ -41,7 +41,7 @@ The Upload interface New Upload components need to implement the Upload interfac
 <meta name="twitter:title" content="Create a custom upload component"/>
 <meta name="twitter:description" content="The last (optional) component of a Baker pipeline is the Upload, whose job is to, precisely, upload local files produced by the output component.
 To create an upload component and make it available to Baker, one must:
- Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components.  At the moment Baker only proposes a single Upload component, S3.
+Implement the Upload interface Fill an UploadDesc structure and register it within Baker via Components. At the moment Baker only proposes a single Upload component, S3.
 The Upload interface New Upload components need to implement the Upload interface."/>
 
 
@@ -50,8 +50,8 @@ The Upload interface New Upload components need to implement the Upload interfac
 
 
 
-<link rel="preload" href="/scss/main.min.a869f8ae07c1235fe9e237787f8716ed71d54bf7ff307e0c349e5de5f23d9938.css" as="style">
-<link href="/scss/main.min.a869f8ae07c1235fe9e237787f8716ed71d54bf7ff307e0c349e5de5f23d9938.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.f03a4147ac3078d4dc5775e9c3c0a08b7cf17767d580640ea12c405b39f1d034.css" as="style">
+<link href="/scss/main.min.f03a4147ac3078d4dc5775e9c3c0a08b7cf17767d580640ea12c405b39f1d034.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -149,7 +149,7 @@ The Upload interface New Upload components need to implement the Upload interfac
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4bb2107953b72d55b8bdc9c04d838b40d80ec011e6c5eb6957aa44128409d7187f6703c68679ba675ac6d4e453ce10cb8aa50d4afa858e1fe3c3d21d88cfcb16.json"
+  data-offline-search-index-json-src="/offline-search-index.84877d81ba7c86c7b9a230c7fee62355d0f84eb6005778b6ec32c4b439f453ff0b61bcac797c079ab6aa25c7f04badf89e7a187cdf08673d029f94864102bcfb.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -180,7 +180,7 @@ The Upload interface New Upload components need to implement the Upload interfac
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4bb2107953b72d55b8bdc9c04d838b40d80ec011e6c5eb6957aa44128409d7187f6703c68679ba675ac6d4e453ce10cb8aa50d4afa858e1fe3c3d21d88cfcb16.json"
+  data-offline-search-index-json-src="/offline-search-index.84877d81ba7c86c7b9a230c7fee62355d0f84eb6005778b6ec32c4b439f453ff0b61bcac797c079ab6aa25c7f04badf89e7a187cdf08673d029f94864102bcfb.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -385,6 +385,12 @@ The Upload interface New Upload components need to implement the Upload interfac
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscountandtag" href="/docs/components/filters/countandtag/">CountAndTag</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscrypt" href="/docs/components/filters/crypt/">Crypt</a>
       
       
@@ -488,6 +494,18 @@ The Upload interface New Upload components need to implement the Upload interfac
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterstimestamprange" href="/docs/components/filters/timestamprange/">TimestampRange</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersurlescape" href="/docs/components/filters/urlescape/">URLEscape</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersurlparam" href="/docs/components/filters/urlparam/">URLParam</a>
       
       
     </li>
@@ -820,21 +838,21 @@ register it within Baker via <a href="https://pkg.go.dev/github.com/AdRoll/baker
 <p>At the moment Baker only proposes a single <code>Upload</code> component, <a href="https://github.com/AdRoll/baker/blob/main/upload/s3.go">S3</a>.</p>
 <h2 id="the-upload-interface">The Upload interface</h2>
 <p>New <code>Upload</code> components need to implement the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Upload">Upload interface</a>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> Upload <span style="color:#8be9fd;font-style:italic">interface</span> {
-	<span style="color:#50fa7b">Run</span>(upch <span style="color:#ff79c6">&lt;-</span><span style="color:#8be9fd;font-style:italic">chan</span> <span style="color:#8be9fd">string</span>) <span style="color:#8be9fd">error</span>
-	<span style="color:#50fa7b">Stop</span>()
-	<span style="color:#50fa7b">Stats</span>() UploadStats
-}
-</code></pre></div><p>The <code>Run</code> function implements the component logic, it is passed a channel from which the upload
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">type</span> Upload <span style="color:#8be9fd;font-style:italic">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#50fa7b">Run</span>(upch <span style="color:#ff79c6">&lt;-</span><span style="color:#8be9fd;font-style:italic">chan</span> <span style="color:#8be9fd">string</span>) <span style="color:#8be9fd">error</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#50fa7b">Stop</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#50fa7b">Stats</span>() UploadStats
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The <code>Run</code> function implements the component logic, it is passed a channel from which the upload
 receives absolute paths of the files to upload. These files are produced by the Output component.</p>
 <h2 id="uploaddesc">UploadDesc</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> MyUploadDesc = baker.UploadDesc{
-	Name:   <span style="color:#f1fa8c">&#34;MyUpload&#34;</span>,
-	New:    NewMyUpload,
-	Config: <span style="color:#ff79c6">&amp;</span>MyUploadConfig{},
-	Help:   <span style="color:#f1fa8c">&#34;High-level description of MyUpload&#34;</span>,
-}
-</code></pre></div><p>This object has a <code>Name</code>, that is used in the Baker configuration file to identify the upload,
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">var</span> MyUploadDesc = baker.UploadDesc{
+</span></span><span style="display:flex;"><span>	Name:   <span style="color:#f1fa8c">&#34;MyUpload&#34;</span>,
+</span></span><span style="display:flex;"><span>	New:    NewMyUpload,
+</span></span><span style="display:flex;"><span>	Config: <span style="color:#ff79c6">&amp;</span>MyUploadConfig{},
+</span></span><span style="display:flex;"><span>	Help:   <span style="color:#f1fa8c">&#34;High-level description of MyUpload&#34;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This object has a <code>Name</code>, that is used in the Baker configuration file to identify the upload,
 a constructor-like function (<code>New</code>), a config object (where the parsed upload configuration from the
 TOML file is stored) and a help text that must help the users to use the component and its
 configuration parameters.</p>
@@ -920,7 +938,7 @@ replica testing environment</li>
         
       </div>
       <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
-        <small class="text-white">&copy; 2021 NextRoll, Inc. All Rights Reserved</small>
+        <small class="text-white">&copy; 2022 NextRoll, Inc. All Rights Reserved</small>
         <small class="ml-1"><a href="https://www.nextroll.com/privacy" target="_blank">Privacy Policy</a></small>
 	
 		
@@ -944,7 +962,7 @@ replica testing environment</li>
 
 
 
-<script src="/js/main.min.63db3e552bd0543be17ce4a79a18b744e9cb72256bec42b540e3ab0cd43722d0.js" integrity="sha256-Y9s&#43;VSvQVDvhfOSnmhi3ROnLciVr7EK1QOOrDNQ3ItA=" crossorigin="anonymous"></script>
+<script src="/js/main.min.27af2a485b4359ac7a0cd4cb4a2d165c56770c59ef3a9330e8f38fbe3bdc2f97.js" integrity="sha256-J68qSFtDWax6DNTLSi0WXFZ3DFnvOpMw6POPvjvcL5c=" crossorigin="anonymous"></script>
 
 
 

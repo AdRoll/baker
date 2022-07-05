@@ -1,7 +1,7 @@
 ---
 title: "PartialClone"
-weight: 21
-date: 2021-11-17
+weight: 22
+date: 2022-07-05
 ---
 {{% pageinfo color="primary" %}}
 

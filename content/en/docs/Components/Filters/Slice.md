@@ -1,7 +1,7 @@
 ---
 title: "Slice"
-weight: 25
-date: 2021-11-17
+weight: 26
+date: 2022-07-05
 ---
 {{% pageinfo color="primary" %}}
 

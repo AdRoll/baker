@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.87.0" />
+<meta name="generator" content="Hugo 0.101.0" />
 
 <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
 
@@ -44,8 +44,8 @@ The input isn&rsquo;t in charge of splitting/parsing the input data into Records
 
 
 
-<link rel="preload" href="/scss/main.min.a869f8ae07c1235fe9e237787f8716ed71d54bf7ff307e0c349e5de5f23d9938.css" as="style">
-<link href="/scss/main.min.a869f8ae07c1235fe9e237787f8716ed71d54bf7ff307e0c349e5de5f23d9938.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.f03a4147ac3078d4dc5775e9c3c0a08b7cf17767d580640ea12c405b39f1d034.css" as="style">
+<link href="/scss/main.min.f03a4147ac3078d4dc5775e9c3c0a08b7cf17767d580640ea12c405b39f1d034.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -143,7 +143,7 @@ The input isn&rsquo;t in charge of splitting/parsing the input data into Records
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4bb2107953b72d55b8bdc9c04d838b40d80ec011e6c5eb6957aa44128409d7187f6703c68679ba675ac6d4e453ce10cb8aa50d4afa858e1fe3c3d21d88cfcb16.json"
+  data-offline-search-index-json-src="/offline-search-index.84877d81ba7c86c7b9a230c7fee62355d0f84eb6005778b6ec32c4b439f453ff0b61bcac797c079ab6aa25c7f04badf89e7a187cdf08673d029f94864102bcfb.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -174,7 +174,7 @@ The input isn&rsquo;t in charge of splitting/parsing the input data into Records
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4bb2107953b72d55b8bdc9c04d838b40d80ec011e6c5eb6957aa44128409d7187f6703c68679ba675ac6d4e453ce10cb8aa50d4afa858e1fe3c3d21d88cfcb16.json"
+  data-offline-search-index-json-src="/offline-search-index.84877d81ba7c86c7b9a230c7fee62355d0f84eb6005778b6ec32c4b439f453ff0b61bcac797c079ab6aa25c7f04badf89e7a187cdf08673d029f94864102bcfb.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -379,6 +379,12 @@ The input isn&rsquo;t in charge of splitting/parsing the input data into Records
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscountandtag" href="/docs/components/filters/countandtag/">CountAndTag</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscrypt" href="/docs/components/filters/crypt/">Crypt</a>
       
       
@@ -482,6 +488,18 @@ The input isn&rsquo;t in charge of splitting/parsing the input data into Records
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterstimestamprange" href="/docs/components/filters/timestamprange/">TimestampRange</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersurlescape" href="/docs/components/filters/urlescape/">URLEscape</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersurlparam" href="/docs/components/filters/urlparam/">URLParam</a>
       
       
     </li>
@@ -836,25 +854,25 @@ information Baker will associate with each of the serialized Record contained in
 Typical information could be the time of retrieval, the filename (in case <code>Records</code> come from a file), etc.</p>
 <h2 id="the-input-interface">The Input interface</h2>
 <p>New <code>Input</code> components need to implement the <a href="https://pkg.go.dev/github.com/AdRoll/baker#Input">Input interface</a>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">type</span> Input <span style="color:#8be9fd;font-style:italic">interface</span> {
-	<span style="color:#50fa7b">Run</span>(output <span style="color:#8be9fd;font-style:italic">chan</span><span style="color:#ff79c6">&lt;-</span> <span style="color:#ff79c6">*</span>Data) <span style="color:#8be9fd">error</span>
-	<span style="color:#50fa7b">Stop</span>()
-	<span style="color:#50fa7b">Stats</span>() InputStats
-	<span style="color:#50fa7b">FreeMem</span>(data <span style="color:#ff79c6">*</span>Data)
-}
-</code></pre></div><p>The <code>Run</code> function implements the component logic and receives a channel where it sends the
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">type</span> Input <span style="color:#8be9fd;font-style:italic">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#50fa7b">Run</span>(output <span style="color:#8be9fd;font-style:italic">chan</span><span style="color:#ff79c6">&lt;-</span> <span style="color:#ff79c6">*</span>Data) <span style="color:#8be9fd">error</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#50fa7b">Stop</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#50fa7b">Stats</span>() InputStats
+</span></span><span style="display:flex;"><span>	<span style="color:#50fa7b">FreeMem</span>(data <span style="color:#ff79c6">*</span>Data)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The <code>Run</code> function implements the component logic and receives a channel where it sends the
 <a href="https://pkg.go.dev/github.com/AdRoll/baker#Data">raw data</a> it processes.</p>
 <p><code>FreeMem(data *Data)</code> is called by Baker when <code>data</code> is no longer needed. This is an occasion
 for the input to recycle memory, for example if the input uses a <code>sync.Pool</code> to create new
 instances of <code>baker.Data</code>.</p>
 <h2 id="inputdesc">InputDesc</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">var</span> MyInputDesc = baker.InputDesc{
-	Name:   <span style="color:#f1fa8c">&#34;MyInput&#34;</span>,
-	New:    NewMyInput,
-	Config: <span style="color:#ff79c6">&amp;</span>MyInputConfig{},
-	Help:   <span style="color:#f1fa8c">&#34;High-level description of MyInput&#34;</span>,
-}
-</code></pre></div><p>This object has a <code>Name</code>, that is used in the Baker configuration file to identify the input,
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">var</span> MyInputDesc = baker.InputDesc{
+</span></span><span style="display:flex;"><span>	Name:   <span style="color:#f1fa8c">&#34;MyInput&#34;</span>,
+</span></span><span style="display:flex;"><span>	New:    NewMyInput,
+</span></span><span style="display:flex;"><span>	Config: <span style="color:#ff79c6">&amp;</span>MyInputConfig{},
+</span></span><span style="display:flex;"><span>	Help:   <span style="color:#f1fa8c">&#34;High-level description of MyInput&#34;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This object has a <code>Name</code>, that is used in the Baker configuration file to identify the input,
 a costructor-like function (<code>New</code>), a config object (where the parsed input configuration from the
 TOML file is stored) and a help text that must help the users to use the component and its
 configuration parameters.</p>
@@ -888,33 +906,33 @@ instantiate the component with valid configurations and intercept incorrect ones
 <p>In case we want to test the component calling the <code>Run</code> function, this is an example of test where,
 after some initialization, the <code>input.Run</code> function is called and the produced <code>Data</code> is checked
 in a goroutine:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">TestMyInput</span>(t <span style="color:#ff79c6">*</span>testing.T) {
-    ch <span style="color:#ff79c6">:=</span> <span style="color:#8be9fd;font-style:italic">make</span>(<span style="color:#8be9fd;font-style:italic">chan</span> <span style="color:#ff79c6">*</span>baker.Data)
-    <span style="color:#ff79c6">defer</span> <span style="color:#8be9fd;font-style:italic">close</span>(ch)
-
-    <span style="color:#6272a4">// start a goroutine that acts as Baker, consuming the baker.Data produced by the input
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">go</span> <span style="color:#8be9fd;font-style:italic">func</span>() {
-        <span style="color:#ff79c6">for</span> data <span style="color:#ff79c6">:=</span> <span style="color:#ff79c6">range</span> ch {
-            <span style="color:#6272a4">// test `data`, that comes from the component,
-</span><span style="color:#6272a4"></span>            <span style="color:#6272a4">// like checking its content, parse the records, metadata, etc
-</span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">if</span> <span style="color:#50fa7b">something_is_wrong</span>(data) {
-                t.<span style="color:#50fa7b">Fatalf</span>(<span style="color:#f1fa8c">&#34;error!&#34;</span>)
-            }
-        }
-    }()
-
-    <span style="color:#6272a4">// Configure the input.
-</span><span style="color:#6272a4"></span>    cfg <span style="color:#ff79c6">:=</span> <span style="color:#ff79c6">...</span>
-
-    input, err <span style="color:#ff79c6">:=</span> <span style="color:#50fa7b">NewMyInput</span>(cfg) <span style="color:#6272a4">// use the contructor-like New function
-</span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// check err
-</span><span style="color:#6272a4"></span>
-    <span style="color:#6272a4">// run the input
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">:=</span> input.<span style="color:#50fa7b">Run</span>(ch); err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
-        t.<span style="color:#50fa7b">Fatal</span>(err)
-    }
-}
-</code></pre></div><p>The <code>List</code> input <a href="https://github.com/AdRoll/baker/blob/main/input/list_test.go#77">has an example</a>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">TestMyInput</span>(t <span style="color:#ff79c6">*</span>testing.T) {
+</span></span><span style="display:flex;"><span>    ch <span style="color:#ff79c6">:=</span> <span style="color:#8be9fd;font-style:italic">make</span>(<span style="color:#8be9fd;font-style:italic">chan</span> <span style="color:#ff79c6">*</span>baker.Data)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">defer</span> <span style="color:#8be9fd;font-style:italic">close</span>(ch)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// start a goroutine that acts as Baker, consuming the baker.Data produced by the input
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">go</span> <span style="color:#8be9fd;font-style:italic">func</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> data <span style="color:#ff79c6">:=</span> <span style="color:#ff79c6">range</span> ch {
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// test `data`, that comes from the component,
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#6272a4">// like checking its content, parse the records, metadata, etc
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">if</span> <span style="color:#50fa7b">something_is_wrong</span>(data) {
+</span></span><span style="display:flex;"><span>                t.<span style="color:#50fa7b">Fatalf</span>(<span style="color:#f1fa8c">&#34;error!&#34;</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// Configure the input.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    cfg <span style="color:#ff79c6">:=</span> <span style="color:#ff79c6">...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    input, err <span style="color:#ff79c6">:=</span> <span style="color:#50fa7b">NewMyInput</span>(cfg) <span style="color:#6272a4">// use the contructor-like New function
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// check err
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// run the input
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">:=</span> input.<span style="color:#50fa7b">Run</span>(ch); err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
+</span></span><span style="display:flex;"><span>        t.<span style="color:#50fa7b">Fatal</span>(err)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The <code>List</code> input <a href="https://github.com/AdRoll/baker/blob/main/input/list_test.go#77">has an example</a>
 of this testing strategy (look for the <code>TestListBasic</code> test).</p>
 <h3 id="test-the-component-running-a-topology">Test the component running a topology</h3>
 <p>If we want to test the component creating and running a topology, we need to create one starting
@@ -922,54 +940,54 @@ from the TOML configuration and then calling <code>NewConfigFromToml</code>, <co
 <p>The <code>Base</code>, <code>Recorder</code> and <code>RawRecorder</code> outputs included in the
 <a href="https://github.com/AdRoll/baker/tree/main/output/outputtest"><code>outputtest</code> package</a> can be
 helpful here to obtain the output and check it:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">TestMyInput</span>(t <span style="color:#ff79c6">*</span>testing.T) {
-    toml <span style="color:#ff79c6">:=</span> <span style="color:#f1fa8c">`
-</span><span style="color:#f1fa8c">    [input]
-</span><span style="color:#f1fa8c">    name = &#34;MyInput&#34;
-</span><span style="color:#f1fa8c">
-</span><span style="color:#f1fa8c">    [output]
-</span><span style="color:#f1fa8c">    name=&#34;RawRecorder&#34;
-</span><span style="color:#f1fa8c">    procs=1
-</span><span style="color:#f1fa8c">    `</span>
-    <span style="color:#6272a4">// Add the input to be tested and a testing output
-</span><span style="color:#6272a4"></span>    c <span style="color:#ff79c6">:=</span> baker.Components{
-        Inputs:  []baker.InputDesc{MyInputDesc},
-        Outputs: []baker.OutputDesc{outputtest.RawRecorderDesc},
-    }
-
-    <span style="color:#6272a4">// Create and start the topology
-</span><span style="color:#6272a4"></span>    cfg, err <span style="color:#ff79c6">:=</span> baker.<span style="color:#50fa7b">NewConfigFromToml</span>(strings.<span style="color:#50fa7b">NewReader</span>(toml), c)
-    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
-        t.<span style="color:#50fa7b">Error</span>(err)
-    }
-    topology, err <span style="color:#ff79c6">:=</span> baker.<span style="color:#50fa7b">NewTopologyFromConfig</span>(cfg)
-    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
-        t.<span style="color:#50fa7b">Error</span>(err)
-    }
-    topology.<span style="color:#50fa7b">Start</span>()
-    
-    <span style="color:#6272a4">// In this goroutine we should provide some inputs to the component
-</span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// The format and how to send them to the component, depends on
-</span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// the component itself
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">go</span> <span style="color:#8be9fd;font-style:italic">func</span>() {
-        <span style="color:#ff79c6">defer</span> topology.<span style="color:#50fa7b">Stop</span>()
-        <span style="color:#50fa7b">sendDataToMyInput</span>() <span style="color:#6272a4">// fake function, you need to implement your logic here
-</span><span style="color:#6272a4"></span>    }
-
-    topology.<span style="color:#50fa7b">Wait</span>() <span style="color:#6272a4">// wait for Baker to quit after `topology.Stop()`
-</span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">:=</span> topology.<span style="color:#50fa7b">Error</span>(); err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
-        t.<span style="color:#50fa7b">Fatalf</span>(<span style="color:#f1fa8c">&#34;topology error: %v&#34;</span>, err)
-    }
-
-    <span style="color:#6272a4">// retrieve the output and test the records
-</span><span style="color:#6272a4"></span>    out <span style="color:#ff79c6">:=</span> topology.Output[<span style="color:#bd93f9">0</span>].(<span style="color:#ff79c6">*</span>outputtest.Recorder)
-    <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">len</span>(out.Records) <span style="color:#ff79c6">!=</span> want {
-        t.<span style="color:#50fa7b">Errorf</span>(<span style="color:#f1fa8c">&#34;want %d log lines, got %d&#34;</span>, want, <span style="color:#8be9fd;font-style:italic">len</span>(out.Records))
-    }
-
-    <span style="color:#6272a4">// more testing on out.Records...
-</span><span style="color:#6272a4"></span>}
-</code></pre></div><p>The <code>TCP</code> input <a href="https://github.com/AdRoll/baker/blob/main/input/tcp_test.go">includes an example</a>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">TestMyInput</span>(t <span style="color:#ff79c6">*</span>testing.T) {
+</span></span><span style="display:flex;"><span>    toml <span style="color:#ff79c6">:=</span> <span style="color:#f1fa8c">`
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">    [input]
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">    name = &#34;MyInput&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">    [output]
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">    name=&#34;RawRecorder&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">    procs=1
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">    `</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// Add the input to be tested and a testing output
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    c <span style="color:#ff79c6">:=</span> baker.Components{
+</span></span><span style="display:flex;"><span>        Inputs:  []baker.InputDesc{MyInputDesc},
+</span></span><span style="display:flex;"><span>        Outputs: []baker.OutputDesc{outputtest.RawRecorderDesc},
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// Create and start the topology
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    cfg, err <span style="color:#ff79c6">:=</span> baker.<span style="color:#50fa7b">NewConfigFromToml</span>(strings.<span style="color:#50fa7b">NewReader</span>(toml), c)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
+</span></span><span style="display:flex;"><span>        t.<span style="color:#50fa7b">Error</span>(err)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    topology, err <span style="color:#ff79c6">:=</span> baker.<span style="color:#50fa7b">NewTopologyFromConfig</span>(cfg)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
+</span></span><span style="display:flex;"><span>        t.<span style="color:#50fa7b">Error</span>(err)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    topology.<span style="color:#50fa7b">Start</span>()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// In this goroutine we should provide some inputs to the component
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// The format and how to send them to the component, depends on
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// the component itself
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">go</span> <span style="color:#8be9fd;font-style:italic">func</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">defer</span> topology.<span style="color:#50fa7b">Stop</span>()
+</span></span><span style="display:flex;"><span>        <span style="color:#50fa7b">sendDataToMyInput</span>() <span style="color:#6272a4">// fake function, you need to implement your logic here
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    topology.<span style="color:#50fa7b">Wait</span>() <span style="color:#6272a4">// wait for Baker to quit after `topology.Stop()`
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">if</span> err <span style="color:#ff79c6">:=</span> topology.<span style="color:#50fa7b">Error</span>(); err <span style="color:#ff79c6">!=</span> <span style="color:#ff79c6">nil</span> {
+</span></span><span style="display:flex;"><span>        t.<span style="color:#50fa7b">Fatalf</span>(<span style="color:#f1fa8c">&#34;topology error: %v&#34;</span>, err)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// retrieve the output and test the records
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    out <span style="color:#ff79c6">:=</span> topology.Output[<span style="color:#bd93f9">0</span>].(<span style="color:#ff79c6">*</span>outputtest.Recorder)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">len</span>(out.Records) <span style="color:#ff79c6">!=</span> want {
+</span></span><span style="display:flex;"><span>        t.<span style="color:#50fa7b">Errorf</span>(<span style="color:#f1fa8c">&#34;want %d log lines, got %d&#34;</span>, want, <span style="color:#8be9fd;font-style:italic">len</span>(out.Records))
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// more testing on out.Records...
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span></code></pre></div><p>The <code>TCP</code> input <a href="https://github.com/AdRoll/baker/blob/main/input/tcp_test.go">includes an example</a>
 of this testing strategy.</p>
 
 	
@@ -1015,7 +1033,7 @@ of this testing strategy.</p>
         
       </div>
       <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
-        <small class="text-white">&copy; 2021 NextRoll, Inc. All Rights Reserved</small>
+        <small class="text-white">&copy; 2022 NextRoll, Inc. All Rights Reserved</small>
         <small class="ml-1"><a href="https://www.nextroll.com/privacy" target="_blank">Privacy Policy</a></small>
 	
 		
@@ -1039,7 +1057,7 @@ of this testing strategy.</p>
 
 
 
-<script src="/js/main.min.63db3e552bd0543be17ce4a79a18b744e9cb72256bec42b540e3ab0cd43722d0.js" integrity="sha256-Y9s&#43;VSvQVDvhfOSnmhi3ROnLciVr7EK1QOOrDNQ3ItA=" crossorigin="anonymous"></script>
+<script src="/js/main.min.27af2a485b4359ac7a0cd4cb4a2d165c56770c59ef3a9330e8f38fbe3bdc2f97.js" integrity="sha256-J68qSFtDWax6DNTLSi0WXFZ3DFnvOpMw6POPvjvcL5c=" crossorigin="anonymous"></script>
 
 
 

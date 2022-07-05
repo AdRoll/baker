@@ -47,12 +47,12 @@ docker-base:
 docker-setup: setup-git ## Setup Hugo with Docker
 
 docker-dev: git-update docker-base ## Run local server with Docker to check you content while writing
-	docker run -w /baker -v $$PWD:/baker -p 1313:1313 --user $$(id -u):$$(id -g) -it baker-docs:base server --bind=0.0.0.0
+	docker run -w /baker -v $$PWD:/baker -p 1313:1313 -it baker-docs:base server --bind=0.0.0.0
 
 docker-build: git-update gen-components docker-base ## Build the static files of the website with Docker 
-	docker run -w /baker -v $$PWD:/baker -p 1313:1313 --user $$(id -u):$$(id -g) -e HUGO_ENV=production -it baker-docs:base
+	docker run -w /baker -v $$PWD:/baker -p 1313:1313 -e HUGO_ENV=production -it baker-docs:base
 
 docker-run-prod: git-update docker-base ## Run the website in production on port :80 with Docker
-	docker run -w /baker -v $$PWD:/baker -p 80:1313 --user $$(id -u):$$(id -g) -e HUGO_ENV=production -it baker-docs:base server --bind=0.0.0.0
+	docker run -w /baker -v $$PWD:/baker -p 80:1313 -e HUGO_ENV=production -it baker-docs:base server --bind=0.0.0.0
 
 .PHONY: docker-base docker-setup docker-dev docker-build docker-run-prod
