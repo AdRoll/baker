@@ -1,5 +1,7 @@
 package baker
 
+import "errors"
+
 // Data represents raw data consumed by a baker input, possibly
 // containing multiple records before they're parsed.
 type Data struct {
@@ -99,6 +101,8 @@ type Filter interface {
 	// Stats returns stats about the filter
 	Stats() FilterStats
 }
+
+var ErrGenericFilterError = errors.New("generic filter error")
 
 // TODO(arl) write comment...
 type FilterErrorHandler interface {
