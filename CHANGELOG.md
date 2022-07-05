@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add CountAndTag filter [#201](https://github.com/AdRoll/baker/pull/201)
 - Add file size-based rotation for `FileWriter` output (`RotateSize` option) [#203](https://github.com/AdRoll/baker/pull/203)
 - Add `DiscardEmptyFiles` option to the `FileWriter` output [#204](https://github.com/AdRoll/baker/pull/204)
+- Add `URLEscape` and `URLParam` filters [#206](https://github.com/AdRoll/baker/pull/206)
 
 ### Changed
 
