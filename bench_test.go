@@ -8,7 +8,9 @@ import (
 	"testing"
 
 	"github.com/AdRoll/baker"
+	"github.com/AdRoll/baker/filter"
 	"github.com/AdRoll/baker/filter/filtertest"
+	"github.com/AdRoll/baker/filter_error_handler"
 	"github.com/AdRoll/baker/input/inputtest"
 	"github.com/AdRoll/baker/output/outputtest"
 )
@@ -348,9 +350,10 @@ fields = ["fielda", "fieldb", "fieldc"]
 	toml := fmt.Sprintf(src, filterToml)
 
 	components := baker.Components{
-		Inputs:  []baker.InputDesc{inputtest.RecordsDesc},
-		Filters: filter.All,
-		Outputs: []baker.OutputDesc{discardOutputDesc},
+		Inputs:              []baker.InputDesc{inputtest.RecordsDesc},
+		Filters:             filter.All,
+		FilterErrorHandlers: filter_error_handler.All,
+		Outputs:             []baker.OutputDesc{discardOutputDesc},
 	}
 
 	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml), components)
@@ -433,6 +436,11 @@ func BenchmarkFilterChain(b *testing.B) {
 		srcfield="fielda"
 		dstfield="fieldb"
 		unescape = true
+
+		[[filter.error_handler]]
+		name = "ClearFields"
+		[filter.error_handler.config]
+		fields = ["fieldb"]
 		`
 		// Now the unescaping may fail, in which case the destination is cleared.
 		// No possibility of drop.
@@ -446,6 +454,7 @@ func BenchmarkFilterChain(b *testing.B) {
 		toml := `
 		[[filter]]
 		name="notnull"
+		dropOnError=true
 		
 		[filter.config]
 		fields= ["fielda"]
@@ -460,6 +469,7 @@ func BenchmarkFilterChain(b *testing.B) {
 		toml := `
 		[[filter]]
 		name="notnull"
+		dropOnError=true
 		
 		[filter.config]
 		fields= ["fielda"]
@@ -475,6 +485,7 @@ func BenchmarkFilterChain(b *testing.B) {
 		toml := `
 		[[filter]]
 		name="notnull"
+		dropOnError=true
 		
 		[filter.config]
 		fields= ["fielda"]
