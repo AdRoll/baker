@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.87.0" />
+<meta name="generator" content="Hugo 0.101.0" />
 
 <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
 
@@ -22,7 +22,7 @@
 
 <title>Tuning concurrency | Baker, high performance modular pipelines for the Big Data era</title><meta property="og:title" content="Tuning concurrency" />
 <meta property="og:description" content="Baker allows to tune concurrency at various levels of a pipeline:
- input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends on the input source and how the input is implemented filters: Baker runs N concurrent filter chains output: Baker runs M concurrent outputs  By default then, Baker processes records concurrently, without any guaranteed order.
+input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends on the input source and how the input is implemented filters: Baker runs N concurrent filter chains output: Baker runs M concurrent outputs By default then, Baker processes records concurrently, without any guaranteed order.
 However, if you need to maintain the order of the records through the whole pipeline, it is still possible by disabling concurrency (see below for details)." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://getbaker.io/docs/how-tos/concurrency/" /><meta property="article:section" content="docs" />
@@ -31,14 +31,14 @@ However, if you need to maintain the order of the records through the whole pipe
 
 <meta itemprop="name" content="Tuning concurrency">
 <meta itemprop="description" content="Baker allows to tune concurrency at various levels of a pipeline:
- input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends on the input source and how the input is implemented filters: Baker runs N concurrent filter chains output: Baker runs M concurrent outputs  By default then, Baker processes records concurrently, without any guaranteed order.
+input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends on the input source and how the input is implemented filters: Baker runs N concurrent filter chains output: Baker runs M concurrent outputs By default then, Baker processes records concurrently, without any guaranteed order.
 However, if you need to maintain the order of the records through the whole pipeline, it is still possible by disabling concurrency (see below for details)."><meta itemprop="datePublished" content="2020-11-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-11-02T00:00:00+00:00" />
 <meta itemprop="wordCount" content="288">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Tuning concurrency"/>
 <meta name="twitter:description" content="Baker allows to tune concurrency at various levels of a pipeline:
- input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends on the input source and how the input is implemented filters: Baker runs N concurrent filter chains output: Baker runs M concurrent outputs  By default then, Baker processes records concurrently, without any guaranteed order.
+input: Baker configuration doesn&rsquo;t expose knobs to tune input concurrency as it highly depends on the input source and how the input is implemented filters: Baker runs N concurrent filter chains output: Baker runs M concurrent outputs By default then, Baker processes records concurrently, without any guaranteed order.
 However, if you need to maintain the order of the records through the whole pipeline, it is still possible by disabling concurrency (see below for details)."/>
 
 
@@ -47,8 +47,8 @@ However, if you need to maintain the order of the records through the whole pipe
 
 
 
-<link rel="preload" href="/scss/main.min.a869f8ae07c1235fe9e237787f8716ed71d54bf7ff307e0c349e5de5f23d9938.css" as="style">
-<link href="/scss/main.min.a869f8ae07c1235fe9e237787f8716ed71d54bf7ff307e0c349e5de5f23d9938.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.f03a4147ac3078d4dc5775e9c3c0a08b7cf17767d580640ea12c405b39f1d034.css" as="style">
+<link href="/scss/main.min.f03a4147ac3078d4dc5775e9c3c0a08b7cf17767d580640ea12c405b39f1d034.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -146,7 +146,7 @@ However, if you need to maintain the order of the records through the whole pipe
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4bb2107953b72d55b8bdc9c04d838b40d80ec011e6c5eb6957aa44128409d7187f6703c68679ba675ac6d4e453ce10cb8aa50d4afa858e1fe3c3d21d88cfcb16.json"
+  data-offline-search-index-json-src="/offline-search-index.84877d81ba7c86c7b9a230c7fee62355d0f84eb6005778b6ec32c4b439f453ff0b61bcac797c079ab6aa25c7f04badf89e7a187cdf08673d029f94864102bcfb.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -177,7 +177,7 @@ However, if you need to maintain the order of the records through the whole pipe
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4bb2107953b72d55b8bdc9c04d838b40d80ec011e6c5eb6957aa44128409d7187f6703c68679ba675ac6d4e453ce10cb8aa50d4afa858e1fe3c3d21d88cfcb16.json"
+  data-offline-search-index-json-src="/offline-search-index.84877d81ba7c86c7b9a230c7fee62355d0f84eb6005778b6ec32c4b439f453ff0b61bcac797c079ab6aa25c7f04badf89e7a187cdf08673d029f94864102bcfb.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -382,6 +382,12 @@ However, if you need to maintain the order of the records through the whole pipe
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscountandtag" href="/docs/components/filters/countandtag/">CountAndTag</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscrypt" href="/docs/components/filters/crypt/">Crypt</a>
       
       
@@ -485,6 +491,18 @@ However, if you need to maintain the order of the records through the whole pipe
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterstimestamprange" href="/docs/components/filters/timestamprange/">TimestampRange</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersurlescape" href="/docs/components/filters/urlescape/">URLEscape</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersurlparam" href="/docs/components/filters/urlparam/">URLParam</a>
       
       
     </li>
@@ -819,14 +837,14 @@ possible by disabling concurrency (<a href="#guarantee-records-order">see below 
 listed in the topology <a href="/docs/core-concepts/toml/">TOML configuration file</a>.</p>
 <p>By default, though, Baker executes multiple concurrent filter chains (the default value is 16)</p>
 <p>Filterchain concurrency can be set defining the <code>procs</code> key in the <code>[filterchain]</code> section:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[filterchain]
-procs=<span style="color:#bd93f9">16</span>
-</code></pre></div><p>Setting the value to <strong>procs=1</strong> disables the filter chain concurrency.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[filterchain]
+</span></span><span style="display:flex;"><span>procs=<span style="color:#bd93f9">16</span>
+</span></span></code></pre></div><p>Setting the value to <strong>procs=1</strong> disables the filter chain concurrency.</p>
 <h3 id="concurrent-output">Concurrent output</h3>
 <p>The output concurrency can be set defining the <code>procs</code> key in the <code>[output]</code> section:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[output]
-procs=<span style="color:#bd93f9">32</span>
-</code></pre></div><p>The default value is <strong>32</strong>.<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[output]
+</span></span><span style="display:flex;"><span>procs=<span style="color:#bd93f9">32</span>
+</span></span></code></pre></div><p>The default value is <strong>32</strong>.<br>
 To disable concurrency, set <strong>procs=1</strong>.</p>
 <h4 id="output-concurrency-support">Output concurrency support</h4>
 <p>For outputs that don&rsquo;t support concurrency, <code>procs=1</code> must be used to avoid corrupted output or
@@ -889,7 +907,7 @@ those components.</p>
         
       </div>
       <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
-        <small class="text-white">&copy; 2021 NextRoll, Inc. All Rights Reserved</small>
+        <small class="text-white">&copy; 2022 NextRoll, Inc. All Rights Reserved</small>
         <small class="ml-1"><a href="https://www.nextroll.com/privacy" target="_blank">Privacy Policy</a></small>
 	
 		
@@ -913,7 +931,7 @@ those components.</p>
 
 
 
-<script src="/js/main.min.63db3e552bd0543be17ce4a79a18b744e9cb72256bec42b540e3ab0cd43722d0.js" integrity="sha256-Y9s&#43;VSvQVDvhfOSnmhi3ROnLciVr7EK1QOOrDNQ3ItA=" crossorigin="anonymous"></script>
+<script src="/js/main.min.27af2a485b4359ac7a0cd4cb4a2d165c56770c59ef3a9330e8f38fbe3bdc2f97.js" integrity="sha256-J68qSFtDWax6DNTLSi0WXFZ3DFnvOpMw6POPvjvcL5c=" crossorigin="anonymous"></script>
 
 
 

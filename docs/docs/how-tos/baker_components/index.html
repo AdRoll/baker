@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="generator" content="Hugo 0.87.0" />
+<meta name="generator" content="Hugo 0.101.0" />
 
 <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
 
@@ -44,8 +44,8 @@
 
 
 
-<link rel="preload" href="/scss/main.min.a869f8ae07c1235fe9e237787f8716ed71d54bf7ff307e0c349e5de5f23d9938.css" as="style">
-<link href="/scss/main.min.a869f8ae07c1235fe9e237787f8716ed71d54bf7ff307e0c349e5de5f23d9938.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/scss/main.min.f03a4147ac3078d4dc5775e9c3c0a08b7cf17767d580640ea12c405b39f1d034.css" as="style">
+<link href="/scss/main.min.f03a4147ac3078d4dc5775e9c3c0a08b7cf17767d580640ea12c405b39f1d034.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -143,7 +143,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4bb2107953b72d55b8bdc9c04d838b40d80ec011e6c5eb6957aa44128409d7187f6703c68679ba675ac6d4e453ce10cb8aa50d4afa858e1fe3c3d21d88cfcb16.json"
+  data-offline-search-index-json-src="/offline-search-index.84877d81ba7c86c7b9a230c7fee62355d0f84eb6005778b6ec32c4b439f453ff0b61bcac797c079ab6aa25c7f04badf89e7a187cdf08673d029f94864102bcfb.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -174,7 +174,7 @@
   aria-label="Search this site…"
   autocomplete="off"
   
-  data-offline-search-index-json-src="/offline-search-index.4bb2107953b72d55b8bdc9c04d838b40d80ec011e6c5eb6957aa44128409d7187f6703c68679ba675ac6d4e453ce10cb8aa50d4afa858e1fe3c3d21d88cfcb16.json"
+  data-offline-search-index-json-src="/offline-search-index.84877d81ba7c86c7b9a230c7fee62355d0f84eb6005778b6ec32c4b439f453ff0b61bcac797c079ab6aa25c7f04badf89e7a187cdf08673d029f94864102bcfb.json"
   data-offline-search-base-href="/"
   data-offline-search-max-results="10"
 >
@@ -379,6 +379,12 @@
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscountandtag" href="/docs/components/filters/countandtag/">CountAndTag</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterscrypt" href="/docs/components/filters/crypt/">Crypt</a>
       
       
@@ -482,6 +488,18 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfilterstimestamprange" href="/docs/components/filters/timestamprange/">TimestampRange</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersurlescape" href="/docs/components/filters/urlescape/">URLEscape</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docscomponentsfiltersurlparam" href="/docs/components/filters/urlparam/">URLParam</a>
       
       
     </li>
@@ -809,17 +827,17 @@ lists all the <a href="/docs/core-concepts/#record-and-logline">components</a> a
 <li>an instance of <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>baker.Components</code></a></li>
 <li>a TOML configuration file describing the topology we want to run</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">main</span>() {
-	comp <span style="color:#ff79c6">:=</span> baker.Component {
-		<span style="color:#6272a4">// ...
-</span><span style="color:#6272a4"></span>	}
-
-	f, _ <span style="color:#ff79c6">:=</span> os.<span style="color:#50fa7b">Open</span>(<span style="color:#f1fa8c">&#34;/path/to/topology.go&#34;</span>)
-	cfg, _ <span style="color:#ff79c6">:=</span> baker.<span style="color:#50fa7b">NewConfigFromToml</span>(f, components)
-
-_ = baker.<span style="color:#50fa7b">Main</span>(cfg)
-}
-</code></pre></div><p>The next paragraphs give you a high level overview of each field of the
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>	comp <span style="color:#ff79c6">:=</span> baker.Component {
+</span></span><span style="display:flex;"><span>		<span style="color:#6272a4">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	f, _ <span style="color:#ff79c6">:=</span> os.<span style="color:#50fa7b">Open</span>(<span style="color:#f1fa8c">&#34;/path/to/topology.go&#34;</span>)
+</span></span><span style="display:flex;"><span>	cfg, _ <span style="color:#ff79c6">:=</span> baker.<span style="color:#50fa7b">NewConfigFromToml</span>(f, components)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>_ = baker.<span style="color:#50fa7b">Main</span>(cfg)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The next paragraphs give you a high level overview of each field of the
 <a href="https://pkg.go.dev/github.com/AdRoll/baker#Components"><code>baker.Components</code></a> struct.</p>
 <h2 id="inputs-filters-outputs-and-uploads">Inputs, Filters, Outputs and Uploads</h2>
 <p>These fields list the components that are available to topologies. All components present
@@ -830,75 +848,75 @@ in <code>baker.Components</code> can be used in the <a href="/docs/core-concepts
 <li>only a single <strong>filter</strong> is set, a custom one we declared ourselves</li>
 <li>all Baker <strong>outputs</strong> are added in addition our own custom output</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#ff79c6">import</span> (
-	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
-	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/input&#34;</span>
-	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/output&#34;</span>
-	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/upload&#34;</span>
-)
-
-comp <span style="color:#ff79c6">:=</span> baker.Components{
-    Inputs:        input.All,
-    Filters:       []baker.FilterDesc{MyCustomFilterDesc},
-	Outputs:       <span style="color:#8be9fd;font-style:italic">append</span>(output.All, MyCustomOutputDesc<span style="color:#ff79c6">...</span>),
-	Uploads:       upload.All,
-
-	<span style="color:#6272a4">// Other fields not shown here.
-</span><span style="color:#6272a4"></span>}
-</code></pre></div><h2 id="metrics">Metrics</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#ff79c6">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/input&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/output&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/upload&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>comp <span style="color:#ff79c6">:=</span> baker.Components{
+</span></span><span style="display:flex;"><span>    Inputs:        input.All,
+</span></span><span style="display:flex;"><span>    Filters:       []baker.FilterDesc{MyCustomFilterDesc},
+</span></span><span style="display:flex;"><span>	Outputs:       <span style="color:#8be9fd;font-style:italic">append</span>(output.All, MyCustomOutputDesc<span style="color:#ff79c6">...</span>),
+</span></span><span style="display:flex;"><span>	Uploads:       upload.All,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#6272a4">// Other fields not shown here.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span></code></pre></div><h2 id="metrics">Metrics</h2>
 <p><code>Metrics</code> lists the metrics clients available when creating topologies.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#ff79c6">import</span> (
-	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
-	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/metrics&#34;</span>
-)
-
-comp <span style="color:#ff79c6">:=</span> baker.Components{
-    Metrics: metrics.All,
-
-	<span style="color:#6272a4">// Other fields not shown here.
-</span><span style="color:#6272a4"></span>}
-</code></pre></div><p>This list can contain a metric backend already included into Baker or a custom implementation
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#ff79c6">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f1fa8c">&#34;github.com/AdRoll/baker/metrics&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>comp <span style="color:#ff79c6">:=</span> baker.Components{
+</span></span><span style="display:flex;"><span>    Metrics: metrics.All,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#6272a4">// Other fields not shown here.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span></code></pre></div><p>This list can contain a metric backend already included into Baker or a custom implementation
 of the <code>baker.MetricsClient</code> interface.</p>
 <p>For more, see the page <a href="/docs/core-concepts/metrics">dedicated to metrics</a>.</p>
 <h2 id="user">User</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
-
-comp <span style="color:#ff79c6">:=</span> baker.Components{
-	User:    []baker.UserDesc{ <span style="color:#6272a4">/* list of user-specific structs */</span>},
-
-	<span style="color:#6272a4">// Other fields not shown here.
-</span><span style="color:#6272a4"></span>}
-</code></pre></div><p>Baker users might want to use Baker TOML files to store application-specific configuration.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>comp <span style="color:#ff79c6">:=</span> baker.Components{
+</span></span><span style="display:flex;"><span>	User:    []baker.UserDesc{ <span style="color:#6272a4">/* list of user-specific structs */</span>},
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#6272a4">// Other fields not shown here.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span></code></pre></div><p>Baker users might want to use Baker TOML files to store application-specific configuration.
 The <code>User</code> field lists user-defined configurations structures which aren&rsquo;t strictly
 useful to Baker.</p>
 <p>To learn more about this topic, read the
 <a href="/docs/core-concepts/toml/#user-defined-configurations">dedicated section</a> in the Pipeline
 configuration page.</p>
 <h2 id="shardingfuncs">ShardingFuncs</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
-
-shardingFuncs <span style="color:#ff79c6">:=</span> <span style="color:#8be9fd;font-style:italic">make</span>(<span style="color:#8be9fd;font-style:italic">map</span>[baker.FieldIndex]baker.ShardingFunc)
-
-comp <span style="color:#ff79c6">:=</span> baker.Components{
-	ShardingFuncs: shardingFuncs,
-
-	<span style="color:#6272a4">// Other fields not shown here.
-</span><span style="color:#6272a4"></span>}
-</code></pre></div><p><code>ShardingFuncs</code> holds a dictionary associating field indexes to hash functions. When sharding
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>shardingFuncs <span style="color:#ff79c6">:=</span> <span style="color:#8be9fd;font-style:italic">make</span>(<span style="color:#8be9fd;font-style:italic">map</span>[baker.FieldIndex]baker.ShardingFunc)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>comp <span style="color:#ff79c6">:=</span> baker.Components{
+</span></span><span style="display:flex;"><span>	ShardingFuncs: shardingFuncs,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#6272a4">// Other fields not shown here.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span></code></pre></div><p><code>ShardingFuncs</code> holds a dictionary associating field indexes to hash functions. When sharding
 is enabled, these hash functions are used to determine which shard a record is sent to.</p>
 <h2 id="validate">Validate</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
-
-<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">validate</span>(baker.Record) (<span style="color:#8be9fd">bool</span>, baker.FieldIndex) {
-	<span style="color:#6272a4">// ...
-</span><span style="color:#6272a4"></span>}
-
-comp <span style="color:#ff79c6">:=</span> baker.Components{
-	Validate: validate,
-
-	<span style="color:#6272a4">// Other fields not shown here.
-</span><span style="color:#6272a4"></span>}
-</code></pre></div><p><code>Validate</code> is the function used to validate a record. It is called for each processed record
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">validate</span>(baker.Record) (<span style="color:#8be9fd">bool</span>, baker.FieldIndex) {
+</span></span><span style="display:flex;"><span>	<span style="color:#6272a4">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>comp <span style="color:#ff79c6">:=</span> baker.Components{
+</span></span><span style="display:flex;"><span>	Validate: validate,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#6272a4">// Other fields not shown here.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span></code></pre></div><p><code>Validate</code> is the function used to validate a record. It is called for each processed record
 unless <code>nil</code> or when <code>dont_validate_fields</code> is set to <code>true</code> in TOML&rsquo;s <code>[general]</code> section.</p>
 <p>Regardless of the <code>dont_validate_fields</code> value, the <code>Validate</code> function is made accessible
 to all components so that they can use it at their will.</p>
@@ -906,35 +924,35 @@ to all components so that they can use it at their will.</p>
 <a href="/docs/how-tos/pipeline_configuration/#validation-configuration"><code>[validation]</code></a> section of the TOML.
 Anyways, the user should specify the validation either in the Components or in the TOML.</p>
 <h2 id="createrecord">CreateRecord</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
-
-<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">create</span>() baker.Record {
-	<span style="color:#6272a4">// ...
-</span><span style="color:#6272a4"></span>}
-
-comp <span style="color:#ff79c6">:=</span> baker.Components{
-	CreateRecord: create,
-
-	<span style="color:#6272a4">// Other fields not shown here.
-</span><span style="color:#6272a4"></span>}
-</code></pre></div><p><code>CreateRecord</code> is a factory function returning new <code>Record</code> instances. If not set, a default function is
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">create</span>() baker.Record {
+</span></span><span style="display:flex;"><span>	<span style="color:#6272a4">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>comp <span style="color:#ff79c6">:=</span> baker.Components{
+</span></span><span style="display:flex;"><span>	CreateRecord: create,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#6272a4">// Other fields not shown here.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span></code></pre></div><p><code>CreateRecord</code> is a factory function returning new <code>Record</code> instances. If not set, a default function is
 used that creates a <code>LogLine</code> with the <strong>comma</strong> field separator.</p>
 <p>The function is used internally by Baker each time a new Record must be created. This
 happens when blobs of raw serialized data, provided by the <code>Input</code> component, are parsed.</p>
 <p>The function is also available for components needing to create new records.</p>
 <h2 id="fieldbyname">FieldByName</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
-
-<span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">fieldByName</span>(name <span style="color:#8be9fd">string</span>) (baker.FieldIndex, <span style="color:#8be9fd">bool</span>) {
-	<span style="color:#6272a4">// ...
-</span><span style="color:#6272a4"></span>}
-
-comp <span style="color:#ff79c6">:=</span> baker.Components{
-	FieldByName: fieldByName,
-
-	<span style="color:#6272a4">// Other fields not shown here.
-</span><span style="color:#6272a4"></span>}
-</code></pre></div><p><code>FieldByName</code> returns the index of a field given its name.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">func</span> <span style="color:#50fa7b">fieldByName</span>(name <span style="color:#8be9fd">string</span>) (baker.FieldIndex, <span style="color:#8be9fd">bool</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#6272a4">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>comp <span style="color:#ff79c6">:=</span> baker.Components{
+</span></span><span style="display:flex;"><span>	FieldByName: fieldByName,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#6272a4">// Other fields not shown here.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span></code></pre></div><p><code>FieldByName</code> returns the index of a field given its name.</p>
 <p>Internally Baker refers to fields by their indices, but it&rsquo;s simpler for users to refer to fields
 with their names. This function exists to convert a field name to its index, it also controls
 if the name is valid.</p>
@@ -943,16 +961,16 @@ index of a field they need for filtering or processing, but it is also used inte
 Baker when sending fields to the output (when at least one field is selected in the output
 TOML configuration).</p>
 <h2 id="fieldnames">FieldNames</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
-
-fieldNames <span style="color:#ff79c6">:=</span> []<span style="color:#8be9fd">string</span>{<span style="color:#f1fa8c">&#34;field0&#34;</span>, <span style="color:#f1fa8c">&#34;field1&#34;</span>, <span style="color:#f1fa8c">&#34;field2&#34;</span>, <span style="color:#f1fa8c">&#34;field3&#34;</span>}
-
-comp <span style="color:#ff79c6">:=</span> baker.Components{
-	FieldNames: fieldNames,
-
-	<span style="color:#6272a4">// Other fields not shown here.
-</span><span style="color:#6272a4"></span>}
-</code></pre></div><p><code>FieldNames</code> is the slice holding the record field names.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#34;github.com/AdRoll/baker&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>fieldNames <span style="color:#ff79c6">:=</span> []<span style="color:#8be9fd">string</span>{<span style="color:#f1fa8c">&#34;field0&#34;</span>, <span style="color:#f1fa8c">&#34;field1&#34;</span>, <span style="color:#f1fa8c">&#34;field2&#34;</span>, <span style="color:#f1fa8c">&#34;field3&#34;</span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>comp <span style="color:#ff79c6">:=</span> baker.Components{
+</span></span><span style="display:flex;"><span>	FieldNames: fieldNames,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#6272a4">// Other fields not shown here.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span></code></pre></div><p><code>FieldNames</code> is the slice holding the record field names.</p>
 <p>Record fields are 0-based indices, and thus the role of the <code>FieldNames</code> slice is twofold: first it allows
 Baker components to refer to a record field by its name rather than its index. It also set an upper-bound on
 the number of declared fields a Record can have, which is useful in some cases. That&rsquo;s why <code>FieldNames</code> is
@@ -1004,7 +1022,7 @@ Baker TOML configuration file. However Baker will refuse to start if field names
         
       </div>
       <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
-        <small class="text-white">&copy; 2021 NextRoll, Inc. All Rights Reserved</small>
+        <small class="text-white">&copy; 2022 NextRoll, Inc. All Rights Reserved</small>
         <small class="ml-1"><a href="https://www.nextroll.com/privacy" target="_blank">Privacy Policy</a></small>
 	
 		
@@ -1028,7 +1046,7 @@ Baker TOML configuration file. However Baker will refuse to start if field names
 
 
 
-<script src="/js/main.min.63db3e552bd0543be17ce4a79a18b744e9cb72256bec42b540e3ab0cd43722d0.js" integrity="sha256-Y9s&#43;VSvQVDvhfOSnmhi3ROnLciVr7EK1QOOrDNQ3ItA=" crossorigin="anonymous"></script>
+<script src="/js/main.min.27af2a485b4359ac7a0cd4cb4a2d165c56770c59ef3a9330e8f38fbe3bdc2f97.js" integrity="sha256-J68qSFtDWax6DNTLSi0WXFZ3DFnvOpMw6POPvjvcL5c=" crossorigin="anonymous"></script>
 
 
 

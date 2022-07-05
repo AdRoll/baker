@@ -1,7 +1,7 @@
 ---
 title: "RegexMatch"
-weight: 22
-date: 2021-11-17
+weight: 23
+date: 2022-07-05
 ---
 {{% pageinfo color="primary" %}}
 
@@ -11,7 +11,7 @@ date: 2021-11-17
 ## Filter *RegexMatch*
 
 ### Overview
-Discard a record if one or more fields don't match the corresponding regular expressions
+Discard record which have one or more fields that do not match their corresponding regular expressions
 
 ### Configuration
 
@@ -21,4 +21,5 @@ Keys available in the `[filter.config]` section:
 |----|:--:|:-----:|:------:|-----------|
 | Fields| array of strings| []| false| list of fields to match with the corresponding regular expression in Regexs|
 | Regexs| array of strings| []| false| list of regular expression to match. Fields[0] must match Regexs[0], Fields[1] Regexs[1] and so on|
+| InvertMatch| bool| false| false| invert the match outcome, so that records are discarded if one or more fields match their corresponding regular expression|
 

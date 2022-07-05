@@ -1,7 +1,7 @@
 ---
 title: "FileWriter"
-weight: 31
-date: 2021-11-17
+weight: 34
+date: 2022-07-05
 ---
 {{% pageinfo color="primary" %}}
 
@@ -61,6 +61,12 @@ path:
     PathString = "/path/to/file-{{.Hour}}-{{.Minute}}.log.gz" 
     RotateInterval = 1s
 
+If you use RotateSize you should also probably include {{.Rotation}}, to generate different 
+different paths:
+
+    PathString = "/path/to/file-{{.Rotation}}.log.gz" 
+    RotateSize = "128MB"
+
  3. Only use {{.Field0}} if you trust the records you consume.
 
 By using {{.Field0}} the files produces will have a path containing whatever value
@@ -74,7 +80,9 @@ Keys available in the `[output.config]` section:
 |Name|Type|Default|Required|Description|
 |----|:--:|:-----:|:------:|-----------|
 | PathString| string| ""| false| Template describing names of the generated files. See top-level documentation for supported placeholders..|
-| RotateInterval| duration| 60s| false| Time interval between 2 successive file rotations. -1 disabled rotation.|
+| RotateInterval| duration| 60s| false| Time interval between 2 successive file rotations. -1 disables interval-based rotation.|
+| RotateSize| bytes as int or string with SI or IEC unit| 0| false| File size which when reached triggers a file rotation. Can be cumulated with RotateInterval. 0 to disable. Examples: 12000, 12KB, 1MB, 1MiB, etc.|
+| DiscardEmptyFiles| bool| false| false| By default, if no records have been received at the moment of rotation (see RotateInterval) then created files are empty. If true, then empty files are discarded.|
 | ZstdCompressionLevel| int| 3| false| Zstd compression level, ranging from 1 (best speed) to 19 (best compression).|
 | ZstdWindowLog| int| 0| false| Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled.|
 
