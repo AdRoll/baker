@@ -56,7 +56,7 @@ type ConfigFilterChain struct {
 type ConfigFilter struct {
 	Name          string
 	DecodedConfig interface{}
-	DropOnError   bool
+	DropOnError   *bool
 
 	Config *toml.Primitive
 	desc   *FilterDesc
@@ -384,6 +384,13 @@ func NewConfigFromToml(f io.Reader, comp Components) (*Config, error) {
 		}
 
 		cfg.Filter[idx].DecodedErrorHandlers = make([]ConfigFilterErrorHandler, len(cfg.Filter[idx].ErrorHandler))
+
+		// If DropOnError has not been overwritten in the config, use the
+		// default value coming from the filter description itself.
+		if cfg.Filter[idx].DropOnError == nil {
+			cfg.Filter[idx].DropOnError = new(bool)
+			*cfg.Filter[idx].DropOnError = cfg.Filter[idx].desc.DropOnErrorDefault
+		}
 
 		for ehidx := range cfg.Filter[idx].ErrorHandler {
 			// To decode the list of error handlers and their configuration,

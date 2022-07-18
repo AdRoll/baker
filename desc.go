@@ -95,20 +95,32 @@ type InputDesc struct {
 
 // FilterDesc describes a Filter component to the topology.
 type FilterDesc struct {
-	Name   string                             // Name of the filter
-	New    func(FilterParams) (Filter, error) // New is the constructor-like function called by the topology to create a new filter
-	Config interface{}                        // Config is the component configuration
-	Help   string                             // Help string
+	// Name of the filter
+	Name string
+
+	// New is the constructor-like function called by the topology to create a new filter
+	New func(FilterParams) (Filter, error)
+
+	// Config is the component configuration
+	Config interface{}
+
+	// DropOnErrorDefault set the default DropOnError value in case it hasn't
+	// been defined in the filter configuration.
+	//
+	// This is mainly used to avoid breaking changes when ntroducing filter
+	// error handling.
+	DropOnErrorDefault bool
+
+	// Help string.
+	Help string
 }
 
 // FilterErrorHandlerDesc describes a FilterErrorHandlerDesc component to the topology.
 type FilterErrorHandlerDesc struct {
-	Name string // Name of the filter
-	// New    func(FilterParams) (Filter, error) // New is the constructor-like function called by the topology to create a new filter
-	New         func(FilterErrorHandlerParams) (FilterErrorHandler, error)
-	Config      interface{} // Config is the component configuration
-	DropOnError bool
-	Help        string // Help string
+	Name   string // Name of the filter
+	New    func(FilterErrorHandlerParams) (FilterErrorHandler, error)
+	Config interface{} // Config is the component configuration
+	Help   string      // Help string
 }
 
 // OutputDesc describes an Output component to the topology.

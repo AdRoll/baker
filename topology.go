@@ -237,7 +237,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 				for _, feh := range cfg.Filter[ifil].handlers {
 					feh.HandleError(cfg.Filter[ifil].Name, r, err)
 				}
-				if cfg.Filter[ifil].DropOnError {
+				if *cfg.Filter[ifil].DropOnError {
 					// TODO(arl): increment filteredLines metrics (and remove it from FilterStats)
 					dropped = true
 					break

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"sync/atomic"
 	"testing"
 
 	"github.com/AdRoll/baker"
@@ -35,8 +36,13 @@ fields = ["fielda", "fieldb", "fieldc"]
 	toml := fmt.Sprintf(src, filterToml)
 
 	components := baker.Components{
-		Inputs:              []baker.InputDesc{inputtest.RecordsDesc},
-		Filters:             filter.All,
+		Inputs: []baker.InputDesc{inputtest.RecordsDesc},
+		Filters: append(filter.All,
+			newDropOnErrorDefaultTestDesc(true, noerrAction),
+			newDropOnErrorDefaultTestDesc(false, noerrAction),
+			newDropOnErrorDefaultTestDesc(true, errorAction),
+			newDropOnErrorDefaultTestDesc(false, errorAction),
+		),
 		FilterErrorHandlers: filter_error_handler.All,
 		Outputs:             []baker.OutputDesc{outputtest.RawRecorderDesc},
 	}
@@ -147,4 +153,186 @@ func TestFilterChain(t *testing.T) {
 			",bar,baz", // fielda is empty, the record will be dropped
 		}, []string{",bar,baz"})
 	})
+}
+
+func TestDropOnErrorDefault(t *testing.T) {
+	t.Run("dropOnError/val=true/default=true/action=error", func(t *testing.T) {
+		toml := `
+		[[filter]]
+		name="dropOnError/default=true/action=error"
+		dropOnError = true`
+
+		testFilterChain(t, toml,
+			[]string{"foo,bar,baz"},
+			nil, // drop
+		)
+	})
+	t.Run("dropOnError/val=true/default=false/action=error", func(t *testing.T) {
+		toml := `
+		[[filter]]
+		name="dropOnError/default=false/action=error"
+		dropOnError = true`
+
+		testFilterChain(t, toml,
+			[]string{"foo,bar,baz"},
+			nil, // drop
+		)
+	})
+	t.Run("dropOnError/val=true/default=true/action=noerror", func(t *testing.T) {
+		toml := `
+		[[filter]]
+		name="dropOnError/default=true/action=noerror"
+		dropOnError = true`
+
+		testFilterChain(t, toml,
+			[]string{"foo,bar,baz"},
+			[]string{"foo,bar,baz"}, // do not drop
+		)
+	})
+	t.Run("dropOnError/val=true/default=false/action=noerror", func(t *testing.T) {
+		toml := `
+		[[filter]]
+		name="dropOnError/default=false/action=noerror"
+		dropOnError = true`
+
+		testFilterChain(t, toml,
+			[]string{"foo,bar,baz"},
+			[]string{"foo,bar,baz"}, // do not drop
+		)
+	})
+
+	//
+	// dropOnError=false
+	//
+
+	t.Run("dropOnError/val=false/default=true/action=error", func(t *testing.T) {
+		toml := `
+		[[filter]]
+		name="dropOnError/default=true/action=error"
+		dropOnError = false`
+
+		testFilterChain(t, toml,
+			[]string{"foo,bar,baz"},
+			[]string{"foo,bar,baz"}, // do not drop
+		)
+	})
+	t.Run("dropOnError/val=false/default=false/action=error", func(t *testing.T) {
+		toml := `
+		[[filter]]
+		name="dropOnError/default=false/action=error"
+		dropOnError = false`
+
+		testFilterChain(t, toml,
+			[]string{"foo,bar,baz"},
+			[]string{"foo,bar,baz"}, // do not drop
+		)
+	})
+	t.Run("dropOnError/val=false/default=true/action=noerror", func(t *testing.T) {
+		toml := `
+		[[filter]]
+		name="dropOnError/default=true/action=noerror"
+		dropOnError = false`
+
+		testFilterChain(t, toml,
+			[]string{"foo,bar,baz"},
+			[]string{"foo,bar,baz"}, // do not drop
+		)
+	})
+	t.Run("dropOnError/val=false/default=false/action=noerror", func(t *testing.T) {
+		toml := `
+		[[filter]]
+		name="dropOnError/default=false/action=noerror"
+		dropOnError = false`
+
+		testFilterChain(t, toml,
+			[]string{"foo,bar,baz"},
+			[]string{"foo,bar,baz"}, // do not drop
+		)
+	})
+
+	//
+	// dropOnError=unset
+	//
+
+	t.Run("dropOnError/val=unset/default=true/action=error", func(t *testing.T) {
+		toml := `
+		[[filter]]
+		name="dropOnError/default=true/action=error"`
+
+		testFilterChain(t, toml,
+			[]string{"foo,bar,baz"},
+			nil, // drop
+		)
+	})
+	t.Run("dropOnError/val=unset/default=false/action=error", func(t *testing.T) {
+		toml := `
+		[[filter]]
+		name="dropOnError/default=false/action=error"`
+
+		testFilterChain(t, toml,
+			[]string{"foo,bar,baz"},
+			[]string{"foo,bar,baz"}, // do not drop
+		)
+	})
+	t.Run("dropOnError/val=unset/default=true/action=noerror", func(t *testing.T) {
+		toml := `
+		[[filter]]
+		name="dropOnError/default=true/action=noerror"`
+
+		testFilterChain(t, toml,
+			[]string{"foo,bar,baz"},
+			[]string{"foo,bar,baz"}, // do not drop
+		)
+	})
+	t.Run("dropOnError/val=unset/default=false/action=noerror", func(t *testing.T) {
+		toml := `
+		[[filter]]
+		name="dropOnError/default=false/action=noerror"`
+
+		testFilterChain(t, toml,
+			[]string{"foo,bar,baz"},
+			[]string{"foo,bar,baz"}, // do not drop
+		)
+	})
+}
+
+type filterAction string
+
+const (
+	errorAction filterAction = "error"
+	noerrAction filterAction = "noerror"
+)
+
+// newDropOnErrorDefaultTestDesc generates the description for a filter is used
+// to test FilterDesc.DropOnErrorDefault. It either generates errors for all
+// records, or for none of them. Also DropOnErrorDefault can be defined in the
+// filter description.
+func newDropOnErrorDefaultTestDesc(dropOnErrorDefault bool, act filterAction) baker.FilterDesc {
+	return baker.FilterDesc{
+		Name: fmt.Sprintf("dropOnError/default=%t/action=%s", dropOnErrorDefault, act),
+		New: func(baker.FilterParams) (baker.Filter, error) {
+			return &testFilter{act: act}, nil
+		},
+		Config:             &struct{}{},
+		DropOnErrorDefault: dropOnErrorDefault,
+	}
+}
+
+type testFilter struct {
+	ndropped int64
+	act      filterAction
+}
+
+func (f *testFilter) Stats() baker.FilterStats {
+	return baker.FilterStats{
+		NumFilteredLines: atomic.LoadInt64(&f.ndropped),
+	}
+}
+
+func (f *testFilter) Process(l baker.Record) error {
+	if f.act == errorAction {
+		atomic.AddInt64(&f.ndropped, 1)
+		return baker.ErrGenericFilterError
+	}
+	return nil
 }
