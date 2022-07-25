@@ -10,7 +10,7 @@ var LazyFilterDesc = baker.FilterDesc{
 	Name:   "LazyFilter",
 	New:    NewLazyFilter,
 	Config: &LazyFilterConfig{},
-	Help:   "This lazy filter does nothing during working time but drops all records between 6pm and 9am",
+	Help:   "This lazy filter triggers errors for all records it receives between 6pm and 9am",
 }
 
 type LazyFilterConfig struct {
@@ -25,15 +25,17 @@ func NewLazyFilter(cfg baker.FilterParams) (baker.Filter, error) {
 	return &LazyFilter{stakhanovite: dcfg.Stakhanovite}, nil
 }
 
-func (f *LazyFilter) Process(l baker.Record, next func(baker.Record)) {
+func (f *LazyFilter) Process(l baker.Record) error {
 	h := time.Now().Hour()
 	upperLimit := 18
 	if f.stakhanovite {
 		upperLimit = 20
 	}
 	if h >= 9 && h <= upperLimit {
-		next(l)
+		return nil
 	}
+
+	return baker.ErrGenericFilterError
 }
 
 func (f *LazyFilter) Stats() baker.FilterStats {
