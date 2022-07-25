@@ -3,7 +3,6 @@ package filter
 import (
 	"fmt"
 	"net/url"
-	"sync/atomic"
 
 	"github.com/AdRoll/baker"
 	log "github.com/sirupsen/logrus"
@@ -23,9 +22,8 @@ type URLEscapeConfig struct {
 }
 
 type URLEscape struct {
-	numFilteredLines int64
-	src, dst         baker.FieldIndex
-	process          func([]byte) ([]byte, error)
+	src, dst baker.FieldIndex
+	process  func([]byte) ([]byte, error)
 }
 
 func NewURLEscape(cfg baker.FilterParams) (baker.Filter, error) {
@@ -64,9 +62,7 @@ func NewURLEscape(cfg baker.FilterParams) (baker.Filter, error) {
 }
 
 func (f *URLEscape) Stats() baker.FilterStats {
-	return baker.FilterStats{
-		NumFilteredLines: atomic.LoadInt64(&f.numFilteredLines),
-	}
+	return baker.FilterStats{}
 }
 
 func (f *URLEscape) Process(l baker.Record) error {

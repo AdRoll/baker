@@ -131,16 +131,18 @@ func TestURLEscape(t *testing.T) {
 				return
 			}
 
-			rec1 := &baker.LogLine{FieldSeparator: fieldSeparator}
-			if err := rec1.Parse([]byte(tt.record), nil); err != nil {
+			rec := &baker.LogLine{FieldSeparator: fieldSeparator}
+			if err := rec.Parse([]byte(tt.record), nil); err != nil {
 				t.Fatalf("parse error: %q", err)
 			}
 
-			f.Process(rec1, func(rec2 baker.Record) {
-				if !bytes.Equal(rec2.ToText(nil), tt.want) {
-					t.Errorf("got:\n%q\n\nwant:\n%q", rec2.ToText(nil), tt.want)
-				}
-			})
+			if err := f.Process(rec); err != nil {
+				// Record untouched in case of error
+				return
+			}
+			if !bytes.Equal(rec.ToText(nil), tt.want) {
+				t.Errorf("got:\n%q\n\nwant:\n%q", rec.ToText(nil), tt.want)
+			}
 		})
 	}
 }
