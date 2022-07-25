@@ -6,6 +6,7 @@ import (
 	"os"
 	"runtime"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -24,6 +25,7 @@ type StatsDumper struct {
 	prevrlines       int64
 	prevUploads      int64
 	prevUploadErrors int64
+	prevFilterDrops  []int64
 }
 
 // NewStatsDumper creates and initializes a StatsDumper using the given
@@ -37,10 +39,11 @@ func NewStatsDumper(t *Topology) (sd *StatsDumper) {
 	}
 
 	return &StatsDumper{
-		t:          t,
-		w:          os.Stdout,
-		metrics:    t.Metrics,
-		filterTags: ftags,
+		t:               t,
+		w:               os.Stdout,
+		metrics:         t.Metrics,
+		filterTags:      ftags,
+		prevFilterDrops: make([]int64, len(t.Filters)),
 	}
 }
 
@@ -66,13 +69,15 @@ func (sd *StatsDumper) dumpNow() {
 	var filtered int64
 	filteredMap := make(map[string]int64)
 	for fidx, f := range t.Filters {
-		stats := f.Stats()
-		if stats.NumFilteredLines > 0 {
-			sd.metrics.RawCountWithTags("filtered_lines", stats.NumFilteredLines, sd.filterTags[fidx])
-			filtered += stats.NumFilteredLines
-			filteredMap[fmt.Sprintf("%T", f)] += filtered
+		drops := atomic.LoadInt64(&sd.prevFilterDrops[fidx])
+		curdrops := drops - sd.prevFilterDrops[fidx]
+		if curdrops > 0 {
+			sd.metrics.RawCountWithTags("filtered_lines", curdrops, sd.filterTags[fidx])
+			filtered += curdrops
+			filteredMap[fmt.Sprintf("%T", f)] += curdrops
+			sd.prevFilterDrops[fidx] = drops
 		}
-		allMetrics.Merge(stats.Metrics)
+		allMetrics.Merge(f.Stats().Metrics)
 	}
 
 	var curwlines, outErrors int64

@@ -324,9 +324,7 @@ type testFilter struct {
 }
 
 func (f *testFilter) Stats() baker.FilterStats {
-	return baker.FilterStats{
-		NumFilteredLines: atomic.LoadInt64(&f.ndropped),
-	}
+	return baker.FilterStats{}
 }
 
 func (f *testFilter) Process(l baker.Record) error {

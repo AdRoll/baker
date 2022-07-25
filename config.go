@@ -63,9 +63,6 @@ type ConfigFilter struct {
 
 	ErrorHandler         []*toml.Primitive `toml:"error_handler"`
 	DecodedErrorHandlers []ConfigFilterErrorHandler
-
-	// TODO(arl): the error handler instances should not reside in the config.
-	handlers []FilterErrorHandler
 }
 
 // ConfigFilterErrorHandler specifies the configuration for a single filter

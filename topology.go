@@ -22,7 +22,11 @@ type Topology struct {
 	Upload  Upload
 	Metrics MetricsClient
 
-	filterNames []string // univocal filter names
+	// FilterErrorHandlers holds error handlers chain, one per filter, i.e.
+	// FilterErrorHandlers[i][j] is the jth error handler of the ith filter.
+	FilterErrorHandlers [][]FilterErrorHandler
+	filterdrops         []int64  // dropped records, per filter, atomically accessed.
+	filterNames         []string // univocal filter names
 
 	inerr     atomic.Value
 	inch      chan *Data
@@ -116,6 +120,7 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 		tp.Filters = append(tp.Filters, fil)
 		tp.filterNames = append(tp.filterNames, strings.ToLower(cfg.Filter[idx].Name))
 
+		var errorHandlers []FilterErrorHandler
 		// Add filter error handlers, if any.
 		for ehidx := range cfg.Filter[idx].DecodedErrorHandlers {
 			fehCfg := FilterErrorHandlerParams{
@@ -135,15 +140,13 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 			if err != nil {
 				return nil, fmt.Errorf("error creating filter error handler: %v", err)
 			}
-			// TODO(arl): for now, we place the error handler in the config.
-			// However this should be owned by the filter, hence by the
-			// topology. Filter is an interface so we might need to add a kind
-			// of filter wrapper in the topology. A slice which would, to each
-			// index, associates the actual filter and the list of instantiated
-			// error handlers, if any.
-			cfg.Filter[idx].handlers = append(cfg.Filter[idx].handlers, feh)
+			errorHandlers = append(errorHandlers, feh)
 		}
+
+		tp.FilterErrorHandlers = append(tp.FilterErrorHandlers, errorHandlers)
 	}
+	tp.filterdrops = make([]int64, len(cfg.Filter))
+
 	makeUnivocal(tp.filterNames)
 
 	// * Create outputs
@@ -234,12 +237,12 @@ func NewTopologyFromConfig(cfg *Config) (*Topology, error) {
 		dropped := false
 		for ifil := 0; ifil < len(tp.Filters); ifil++ {
 			if err := tp.Filters[ifil].Process(r); err != nil {
-				for _, feh := range cfg.Filter[ifil].handlers {
+				for _, feh := range tp.FilterErrorHandlers[ifil] {
 					feh.HandleError(cfg.Filter[ifil].Name, r, err)
 				}
 				if *cfg.Filter[ifil].DropOnError {
-					// TODO(arl): increment filteredLines metrics (and remove it from FilterStats)
 					dropped = true
+					atomic.AddInt64(&tp.filterdrops[ifil], 1)
 					break
 				}
 			}

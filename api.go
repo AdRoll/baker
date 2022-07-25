@@ -33,8 +33,7 @@ type InputStats struct {
 // FilterStats contains statistics about the filter components,
 // ready for export to the metric client and to print debug info
 type FilterStats struct {
-	NumFilteredLines int64
-	Metrics          MetricsBag
+	Metrics MetricsBag
 }
 
 // OutputStats contains statistics about the output component,
