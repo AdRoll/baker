@@ -3,7 +3,6 @@ package baker_test
 import (
 	"bytes"
 	"math"
-	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -47,8 +46,7 @@ func (statsFilter) Stats() baker.FilterStats {
 	bag.AddTimings("filter.timings", []time.Duration{1 * time.Minute, 10 * time.Minute, 100 * time.Minute})
 
 	return baker.FilterStats{
-		NumFilteredLines: 8,
-		Metrics:          bag,
+		Metrics: bag,
 	}
 }
 

@@ -1,3 +1,2 @@
-Stats: 1s[w:106 r:93] total[w:106 r:93 u:17] speed[w:0 r:0] errors[p:0 i:0 f:24 o:14 u:3]
+Stats: 1s[w:106 r:93] total[w:106 r:93 u:17] speed[w:0 r:0] errors[p:0 i:0 f:0 o:14 u:3]
 --- Input stats: map[k1:v1 k2:v2]
---- Filtered lines: map[baker_test.statsFilter:48]

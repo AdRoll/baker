@@ -54,11 +54,8 @@ hist|name=upload.hist|value=10
 hist|name=upload.hist|value=11
 hist|name=upload.hist|value=8
 hist|name=upload.hist|value=9
-rawcount|name=error_lines|value=38
+rawcount|name=error_lines|value=14
 rawcount|name=filter.raw_count|value=12
-rawcount|name=filtered_lines|value=8|tag=filter_name:statsfilter
-rawcount|name=filtered_lines|value=8|tag=filter_name:statsfilter_2
-rawcount|name=filtered_lines|value=8|tag=filter_name:statsfilter_3
 rawcount|name=input.raw_count|value=10
 rawcount|name=output.raw_count|value=6
 rawcount|name=processed_lines|value=106
