@@ -155,13 +155,8 @@ name="MockMetrics"
 	stop := sd.Run()
 	stop()
 
-	// Check StatsDumper output. We first what, by default, gets written to
-	// standard output.
+	// Check StatsDumper output. We first what gets written to standard output.
 	golden := filepath.Join("testdata", t.Name()+".stdout.golden")
-	if *testutil.UpdateGolden {
-		os.WriteFile(golden, buf.Bytes(), os.ModePerm)
-		t.Logf("updated: %q", golden)
-	}
 	testutil.DiffWithGolden(t, buf.Bytes(), golden)
 
 	// We then check the metrics the StatsDumper sent to the configured metrics
@@ -169,10 +164,6 @@ name="MockMetrics"
 	mc := tp.Metrics.(*testutil.MockMetrics)
 	golden = filepath.Join("testdata", t.Name()+".metrics.golden")
 	out := []byte(strings.Join(mc.PublishedMetrics(""), "\n"))
-	if *testutil.UpdateGolden {
-		os.WriteFile(golden, out, os.ModePerm)
-		t.Logf("updated: %q", golden)
-	}
 	testutil.DiffWithGolden(t, out, golden)
 }
 
