@@ -104,7 +104,8 @@ type Filter interface {
 
 var ErrGenericFilterError = errors.New("generic filter error")
 
-// TODO(arl) write comment...
+// FilterErrorHandler handles the records marked as errors by a filter,
+// typically because it couldn't process the record data.
 type FilterErrorHandler interface {
 	HandleError(filterName string, rec Record, err error)
 }
