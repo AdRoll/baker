@@ -9,6 +9,7 @@ import (
 var All = []baker.FilterDesc{
 	ExternalMatchDesc,
 	NotNullDesc,
+	RegexMatchDesc,
 	ReplaceFieldsDesc,
 	URLEscapeDesc,
 }
