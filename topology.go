@@ -25,8 +25,10 @@ type Topology struct {
 	// FilterErrorHandlers holds error handlers chain, one per filter, i.e.
 	// FilterErrorHandlers[i][j] is the jth error handler of the ith filter.
 	FilterErrorHandlers [][]FilterErrorHandler
-	filterdrops         []int64  // dropped records, per filter, atomically accessed.
-	filterNames         []string // univocal filter names
+
+	// TODO(arl) add a unit test for this
+	filterdrops []int64  // dropped records, per filter, atomically accessed.
+	filterNames []string // univocal filter names
 
 	inerr     atomic.Value
 	inch      chan *Data
