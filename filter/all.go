@@ -12,4 +12,5 @@ var All = []baker.FilterDesc{
 	RegexMatchDesc,
 	ReplaceFieldsDesc,
 	URLEscapeDesc,
+	URLParamDesc,
 }
