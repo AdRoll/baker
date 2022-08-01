@@ -94,7 +94,7 @@ type FileWriterConfig struct {
 	PathString           string          `help:"Template describing names of the generated files. See top-level documentation for supported placeholders.."`
 	RotateInterval       time.Duration   `help:"Time interval between 2 successive file rotations. -1 disables interval-based rotation." default:"60s"`
 	RotateSize           baker.SizeBytes `help:"File size which when reached triggers a file rotation. Can be cumulated with RotateInterval. 0 to disable. Examples: 12000, 12KB, 1MB, 1MiB, etc." default:"0"`
-	DiscardEmptyFiles    bool            `help:"By default, if no records have been received at the moment of rotation (see RotateInterval) then created files are empty. If true, then empty files are discarded." default:"false"`
+	DiscardEmptyFiles    bool            `help:"By default, rotation may create empty files if no records were received. If true, then rotation is skipped if the file would be empty." default:"false"`
 	ZstdCompressionLevel int             `help:"Zstd compression level, ranging from 1 (best speed) to 19 (best compression)." default:"3"`
 	ZstdWindowLog        int             `help:"Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled." default:"0"`
 }
@@ -270,7 +270,7 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 	// Perform rotation. Close, upload and swap curw with a newly
 	// created file, after evaluating the path template.
 	rotate := func() {
-		if cfg.DiscardEmptyFiles && fw.writtenOnce {
+		if cfg.DiscardEmptyFiles && !fw.writtenOnce {
 			// Do not rotate if nothing has been written.
 			return
 		}
@@ -280,7 +280,6 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 		}
 
 		upch <- curPath
-
 		fw.rotateIdx++
 		newPath, err := fw.makePath(tmpl)
 		if err != nil {
@@ -321,11 +320,22 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 			}
 			ctxLog.WithFields(log.Fields{"current": curPath}).Info("FileWriter worker terminating")
 
-			// Close the last file and upload it.
+			// Close the last file and upload it, unless it contains no records
+			// and DiscardEmptyFiles is true, in which case we can skip the
+			// upload and delete it.
+
 			if err := curw.Close(); err != nil {
 				ctxLog.WithError(err).WithField("current", curPath).Error("FileWriter worker error closing file")
 			}
-			upch <- curPath
+
+			if !fw.writtenOnce && cfg.DiscardEmptyFiles {
+				if err := os.Remove(curPath); err != nil {
+					ctxLog.WithError(err).WithField("current", curPath).Warning("FileWriter worker error removing empty file")
+				}
+			} else {
+				upch <- curPath
+			}
+
 			close(fw.done)
 		}()
 

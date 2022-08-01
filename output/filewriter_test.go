@@ -668,14 +668,14 @@ func TestFileWriterDiscardEmptyFiles(t *testing.T) {
 		procs = 1
 		[output.config]
 		pathstring = %q
-		rotateInterval = "150ms"
+		rotateInterval = "10ms"
 		discardEmptyFiles = true
 	`
 	if !testing.Verbose() {
 		defer testutil.LessLogging()()
 	}
 
-	toml = fmt.Sprintf(toml, filepath.Join(tmpDir, "file-{{.Hour}}-{{.Minute}}-{{.Second}}.log.gz"))
+	toml = fmt.Sprintf(toml, filepath.Join(tmpDir, "file-{{.Hour}}-{{.Minute}}-{{.Second}}-{{.Rotation}}.log.gz"))
 	cfg, err := baker.NewConfigFromToml(strings.NewReader(toml),
 		baker.Components{
 			Inputs:  []baker.InputDesc{inputtest.ChannelDesc},
@@ -692,7 +692,10 @@ func TestFileWriterDiscardEmptyFiles(t *testing.T) {
 	in := topo.Input.(*inputtest.Channel)
 	go func() {
 		*in <- baker.Data{Bytes: []byte(";;;;\n")}
-		time.Sleep(time.Second)
+		time.Sleep(200 * time.Millisecond)
+		*in <- baker.Data{Bytes: []byte(";;;;\n")}
+		time.Sleep(200 * time.Millisecond)
+
 		close(*in)
 	}()
 
@@ -704,22 +707,24 @@ func TestFileWriterDiscardEmptyFiles(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(files) != 1 {
-		t.Fatalf("got %d files, want one and only one file", len(files))
+	if len(files) != 2 {
+		t.Fatalf("got %d file(s), want 2", len(files))
 	}
 
-	f, err := os.Open(files[0].Path)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer f.Close()
+	for i := range files {
+		f, err := os.Open(files[i].Path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer f.Close()
 
-	n, err := countLines(f)
-	if err != nil {
-		t.Fatal(err)
-	}
+		n, err := countLines(f)
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	if n != 1 {
-		t.Fatalf("got %d lines in %q, want a single line", n, files[0].Path)
+		if n != 1 {
+			t.Fatalf("got %d line(s) in %q, want 1", n, files[0].Path)
+		}
 	}
 }
