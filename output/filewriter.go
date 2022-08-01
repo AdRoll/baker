@@ -270,7 +270,7 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 	// Perform rotation. Close, upload and swap curw with a newly
 	// created file, after evaluating the path template.
 	rotate := func() {
-		if cfg.DiscardEmptyFiles && fw.writtenOnce {
+		if cfg.DiscardEmptyFiles && !fw.writtenOnce {
 			// Do not rotate if nothing has been written.
 			return
 		}
