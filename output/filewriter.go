@@ -280,7 +280,6 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 		}
 
 		upch <- curPath
-
 		fw.rotateIdx++
 		newPath, err := fw.makePath(tmpl)
 		if err != nil {
@@ -321,11 +320,22 @@ func newWorker(cfg *FileWriterConfig, tmpl *template.Template, replFieldValue st
 			}
 			ctxLog.WithFields(log.Fields{"current": curPath}).Info("FileWriter worker terminating")
 
-			// Close the last file and upload it.
+			// Close the last file and upload it, unless it contains no records
+			// and DiscardEmptyFiles is true, in which case we can skip the
+			// upload and delete it.
+
 			if err := curw.Close(); err != nil {
 				ctxLog.WithError(err).WithField("current", curPath).Error("FileWriter worker error closing file")
 			}
-			upch <- curPath
+
+			if !fw.writtenOnce && cfg.DiscardEmptyFiles {
+				if err := os.Remove(curPath); err != nil {
+					ctxLog.WithError(err).WithField("current", curPath).Warning("FileWriter worker error removing empty file")
+				}
+			} else {
+				upch <- curPath
+			}
+
 			close(fw.done)
 		}()
 
