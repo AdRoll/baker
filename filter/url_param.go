@@ -7,9 +7,6 @@ import (
 	"github.com/AdRoll/baker"
 )
 
-ErrURLParamInvalidURL
-type ErrURLParamNotFound 
-
 const (
 	urlParamHelp = `
 This filter extracts a query parameter (Param) from a source field (SrcField)
@@ -63,7 +60,7 @@ func (f *URLParam) Process(l baker.Record) error {
 		return ErrURLParamInvalidURL{url: ustr, err: err}
 	}
 
-	if u.Query().Has(f.param) {
+	if !u.Query().Has(f.param) {
 		return ErrURLParamNotFound(f.param)
 	}
 

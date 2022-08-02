@@ -16,7 +16,7 @@ func TestURLParam(t *testing.T) {
 		param         string
 		record        string
 		want          string
-		wantErr       error
+		wantErr       interface{}
 		wantConfigErr bool
 	}{
 		{
@@ -44,17 +44,19 @@ func TestURLParam(t *testing.T) {
 			dstField: "field1",
 		},
 		{
-			name:     "\"srcField\" not a valid url",
-			record:   "s0,s1",
-			want:     ",s1",
+			name:     "srcField not a valid url",
+			record:   " http://foo.com,s1",
+			wantErr:  &ErrURLParamInvalidURL{},
+			want:     " http://foo.com,s1", // unchanged
 			param:    "parameter_a",
 			srcField: "field1",
 			dstField: "field1",
 		},
 		{
-			name:     "\"param\" not in url",
+			name:     "url param not found",
 			record:   "https://app.adroll.com/?parameter_a=value_a,s1",
-			want:     ",s1",
+			want:     "https://app.adroll.com/?parameter_a=value_a,s1", // unchanged
+			wantErr:  new(ErrURLParamNotFound),
 			param:    "not_parameter_a",
 			srcField: "field1",
 			dstField: "field1",
@@ -62,7 +64,7 @@ func TestURLParam(t *testing.T) {
 
 		// Configuration errors
 		{
-			name:          "unknown \"srcField\"",
+			name:          "unknown srcField",
 			record:        "https://app.adroll.com/?parameter_a=value_a,s1",
 			want:          "",
 			param:         "parameter_a",
@@ -71,7 +73,7 @@ func TestURLParam(t *testing.T) {
 			wantConfigErr: true,
 		},
 		{
-			name:          "unknown \"dstField\"",
+			name:          "unknown dstField",
 			record:        "https://app.adroll.com/?parameter_a=value_a,s1",
 			want:          "",
 			param:         "parameter_a",
@@ -121,8 +123,11 @@ func TestURLParam(t *testing.T) {
 			}
 
 			err = f.Process(&ll)
-			if !errors.Is(err, tt.wantErr) {
-				t.Errorf("Process returned err='%v' want err='%v'", err, tt.wantErr)
+			if (err != nil) != (tt.wantErr != nil) {
+				t.Fatalf("Process returned err='%v' wantErr = %t", err, tt.wantErr != nil)
+			}
+			if tt.wantErr != nil && !errors.As(err, tt.wantErr) {
+				t.Fatalf("Process returned err='%v' wantErr='%v'", err, tt.wantErr)
 			}
 
 			got := ll.ToText(nil)
