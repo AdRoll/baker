@@ -254,7 +254,9 @@ func (s *SQS) Run(inch chan<- *baker.Data) error {
 
 	for _, queueName := range s.Cfg.QueueNames {
 
-		resp, err := s.svc.GetQueueUrlWithContext(ctx, &sqs.GetQueueUrlInput{})
+		resp, err := s.svc.GetQueueUrlWithContext(ctx, &sqs.GetQueueUrlInput{
+			QueueName: aws.String(queueName),
+		})
 		if err != nil {
 			return err
 		}

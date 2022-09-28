@@ -426,6 +426,23 @@ func (c *mockSQSClient) ListQueuesWithContext(ctx aws.Context, input *sqs.ListQu
 	return out, nil
 }
 
+func (c *mockSQSClient) GetQueueUrlWithContext(ctx aws.Context, input *sqs.GetQueueUrlInput, options ...request.Option) (*sqs.GetQueueUrlOutput, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	queueName := ""
+	for name := range c.queues {
+		if name == *input.queueName {
+			queueName = "https://sqs.us-west-2.amazonaws.com/123456789012/" + name
+			break
+		}
+	}
+
+	out := &sqs.GetQueueUrlOutput{QueueUrl: queueName}
+	log.WithFields(log.Fields{"sqs": "GetQueueUrlWithContext", "input": *input, "out": *out}).Debug()
+	return out, nil
+}
+
 // ReceiveMessageWithContext sends the first message for the requested queue, if
 // any, then removes it from the queue.
 func (c *mockSQSClient) ReceiveMessageWithContext(ctx aws.Context, input *sqs.ReceiveMessageInput, options ...request.Option) (*sqs.ReceiveMessageOutput, error) {
