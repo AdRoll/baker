@@ -41,8 +41,8 @@ Supported formats (MessageFormat):
 type SQSConfig struct {
 	AwsRegion         string   `help:"AWS region to connect to" default:"us-west-2"`
 	Bucket            string   `help:"S3 Bucket to use if paths do not have one" default:""`
-	QueuePrefixes     []string `help:"Prefixes of the names of the SQS queues to monitor" required:"true" if QueueNames not set`
-	QueueNames        []string `help:"Names of the SQS queues to monitor" required:"true" if QueuePrefixes not set`
+	QueuePrefixes     []string `help:"Prefixes of the names of the SQS queues to monitor"`
+	QueueNames        []string `help:"Names of the SQS queues to monitor"`
 	MessageFormat     string   `help:"SQS message format. See help string for supported formats" default:"sns"`
 	MessageExpression string   `help:"The expression to extract an S3 path from arbitrary message formats"`
 	FilePathFilter    string   `help:"If provided, will only use S3 files with the given path."`
@@ -109,9 +109,6 @@ func NewSQS(cfg baker.InputParams) (baker.Input, error) {
 			return nil, fmt.Errorf("SQS: can't compile FilePathFilter: %v", err)
 		}
 	}
-	if len(dcfg.QueuePrefixes) == 0 && len(dcfg.QueueNames) {
-		return nil, fmt.Errorf("SQS: QueuePrefixes or QueueNames must be set")
-	}
 
 	sess, err := session.NewSession(&aws.Config{Region: aws.String(dcfg.AwsRegion)})
 	if err != nil {
@@ -126,6 +123,10 @@ func NewSQS(cfg baker.InputParams) (baker.Input, error) {
 	s3Input, err := inpututils.NewS3Input(dcfg.AwsRegion, dcfg.Bucket)
 	if err != nil {
 		return nil, fmt.Errorf("SQS: %v", err)
+	}
+
+	if len(dcfg.QueuePrefixes) == 0 && len(dcfg.QueueNames) == 0 {
+		return nil, fmt.Errorf("SQS: QueuePrefixes or QueueNames must be set")
 	}
 
 	sqs := &SQS{
@@ -260,7 +261,7 @@ func (s *SQS) Run(inch chan<- *baker.Data) error {
 		if err != nil {
 			return err
 		}
-		queueUrls = append(queueUrls, resp.QueueUrl)
+		queueUrls = append(queueUrls, *resp.QueueUrl)
 	}
 
 	for _, prefix := range s.Cfg.QueuePrefixes {
@@ -272,7 +273,9 @@ func (s *SQS) Run(inch chan<- *baker.Data) error {
 			return err
 		}
 
-		queueUrls = append(queueUrls, resp.QueueUrls)
+		for _, url := range resp.QueueUrls {
+			queueUrls = append(queueUrls, *url)
+		}
 	}
 
 	var wg sync.WaitGroup
@@ -282,7 +285,7 @@ func (s *SQS) Run(inch chan<- *baker.Data) error {
 			defer wg.Done()
 
 			s.pollQueue(ctx, url)
-		}(*url)
+		}(url)
 	}
 
 	// The correct order of operation to cleanly stop the whole pipeline is the
