@@ -31,5 +31,5 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/valyala/gozstd v1.17.0
 	github.com/vmware/vmware-go-kcl v1.5.0
-	golang.org/x/net v0.0.0-20221002022538-bcab6841153b
+	golang.org/x/net v0.4.0
 )
