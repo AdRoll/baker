@@ -20,7 +20,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/jmespath/go-jmespath v0.4.0
 	github.com/jpillora/backoff v1.0.0
-	github.com/juju/ratelimit v0.0.0-20151125201925-77ed1c8a0121
+	github.com/juju/ratelimit v1.0.2
 	github.com/klauspost/compress v1.15.1
 	github.com/mattn/go-colorable v0.1.6 // indirect
 	github.com/mattn/go-sqlite3 v1.14.3
