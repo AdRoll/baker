@@ -27,16 +27,19 @@ import (
 func TestSQSParseMessage(t *testing.T) {
 	tests := []struct {
 		name                        string
+		queues                      []string
 		format, message, expression string
 		wantPath                    string
 		wantConfigErr, wantParseErr bool
 	}{
 		{
+			queues:   []string{"some-queue"},
 			format:   "plain",
 			message:  "s3://some-bucket/with/stuff/inside",
 			wantPath: "s3://some-bucket/with/stuff/inside",
 		},
 		{
+			queues: []string{"some-queue"},
 			format: "sns",
 			message: `
 			{
@@ -47,6 +50,7 @@ func TestSQSParseMessage(t *testing.T) {
 			wantPath: "s3://another-bucket/path/to/file",
 		},
 		{
+			queues:     []string{"some-queue"},
 			format:     "json",
 			expression: "Foo.Bar",
 			message: `
@@ -59,6 +63,7 @@ func TestSQSParseMessage(t *testing.T) {
 			wantPath: "s3://another-bucket/path/to/file",
 		},
 		{
+			queues:     []string{"some-queue"},
 			format:     "s3::ObjectCreated",
 			expression: "Records[*].join('/',['s3:/', s3.bucket.name, s3.object.key]) | [0]",
 			message: `
@@ -103,6 +108,7 @@ func TestSQSParseMessage(t *testing.T) {
 			wantPath: "s3://mybucket/path/to/a/csv/file/in/a/bucket/file.csv.log.zst",
 		},
 		{
+			queues:     []string{"some-queue"},
 			format:     "json",
 			expression: "Records[*].join('/',['s3:/', s3.bucket.name, s3.object.key]) | [0]",
 			message: `
@@ -170,9 +176,17 @@ func TestSQSParseMessage(t *testing.T) {
 			wantPath:      "whatever",
 			wantConfigErr: true,
 		},
+		{
+			queues:        []string{},
+			format:        "plain",
+			message:       "s3://some-bucket/with/stuff/inside",
+			wantPath:      "s3://some-bucket/with/stuff/inside",
+			wantConfigErr: true,
+		},
 
 		// parse errors
 		{
+			queues:     []string{"some-queue"},
 			name:       "invalid json payload",
 			format:     "json",
 			expression: "Foo.Bar",
@@ -186,6 +200,7 @@ func TestSQSParseMessage(t *testing.T) {
 			wantParseErr: true,
 		},
 		{
+			queues:     []string{"some-queue"},
 			name:       "field not found",
 			format:     "json",
 			expression: "Foo.Bar",
@@ -197,6 +212,7 @@ func TestSQSParseMessage(t *testing.T) {
 			wantParseErr: true,
 		},
 		{
+			queues:     []string{"some-queue"},
 			name:       "field of wrong type",
 			format:     "json",
 			expression: "Foo.Bar",
@@ -220,6 +236,7 @@ func TestSQSParseMessage(t *testing.T) {
 			in, err := NewSQS(baker.InputParams{
 				ComponentParams: baker.ComponentParams{
 					DecodedConfig: &SQSConfig{
+						QueueNames:        tt.queues,
 						MessageFormat:     string(tt.format),
 						MessageExpression: tt.expression,
 					},
@@ -252,6 +269,7 @@ type sqsIntegrationTestCase struct {
 
 	// SQS input configuration
 	queuePrefixes []string // QueuePrefixes configuration parameter
+	queueNames    []string // QueueNames configuration parameter
 	bucket        string   // Bucket configuration parameter
 
 	// SQS service configuration
@@ -312,6 +330,21 @@ func TestSQS(t *testing.T) {
 				"bucket-a,path/to,2.zst",
 			},
 		},
+		{
+			name:       "use provided bucket",
+			queueNames: []string{"queue-a"},
+			bucket:     "bucket-a",
+			messages: map[string][]sqs.Message{
+				"queue-a": {
+					sqsMessage("path/to/file/1.zst"),
+					sqsMessage("path/to/file/2.zst"),
+				},
+			},
+			wantRecords: []string{
+				"bucket-a,path/to,1.zst",
+				"bucket-a,path/to,2.zst",
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -334,6 +367,7 @@ Name="sqs"
 Bucket=%q
 MessageFormat="plain"
 QueuePrefixes=[%v]
+QueueNames=[%v]
 FilePathFilter=".*"
 
 [output]
@@ -352,8 +386,12 @@ fields=["bucket", "path", "filename"]
 		for _, pref := range tc.queuePrefixes {
 			prefixes = append(prefixes, `"`+pref+`"`)
 		}
+		queues := []string{}
+		for _, name := range tc.queueNames {
+			queues = append(queues, `"`+name+`"`)
+		}
 
-		r := strings.NewReader(fmt.Sprintf(toml, tc.bucket, strings.Join(prefixes, ",")))
+		r := strings.NewReader(fmt.Sprintf(toml, tc.bucket, strings.Join(prefixes, ","), strings.Join(queues, ",")))
 		cfg, err := baker.NewConfigFromToml(r, comp)
 		if err != nil {
 			t.Fatal(err)
@@ -423,6 +461,23 @@ func (c *mockSQSClient) ListQueuesWithContext(ctx aws.Context, input *sqs.ListQu
 
 	out := &sqs.ListQueuesOutput{QueueUrls: queueURLs}
 	log.WithFields(log.Fields{"sqs": "ListQueuesWithContext", "input": *input, "out": *out}).Debug()
+	return out, nil
+}
+
+func (c *mockSQSClient) GetQueueUrlWithContext(ctx aws.Context, input *sqs.GetQueueUrlInput, options ...request.Option) (*sqs.GetQueueUrlOutput, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	queueName := ""
+	for name := range c.queues {
+		if name == *input.QueueName {
+			queueName = "https://sqs.us-west-2.amazonaws.com/123456789012/" + name
+			break
+		}
+	}
+
+	out := &sqs.GetQueueUrlOutput{QueueUrl: &queueName}
+	log.WithFields(log.Fields{"sqs": "GetQueueUrlWithContext", "input": *input, "out": *out}).Debug()
 	return out, nil
 }
 

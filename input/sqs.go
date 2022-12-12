@@ -41,7 +41,8 @@ Supported formats (MessageFormat):
 type SQSConfig struct {
 	AwsRegion         string   `help:"AWS region to connect to" default:"us-west-2"`
 	Bucket            string   `help:"S3 Bucket to use if paths do not have one" default:""`
-	QueuePrefixes     []string `help:"Prefixes of the names of the SQS queues to monitor" required:"true"`
+	QueuePrefixes     []string `help:"Prefixes of the names of the SQS queues to monitor"`
+	QueueNames        []string `help:"Names of the SQS queues to monitor"`
 	MessageFormat     string   `help:"SQS message format. See help string for supported formats" default:"sns"`
 	MessageExpression string   `help:"The expression to extract an S3 path from arbitrary message formats"`
 	FilePathFilter    string   `help:"If provided, will only use S3 files with the given path."`
@@ -122,6 +123,10 @@ func NewSQS(cfg baker.InputParams) (baker.Input, error) {
 	s3Input, err := inpututils.NewS3Input(dcfg.AwsRegion, dcfg.Bucket)
 	if err != nil {
 		return nil, fmt.Errorf("SQS: %v", err)
+	}
+
+	if len(dcfg.QueuePrefixes) == 0 && len(dcfg.QueueNames) == 0 {
+		return nil, fmt.Errorf("SQS: QueuePrefixes or QueueNames must be set")
 	}
 
 	sqs := &SQS{
@@ -246,7 +251,19 @@ func (s *SQS) Run(inch chan<- *baker.Data) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	var wg sync.WaitGroup
+	queueUrls := []string{}
+
+	for _, queueName := range s.Cfg.QueueNames {
+
+		resp, err := s.svc.GetQueueUrlWithContext(ctx, &sqs.GetQueueUrlInput{
+			QueueName: aws.String(queueName),
+		})
+		if err != nil {
+			return err
+		}
+		queueUrls = append(queueUrls, *resp.QueueUrl)
+	}
+
 	for _, prefix := range s.Cfg.QueuePrefixes {
 
 		resp, err := s.svc.ListQueuesWithContext(ctx, &sqs.ListQueuesInput{
@@ -257,13 +274,18 @@ func (s *SQS) Run(inch chan<- *baker.Data) error {
 		}
 
 		for _, url := range resp.QueueUrls {
-			wg.Add(1)
-			go func(url string) {
-				defer wg.Done()
-
-				s.pollQueue(ctx, url)
-			}(*url)
+			queueUrls = append(queueUrls, *url)
 		}
+	}
+
+	var wg sync.WaitGroup
+	for _, url := range queueUrls {
+		wg.Add(1)
+		go func(url string) {
+			defer wg.Done()
+
+			s.pollQueue(ctx, url)
+		}(url)
 	}
 
 	// The correct order of operation to cleanly stop the whole pipeline is the
