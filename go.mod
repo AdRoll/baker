@@ -29,7 +29,7 @@ require (
 	github.com/rasky/toml v0.1.1-0.20160309013025-90bcb678a72a
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
-	github.com/valyala/gozstd v1.14.2
+	github.com/valyala/gozstd v1.17.0
 	github.com/vmware/vmware-go-kcl v1.5.0
 	golang.org/x/net v0.0.0-20221002022538-bcab6841153b
 )

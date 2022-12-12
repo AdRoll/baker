@@ -305,6 +305,8 @@ github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5Cc
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/valyala/gozstd v1.14.2 h1:mtK5+UU774dXzuWtCqukhLyVOCM5NClDU3wUDazx90w=
 github.com/valyala/gozstd v1.14.2/go.mod h1:y5Ew47GLlP37EkTB+B4s7r6A5rdaeB7ftbl9zoYiIPQ=
+github.com/valyala/gozstd v1.17.0 h1:M4Ds4MIrw+pD+s6vYtuFZ8D3iEw9htzfdytOV3C3iQU=
+github.com/valyala/gozstd v1.17.0/go.mod h1:y5Ew47GLlP37EkTB+B4s7r6A5rdaeB7ftbl9zoYiIPQ=
 github.com/vmware/vmware-go-kcl v1.5.0 h1:lTptJptznhVOHS7CSuhd/2yDJa7deTBRHaj3zAvhJt8=
 github.com/vmware/vmware-go-kcl v1.5.0/go.mod h1:P92YfaWfQyudNf62BNx+E2rJn9pd165MhHsRt8ajkpM=
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
