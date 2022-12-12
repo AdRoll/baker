@@ -14,6 +14,7 @@ date: 2022-07-05
 This input listens on multiple SQS queues for paths to S3 files.
 It can be used with SQS queues subscribed to SNS topics (with raw_message_delivery subscription) and supports arbitrary payload (plain or json).
 It never exits.
+You should configure at least one of QueuePrefixes or QueueNames parameter. If both are used the input will listen to all queues.
 
 Supported formats (MessageFormat):
  - "plain": the message payload is a plain S3 path.
@@ -30,7 +31,8 @@ Keys available in the `[input.config]` section:
 |----|:--:|:-----:|:------:|-----------|
 | AwsRegion| string| "us-west-2"| false| AWS region to connect to|
 | Bucket| string| ""| false| S3 Bucket to use if paths do not have one|
-| QueuePrefixes| array of strings| []| true| Prefixes of the names of the SQS queues to monitor|
+| QueuePrefixes| array of strings| []| false| Prefixes of the names of the SQS queues to monitor|
+| QueueNames| array of strings| []| false| Names of the SQS queues to monitor|
 | MessageFormat| string| "sns"| false| SQS message format. See help string for supported formats|
 | MessageExpression| string| ""| false| The expression to extract an S3 path from arbitrary message formats|
 | FilePathFilter| string| ""| false| If provided, will only use S3 files with the given path.|
