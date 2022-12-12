@@ -30,6 +30,8 @@ func MainCLI(components Components) error {
 	log.SetFormatter(&log.JSONFormatter{})
 	log.SetOutput(os.Stderr)
 
+	// Create a new flagset to avoid conflict with other libraries
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	var (
 		flagHelpConfig = flag.String("help", "", "show help for a `component` (input/filter/output/upload) (use '*' to dump all)")
 		flagVerbose    = flag.Bool("v", false, "verbose logging (debug level)")
