@@ -3,7 +3,7 @@ module github.com/AdRoll/baker
 go 1.16
 
 require (
-	github.com/DataDog/datadog-go/v5 v5.1.0
+	github.com/DataDog/datadog-go/v5 v5.1.1
 	github.com/alecthomas/assert v0.0.0-20170929043011-405dbfeb8e38 // indirect
 	github.com/alecthomas/colour v0.0.0-20160524082231-60882d9e2721 // indirect
 	github.com/alecthomas/kong v0.2.4 // indirect
