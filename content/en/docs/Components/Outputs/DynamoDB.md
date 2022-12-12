@@ -1,7 +1,7 @@
 ---
 title: "DynamoDB"
 weight: 33
-date: 2022-07-05
+date: 2022-12-12
 ---
 {{% pageinfo color="primary" %}}
 

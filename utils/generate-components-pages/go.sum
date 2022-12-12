@@ -32,8 +32,8 @@ cloud.google.com/go/storage v1.8.0/go.mod h1:Wv1Oy7z6Yz3DshWRJFhqM/UCfaWIRTdp0RX
 cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9ullr3+Kg0=
 code.cloudfoundry.org/bytefmt v0.0.0-20190710193110-1eb035ffe2b6/go.mod h1:wN/zk7mhREp/oviagqUXY3EwuHhWyOvAdsn5Y4CzOrc=
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
-github.com/AdRoll/baker v0.1.0-alpha.0.20220705102049-dd0792d7f28c h1:LJDOUXz48X63DL0hkURs6Xu5i4abKHyuJKR6A7MrPI8=
-github.com/AdRoll/baker v0.1.0-alpha.0.20220705102049-dd0792d7f28c/go.mod h1:DvFlXtCPH55dl7b5uObnLZE2gJshnEECREh7E9Evo50=
+github.com/AdRoll/baker v0.1.0-alpha.0.20221212100636-7888e891596a h1:1Hy68o7y71X8k3wYeZEWoU3yfzrJE68xSeu3pBcbZfs=
+github.com/AdRoll/baker v0.1.0-alpha.0.20221212100636-7888e891596a/go.mod h1:DvFlXtCPH55dl7b5uObnLZE2gJshnEECREh7E9Evo50=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/toml v0.4.1 h1:GaI7EiDXDRfa8VshkTj7Fym7ha+y8/XxIgD2okUIjLw=
 github.com/BurntSushi/toml v0.4.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=

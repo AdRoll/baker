@@ -1,7 +1,7 @@
 ---
 title: "Crypt"
 weight: 12
-date: 2022-07-05
+date: 2022-12-12
 ---
 {{% pageinfo color="primary" %}}
 

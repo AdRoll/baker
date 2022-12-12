@@ -5,7 +5,7 @@
     <description>Recent content in Documentation on Baker, high performance modular pipelines for the Big Data era</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 05 Jul 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 12 Dec 2022 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: KCL</title>
       <link>https://getbaker.io/docs/components/inputs/kcl/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/kcl/</guid>
       <description>
@@ -103,7 +103,7 @@ the shards among KCL workers.&lt;/p&gt;
     <item>
       <title>Docs: Kinesis</title>
       <link>https://getbaker.io/docs/components/inputs/kinesis/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/kinesis/</guid>
       <description>
@@ -163,7 +163,7 @@ processes all the shards in that stream. It never exits.&lt;/p&gt;
     <item>
       <title>Docs: List</title>
       <link>https://getbaker.io/docs/components/inputs/list/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/list/</guid>
       <description>
@@ -245,7 +245,7 @@ walked, and all files matching the &amp;ldquo;MatchPath&amp;rdquo; option regexp
     <item>
       <title>Docs: SQS</title>
       <link>https://getbaker.io/docs/components/inputs/sqs/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/sqs/</guid>
       <description>
@@ -301,8 +301,15 @@ It never exits.&lt;/p&gt;
 &lt;td&gt;QueuePrefixes&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
 &lt;td&gt;Prefixes of the names of the SQS queues to monitor&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;QueueNames&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
+&lt;td&gt;Names of the SQS queues to monitor&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;MessageFormat&lt;/td&gt;
@@ -334,7 +341,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: TCP</title>
       <link>https://getbaker.io/docs/components/inputs/tcp/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/tcp/</guid>
       <description>
@@ -382,7 +389,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: ClauseFilter</title>
       <link>https://getbaker.io/docs/components/filters/clausefilter/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clausefilter/</guid>
       <description>
@@ -474,7 +481,7 @@ Matches anything
     <item>
       <title>Docs: ClearFields</title>
       <link>https://getbaker.io/docs/components/filters/clearfields/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/clearfields/</guid>
       <description>
@@ -519,7 +526,7 @@ Matches anything
     <item>
       <title>Docs: Concatenate</title>
       <link>https://getbaker.io/docs/components/filters/concatenate/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/concatenate/</guid>
       <description>
@@ -578,7 +585,7 @@ Matches anything
     <item>
       <title>Docs: CountAndTag</title>
       <link>https://getbaker.io/docs/components/filters/countandtag/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/countandtag/</guid>
       <description>
@@ -645,7 +652,7 @@ As such, it&amp;rsquo;s important to have strong guarantees about the set of pos
     <item>
       <title>Docs: Crypt</title>
       <link>https://getbaker.io/docs/components/filters/crypt/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/crypt/</guid>
       <description>
@@ -727,7 +734,7 @@ As such, it&amp;rsquo;s important to have strong guarantees about the set of pos
     <item>
       <title>Docs: Dedup</title>
       <link>https://getbaker.io/docs/components/filters/dedup/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/dedup/</guid>
       <description>
@@ -784,7 +791,7 @@ on your data set, this might lead to OOM (i.e. out of memory) errors.&lt;/p&gt;
     <item>
       <title>Docs: ExpandJSON</title>
       <link>https://getbaker.io/docs/components/filters/expandjson/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/expandjson/</guid>
       <description>
@@ -857,7 +864,7 @@ object present in field &lt;code&gt;json_data&lt;/code&gt;of the record. Then, t
     <item>
       <title>Docs: ExpandList</title>
       <link>https://getbaker.io/docs/components/filters/expandlist/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/expandlist/</guid>
       <description>
@@ -932,7 +939,7 @@ name=&amp;quot;ExpandList&amp;quot;
     <item>
       <title>Docs: ExternalMatch</title>
       <link>https://getbaker.io/docs/components/filters/externalmatch/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/externalmatch/</guid>
       <description>
@@ -1026,7 +1033,7 @@ name=&amp;quot;ExpandList&amp;quot;
     <item>
       <title>Docs: FormatTime</title>
       <link>https://getbaker.io/docs/components/filters/formattime/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/formattime/</guid>
       <description>
@@ -1115,7 +1122,7 @@ string, see &lt;a href=&#34;https://pkg.go.dev/time#pkg-constants&#34;&gt;Go tim
     <item>
       <title>Docs: Hash</title>
       <link>https://getbaker.io/docs/components/filters/hash/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/hash/</guid>
       <description>
@@ -1192,7 +1199,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: MetadataLastModified</title>
       <link>https://getbaker.io/docs/components/filters/metadatalastmodified/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/metadatalastmodified/</guid>
       <description>
@@ -1237,7 +1244,7 @@ present, the hashed value can optionally be encoded.&lt;/p&gt;
     <item>
       <title>Docs: MetadataUrl</title>
       <link>https://getbaker.io/docs/components/filters/metadataurl/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/metadataurl/</guid>
       <description>
@@ -1284,7 +1291,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: NotNull</title>
       <link>https://getbaker.io/docs/components/filters/notnull/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/notnull/</guid>
       <description>
@@ -1329,7 +1336,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: PartialClone</title>
       <link>https://getbaker.io/docs/components/filters/partialclone/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/partialclone/</guid>
       <description>
@@ -1374,7 +1381,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: RegexMatch</title>
       <link>https://getbaker.io/docs/components/filters/regexmatch/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/regexmatch/</guid>
       <description>
@@ -1433,7 +1440,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: ReplaceFields</title>
       <link>https://getbaker.io/docs/components/filters/replacefields/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/replacefields/</guid>
       <description>
@@ -1485,7 +1492,7 @@ If it doesn&amp;rsquo;t find the &amp;lsquo;url&amp;rsquo; in the metadata, this
     <item>
       <title>Docs: SetStringFromURL</title>
       <link>https://getbaker.io/docs/components/filters/setstringfromurl/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/setstringfromurl/</guid>
       <description>
@@ -1539,7 +1546,7 @@ Discards the log lines if URL metadata doesn&amp;rsquo;t contain any of the give
     <item>
       <title>Docs: Slice</title>
       <link>https://getbaker.io/docs/components/filters/slice/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/slice/</guid>
       <description>
@@ -1608,7 +1615,7 @@ Note: Indexes are 0-based and are intended as number of bytes, thus not taking i
     <item>
       <title>Docs: StringMatch</title>
       <link>https://getbaker.io/docs/components/filters/stringmatch/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/stringmatch/</guid>
       <description>
@@ -1667,7 +1674,7 @@ Note: Indexes are 0-based and are intended as number of bytes, thus not taking i
     <item>
       <title>Docs: Timestamp</title>
       <link>https://getbaker.io/docs/components/filters/timestamp/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamp/</guid>
       <description>
@@ -1712,7 +1719,7 @@ Note: Indexes are 0-based and are intended as number of bytes, thus not taking i
     <item>
       <title>Docs: TimestampRange</title>
       <link>https://getbaker.io/docs/components/filters/timestamprange/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/timestamprange/</guid>
       <description>
@@ -1771,7 +1778,7 @@ Note: Indexes are 0-based and are intended as number of bytes, thus not taking i
     <item>
       <title>Docs: URLEscape</title>
       <link>https://getbaker.io/docs/components/filters/urlescape/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/urlescape/</guid>
       <description>
@@ -1830,7 +1837,7 @@ Note: Indexes are 0-based and are intended as number of bytes, thus not taking i
     <item>
       <title>Docs: URLParam</title>
       <link>https://getbaker.io/docs/components/filters/urlparam/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/filters/urlparam/</guid>
       <description>
@@ -1897,7 +1904,7 @@ stored in DstField.&lt;/li&gt;
     <item>
       <title>Docs: DynamoDB</title>
       <link>https://getbaker.io/docs/components/outputs/dynamodb/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/dynamodb/</guid>
       <description>
@@ -1984,7 +1991,7 @@ The first column (and field) must be the primary key.&lt;/p&gt;
     <item>
       <title>Docs: FileWriter</title>
       <link>https://getbaker.io/docs/components/outputs/filewriter/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/filewriter/</guid>
       <description>
@@ -2093,7 +2100,7 @@ means that the number of files (and workers) depend on the cardinality of that f
 &lt;td style=&#34;text-align:center&#34;&gt;bool&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
-&lt;td&gt;By default, if no records have been received at the moment of rotation (see RotateInterval) then created files are empty. If true, then empty files are discarded.&lt;/td&gt;
+&lt;td&gt;By default, rotation may create empty files if no records were received. If true, then rotation is skipped if the file would be empty.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;ZstdCompressionLevel&lt;/td&gt;
@@ -2118,7 +2125,7 @@ means that the number of files (and workers) depend on the cardinality of that f
     <item>
       <title>Docs: Nop</title>
       <link>https://getbaker.io/docs/components/outputs/nop/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/nop/</guid>
       <description>
@@ -2144,7 +2151,7 @@ means that the number of files (and workers) depend on the cardinality of that f
     <item>
       <title>Docs: OpLog</title>
       <link>https://getbaker.io/docs/components/outputs/oplog/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/oplog/</guid>
       <description>
@@ -2170,7 +2177,7 @@ means that the number of files (and workers) depend on the cardinality of that f
     <item>
       <title>Docs: Stats</title>
       <link>https://getbaker.io/docs/components/outputs/stats/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/stats/</guid>
       <description>
@@ -2230,7 +2237,7 @@ means that the number of files (and workers) depend on the cardinality of that f
     <item>
       <title>Docs: WebSocket</title>
       <link>https://getbaker.io/docs/components/outputs/websocket/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/outputs/websocket/</guid>
       <description>
@@ -2256,7 +2263,7 @@ means that the number of files (and workers) depend on the cardinality of that f
     <item>
       <title>Docs: S3</title>
       <link>https://getbaker.io/docs/components/uploads/s3/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/uploads/s3/</guid>
       <description>

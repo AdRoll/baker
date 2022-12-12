@@ -1,7 +1,7 @@
 ---
 title: "SQS"
 weight: 5
-date: 2022-07-05
+date: 2022-12-12
 ---
 {{% pageinfo color="primary" %}}
 
@@ -14,7 +14,6 @@ date: 2022-07-05
 This input listens on multiple SQS queues for paths to S3 files.
 It can be used with SQS queues subscribed to SNS topics (with raw_message_delivery subscription) and supports arbitrary payload (plain or json).
 It never exits.
-You should configure at least one of QueuePrefixes or QueueNames parameter. If both are used the input will listen to all queues.
 
 Supported formats (MessageFormat):
  - "plain": the message payload is a plain S3 path.

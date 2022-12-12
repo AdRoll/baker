@@ -1,7 +1,7 @@
 ---
 title: "FileWriter"
 weight: 34
-date: 2022-07-05
+date: 2022-12-12
 ---
 {{% pageinfo color="primary" %}}
 
@@ -82,7 +82,7 @@ Keys available in the `[output.config]` section:
 | PathString| string| ""| false| Template describing names of the generated files. See top-level documentation for supported placeholders..|
 | RotateInterval| duration| 60s| false| Time interval between 2 successive file rotations. -1 disables interval-based rotation.|
 | RotateSize| bytes as int or string with SI or IEC unit| 0| false| File size which when reached triggers a file rotation. Can be cumulated with RotateInterval. 0 to disable. Examples: 12000, 12KB, 1MB, 1MiB, etc.|
-| DiscardEmptyFiles| bool| false| false| By default, if no records have been received at the moment of rotation (see RotateInterval) then created files are empty. If true, then empty files are discarded.|
+| DiscardEmptyFiles| bool| false| false| By default, rotation may create empty files if no records were received. If true, then rotation is skipped if the file would be empty.|
 | ZstdCompressionLevel| int| 3| false| Zstd compression level, ranging from 1 (best speed) to 19 (best compression).|
 | ZstdWindowLog| int| 0| false| Enable zstd long distance matching. Increase memory usage for both compressor/decompressor. If more than 27 the decompressor requires special treatment. 0:disabled.|
 

@@ -5,7 +5,7 @@
     <description>Recent content in Inputs on Baker, high performance modular pipelines for the Big Data era</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 05 Jul 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 12 Dec 2022 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://getbaker.io/docs/components/inputs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -18,7 +18,7 @@
     <item>
       <title>Docs: KCL</title>
       <link>https://getbaker.io/docs/components/inputs/kcl/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/kcl/</guid>
       <description>
@@ -103,7 +103,7 @@ the shards among KCL workers.&lt;/p&gt;
     <item>
       <title>Docs: Kinesis</title>
       <link>https://getbaker.io/docs/components/inputs/kinesis/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/kinesis/</guid>
       <description>
@@ -163,7 +163,7 @@ processes all the shards in that stream. It never exits.&lt;/p&gt;
     <item>
       <title>Docs: List</title>
       <link>https://getbaker.io/docs/components/inputs/list/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/list/</guid>
       <description>
@@ -245,7 +245,7 @@ walked, and all files matching the &amp;ldquo;MatchPath&amp;rdquo; option regexp
     <item>
       <title>Docs: SQS</title>
       <link>https://getbaker.io/docs/components/inputs/sqs/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/sqs/</guid>
       <description>
@@ -301,8 +301,15 @@ It never exits.&lt;/p&gt;
 &lt;td&gt;QueuePrefixes&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
 &lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;true&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
 &lt;td&gt;Prefixes of the names of the SQS queues to monitor&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;QueueNames&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;array of strings&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;[]&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;false&lt;/td&gt;
+&lt;td&gt;Names of the SQS queues to monitor&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;MessageFormat&lt;/td&gt;
@@ -334,7 +341,7 @@ It never exits.&lt;/p&gt;
     <item>
       <title>Docs: TCP</title>
       <link>https://getbaker.io/docs/components/inputs/tcp/</link>
-      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 12 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://getbaker.io/docs/components/inputs/tcp/</guid>
       <description>
