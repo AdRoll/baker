@@ -25,3 +25,27 @@ require (
 	github.com/vmware/vmware-go-kcl v1.5.0
 	golang.org/x/net v0.4.0
 )
+
+require (
+	github.com/Microsoft/go-winio v0.5.0 // indirect
+	github.com/alecthomas/chroma v0.10.0 // indirect
+	github.com/awslabs/kinesis-aggregation/go v0.0.0-20210630091500-54e17340d32f // indirect
+	github.com/aymanbagabas/go-osc52 v1.0.3 // indirect
+	github.com/aymerick/douceur v0.2.0 // indirect
+	github.com/dlclark/regexp2 v1.4.0 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/gorilla/css v1.0.0 // indirect
+	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
+	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-runewidth v0.0.14 // indirect
+	github.com/microcosm-cc/bluemonday v1.0.21 // indirect
+	github.com/muesli/reflow v0.3.0 // indirect
+	github.com/muesli/termenv v0.13.0 // indirect
+	github.com/olekukonko/tablewriter v0.0.5 // indirect
+	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/yuin/goldmark v1.5.2 // indirect
+	github.com/yuin/goldmark-emoji v1.0.1 // indirect
+	golang.org/x/sys v0.3.0 // indirect
+	google.golang.org/protobuf v1.27.1 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
+)
