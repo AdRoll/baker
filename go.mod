@@ -3,7 +3,7 @@ module github.com/AdRoll/baker
 go 1.18
 
 require (
-	github.com/DataDog/datadog-go/v5 v5.1.1
+	github.com/DataDog/datadog-go/v5 v5.2.0
 	github.com/arl/dirtree v0.1.3
 	github.com/arl/zt v0.2.0
 	github.com/aws/aws-sdk-go v1.41.7
@@ -15,13 +15,13 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0
 	github.com/jpillora/backoff v1.0.0
 	github.com/juju/ratelimit v1.0.2
-	github.com/klauspost/compress v1.15.1
-	github.com/mattn/go-sqlite3 v1.14.3
+	github.com/klauspost/compress v1.16.0
+	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/nsf/sexp v0.0.0-20130620094510-d3d2f2591f1d
 	github.com/pierrec/lz4/v3 v3.3.2
 	github.com/rasky/toml v0.1.1-0.20160309013025-90bcb678a72a
-	github.com/sirupsen/logrus v1.8.1
-	github.com/valyala/gozstd v1.17.0
+	github.com/sirupsen/logrus v1.9.0
+	github.com/valyala/gozstd v1.18.0
 	github.com/vmware/vmware-go-kcl v1.5.0
 	golang.org/x/net v0.4.0
 )
