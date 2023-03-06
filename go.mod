@@ -21,7 +21,7 @@ require (
 	github.com/pierrec/lz4/v3 v3.3.2
 	github.com/rasky/toml v0.1.1-0.20160309013025-90bcb678a72a
 	github.com/sirupsen/logrus v1.8.1
-	github.com/valyala/gozstd v1.17.0
+	github.com/valyala/gozstd v1.18.0
 	github.com/vmware/vmware-go-kcl v1.5.0
 	golang.org/x/net v0.4.0
 )
