@@ -3,7 +3,7 @@ module github.com/AdRoll/baker
 go 1.18
 
 require (
-	github.com/DataDog/datadog-go/v5 v5.1.1
+	github.com/DataDog/datadog-go/v5 v5.2.0
 	github.com/arl/dirtree v0.1.3
 	github.com/arl/zt v0.2.0
 	github.com/aws/aws-sdk-go v1.41.7
