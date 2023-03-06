@@ -16,7 +16,7 @@ require (
 	github.com/jpillora/backoff v1.0.0
 	github.com/juju/ratelimit v1.0.2
 	github.com/klauspost/compress v1.16.0
-	github.com/mattn/go-sqlite3 v1.14.3
+	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/nsf/sexp v0.0.0-20130620094510-d3d2f2591f1d
 	github.com/pierrec/lz4/v3 v3.3.2
 	github.com/rasky/toml v0.1.1-0.20160309013025-90bcb678a72a
