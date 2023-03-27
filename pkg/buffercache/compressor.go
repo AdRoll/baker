@@ -3,7 +3,7 @@ package buffercache
 import (
 	"fmt"
 
-	"github.com/pierrec/lz4/v3"
+	"github.com/pierrec/lz4/v4"
 )
 
 const lz4TableSize = 64 << 10
