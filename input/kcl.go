@@ -43,6 +43,7 @@ type KCLConfig struct {
 	AppName         string        `help:"Used by KCL to allow multiple app to consume the same stream." required:"true"`
 	MaxShards       int           `help:"Max shards this Worker can handle at a time" default:"32767"`
 	ShardSync       time.Duration `help:"Time between tasks to sync leases and Kinesis shards" default:"60s"`
+	LeaseDuration   time.Duration `help:"Time after which a worker should have renewed all shard leases before not being considered owner anymore" default:"60s"`
 	InitialPosition string        `help:"Position in the stream where a new application should start from. Values: LATEST or TRIM_HORIZON" default:"LATEST"`
 	initialPosition config.InitialPositionInStream
 }
@@ -74,6 +75,9 @@ func (cfg *KCLConfig) fillDefaults() {
 	}
 	if cfg.ShardSync == 0 {
 		cfg.ShardSync = time.Minute
+	}
+	if cfg.LeaseDuration == 0 {
+		cfg.LeaseDuration = time.Minute
 	}
 }
 
@@ -119,8 +123,6 @@ func NewKCL(cfg baker.InputParams) (baker.Input, error) {
 	}
 
 	const (
-		// Leases not renewed within this period will be claimed by others
-		leaseDuration = 60 * time.Second
 		// Period before the end of lease during which a lease is refreshed by the owner
 		leaseRefreshPeriod = 20 * time.Second
 		// Max records to read per Kinesis getRecords() call
@@ -136,7 +138,7 @@ func NewKCL(cfg baker.InputParams) (baker.Input, error) {
 		WithMaxRecords(maxRecords).
 		WithMaxLeasesForWorker(dcfg.MaxShards).
 		WithShardSyncIntervalMillis(int(dcfg.ShardSync / time.Millisecond)).
-		WithFailoverTimeMillis(int(leaseDuration / time.Millisecond)).
+		WithFailoverTimeMillis(int(dcfg.LeaseDuration / time.Millisecond)).
 		WithLeaseRefreshPeriodMillis(int(leaseRefreshPeriod / time.Millisecond)).
 		WithInitialPositionInStream(dcfg.initialPosition).
 		WithMonitoringService(&kcl.metrics).
