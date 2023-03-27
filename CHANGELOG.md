@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `DiscardEmptyFiles` option to the `FileWriter` output [#204](https://github.com/AdRoll/baker/pull/204)
 - Add `URLEscape` and `URLParam` filters [#206](https://github.com/AdRoll/baker/pull/206)
 - Add `QueueNames` parameter to SQS Input [#210](https://github.com/AdRoll/baker/pull/210)
+- Make `LeaseDuration` configurable on the KCL input [#216](https://github.com/AdRoll/baker/pull/216)
 
 ### Changed
 
