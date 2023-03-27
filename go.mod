@@ -23,7 +23,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/valyala/gozstd v1.18.0
 	github.com/vmware/vmware-go-kcl v1.5.0
-	golang.org/x/net v0.4.0
+	golang.org/x/net v0.7.0
 )
 
 require (
@@ -45,7 +45,7 @@ require (
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/yuin/goldmark v1.5.2 // indirect
 	github.com/yuin/goldmark-emoji v1.0.1 // indirect
-	golang.org/x/sys v0.3.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )
