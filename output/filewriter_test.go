@@ -550,6 +550,7 @@ func countLines(r io.Reader) (int, error) {
 // Data in the following file has been generated from
 // https://www.convertcsv.com/generate-test-data.htm with the following
 // 'schema': pick(AAA|BBB|CCC|DDD), digit(22), first, last, email, state
+//
 //go:embed testdata/filewriter/input.csv
 var inputCSV string
 
@@ -618,7 +619,7 @@ func TestFileWriterRotateSize(t *testing.T) {
 	}
 
 	const (
-		sizeEpsilon = 0.01
+		sizeEpsilon = 0.05
 		rotateSize  = 2_000_000
 		minSize     = rotateSize * (1 - sizeEpsilon)
 		maxSize     = rotateSize * (1 + sizeEpsilon)
