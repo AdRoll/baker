@@ -18,12 +18,12 @@ require (
 	github.com/klauspost/compress v1.16.3
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/nsf/sexp v0.0.0-20130620094510-d3d2f2591f1d
-	github.com/pierrec/lz4/v3 v3.3.5
+	github.com/pierrec/lz4/v4 v4.1.17
 	github.com/rasky/toml v0.1.1-0.20160309013025-90bcb678a72a
 	github.com/sirupsen/logrus v1.9.0
 	github.com/valyala/gozstd v1.18.0
 	github.com/vmware/vmware-go-kcl v1.5.0
-	golang.org/x/net v0.8.0
+	golang.org/x/net v0.17.0
 )
 
 require (
@@ -42,11 +42,10 @@ require (
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.13.0 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
-	github.com/pierrec/lz4/v4 v4.1.17 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/yuin/goldmark v1.5.2 // indirect
 	github.com/yuin/goldmark-emoji v1.0.1 // indirect
-	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )
